@@ -270,9 +270,14 @@ class Game_Event < Game_Character
     @move_type          = @page.move_type
     @move_speed         = @page.move_speed
     @move_frequency     = @page.move_frequency
-    @move_route         = @page.move_route
-    @move_route_index   = 0
-    @move_route_forcing = false
+    
+    #tag: modified
+    if !@on_path_finding || @on_path_finding.nil?
+      @move_route         = @page.move_route
+      @move_route_index   = 0               
+      @move_route_forcing = false           
+    end
+    
     @walk_anime         = @page.walk_anime
     @step_anime         = @page.step_anime
     @direction_fix      = @page.direction_fix

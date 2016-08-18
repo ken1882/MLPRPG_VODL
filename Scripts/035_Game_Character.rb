@@ -110,6 +110,8 @@ class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   def update_stop
     super
+    
+    #if @move_route_forcing then msgbox("detected") end
     update_routine_move if @move_route_forcing
   end
   #--------------------------------------------------------------------------
@@ -332,6 +334,7 @@ class Game_Character < Game_CharacterBase
     if @move_route.repeat
       @move_route_index = -1
     elsif @move_route_forcing
+      @on_path_finding = false
       @move_route_forcing = false
       restore_move_route
     end
