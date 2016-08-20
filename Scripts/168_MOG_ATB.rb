@@ -1300,7 +1300,7 @@ module BattleManager
       end
       if ($game_system.show_roll_result? || $force_show_roll_result)
         $game_message.battle_log_add("------------------------------------------")
-        $game_message.battle_log_add("          Battle Initiative roll          ")
+        $game_message.battle_log_add("          Battle Initiative Roll          ")
         $game_message.battle_log_add("------------------------------------------")
       end
       battlers.each do |battler|

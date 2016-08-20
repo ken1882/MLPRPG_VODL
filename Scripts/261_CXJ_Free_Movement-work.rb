@@ -563,6 +563,7 @@ class Game_CharacterBase
           processed = true
         end
       end
+      
       if(processed)
         pixelstep = CXJ::FREE_MOVEMENT::PIXELS_PER_STEP / 32.0
         if(step_left > pixelstep && !@move_poll.empty?)
@@ -573,6 +574,8 @@ class Game_CharacterBase
       else
         @move_poll.clear
       end
+      
+      @move_succeed = processed
       current_move
     end
   end
@@ -845,20 +848,40 @@ class Game_Character < Game_CharacterBase
   end
   #--------------------------------------------------------------------------
   # * Alias: Process Move Command
+  # tag: modified
   #--------------------------------------------------------------------------
   alias game_character_process_move_command_cxj_fm process_move_command
   def process_move_command(command)
+    is_player = self.is_a?(Game_Player)
+    saved_poll = nil
     case command.code
-    when ROUTE_MOVE_DOWN;         @move_poll+= [[2, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil 
-    when ROUTE_MOVE_LEFT;         @move_poll+= [[4, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
-    when ROUTE_MOVE_RIGHT;        @move_poll+= [[6, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
-    when ROUTE_MOVE_UP;           @move_poll+= [[8, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
-    when ROUTE_MOVE_LOWER_L;      @move_poll+= [[1, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
-    when ROUTE_MOVE_LOWER_R;      @move_poll+= [[3, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
-    when ROUTE_MOVE_UPPER_L;      @move_poll+= [[7, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
-    when ROUTE_MOVE_UPPER_R;      @move_poll+= [[9, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
-    else;                         game_character_process_move_command_cxj_fm(command)
+    when ROUTE_MOVE_DOWN
+      saved_poll = [[2, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil 
+    when ROUTE_MOVE_LEFT
+      saved_poll = [[4, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
+    when ROUTE_MOVE_RIGHT
+      saved_poll = [[6, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
+    when ROUTE_MOVE_UP
+      saved_poll = [[8, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
+    when ROUTE_MOVE_LOWER_L
+      saved_poll = [[1, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
+    when ROUTE_MOVE_LOWER_R
+      saved_poll = [[3, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
+    when ROUTE_MOVE_UPPER_L
+      saved_poll = [[7, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
+    when ROUTE_MOVE_UPPER_R
+      saved_poll = [[9, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
+    else; game_character_process_move_command_cxj_fm(command)
     end
+    
+    @move_poll += saved_poll unless saved_poll.nil?
+    if is_player && !saved_poll.nil?
+      $game_player.followers.each do |follower|
+        follower.moveto($game_player.x,$game_player.y)
+        follower.move_poll += saved_poll
+      end
+    end
+    
   end
 end
 #==============================================================================
@@ -1074,6 +1097,8 @@ class Game_Followers
   def move
     reverse_each {|follower| follower.board if gathering?; follower.chase_preceding_character }
   end
+  
+
 end
 #==============================================================================
 # ** Game_Vehicle
@@ -1229,7 +1254,7 @@ class Game_Follower < Game_Character
   # * Alias: Pursue Preceding Character
   #--------------------------------------------------------------------------
   def chase_preceding_character
-    return if command == "hold"
+    return if self.command_holding?
     unless moving? && !@force_chase
       dist = CXJ::FREE_MOVEMENT::FOLLOWERS_DISTANCE / 32.0
       mrgn = CXJ::FREE_MOVEMENT::FOLLOWERS_DISTANCE_MARGIN / 32.0
@@ -1263,7 +1288,7 @@ class Game_Follower < Game_Character
         end
       elsif type == 2
         
-        goal = command == "gather" ? $game_player : @preceding_character
+        goal = @preceding_character
         sx = distance_x_from(goal.x)
         sy = distance_y_from(goal.y)
         sd = Math.hypot(sx, sy)

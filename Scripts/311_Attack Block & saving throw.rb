@@ -402,16 +402,18 @@ class Game_BattlerBase
   #--------------------------------------------------------------------------
   def attack_roll(item)
     
+    bonus = (item.magical? || item.speed > 60) ? 4 : 0
+    
     if item.physical?
       if item.is_missile
-        return self.difficulty_class('dex',-10,false)
+        return self.difficulty_class('dex',-10,false) + bonus
       else
-        return self.difficulty_class('str',-10,false)
+        return self.difficulty_class('str',-10,false) + bonus
       end
-      
     elsif item.magical?
-      return self.difficulty_class('int',-8,false)
+      return self.difficulty_class('int',-8,false) + bonus
     end
+    
     return 20
   end
   #--------------------------------------------------------------------------
@@ -442,7 +444,6 @@ class Game_BattlerBase
     
     if !result
       real_ac = self.armor_class + calc_block_rate(item)
-      real_ac -= 10 if item.speed > 60
     end
     
     #puts "THAC0:#{@real_thac0} AC:#{real_ac}"

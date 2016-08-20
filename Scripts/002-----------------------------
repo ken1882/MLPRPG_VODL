@@ -1,0 +1,89 @@
+# I know this game can be decrypted. Respect the authors, please.
+# Warning: I have modified tons of stuffs, if any problem occured in your game
+# it's your business.
+
+=begin
+
+╔════╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═════╗
+║ ╔══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╗ ║
+╠─╣                                                                          ╠─╣
+╠─╣                          Script Tags                                     ╠─╣
+╠─╣                                                                          ╠─╣
+║ ╚══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╝ ║
+╚════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════╝
+
+search tag:
+Crtl + Shift + F
+
+Tags available:
+
+tag: damage
+tag: atb_speed
+tag: cast
+tag: coop
+tag: CT
+Tag: CT setting
+Tag: execute state effect
+tag: customed
+tag: atb
+tag: atb clear
+tag: skill action
+tag: skill
+tag: state
+tag: target
+tag: item
+tag: state
+tag: AI
+tag: poison
+tag: modified
+tag: thac0 (include dnd paramater)
+tag: battle_start
+
+╔════╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═════╗
+║ ╔══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╗ ║
+╠─╣                                                                          ╠─╣
+╠─╣                         Important Global Variables                       ╠─╣
+╠─╣                                                                          ╠─╣
+║ ╚══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╝ ║
+╚════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════╝
+
+
+$Battle_Current_Target   #Fix bug between MOG:Battle_Cursor and YEA|Battle
+$Battle_Original_Target
+
+  moving? -> process_moving (Fix free movement can't detect moving while dash)
+
+$data_notetagged_items  # improve search range of the state and equipment that
+                        # have bonus to saving throw or block rate
+
+$current_damage_type    # none/physical/magical
+                        #  0  /   1    /   2
+                        
+$current_using_item     # current using item, in item_apply method
+
+$current_user           # current item user
+
+$item_invert_target     # fix invert target gone bug
+
+$force_target           # when enemey targeting, the action will turn to the 
+                          force target(s)
+                          
+$force_target_enemy     # when acotr targeting, the action will turn to the 
+                          force target(s)
+╔════╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═════╗
+║ ╔══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╗ ║
+╠─╣                                                                          ╠─╣
+╠─╣                   Last Work Process : Skill Tree line 3456               ╠─╣
+╠─╣                       YEA|Steal Item line 682                            ╠─╣
+╠─╣                      Move Speed line 131                                 ╠─╣
+╠─╣                                                                          ╠─╣
+║ ╚══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╝ ║
+╚════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════╝
+
+=end
+
+
+module PONY
+  TOTAL_BIT_VARIABLE_ID = 31
+  TOTAL_XP_VARIABLE_ID = 32
+end

@@ -106,6 +106,8 @@ class RPG::BaseItem
     :special_flag  => 62,              # Special Flag
     :collapse_type => 63,              # Collapse Effect
     :party_ability => 64,              # Party Ability
+    #-------------------------------------------------------
+    
   }
   
   def features

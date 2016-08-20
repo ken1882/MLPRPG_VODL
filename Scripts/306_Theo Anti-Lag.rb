@@ -368,7 +368,7 @@ class Game_Map
       offscreen_events = last_events - events
       offscreen_events.each {|event| event.delete_sprite}
     end
-    events.each {|event| event.update}
+    events.each {|event| event.update if event.need_update}
     @common_events.each {|event| event.update}
   end
   #-----------------------------------------------------------------------------

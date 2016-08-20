@@ -11,27 +11,45 @@ class Scene_Map < Scene_Base
   
   def update_scene
     scene_map_update_scene_hack
-    check_hacks unless scene_changing?
+    distract_data unless scene_changing?
   end
   
   #--------------------------------------------------------------------------
-  # new method: check_hacks
+  # new method: distract data
   #--------------------------------------------------------------------------
+  def distract_data
+    
+    $game_variables[PONY::TOTAL_BIT_VARIABLE_ID] = $game_variables[PONY::TOTAL_BIT_VARIABLE_ID].to_i
+    $game_variables[PONY::TOTAL_XP_VARIABLE_ID]  = $game_variables[PONY::TOTAL_XP_VARIABLE_ID].to_i
+
+    distract_value = rand / 2
+    $game_variables[PONY::TOTAL_BIT_VARIABLE_ID] += distract_value
+    $game_variables[PONY::TOTAL_XP_VARIABLE_ID]  += distract_value
+    
+  end
+  
+end # Scene_Map
+
+
+
+#==============================================================================
+# ■ Scene_Menu
+#==============================================================================
+
+class Scene_Menu < Scene_MenuBase
+  
+  #--------------------------------------------------------------------------
+  # alias method: start
+  #--------------------------------------------------------------------------
+  alias start_prehacks start
+  def start
+    check_hacks
+    start_prehacks
+  end
+  
   def check_hacks
     
-    if $previous_rand_value.nil?
-      puts "previous no rand available"
-      $game_variables[PONY::TOTAL_BIT_VARIABLE_ID] = $game_variables[PONY::TOTAL_BIT_VARIABLE_ID].to_i
-      $game_variables[PONY::TOTAL_XP_VARIABLE_ID]  = $game_variables[PONY::TOTAL_XP_VARIABLE_ID].to_i
-    else
-      $game_variables[PONY::TOTAL_BIT_VARIABLE_ID] -= $previous_rand_value
-      $game_variables[PONY::TOTAL_XP_VARIABLE_ID]  -= $previous_rand_value
-    end
-    
-    $previous_rand_value = rand
-    $game_variables[PONY::TOTAL_BIT_VARIABLE_ID] += $previous_rand_value
-    $game_variables[PONY::TOTAL_XP_VARIABLE_ID]  += $previous_rand_value
-    
+    puts "Check Hacks"
     value = $game_variables[PONY::TOTAL_BIT_VARIABLE_ID]
     value = [1000,[value,$game_party.max_gold].min].max
     
@@ -53,7 +71,6 @@ class Scene_Map < Scene_Base
         return
       end
     end
-    
   end
   
-end # Scene_Map
+end # Scene_Menus

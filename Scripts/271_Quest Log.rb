@@ -240,7 +240,7 @@ module QuestData
   MENU_INDEX = 4
   #  MAP_ACCESS - If true, this allows you to access the quest journal by 
   # pressing a key on the map.
-  MAP_ACCESS = true
+  MAP_ACCESS = false
   #  MAP_BUTTON - If MAP_ACCESS is true, this determines which button calls the
   # Quest Journal
   MAP_BUTTON = :L
@@ -2587,12 +2587,13 @@ end
 class Scene_Map
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Update Scene
+  # tag: modified
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  alias maqj_updascne_9kh4 update_scene
-  def update_scene(*args, &block)
-    maqj_updascne_9kh4(*args, &block)
-    update_call_quest_journal if $game_system.quest_map_access && !scene_changing?
-  end
+  #alias maqj_updascne_9kh4 update_scene
+  #def update_scene(*args, &block)
+  #  maqj_updascne_9kh4(*args, &block)
+  #  #update_call_quest_journal if $game_system.quest_map_access && !scene_changing?
+  #end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Update Call Quest Journal
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
