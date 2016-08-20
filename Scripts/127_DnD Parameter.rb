@@ -11,6 +11,22 @@ module DND
     CHA = /(?:CHA|cha):[ ](\d+)/i
     DND_PARAMETER_OFF = /<\/(?:DND_PARAMETERS|dnd parameters)>/i
   end
+  
+  module PARAMS
+    INIT_TABLE = [
+      10,             # 0, str
+      10,             # 1, dex
+      10,             # 2, con
+      10,             # 3, int
+      10,             # 4, wis
+      10,             # 5, cha
+      0,              # 6, AR
+      10,             # 7, AC
+    ]
+    NUMBER = 8
+    LEVEL_CAP = 100
+  end
+  
 
 end
 #==============================================================================
@@ -133,4 +149,6 @@ class RPG::BaseItem
     end
   end #load_notetags_dnd
   
-end # RPG::BaseItem
+end # RPG::BaseItem
+
+

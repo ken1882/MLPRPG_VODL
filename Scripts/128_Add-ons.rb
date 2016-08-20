@@ -42,13 +42,13 @@ end
 # Game Actor
 #=======================================================================
 class Game_Actor < Game_Battler
+ 
   attr_accessor :p_str                # strength in DnD
   attr_accessor :p_dex                # dexterity in DnD
   attr_accessor :p_con                # constitution in DnD
   attr_accessor :p_int                # intelligence in DnD
   attr_accessor :p_wis                # wisdom in DnD
   attr_accessor :p_cha                # charisma in DnD
-  
   
   attr_accessor :real_str                # strength in DnD
   attr_accessor :real_dex                # dexterity in DnD
@@ -57,8 +57,9 @@ class Game_Actor < Game_Battler
   attr_accessor :real_wis                # wisdom in DnD
   attr_accessor :real_cha                # charisma in DnD
   
+
   attr_accessor :str_ath
-  
+
   attr_accessor :dex_acr
   attr_accessor :dex_sle
   attr_accessor :dex_ste
@@ -68,7 +69,7 @@ class Game_Actor < Game_Battler
   attr_accessor :int_inv
   attr_accessor :int_nat
   attr_accessor :int_rel
-  
+
   attr_accessor :wis_ani
   attr_accessor :wis_ins
   attr_accessor :wis_med
@@ -79,9 +80,9 @@ class Game_Actor < Game_Battler
   attr_accessor :cha_int
   attr_accessor :cha_perfor
   attr_accessor :cha_persua
-  
+
   attr_accessor :lskill               # dnd 5e life skills
-  
+
   #--------------------------------------------------------------------------
   # ● alias method initialize
   #-------------------------------------------------------------------------- 

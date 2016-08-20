@@ -87,4 +87,3 @@ module PONY
   TOTAL_BIT_VARIABLE_ID = 31
   TOTAL_XP_VARIABLE_ID = 32
 end
-
