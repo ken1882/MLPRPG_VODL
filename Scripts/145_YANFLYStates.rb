@@ -734,7 +734,7 @@ class Game_Battler < Game_BattlerBase
       @state_turns[state_id] = [state_turn_mod(state_id),@state_turns[state_id]].max
     end
     @state_turns[state_id] = force_set_turn unless force_set_turn == 0
-    @state_steps[state_id] = state.steps_to_remove
+    @state_steps[state_id] = state.steps_to_remove * 8
   end
   
   #--------------------------------------------------------------------------

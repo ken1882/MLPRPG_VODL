@@ -906,7 +906,7 @@ class Game_Actor < Game_Battler
     initialize_vancian_casting(self.class.source_table, @level);
   end
   
-  #tag: thac0
+  #tag: D&D_params
   alias_method  :vancecs_actor_level_up, :level_up
   def level_up
     vancecs_actor_level_up

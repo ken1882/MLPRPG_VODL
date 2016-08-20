@@ -47,7 +47,9 @@ module ESTRIOLE
     "ep" => 9,
     "Ep" => 9,
     #-------------------
+    
     "Fire"      =>    18,
+    "Friendly"  =>    18,
     #"fire"      =>    18,
     "Ice"       =>    23,
     #"ice"       =>    23,
@@ -108,6 +110,7 @@ module ESTRIOLE
     "CHA"       =>    17,
     #---------------------------------------
     "Saving Throw"    =>    1,
+    "Saving Throws"    =>    1,
     #"saving throw"    =>    1,
     "Physical Damage" =>    7,
     "P.DMG"           =>    7,

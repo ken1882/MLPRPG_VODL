@@ -49,6 +49,10 @@ class Game_CharacterBase
     
     @dash_speed_bonus = 0
     #-------------------------------------------
+    # Haste
+    #-------------------------------------------
+    @dash_speed_bonus += 0.3 if $game_party.leader.state?(283)
+    #-------------------------------------------
     # Boots of Speed
     #-------------------------------------------
     for battler in $game_party.members

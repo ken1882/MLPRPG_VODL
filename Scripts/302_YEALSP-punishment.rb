@@ -50,9 +50,6 @@ $imported["YEA-LSP-Punishment"] = true
 if $imported["YEA-LunaticStates"]
 class Game_BattlerBase
   
-
-  
-  
   #--------------------------------------------------------------------------
   # ● Lunatic States Package Effects - Punishment
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -520,7 +517,22 @@ class Game_BattlerBase
       for poison in @poison_damage
         @poison_damage.delete(poison) if poison[0] == 410
       end
-    
+    #======================================================================
+    # ● Glyph of Paralysis
+    #======================================================================
+    when /APPLY_GLYPH_PARALYSIS/i      
+      puts "Fuck you dumb bitch"
+      @state_info[285] = $current_user.difficulty_class('int')
+    #======================================================================
+    # ● Glyph of Paralysis
+    #======================================================================
+    when /GLYPH_PARALYSIS/i
+      return if attacker.nil?
+      return unless opposite?(attacker)
+      
+      self.remove_state(285)
+      attacker.multi_animation_id.push(368)
+      attacker.add_state(7) if attacker.saving_throw('con') < @state_info[285]
     #----------------------------------------------------------------------
     # Stop editting past this point.
     #----------------------------------------------------------------------

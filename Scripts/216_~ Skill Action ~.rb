@@ -126,7 +126,13 @@ module TSBS
   [:loop, 3, "K-Cast"],
   [:wait,3],
   [:projectile, 140,3, 0], 
-  
+  ],
+  #----------------------------------------------------------------------------
+  "Casting_Pose" => [
+  [],
+  [:cast, 139],
+  [:loop, 3, "K-Cast"],
+  [:wait,3],
   ],
   #----------------------------------------------------------------------------
   "Dragon_Casting" => [
@@ -918,6 +924,7 @@ module TSBS
     #------------------------------------------------------------------------
     "Fireball" => [
       [],
+      [:action,"Casting_Pose"],
       [:projectile,276,6,0],
       [:wait,20],
     ],
@@ -2016,6 +2023,12 @@ module TSBS
     [:show_anim],
     [:screen, :shake, 16 ,20, 20],
     [:wait,50],
+  ],
+  #--------------------------------------------------------------------------
+  "Glyph_Paralysis" => [
+    [],
+    [:action,"Casting_Spell"],
+    [:target_damage,"if a.opposite?(b) && a.difficulty_class('int') >= b.saving_throw('con') then b.add_state(7); else; b.add_state(285) end"],
   ],
   
   #------------------------------

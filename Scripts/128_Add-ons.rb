@@ -266,10 +266,12 @@ class Game_BattlerBase
   attr_accessor :path_finding         # check A* path finding is in process
   attr_accessor :priority             # priority of targeted
   attr_accessor :damage_taken
-  attr_accessor :anti_magic
+  attr_accessor :anti_magic           # natural anti-magic
   attr_accessor :force_perform_skills 
-  attr_accessor :poison_damage
-  attr_accessor :dead_drained
+  attr_accessor :poison_damage        # jump to tag: poison
+  attr_accessor :dead_drained   
+  
+  attr_accessor :state_info           # Lunatic State, store extra informations
   
   alias init_custom initialize
   def initialize
@@ -282,7 +284,7 @@ class Game_BattlerBase
     @saving_throw_adjust = [0,0,0,0,0,0,0,0]
     @saving_rolled = []
     @atb_dropped_times = [0,0]
-    
+    @state_info = []
     
     @p_penetration = 0
     @m_penetration = 0
