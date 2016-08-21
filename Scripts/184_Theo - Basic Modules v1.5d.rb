@@ -1191,6 +1191,7 @@ class Sprite
   
   alias theolized_move_update update
   def update
+    return if disposed?
     theolized_move_update
     update_move
   end

@@ -814,7 +814,7 @@ class Window_SystemOptions < Window_Command
       $game_switches[14] = $battle_party_status_UI
       #puts "#{$game_switches[YEA::SYSTEM::CUSTOM_SWITCHES[ext][0]]} , #{$battle_party_status_UI}"
     elsif YEA::SYSTEM::CUSTOM_SWITCHES[ext][0] == 21
-      $game_switches[21] = $light_effects
+      $game_switches[21] = $light_effects || $light_effects_forced
     end
     
     name = @list[index][:name]
@@ -976,7 +976,19 @@ class Window_SystemOptions < Window_Command
     Sound.play_cursor if value != current_case
     draw_item(index)
   end
-  
+  #--------------------------------------------------------------------------
+  # check if allow to change_custom_switch
+  #--------------------------------------------------------------------------
+  def allow_to_change_switch?(id)
+    if id == 21
+      if $light_effects_forced
+        msgbox("The Light Effects is forced to turn on currently,\n" + "so you can't disable it right now.")
+        return false
+      end
+    end
+    
+    return true
+  end
   #--------------------------------------------------------------------------
   # change_custom_switch
   #--------------------------------------------------------------------------
@@ -986,6 +998,9 @@ class Window_SystemOptions < Window_Command
     ext = current_ext
     current_case = $game_switches[YEA::SYSTEM::CUSTOM_SWITCHES[ext][0]]
     current_id = YEA::SYSTEM::CUSTOM_SWITCHES[ext][0]
+    
+    return unless allow_to_change_switch?(current_id)
+    
     $game_switches[YEA::SYSTEM::CUSTOM_SWITCHES[ext][0]] = value
     
     $battle_party_status_UI = $game_switches[14]

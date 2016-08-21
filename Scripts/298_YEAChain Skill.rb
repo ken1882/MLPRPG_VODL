@@ -253,11 +253,14 @@ class Game_BattlerBase
   
   #--------------------------------------------------------------------------
   # new method: chain_skill_restriction?
+  # tag: modified
+  # tag: skill
   #--------------------------------------------------------------------------
   def chain_skill_restriction?(skill)
     #return false unless actor?
     return false unless $game_party.in_battle
     return false unless skill.chain_only
+    return false if (self.state?(90) || self.state?(288)) && skill.is_spell?
     return !@active_chain_enabled
   end
   
@@ -721,6 +724,7 @@ class Scene_Battle < Scene_Base
     return if $Battle_Original_Target.dead? rescue nil
     return if @active_chain_skill > 0
     return if @skill_chained
+    return if @subject.state?(PONY::COMBAT_STOP_FLAG)
     
     if @active_chain_skill_counter <= 0
       @active_chain_skill_window.close

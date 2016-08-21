@@ -220,7 +220,9 @@ module GameTime
   end
 
   class Window_Clock < Window_Base
+    
     def initialize
+      
       case CLOCK_POSITION
       when 1
         super(0,0,205,56)
@@ -232,7 +234,9 @@ module GameTime
         super(Graphics.width-205,Graphics.height-56,205,56)
       end
       self.visible = $game_time_clock_visibility unless $game_time_clock_visibility.nil?
+      self.z = 300
     end
+    
     def update
       return if $game_system.hide_all_windows?
       self.contents.clear

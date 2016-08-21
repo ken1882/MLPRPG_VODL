@@ -567,6 +567,7 @@ class Game_BattlerBase
   
   #--------------------------------------------------------------------------
   # new method: skill_restriction?
+  # tagL modified
   #--------------------------------------------------------------------------
   def skill_restriction?(skill)
     if $game_party.in_battle
@@ -576,6 +577,7 @@ class Game_BattlerBase
     end
     return true if switch_restricted?(skill)
     return true if restrict_eval?(skill)
+    return true if (self.state?(90) || self.state?(288)) && skill.is_spell?
     return false
   end
   

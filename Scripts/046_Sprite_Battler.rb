@@ -147,6 +147,11 @@ class Sprite_Battler < Sprite_Base
     end
     
     for id in @battler.multi_animation_id
+      if id == 0
+        dispose_animation
+        @battler.multi_animation_id.shift
+        next
+      end
       animation = $data_animations[id]
       mirror = @battler.animation_mirror
       start_animation(animation, mirror)

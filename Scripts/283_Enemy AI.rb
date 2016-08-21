@@ -222,7 +222,8 @@ class Game_Enemy < Game_Battler
     #------------------------------------------------------------
     #   Check if using magic attack
     #------------------------------------------------------------
-    if cur_item.magical? && cur_item.for_opponent?
+    if (cur_item.magical? || cur_item.is_spell?) && cur_item.for_opponent?
+      return false if self.state?(288) || self.state?(90)
       return false if !self.using_magic_attack?
     end
     #------------------------------------------------------------

@@ -423,7 +423,7 @@ class Game_BattlerBase
       result = true; source = 2 
     end
     
-    anti_magic_state = [266,267]
+    anti_magic_state = [266,267,288]
     
     for id in anti_magic_state
       if self.state?(id)

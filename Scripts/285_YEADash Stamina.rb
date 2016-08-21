@@ -280,6 +280,7 @@ class Window_Stamina < Window_Base
     $game_player.stamina_backup[:x] ||= self.x
     $game_player.stamina_backup[:time] ||= @time
     self.x = $game_player.stamina_backup[:x]
+    self.z = 300
     @time = $game_player.stamina_backup[:time]
   end
   

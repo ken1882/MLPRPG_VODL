@@ -958,12 +958,12 @@ class Game_Battler < Game_BattlerBase
   #-------------------------------------------------------------------------- 
   def casting_interrupt
     return if self.atb_cast.empty?
-    add_state(98) if movable?
+    add_state(PONY::COMBAT_STOP_FLAG) if movable?
     @dmg_popup = true
     @damage.push(["Interrupted","Interrupted"])
     $game_message.battle_log_add(sprintf("%s's casting was interrupted!",self.name))
     execute_cast_action
-    self.remove_state(98)
+    self.remove_state(PONY::COMBAT_STOP_FLAG)
     self.remove_state(48)
     self.remove_state(50)
   end
@@ -1268,7 +1268,15 @@ module BattleManager
         battle_atb_base = 0
         standard_deviation = 0
         
-        battlers.each do |battler| $standard_atb += battler.agi end
+        min_agi = 9999
+        max_agi = 0
+        
+        battlers.each do |battler| 
+          $standard_atb += battler.agi 
+          min_agi = [min_agi,battler.agi].min
+          max_agi = [max_agi,battler.agi].max
+        end
+        
         $standard_atb /= battlers.size
         
         for battler in battlers
@@ -1280,7 +1288,7 @@ module BattleManager
         for battler in battlers
           div = battler.agi - $standard_atb
           div /= standard_deviation
-          battler.standardized = (($standard_atb * ((2 + div) * 0.8)) * 0.8).to_i
+          battler.standardized = ($standard_atb + (2 + div) * (max_agi - min_agi) * 0.8).to_i
           puts "#{battler.name}: #{battler.standardized} Div:#{div}"
         end
         
@@ -1647,6 +1655,7 @@ module BattleManager
   #--------------------------------------------------------------------------
   # ● Current Battler Clear
   # Tag: atb clear
+  # tag: atb_clear
   #--------------------------------------------------------------------------    
   def self.current_battler_clear(subject)
       return if subject == nil 
@@ -1689,6 +1698,12 @@ module BattleManager
         scene.damage.reset_value
       end
       
+      if @current_battler.is_a?(RPG::Enemy)
+        @current_battler.reset_cooldowns if @current_battler.id == 105 || @current_battler.id == 106
+      end
+      
+      
+      @current_battler.remove_state(PONY::COMBAT_STOP_FLAG)
       @current_battler.atb += [
       @current_battler.begin_atb * @current_battler.atb_max * 0.01, @current_battler.atb_max * 0.15
       ].min

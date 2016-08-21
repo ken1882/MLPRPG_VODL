@@ -39,5 +39,44 @@ class Game_Event < Game_Character
     
   end # def setup_light
   
+  #--------------------------------------------------------
+  # *) check if comment is in event page
+  #--------------------------------------------------------
+  def comment_include?(comment)
+    return if comment.nil? || @list.nil?
+    comment = comment.to_s
+    for command in @list
+      if command.code == 108
+        return true if command.parameters[0].include?(comment)
+      end # if command.code
+    end # for command
+    return false
+  end # def comment
+  #------------------
 end
+
+#==============================================================================
+# ** Game_Map
+#------------------------------------------------------------------------------
+#  This class handles maps. It includes scrolling and passage determination
+# functions. The instance of this class is referenced by $game_map.
+#==============================================================================
+
+class Game_Map
+
+  #------------------------------------------------------------------------------
+  #   alias method: ssetup_events
+  #------------------------------------------------------------------------------
+  alias setup_events_light setup_events
+  def setup_events
+    setup_events_light
+    $light_effects_forced = false
+    @events.each_value { |event|
+      $light_effects_forced ||= event.comment_include?("Force enable light effects")
+    }
+    $light_effects = $light_effects_forced
+    puts "Force Enable Light Effects: #{$light_effects_forced}"
+  end
+end
+
 

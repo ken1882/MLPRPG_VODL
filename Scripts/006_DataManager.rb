@@ -99,7 +99,6 @@ module DataManager
     $game_player        = Game_Player.new
     
     $game_variables[34] = 10 if $game_variables[34] == 0
-    
     $game_switches[21]  = $light_effects
   end
   #--------------------------------------------------------------------------

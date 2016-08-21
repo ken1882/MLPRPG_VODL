@@ -1,4 +1,31 @@
 #==============================================================================
+# ** Game_ActionResult
+#------------------------------------------------------------------------------
+#  This class handles the results of battle actions. It is used internally for
+# the Game_Battler class. 
+#==============================================================================
+
+class Game_ActionResult
+  attr_accessor :interrupted
+  #--------------------------------------------------------------------------
+  # * Alias :Clear Hit Flags
+  #--------------------------------------------------------------------------
+  alias clear_hit_flags_dnd clear_hit_flags
+  def clear_hit_flags
+    @interrupted = false
+    clear_hit_flags_dnd
+  end
+  
+  #--------------------------------------------------------------------------
+  # * overwrite :hit?
+  #--------------------------------------------------------------------------
+  def hit?
+    @used && !@missed && !@evaded && !@interrupted
+  end
+end
+
+
+#==============================================================================
 # ** Core Damage Processing
 # -----------------------------------------------------------------------------
 # I altered the way how damage calculation to provide more flexibility. Any
@@ -191,6 +218,7 @@ class Game_Battler < Game_BattlerBase
     @result.used = item_test(user, item)
     @result.missed = determind_missed(user,item)
     @result.evaded = determind_evaded(user,item)
+    @result.interrupted = determind_interrupted(user,item)
   end
   # ---------------------------------------------------------------------------
   # *) Determind missed
@@ -210,6 +238,19 @@ class Game_Battler < Game_BattlerBase
     
     dex_bonus = self.difficulty_class('dex',-10,false) * 0.01
     rand < ( item_eva(user, item) + dex_bonus)
+  end
+  
+  # ---------------------------------------------------------------------------
+  # *) Determind interrupted
+  # ---------------------------------------------------------------------------
+  def determind_interrupted(user,item)
+    return true if user.state?(PONY::COMBAT_STOP_FLAG)
+    result = false
+    
+    result ||= check_skill_interruption(user, item)
+    result ||= check_state_interruption(user, item)
+    
+    return result
   end
   # ---------------------------------------------------------------------------
   # *) Apply hit
@@ -240,8 +281,7 @@ class Game_Battler < Game_BattlerBase
       
       if effect.code == 21
         
-        if self.anti_magic? && $current_damage_type == 2 && 
-          $debuff_state_id_list.include?(effect.data_id)
+        if self.anti_magic? && $current_damage_type == 2 && $data_states[effect.data_id].is_magic?
           next
         end
         

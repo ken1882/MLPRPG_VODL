@@ -1979,6 +1979,7 @@ class Game_Battler < Game_BattlerBase
   # Must be called when item_in_use isn't nil
   # --------------------------------------------------------------------------
   def return_key
+    return "Knock_Back" if item_in_use.nil?
     return item_in_use.return_key if !item_in_use.return_key.empty?
     return data_battler.return_key
   end
@@ -3442,6 +3443,7 @@ class Game_Battler < Game_BattlerBase
     if @result.missed && PlaySystemSound
       Sound.tsbs_play_miss
     end
+    
     if @result.evaded
       Sound.tsbs_play_eva if item.physical? && PlaySystemSound
       Sound.tsbs_play_magic_eva if item.magical? && PlaySystemSound

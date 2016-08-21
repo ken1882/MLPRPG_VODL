@@ -509,7 +509,7 @@ class Game_BattlerBase
     if @hp == 0
       remove_state(48)
       remove_state(50)
-      remove_state(98)
+      remove_state(PONY::COMBAT_STOP_FLAG)
       @icon_key = "Clear"
       add_state(death_state_id)
     else

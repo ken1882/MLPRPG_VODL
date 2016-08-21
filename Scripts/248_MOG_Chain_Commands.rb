@@ -66,7 +66,7 @@ module MOG_CHAIN_COMMANDS
  #Som ao errar.
  CHAIN_WRONG_SE = "Buzzer1"
  #Switch que ativa o modo automático.
- CHAIN_AUTOMATIC_MODE_SWITCH_ID = 20
+ CHAIN_AUTOMATIC_MODE_SWITCH_ID = 22
  #Definição da prioridade da hud na tela
  CHAIN_HUD_Z = 300
 end

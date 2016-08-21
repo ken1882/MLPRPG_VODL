@@ -85,6 +85,8 @@ $force_target_enemy     # when acotr targeting, the action will turn to the
 
 
 module PONY
-  TOTAL_BIT_VARIABLE_ID = 31
-  TOTAL_XP_VARIABLE_ID = 32
+  TOTAL_BIT_VARIABLE_ID   = 31
+  TOTAL_XP_VARIABLE_ID    = 32
+  
+  COMBAT_STOP_FLAG        = 98
 end
