@@ -1,0 +1,42 @@
+The main D&D core rules of this game is the 5th edition.
+Turn on your "show dice rolls" in system, when you're adjacent to a hidden object, you can see your roll result and know where's it.
+During the combat and you're gonna use an item, press 'A'(default) to invert the target; The skill marked 'friendly fire' does the same.
+A weapon/armor with coloured text means it's enchanted, allow it to level up.
+If a hidden-object on the map is free to explore and you failed the roll, you can reroll it at next minute.
+Music Sheets allow you to listen the wonderful music collected in the game.
+Some poisons cannot be cured by full-recover, it'll last til the victim dead or cured by the right remedy.
+Collect the codex is always helpful - they'll assit you better understand the Equestria and more!
+Every item, especially the healings, has a carry limit, wisely using them to prevent you from out-of-supplies.
+Score Ability(Str, Dex, Con, Int, Wis, Cha) represents your pony's pros and cons; it will directly effect the life skill.
+Every enemy has a sight of line, wisely use your party movement command to avoid them.
+Forget the party command? 'F' is follow in a line, 'H' is hold in position, 'G' is gather.
+Everypony has a special talent, they hardly has the same function.
+Dual-weapon provides good damage ONLY to the pony who is proficient in it, never let a newbie use it.
+Magic attacks, long-casting skills has +4 attack roll.
+Ranged weapons apply the DEX modifier, Melee weapons apply the STR, and Magical attacks apply the INT one.
+Vancial Spells are powerful but limited-use before sleep, use them wisely to make your adventure smoothly.
+Petrification will only last for 24 hours.
+"Apple Jelly, why it sounds so familiar dude?" -"Maybe because you have played The Tales Series :p"
+Crossbow's damage based on the user's ATK more than AGI, Bow's damage based on AGI more than ATK.
+Although Earth Pony can't fly nor casting spells, but they're much more flexible on customizing and has more durability.
+A pony equipped a shield has a chance to block (physical) projectiles, such as rocks.
+Running/Dashing will cost your pony's stamina, when it dropped to 0, you can't run until it's recovered.
+Twilight Sparkle's teleport won't help you move to a tile that is unpassable.
+Use Rainbow Dash's "fly" to investigate the map, although not every map is allowed to use.
+Your pony pass out during the combat will awake after the combat, but he/she will gets a penalty.
+"Friendship" skills are co-op related.
+When you encounter the enemy party that owns items, you can steal the item before they use.
+Some enemies are able to chain-skills, but usually their EP drains quickly and need to use the potion very often; try to steal!
+Materials are always near your side, you can use them to crafting stuffs.
+In crafting, Pinkie does baking, Twilight does potions, Rarity does materials and Applejack does equipments.
+Log in a gamejolt account, therefore you can save your achievements online.
+Puzzles are too hard? Why don't discuess with other pony on gamejolt or mlp fourm?
+During the combat, the EP cost increases with each skill you chained in a single turn.
+Initiative Roll determinds the battler's AT start value at the begining of the battle.
+You can find various function in system setting menu.
+In a map scene, press 'Q' to perform quick-save, the save location is independent from normal saves, you can only load from the quick-save location.
+Your progress will be auto-saved when you're going to a story or boss-fight.
+The JP is using for learn the talents in the talent tree, when you learned all talents in a treem, you'll get the corresponding achievement.
+You can gain jp via complete quests, win a combat and others.
+The main title in this load screen is the big location where you are.
+*Self canon alert*: Since the changeling invasion, Celestia has strengthen the national defence of Equestria.
