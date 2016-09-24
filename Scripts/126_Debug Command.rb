@@ -29,11 +29,27 @@ class Game_System
       info = "No command input!"
     elsif execute_command.include?("$") && !allow_eval_code
       info = "Invailed command!"
+      
     else
-      execute_command = prefix + execute_command
-      puts "Execute : #{execute_command}"
-      eval(execute_command)
-      info = "success!\n#{execute_command}"
+      executable = false
+      for method in $game_console.methods
+        executable = true if command[1].split('(').at(0) == method.to_s
+        #puts "#{command[1].split('(').at(0)} #{method}"
+      end
+      
+      if executable
+        values = command[1].tr('()','')
+        executable = values.split(',').size < 3
+      end
+      
+      if executable
+        execute_command = prefix + execute_command
+        puts "Execute : #{execute_command}"
+        eval(execute_command)
+        info = "success!\n#{execute_command}"
+      else
+        info = "Invailed command!"
+      end
     end
     
     msgbox(info)
@@ -42,11 +58,11 @@ class Game_System
 end
 class Debug_Functions
   
-  def AddBits(amount = 0)
+  def AddBits(amount = 0, useless = 0)
     $game_party.gain_gold(amount)
   end
   
-  def SetCurrentXP(value = 100)
+  def SetCurrentXP(value = 100, useless = 0)
     $game_party.members.each do |battler|
       battler.change_exp(value,true)
     end

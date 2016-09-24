@@ -29,18 +29,8 @@ class Game_Map
   # Only work in testing map
   #------------------------------------------------------------------------------
   def clean_pathfinding_arrow
-    dir = [2,4,6,8]
-      for i in 0..$game_map.width
-        for j in 0..$game_map.height
-            for c in 0...4
-              if $game_map.passable?(i,j,dir[c]) && $game_player.passable?(i,j,dir[c])
-                $game_map.data[i,j,2] = 893 
-              end
-              
-            end # for c
-        end # for j 
-      end # for i
-  end # def clean_
+    
+  end # def clean_pathfinding_arrow
 end
 #==============================================================================
 # ** Map_Address_Node
@@ -357,9 +347,8 @@ class Game_Character < Game_CharacterBase
           #=====================================================================
           # Draw search arrow
           #=====================================================================
-          if draw_arrow
-            $game_map.data[next_x,next_y,2] = 887 + dir[i].to_i/2 
-            $game_map.interpreter.wait(1)
+          if draw_arrow && SceneManager.scene.is_a?(Scene_Map)
+            
           end
           
         end # if passable?
@@ -448,4 +437,28 @@ class Game_Event < Game_Character
     @list               = @page.list
     @interpreter = @trigger == 4 ? Game_Interpreter.new : nil
   end
+end
+#==============================================================================
+# ** SceneManager
+#------------------------------------------------------------------------------
+#  This module manages scene transitions. For example, it can handle
+# hierarchical structures such as calling the item screen from the main menu
+# or returning from the item screen to the main menu.
+#==============================================================================
+module SceneManager
+  
+end
+#==============================================================================
+# ** Scene_Map
+#------------------------------------------------------------------------------
+#  This class performs the map screen processing.
+#==============================================================================
+class Scene_Map < Scene_Base
+  #-------------------------------------------------------------------------
+  # *) draw pathfinding arrow
+  #-------------------------------------------------------------------------
+  def draw_pathfinding_arrow
+    
+  end
+  #-------------------------------------------------------------------------
 end

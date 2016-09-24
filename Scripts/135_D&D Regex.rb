@@ -111,26 +111,44 @@ class Bitmap
     rad -= 1
     error   = -rad
     x, y    = rad, 0
+    
+    visited = {}
     while (x >= y)
-	  self.fill_rect(cx + x, cy + y, thick, thick, color) if (end_angle >= 270 - (61 * y / rad))
-	  self.fill_rect(cx - x, cy + y, thick, thick, color) if (x != 0 && end_angle > 90 + (61 * y / rad))
-	  self.fill_rect(cx + x, cy - y, thick, thick, color) if (y != 0 && end_angle > 270 + (61 * y / rad))
-	  self.fill_rect(cx - x, cy - y, thick, thick, color) if (x != 0 && y != 0 && end_angle >= 90 - (61 * y / rad))
-	  if (x != y)
-	    self.fill_rect(cx + y, cy + x, thick, thick, color) if (end_angle > 180 + (61 * y / rad))
-	    self.fill_rect(cx - y, cy + x, thick, thick, color) if (y != 0 && end_angle >= 180 - (61 * y / rad))
-	    self.fill_rect(cx + y, cy - x, thick, thick, color) if (x != 0 && end_angle >= 360 - (61 * y / rad))
-	    self.fill_rect(cx - y, cy - x, thick, thick, color) if (y != 0 && x != 0 && end_angle > (61 * y / rad))
-	  end
-	  error += y
-	  y	 += 1
-	  error += y
-	  if (error >= 0)
-	    error -= x
-	    x	 -= 1
-	    error -= x
-	  end
+      
+      
+      if (end_angle >= 270 - (61 * y / rad))
+        self.fill_rect(cx + x, cy + y, thick, thick, color)
+      end
+      
+      if (x != 0 && end_angle > 90 + (61 * y / rad))
+        self.fill_rect(cx - x, cy + y, thick, thick, color)
+      end
+      
+      if (y != 0 && end_angle > 270 + (61 * y / rad))
+        self.fill_rect(cx + x, cy - y, thick, thick, color)
+      end
+      
+      if (x != 0 && y != 0 && end_angle >= 90 - (61 * y / rad))
+        self.fill_rect(cx - x, cy - y, thick, thick, color)
+      end
+    
+      if (x != y)
+        self.fill_rect(cx + y, cy + x, thick, thick, color) if (end_angle > 180 + (61 * y / rad))
+        self.fill_rect(cx - y, cy + x, thick, thick, color) if (y != 0 && end_angle >= 180 - (61 * y / rad))
+        self.fill_rect(cx + y, cy - x, thick, thick, color) if (x != 0 && end_angle >= 360 - (61 * y / rad))
+        self.fill_rect(cx - y, cy - x, thick, thick, color) if (y != 0 && x != 0 && end_angle > (61 * y / rad))
+      end
+      
+      error += y
+      y	 += 1
+      error += y
+      if (error >= 0)
+        error -= x
+        x	 -= 1
+        error -= x
+      end
     end
+    $debugged = true if end_angle == 240
   end
   
 end
