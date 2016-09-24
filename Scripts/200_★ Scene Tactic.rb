@@ -36,14 +36,15 @@ end
 class Scene_Map < Scene_Base
   #----------------------------------------------------------------------------
   # Window names: should be replaced by Integer for CPU efficiency  
-    Win_Help = :help        #'help'
-    Menu_Actor = :actor     #'actor'
-    Win_Confirm = :confirm  #'confirm'
-    Win_Status, Win_Detail = :status, :detail                     #'status', 'detail'
-    Win_Item, Win_Skill, Win_Revive = :item, :skill, :revive      #'item', 'skill', 'revive'
+    Win_Help    = :help        #'help'
+    Menu_Actor  = :actor       #'actor'
+    Win_Confirm = :confirm     #'confirm'
+    Win_Status  = :status      #'status'
+    Win_Detail  = :detail      #'detail'
+    Win_Item, Win_Skill, Win_Revive   = :item, :skill, :revive      #'item', 'skill', 'revive'
     Win_Option, Win_Config, Win_Color = :option, :config, :color  #'option', 'config', 'color'
     Win_LevelUp = :earned   #'earned'
-    Act_List = :act_list    #'Act List'
+    Act_List    = :act_list    #'Act List'
   #============================================================================
   #-----------------------------------------------------------------------------
   # *) Instance Variables
@@ -92,14 +93,14 @@ class Scene_Map < Scene_Base
     update_tactic_buttons
     @spriteset.update
     $tbs_cursor.update     if !@window_info.active
-    update_scene           if @tactic_enabled && !Input.press?(:kALT)
+    update_scene           if @tactic_enabled && !Input.press?(:kALT) && !@windows[Menu_Actor].visible && $tbs_cursor.mode.nil?
     $game_map.update(true) if $game_map.need_refresh
     update_win_visible     if @tactic_enabled
     return if @tactic_enabled && !Input.press?(:kALT)
     $game_map.update(true)
     $game_player.update
     $game_timer.update
-    update_scene        if scene_change_ok?
+    update_scene           if scene_change_ok?
   end
   #--------------------------------------------------------------------------
   # *) Quick menu buttons update
@@ -125,11 +126,11 @@ class Scene_Map < Scene_Base
   def create_windows
     @windows = {}
     ##Help - Creates the help window
-    #@windows[Win_Help] = TBS_Window_Help.new
-    #@windows[Win_Help].move_to(2)
+    @windows[Win_Help] = TBS_Window_Help.new
+    @windows[Win_Help].move_to(2)
     
     #Create Command Window
-    #create_command_window
+    create_command_window
     
     #Create Status Windows - Both Full and Mini
     create_status_windows
@@ -160,6 +161,7 @@ class Scene_Map < Scene_Base
   def update_selected
     @selected = $game_map.occupied_by?($tbs_cursor.x, $tbs_cursor.y,
                    $battle_cursor_sprite.x, $battle_cursor_sprite.y)
+    @selected = @selected.is_a?(Array) ? @selected.at(0) : @selected
   end
   #----------------------------------------------------------------------------
   # Update Window Visible
@@ -169,6 +171,9 @@ class Scene_Map < Scene_Base
     @windows[Win_Status].update(@selected)
     @windows[Win_Status].visible = @tactic_enabled && @selected
     @opacity = 0 if scene_changing?
+    
+    update_actor_menu if @windows[Menu_Actor].active
+    cursor_use_move   if $tbs_cursor.active && $tbs_cursor.mode == TBS_Cursor::Move
   end
   #----------------------------------------------------------------------------
   # Display info on window
@@ -182,7 +187,32 @@ class Scene_Map < Scene_Base
   def clear_info
     @winow_info.clear
   end
-  
+  #----------------------------------------------------------------------------
+  # Update Actor Menu
+  #----------------------------------------------------------------------------
+  def update_actor_menu
+    if @active_battler == nil 
+      @windows[Menu_Actor].deactivate
+      return
+    elsif @active_battler.death_state?
+      @windows[Menu_Actor].deactivate
+      return
+    end
+    @windows[Menu_Actor].visible = true  #||=
+    @windows[Menu_Actor].update
+    #@windows[Win_Status].visible = true
+  end
+  #----------------------------------------------------------------------------
+  # Disable Actor Menu
+  #----------------------------------------------------------------------------
+  def actor_menu_cancel
+    Sound.play_cancel
+    @windows[Menu_Actor].deactivate
+    @windows[Menu_Actor].hide
+    @windows[Menu_Actor].close
+    #@windows[Win_Help].hide
+    disable_cursor(true)
+  end
   #--------------------------------------------------------------------------
 end
 #==============================================================================
@@ -299,7 +329,7 @@ class Game_Map
         next
       else
         if battler.at_xy_coord(x,y)
-          return _battler
+          return [_battler, battler]
         end
       end
     end
@@ -351,5 +381,7 @@ class Game_Character < Game_CharacterBase
   #---------------------------------------------------------------------------
 end
 #===============================================================================
-# ▼ End of File Battle_Cursor
+#
+# ▼ End of File
+#
 #===============================================================================

@@ -9,7 +9,7 @@ module GTBS_Win_Base
   #--------------------------------------------------------------------------
   def create_contents
     super
-    create_gtbs_back
+    #create_gtbs_back
   end
   #--------------------------------------------------------------------------
   # * Update @back if defined

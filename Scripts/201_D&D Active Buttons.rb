@@ -54,8 +54,8 @@ class Scene_Map < Scene_Base
     
     deactivate_window_info                if !@tactic_enabled || Input.press?(:kALT)
     $game_player.update_followers_trigger if @tactic_enabled
+    @button_cooldown -= 1 if @button_cooldown > 0
     
-    @button_cooldown -= 1
     return if @button_cooldown > 0
     #--------------------------------------------------------------------------
     # Console
@@ -122,6 +122,12 @@ class Scene_Map < Scene_Base
         @window_info.show
       end
       @button_cooldown = 15
+    #--------------------------------------------------------------------------
+    #  Process command
+    #--------------------------------------------------------------------------
+    elsif Input.trigger?(:C) && !@selected.nil? && !@windows[Menu_Actor].active
+      set_active_battler(@selected)
+      @button_cooldown = 10
     end
     
   end

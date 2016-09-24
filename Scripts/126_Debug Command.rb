@@ -34,15 +34,14 @@ class Game_System
       executable = false
       for method in $game_console.methods
         executable = true if command[1].split('(').at(0) == method.to_s
-        #puts "#{command[1].split('(').at(0)} #{method}"
       end
       
-      if executable
+      if executable && !allow_eval_code
         values = command[1].tr('()','')
         executable = values.split(',').size < 3
       end
       
-      if executable
+      if executable || allow_eval_code
         execute_command = prefix + execute_command
         puts "Execute : #{execute_command}"
         eval(execute_command)

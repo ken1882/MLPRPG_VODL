@@ -94,6 +94,12 @@ class Battle_Cursor < Sprite_Base
       end
     end
   end
+  
+  def change_bitmap_to_target
+    if FileTest.exist?('Graphics/Pictures/Tactics/Target.png')
+      self.bitmap = Cache.picture("Tactics/Target.png")
+    end
+  end
   #----------------------------------------------------------------------------
   # MoveTo - Sets the X,Y position of the cursor
   #----------------------------------------------------------------------------

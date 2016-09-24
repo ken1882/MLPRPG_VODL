@@ -165,4 +165,8 @@ class Game_Actor
     
   end
   
+  def moved?
+    false
+  end
+  
 end
