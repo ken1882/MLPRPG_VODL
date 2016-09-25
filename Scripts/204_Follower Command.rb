@@ -6,18 +6,33 @@ if PONY::ENABLE_FOLLOWER
 # the front character, displayed in the party. It is referenced within the
 # Game_Followers class.
 #==============================================================================
-class Game_Follower < Game_Character
+class Game_Character
   attr_accessor :movement_command
-  #----------------------------------------------------------------------------
-  alias initialize_follower_cmd initialize
-  def initialize(member_index, preceding_character)
-    initialize_follower_cmd(member_index, preceding_character)
+  #--------------------------------------------------------------------------
+  # * Initialize Public Member Variables
+  #--------------------------------------------------------------------------
+  alias init_public_members_dnd init_public_members
+  def init_public_members
+    init_public_members_dnd
     @movement_command = 1
   end
   #----------------------------------------------------------------------------
-  def command_follow;  @movement_command = 1 end
+  def command_follow
+    @movement_command = 1
+    return if actor.nil?
+    self.pop_damage('Move')
+    self.actor.remove_state(4)
+  end
+  
   def command_gather;  @movement_command = 2 end
-  def command_hold  ;  @movement_command = 3 end
+    
+  def command_hold  
+    return if actor.nil?
+    @movement_command = 3 
+    @pathfinding_moves.clear
+    self.pop_damage('Hold in Position')
+    self.actor.add_state(4)
+  end
   #----------------------------------------------------------------------------
   def command_following?;   return  @movement_command == 1; end
   def command_gathering?;   return  @movement_command == 2; end
@@ -27,6 +42,7 @@ class Game_Follower < Game_Character
   #----------------------------------------------------------------------------
   alias update_follower_movement_dnd update_follower_movement
   def update_follower_movement
+    process_pathfinding_movement
     return if command_holding? || command_gathering?
     update_follower_movement_dnd
   end
@@ -81,7 +97,7 @@ class Scene_Map < Scene_Base
   #--------------------------------------------------------------------------
   def process_follower_command
     return if @button_cooldown > 0
-    if Input.press?(:kSHIFT)
+    if Input.press?(:kCTRL)
       if Input.press?(:kF)
         $game_player.followers.each do |follower|
           follower.command_follow
@@ -92,6 +108,7 @@ class Scene_Map < Scene_Base
         @button_cooldown = 10
       #-----------------------------------------------------
       elsif Input.trigger?(:kG)
+        return
         $game_player.followers.each do |follower|
           follower.command_gather
         end

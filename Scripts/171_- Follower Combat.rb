@@ -24,14 +24,18 @@ class Game_CharacterBase
   
   # followers attack engine
   def update_followers_attack
+    if self.is_a?(Game_Follower)
+      return if @pathfinding_moves.size > 0
+    end
     if fo_tool.nil? || battler.dead?
       @targeted_character = nil if @targeted_character != nil
       return
     end
     return if @stopped_movement > 0
+    
     if @follower_attacktimer > 0
       @follower_attacktimer -= 1
-      if @follower_attacktimer == 40 and !moving?
+      if @follower_attacktimer == 40 && !moving? && !command_holding?
         r = rand(3)
         move_random if r == 0 || r == 1
         move_away_from_character(@targeted_character) if 
@@ -39,7 +43,7 @@ class Game_CharacterBase
       end
     end
     
-     # si la skill es para el player 
+     # if the skill is for the player
     if @targeted_character != nil and @targeted_character.is_a?(Game_Player)
       if all_enemies_dead?
         delete_targetf
@@ -49,7 +53,7 @@ class Game_CharacterBase
       return
     end
     
-    # si la skill es para un enemigo continuar
+    # if the skill is for an enemy to continue
     if @targeted_character != nil
       use_predefined_tool
       return if @targeted_character.nil?
@@ -76,7 +80,6 @@ class Game_CharacterBase
   
   # prepare the tool usage
   def setup_followertool_usage
-    
     @range_view = [2, fo_tool.tool_distance].max
     @range_view = [6, @range_view].max if fo_tool.tool_data("Tool Target = ", false) == "true" ||
     fo_tool.tool_data("Tool Special = ", false) == "autotarget"
@@ -156,7 +159,6 @@ class Game_CharacterBase
       return
     end
     
-    process_pathfinding_movement
     
     # if the follower is unabble to use the tool
     unless usable_test_passed?(fo_tool)
@@ -201,7 +203,8 @@ class Game_CharacterBase
   end
   #---------------------------------------------------------------------
   # cpu reaction
-  # move to target
+  # tag: target
+  # tag: follower
   #---------------------------------------------------------------------
   def cpu_reactiontype(type, target)
     unless on_battle_screen?
@@ -213,9 +216,10 @@ class Game_CharacterBase
       move_toward_character(target, true)
     end
     
-    if @follower_attacktimer == 0 || !obj_size?(target, @range_view)
+    if (@follower_attacktimer == 0 || !obj_size?(target, @range_view))
       if type == 2
         if fo_tool.tool_distance > 3 && Math.hypot(@x - target.x, @y - target.y) < 5
+          @pathfinding_moves.clear if @pathfinding_moves.clear.size > 0
           move_away_from_character(target)
         else
           move_toward_character(target, true)

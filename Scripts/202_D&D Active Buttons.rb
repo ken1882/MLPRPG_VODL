@@ -125,7 +125,8 @@ class Scene_Map < Scene_Base
     #--------------------------------------------------------------------------
     #  Process command
     #--------------------------------------------------------------------------
-    elsif Input.trigger?(:C) && !@selected.nil? && !@windows[Menu_Actor].active
+    elsif Input.trigger?(:C) && !@selected.nil? && !@windows[Menu_Actor].active && $tactic_enabled
+      return if @selected[0].is_a?(Game_Enemy) || @selected[0].is_a?(Game_Event) 
       set_active_battler(@selected)
       @button_cooldown = 10
     end

@@ -363,8 +363,8 @@ class Game_CharacterBase
       if !battler.usable?($data_items[itemcost])        
         
         if @hint_cooldown == 0
-          #text = sprintf("%s - run out of %s", battler.name, $data_items[itemcost].name)
           #$game_map.interpreter.gab(text)
+          text = sprintf("%s - run out of %s", battler.name, $data_items[itemcost].name)
           SceneManager.display_info(text)
           @hint_cooldown = 120
         end
@@ -1327,20 +1327,40 @@ class Game_Party < Game_Unit
     pos1 = index1 == 0 ? [$game_player.x, $game_player.y] : [$game_player.followers[index1-1].x, $game_player.followers[index1 - 1].y]
     pos2 = index2 == 0 ? [$game_player.x, $game_player.y] : [$game_player.followers[index2-1].x, $game_player.followers[index2 - 1].y]
     
+    target_battler = nil
+    original_index = 0
     if index1 == 0
       $game_player.moveto(pos2[0], pos2[1])
     else
       $game_player.followers[index1 - 1].moveto(pos2[0], pos2[1])
+      target_battler = $game_player.followers[index1 - 1].targeted_character
+      original_index = index1 - 1
+      if $game_player.followers[index1 - 1].command_holding?
+        $game_player.followers[index1 - 1].command_follow 
+        $game_player.followers[index1 - 1].targeted_character = $game_player.targeted_character
+      end
     end
+    
     if index2 == 0
       $game_player.moveto(pos1[0], pos1[1])
     else
       $game_player.followers[index2 - 1].moveto(pos1[0], pos1[1])
+      original_index = index2 - 1
+      target_battler = $game_player.followers[index2 - 1].targeted_character
+      if $game_player.followers[index2 - 1].command_holding?
+        $game_player.followers[index2 - 1].command_follow 
+        $game_player.followers[index2 - 1].targeted_character = $game_player.targeted_character
+      end
     end
+    $game_player.command_follow
+    $game_party.leader.remove_state(2)
     
     falcaopearl_swap_order(index1, index2)
     $game_map.need_refresh = true
     $tbs_cursor.moveto($game_player.x, $game_player.y)
+    
+    $game_player.followers[original_index].setup_followertool_usage if target_battler
+    #-----------------
   end
 end
 class << DataManager

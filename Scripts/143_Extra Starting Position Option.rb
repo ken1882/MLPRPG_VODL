@@ -20,7 +20,7 @@ module ZE_Extra_Starting_Position_Option
 	# This is the number for the map the player should start on when the
 	# extra option is selected.
 	#------------------------------------------------------------------------
-	:MAP => 23,
+	:MAP => 26,
 	#------------------------------------------------------------------------
 	# This is the X and Y position the player should start at when the
 	# extra option is selected.

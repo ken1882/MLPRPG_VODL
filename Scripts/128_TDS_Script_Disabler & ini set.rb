@@ -100,6 +100,17 @@
       $debug_mode = true
       info = "[System]:Debug Mode Enabled"
       puts "#{info}"
+    #================================================
+    #   Volume
+    #================================================
+    elsif str.include?("Volume")
+      str = str.split('=').at(1)
+      str = str.tr('[]','')
+      $sound_volume = str.split(',')
+      for i in 0...$sound_volume.size do $sound_volume[i] = $sound_volume[i].to_i end
+      info = sprintf("[System]:Volume detected: %d %d %d",$sound_volume[0],$sound_volume[1],$sound_volume[2])
+      puts "#{info}"
+    #-----------------------------------------------
     end
   end
   

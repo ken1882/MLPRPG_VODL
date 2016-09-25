@@ -413,8 +413,9 @@ class Projectile < Game_Character
         reset_boomed(event) if @tool_destroy_delay == 1 and obj_size?(event, 1) 
       end
     end
-  
+    #------------------------------------------------------------------------
     # prepare the tool to be destoryed when colliding with user
+    #------------------------------------------------------------------------
     if @tool_destroy_delay <= @originaldestory_delay - 50
       move_toward_character(@user) if !moving?
       if @x == @user.x and @y == @user.y
@@ -569,13 +570,20 @@ class Projectile < Game_Character
   end
   #-------------------------------------------------------------------------------
   # *) Timer updater
+  # tag: projectile
   #-------------------------------------------------------------------------------
   def update_timer
-    update_tool_movement
+    passable = pixel_passable?(@x , @y , @direction)
+    update_tool_movement if passable
+    
     @mini_opacity -= 1 if  @mini_opacity > 0
     @opacity = 255 if @mini_opacity == 1
     @tool_effect_delay -= 1 if @tool_effect_delay > 0
+    
     if @tool_distance == 0
+      @tool_destroy_delay -= 1 if @tool_destroy_delay > 0
+      @destroy_it = true if @tool_destroy_delay == 0
+    elsif !passable
       @tool_destroy_delay -= 1 if @tool_destroy_delay > 0
       @destroy_it = true if @tool_destroy_delay == 0
     end

@@ -537,8 +537,7 @@ class Game_CharacterBase
       check_event_trigger_touch_front
       processed = false
       
-      if (d % 2 == 0 && passable?(@x, @y, d)) || (d % 2 != 0 && diagonal_passable?(@x, @y, horz, vert)) || 
-        (self.is_a?(Projectile) && pixel_passable?(@x, @y, d))
+      if (d % 2 == 0 && passable?(@x, @y, d)) || (d % 2 != 0 && diagonal_passable?(@x, @y, horz, vert))
         process_move(horz, vert)
         processed = true
       elsif d % 2 != 0 && !diagonal_passable?(@x, @y, horz, vert)
@@ -573,11 +572,12 @@ class Game_CharacterBase
   # * New: Pixel passable?
   #--------------------------------------------------------------------------
   def pixel_passable?(px,py,d)
+    return true if $game_map.region_id(px, py) == 1 && self.is_a?(Projectile)
+    return false if (d % 2 != 0)
     px *= 4
     py *= 4
-    return false if (d % 2 != 0)
-    nx = px+Tile_Range[d][0]
-    ny = py+Tile_Range[d][1]
+    nx = px + Tile_Range[d][0]
+    ny = py + Tile_Range[d][1]
     return false unless $game_map.pixel_valid?(nx,ny)
     return false if $game_map.pixel_table[px+Tile_Range[d][0],py+Tile_Range[d][1],1] == 0
     return true
@@ -783,7 +783,7 @@ class Game_Character < Game_CharacterBase
   def move_toward_character(character, pathfinding = false)
     return unless @move_poll.empty?
     
-    if pathfinding && !path_clear?(@x, @y, character.x, character.y)
+    if pathfinding && Math.hypot(character.x - @x, character.y - @y) > 3#&& !path_clear?(@x, @y, character.x, character.y)
       @pathfinding_goal = character
       found = move_to_position(character.x, character.y)
       @pathfinding_moves.clear if @pathfinding_goal.enemy.dead?
@@ -814,6 +814,7 @@ class Game_Character < Game_CharacterBase
   # * Override: Move Away from Character
   #--------------------------------------------------------------------------
   def move_away_from_character(character)
+    
     sx = distance_x_from(character.x)
     sy = distance_y_from(character.y)
     if sx.abs > sy.abs

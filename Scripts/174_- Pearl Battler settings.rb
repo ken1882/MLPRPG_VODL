@@ -264,26 +264,36 @@ class Game_Player < Game_Character
     @followers.each do |f|
       next unless f.visible?
       next if f.fo_tool.nil? || f.battler.dead? 
-      if f.targeted_character.nil?
-        if f.fo_tool.tool_data("User Graphic = ", false).nil?
-          if f.fo_tool.is_a?(RPG::Skill) || fo_tool.is_a?(RPG::Item)
-            # has no data but is a benefical skill
-            if f.fo_tool.scope == 0 || f.fo_tool.scope.between?(7, 11)
-              f.setup_followertool_usage
-            else
-              f.balloon_id = PearlKernel::FailBalloon
-            end # f.fo_tool.scope
-          else
-            f.balloon_id = PearlKernel::FailBalloon
-            next
-          end # if f.fo_tool.too_data
-        else # tool data available
-          f.setup_followertool_usage
-        end
-      end
+      make_battle_follower(f)
     end
   end
-  
+  #---------------------------------------------------------------------------
+  # *) follower into the fray
+  #---------------------------------------------------------------------------
+  def make_battle_follower(f)
+    f.pathfinding_moves.clear
+    f.setup_followertool_usage if !targeted_character.nil?
+    f.command_follow           if !targeted_character.nil?
+    
+    if f.targeted_character.nil?
+      if f.fo_tool.tool_data("User Graphic = ", false).nil?
+        if f.fo_tool.is_a?(RPG::Skill) || fo_tool.is_a?(RPG::Item)
+          # has no data but is a benefical skill
+          if f.fo_tool.scope == 0 || f.fo_tool.scope.between?(7, 11)
+            f.setup_followertool_usage
+          else
+            f.balloon_id = PearlKernel::FailBalloon
+          end # f.fo_tool.scope
+        else
+          f.balloon_id = PearlKernel::FailBalloon
+          return
+        end # if f.fo_tool.is_a?
+      else
+        f.setup_followertool_usage
+      end # tool_data
+    end # targeted_character.nil?
+  end # def 
+  #---------------------------------------------------------------------------
   # menu buttons update
   def update_menu_buttons
     return if $game_map.interpreter.running?
@@ -509,7 +519,6 @@ class Game_Follower < Game_Character
       return if battler.dead?
     end
     
-    
     $game_player.reserved_swap.each {|i| 
     
     if i == battler.id
@@ -537,6 +546,10 @@ class Game_Follower < Game_Character
         if $game_player.obj_size?(event, PearlKernel::PlayerRange)# && !event.being_targeted
           @targeted_character = event
           event.being_targeted = true
+          if @hint_cooldown == 0
+            self.pop_damage("Attack target")
+            @hint_cooldown = 30
+          end
           break
         end
       end

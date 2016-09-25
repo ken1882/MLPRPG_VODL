@@ -43,7 +43,7 @@ class Game_Follower < Game_Character
   # * Move to Designated Position
   #--------------------------------------------------------------------------
   def moveto(x, y)
-    
+    return if @targeted_character != nil
     @x = x % $game_map.width
     @y = y % $game_map.height
     @real_x = @x
@@ -57,11 +57,16 @@ class Game_Follower < Game_Character
   # * Alias: Pursue Preceding Character
   #--------------------------------------------------------------------------
   def chase_preceding_character
-    return if self.command_holding?
+    if @pathfinding_moves.size > 0
+      process_pathfinding_movement
+      return
+    end
+    
     return if @blowpower[0] > 0
     return if @targeted_character != nil
     return if $game_player.in_combat_mode?
     
+    return if self.command_holding?
     if !@move_route.nil?
       command = @move_route.list[@move_route_index]
       if command

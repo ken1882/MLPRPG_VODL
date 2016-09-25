@@ -82,6 +82,9 @@ class Scene_Map < Scene_Base
     @tactic_enabled = false
     $tactic_enabled = false
     $tbs_cursor.active = false
+    actor_menu_cancel
+    @windows[Win_Help].visible = false
+    disable_cursor
     @window_info.add_text("Unpaused")
     update_win_visible
   end
@@ -92,7 +95,7 @@ class Scene_Map < Scene_Base
     super
     update_tactic_buttons
     @spriteset.update
-    $tbs_cursor.update     if !@window_info.active
+    $tbs_cursor.update     if !@window_info.active && !@windows[Menu_Actor].active
     update_scene           if @tactic_enabled && !Input.press?(:kALT) && !@windows[Menu_Actor].visible && $tbs_cursor.mode.nil?
     $game_map.update(true) if $game_map.need_refresh
     update_win_visible     if @tactic_enabled
@@ -161,19 +164,20 @@ class Scene_Map < Scene_Base
   def update_selected
     @selected = $game_map.occupied_by?($tbs_cursor.x, $tbs_cursor.y,
                    $battle_cursor_sprite.x, $battle_cursor_sprite.y)
-    @selected = @selected.is_a?(Array) ? @selected.at(0) : @selected
   end
   #----------------------------------------------------------------------------
   # Update Window Visible
   #----------------------------------------------------------------------------
   def update_win_visible
     update_selected
-    @windows[Win_Status].update(@selected)
+    obj = @selected.nil? ? nil : @selected[0]
+    @windows[Win_Status].update(obj)
     @windows[Win_Status].visible = @tactic_enabled && @selected
     @opacity = 0 if scene_changing?
     
+    #puts "#{$tbs_cursor.mode}" if @windows[Win_Help].visible
     update_actor_menu if @windows[Menu_Actor].active
-    cursor_use_move   if $tbs_cursor.active && $tbs_cursor.mode == TBS_Cursor::Move
+    cursor_use_move   if $tbs_cursor.mode == TBS_Cursor::Move
   end
   #----------------------------------------------------------------------------
   # Display info on window
@@ -201,17 +205,6 @@ class Scene_Map < Scene_Base
     @windows[Menu_Actor].visible = true  #||=
     @windows[Menu_Actor].update
     #@windows[Win_Status].visible = true
-  end
-  #----------------------------------------------------------------------------
-  # Disable Actor Menu
-  #----------------------------------------------------------------------------
-  def actor_menu_cancel
-    Sound.play_cancel
-    @windows[Menu_Actor].deactivate
-    @windows[Menu_Actor].hide
-    @windows[Menu_Actor].close
-    #@windows[Win_Help].hide
-    disable_cursor(true)
   end
   #--------------------------------------------------------------------------
 end
@@ -243,23 +236,23 @@ class Spriteset_Map
     initialize_dnd
     create_tactic_sprites
   end
-    #--------------------------------------------------------------------------
-    # * Alias: Create Character Sprite
-    #--------------------------------------------------------------------------
-    alias create_characters_dnd create_characters
-    def create_characters
-      create_characters_dnd
-      
-      battlers = SceneManager.all_battlers
-      @units = []
-      $battle_unit_sprites  = []
-      @character_sprites.each do |char|
-        next unless battlers.include?(char.character)
-        obj = Unit_Circle.new(@viewport1, char, char.character)
-        @units.push(obj)
-        $battle_unit_sprites.push(obj)
-      end
+  #--------------------------------------------------------------------------
+  # * Alias: Create Character Sprite
+  #--------------------------------------------------------------------------
+  alias create_characters_dnd create_characters
+  def create_characters
+    create_characters_dnd
+    
+    battlers = SceneManager.all_battlers
+    @units = []
+    $battle_unit_sprites  = []
+    @character_sprites.each do |char|
+      next unless battlers.include?(char.character)
+      obj = Unit_Circle.new(@viewport1, char, char.character)
+      @units.push(obj)
+      $battle_unit_sprites.push(obj)
     end
+  end
   #-----------------------------------------------------------------------------
   # *) Create tactic sprites
   #-----------------------------------------------------------------------------
@@ -312,6 +305,8 @@ class Game_Map
     end
     battlers += $game_map.event_enemies
     
+    # battler: sprite, event etc.
+    # _battler : actor, enemy etc.
     for battler in battlers
       next if battler.nil?
       
@@ -346,7 +341,7 @@ class Game_Map
         _battler = battler.enemy
       end
       
-      return _battler if sprite.adjacent?(sx - 16, sy - 32)
+      return [_battler, battler] if sprite.adjacent?(sx - 16, sy - 32)
     end
     
     return nil # not occupied by anything
@@ -379,6 +374,67 @@ class Game_Character < Game_CharacterBase
     return( x.between?(@x, @x + size) and y.between?(@y, @y + size))
   end
   #---------------------------------------------------------------------------
+end
+#==============================================================================
+# ** Game_Player
+#------------------------------------------------------------------------------
+#  This class handles the player. It includes event starting determinants and
+# map scrolling functions. The instance of this class is referenced by
+# $game_player.
+#==============================================================================
+class Game_Player < Game_Character
+  #--------------------------------------------------------------------------
+  # * Scroll Processing
+  #--------------------------------------------------------------------------
+  alias update_scroll_dnd update_scroll
+  def update_scroll(last_real_x, last_real_y)
+    update_scroll_dnd(last_real_x, last_real_y) unless $tactic_enabled
+  end
+  #--------------------------------------------------------------------------
+  # * Player Transfer Reservation
+  #     d:  Post move direction (2,4,6,8)
+  #--------------------------------------------------------------------------
+  alias reserve_transfer_dnd reserve_transfer
+  def reserve_transfer(map_id, x, y, d = 2)
+    reserve_transfer_dnd(map_id, x, y, d = 2) unless $game_party.leader.state?(2)
+  end
+  #-------------------------------------------------------------------------
+end
+#==============================================================================
+# ** Game_Map
+#------------------------------------------------------------------------------
+#  This class handles maps. It includes scrolling and passage determination
+# functions. The instance of this class is referenced by $game_map.
+#==============================================================================
+class Game_Map
+  #--------------------------------------------------------------------------
+  # * Scroll Down
+  #--------------------------------------------------------------------------
+  alias scroll_down_dnd scroll_down
+  def scroll_down(distance)
+    scroll_down_dnd(distance) unless $tactic_enabled
+  end
+  #--------------------------------------------------------------------------
+  # * Scroll Left
+  #--------------------------------------------------------------------------
+  alias scroll_left_dnd scroll_left
+  def scroll_left(distance)
+    scroll_left_dnd(distance) unless $tactic_enabled
+  end
+  #--------------------------------------------------------------------------
+  # * Scroll Right
+  #--------------------------------------------------------------------------
+  alias scroll_right_dnd scroll_right
+  def scroll_right(distance)
+    scroll_right(distance) unless $tactic_enabled
+  end
+  #--------------------------------------------------------------------------
+  # * Scroll Up
+  #--------------------------------------------------------------------------
+  alias scroll_up_dnd scroll_up
+  def scroll_up(distance)
+    scroll_up_dnd(distance) unless $tactic_enabled
+  end
 end
 #===============================================================================
 #

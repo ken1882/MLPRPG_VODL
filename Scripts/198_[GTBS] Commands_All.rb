@@ -43,6 +43,7 @@ class Commands_All < TBS_Win_Actor
   def make_command_list
     return unless @actor
     add_move_command(false)
+    add_hold_command(false)
     #add_attack_command(@actor.perf_action)
     #add_skill_commands(@actor.perf_action)
     #add_item_command(@actor.perf_action)
@@ -50,6 +51,24 @@ class Commands_All < TBS_Win_Actor
     #add_equip_command if $imported["YEA-CommandEquip"]
     #add_status_command
     #add_escape_command
+  end
+  #--------------------------------------------------------------------------
+  # * Add Move Command to List
+  #--------------------------------------------------------------------------
+  def add_move_command(disabled)
+    add_command(GTBS::Menu_Move, :move, @battler.is_a?(Game_Follower))# unless GTBS::HIDE_INACTIVE_COMMANDS && @actor.moved?
+  end
+  
+  def add_hold_command(disabled)
+    add_command("Hold/Unhold", :hold, @battler.is_a?(Game_Follower))
+  end
+  
+  def add_status_command
+    add_command(Vocab.status, :status, true)
+  end
+  
+  def add_escape_command
+    add_command(Vocab.escape, :escape, BattleManager.can_escape?)
   end
   #--------------------------------------------------------------------------
   # * Add Attack Command to List
@@ -83,22 +102,12 @@ class Commands_All < TBS_Win_Actor
   def add_item_command(disabled)
     add_command(Vocab::item, :item) unless GTBS::HIDE_INACTIVE_COMMANDS && @actor.perf_action
   end
-  #--------------------------------------------------------------------------
-  # * Add Move Command to List
-  #--------------------------------------------------------------------------
-  def add_move_command(disabled)
-    add_command(GTBS::Menu_Move, :move, !@actor.moved?)# unless GTBS::HIDE_INACTIVE_COMMANDS && @actor.moved?
-  end
-  def add_status_command
-    add_command(Vocab.status, :status, true)
-  end
-  def add_escape_command
-    add_command(Vocab.escape, :escape, BattleManager.can_escape?)
-  end
+  
   #--------------------------------------------------------------------------
   # * Setup
   #--------------------------------------------------------------------------
-  def setup(actor)
+  def setup(actor, battler)
+    @battler = battler
     super(actor)
     @actor_display.refresh(actor)
     self.height = item_max * WLH + (standard_padding * 2)

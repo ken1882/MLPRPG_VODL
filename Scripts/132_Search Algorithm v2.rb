@@ -462,3 +462,38 @@ class Scene_Map < Scene_Base
   end
   #-------------------------------------------------------------------------
 end
+#==============================================================================
+# ** Spriteset_Map
+#------------------------------------------------------------------------------
+#  This class brings together map screen sprites, tilemaps, etc. It's used
+# within the Scene_Map class.
+#==============================================================================
+class Spriteset_Map
+  #-----------------------------------------------------------------------------
+  # *) Instance Variables
+  #-----------------------------------------------------------------------------
+  
+  #--------------------------------------------------------------------------
+  # * Alias: Create Character Sprite
+  #--------------------------------------------------------------------------
+  alias create_characters_tactic create_characters
+  def create_characters
+    create_characters_tactic
+    
+    battlers = SceneManager.all_battlers
+    @units = []
+    $battle_unit_sprites  = []
+    @character_sprites.each do |char|
+      next unless battlers.include?(char.character)
+      obj = Unit_Circle.new(@viewport1, char, char.character)
+      @units.push(obj)
+      $battle_unit_sprites.push(obj)
+    end
+  end
+  #----------------------------------------------------------------------------
+end
+#==============================================================================#
+#                                                                              #
+#                      ▼   End of File   ▼                                     #
+#                                                                              # 
+#==============================================================================#

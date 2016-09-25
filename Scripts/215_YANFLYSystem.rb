@@ -432,9 +432,15 @@ class Game_System
   #--------------------------------------------------------------------------
   def init_volume_control
     @volume = {}
-    @volume[:bgm] = 100
-    @volume[:bgs] = 100
-    @volume[:sfx] = 100
+    if $sound_volume.nil?
+      @volume[:bgm] = 100
+      @volume[:bgs] = 100
+      @volume[:sfx] = 100
+    else
+      @volume[:bgm] = $sound_volume[0]
+      @volume[:bgs] = $sound_volume[1]
+      @volume[:sfx] = $sound_volume[2]
+    end
   end
   
   #--------------------------------------------------------------------------
@@ -452,6 +458,10 @@ class Game_System
     init_volume_control if @volume.nil?
     @volume[type] += increment
     @volume[type] = [[@volume[type], 0].max, 100].min
+    
+    obj = "Volume"
+    goal = sprintf("[%d,%d,%d]",@volume[:bgm],@volume[:bgs],@volume[:sfx])
+    FileManager.change_ini(obj, '=', goal)
   end
   
   #--------------------------------------------------------------------------
@@ -984,45 +994,17 @@ class Window_SystemOptions < Window_Command
     
     if current_id == 14 || current_id == 21
       
-      file = File.new("Game.ini", "r")
-      parameter_index = []
-      
-      while (line = file.gets)
-        parameter_index.push(line)
-      end
-      
-      status = ''
-      info   = ''
-      
       if current_id == 14
         obj = "BattleStatusUI"
-        status = $battle_party_status_UI == true ? '1' : '0'
+        goal = $battle_party_status_UI == true ? '1' : '0'
         info = $battle_party_status_UI ? "Fancy" : "Simple" 
       elsif current_id == 21
         obj = "LightEffects"
-        status = $light_effects == true ? '1' : '0'
+        goal = $light_effects == true ? '1' : '0'
         info = $light_effects ? "Light Effects ON" : "Light Effects OFF"
       end
-      
-      file.close
-      for i in 0...parameter_index.size
-        if parameter_index[i].include?(obj)
-          for j in 0...parameter_index[i].size
-            if parameter_index[i][j] == '1' || parameter_index[i][j] == '0'
-              parameter_index[i][j] = status
-              msgbox("Current setting: #{info}\nYou gotta close and re-open the game to apply this change")
-            end
-          end
-        end
-      end
-      
-      file = File.new("Game.ini", "w")
-        for str in parameter_index
-          file.write(str)
-          puts "#{str}"
-        end
-      file.close
-      
+      message = "Current setting: #{info}\nYou gotta close and re-open the game to apply this change"
+      FileManager.change_ini(obj, '=', goal, message)
     end
     
     Sound.play_cursor if value != current_case

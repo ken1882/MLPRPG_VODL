@@ -1,3 +1,39 @@
+#==============================================================================
+# ** FileManager
+#------------------------------------------------------------------------------
+#  This module is using to change the configs in Game.ini, e.g. sound volume or
+#  other settings.
+#==============================================================================
+module FileManager
+  
+  def self.change_ini(obj, splits, goal, message = nil)
+    file = File.new("Game.ini", "r")
+    parameter_index = []
+    
+    while (line = file.gets)
+      parameter_index.push(line)
+    end
+    file.close
+      
+    for i in 0...parameter_index.size
+      if parameter_index[i].include?(obj)
+        str = parameter_index[i].split(splits).at(0)
+        str += splits + goal + 10.chr
+        parameter_index[i] = str
+        msgbox(message) if message
+      end
+    end
+    
+    puts "---------------[Game.ini]---------------"
+    file = File.new("Game.ini", "w")
+    for str in parameter_index
+      file.write(str)
+      puts "#{str}"
+    end
+    file.close
+    puts "----------------------------------------"
+  end # def change ini
+end
 #========================================================================
 #
 # init settings 
