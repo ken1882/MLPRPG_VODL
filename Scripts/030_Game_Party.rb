@@ -271,7 +271,8 @@ class Game_Party < Game_Unit
   #     include_equip : Include equipped items
   #--------------------------------------------------------------------------
   def lose_item(item, amount, include_equip = false)
-    gain_item(item, -amount, include_equip)
+    gain_item(item, -amount, true) if include_equip
+    gain_item(item, -amount, false) if !include_equip
   end
   #--------------------------------------------------------------------------
   # * Consume Items

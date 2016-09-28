@@ -23,15 +23,15 @@ module DND
   ACTOR_PARAMS  = {
   # cnt       0,   1,   2,   3,   4,   5,   6,   7
   # id      dhp, dmp, str, con, int, wis, dex, cha
-    1   => [   6,  9,   8,  11,  16,  15,  10,  12],  # Twilight
-    2   => [  12, 12,  15,  17,   8,  13,  12,  12],  # Applejack
-    3   => [   8,  5,  16,  17,  10,  10,  12,  10],  # Spike(useless)
-    4   => [  10, 15,  14,  16,  10,  10,  16,  16],  # Pinkie
-    5   => [   9,  8,  16,  14,  10,   8,  17,  13],  # Rainbow Dash
-    6   => [   7,  8,  10,  12,  14,  17,  13,  16],  # Rarity
-    7   => [   8,  7,  10,  12,  15,  17,  12,  14],  # Fluttershy
-    8   => [  21, 35,  17,  24,  32,  26,  18,  30],  # Celestia
-    9   => [  18, 32,  22,  23,  29,  18,  20,  23],  # Luna
+    1   => [   6,100,   8,  11,  16,  15,  10,  12],  # Twilight
+    2   => [  12,120,  15,  17,   8,  13,  12,  12],  # Applejack
+    3   => [   8, 80,  16,  17,  10,  10,  12,  10],  # Spike(useless)
+    4   => [  10,130,  14,  16,  10,  10,  16,  16],  # Pinkie
+    5   => [   9,110,  16,  14,  10,   8,  17,  13],  # Rainbow Dash
+    6   => [   7,100,  10,  12,  14,  17,  13,  16],  # Rarity
+    7   => [   8,100,  10,  12,  15,  17,  12,  14],  # Fluttershy
+    8   => [  21,200,  17,  24,  32,  26,  18,  30],  # Celestia
+    9   => [  18,200,  22,  23,  29,  18,  20,  23],  # Luna
     
    10   => [   8,  5,  10,  10,  10,  10,  10,  10],
    11   => [   8,  5,  10,  10,  10,  10,  10,  10],
@@ -521,8 +521,8 @@ class RPG::Class < RPG::BaseItem
   def initialize_dndparams
     @params = Table.new(8,100)
     (1..99).each do |i|
-      (0...2).each {|j| @params[j,i] = DND::ACTOR_PARAMS[id][j] * i}
-      (2...8).each {|j| @params[j,i] = DND::ACTOR_PARAMS[id][j] }
+      (0...1).each {|j| @params[j,i] = DND::ACTOR_PARAMS[id][j] * i}
+      (1...8).each {|j| @params[j,i] = DND::ACTOR_PARAMS[id][j] }
     end
   end
   
