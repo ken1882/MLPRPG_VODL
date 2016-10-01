@@ -13,6 +13,7 @@ class RPG::BaseItem
   attr_accessor :damage_index
   attr_accessor :physical_damage_modify
   attr_accessor :magical_damage_modify
+  attr_accessor :item_own_max
   #------------------------------------------------------------------------
   # common cache: load_notetags_dndsubs
   #------------------------------------------------------------------------  
@@ -23,6 +24,8 @@ class RPG::BaseItem
     @damage_index             = []
     @physical_damage_modify   = 0
     @magical_damage_modify    = 0
+    @block_by_event           = false
+    @item_own_max             = 10
     
     if self.is_spell?
       @property.push(0)
@@ -52,6 +55,10 @@ class RPG::BaseItem
         @property.push(3)
       when DND::REGEX::IS_MAGICAL
         @property.push(4)
+      when DND::REGEX::PROJ_BLOCK_BY_EVENT
+        @block_by_event = true
+      when DND::REGEX::ITEM_MAX
+        @item_own_max = $1.to_i
       when DND::REGEX::DAMAGE
         element_id = get_element_id($3)
         time = $1.split('d').at(0)

@@ -20,13 +20,14 @@ class Game_Character
   def command_follow
     @movement_command = 1
     return if actor.nil?
-    self.pop_damage('Move')
+    self.pop_damage('Move') if @hint_cooldown == 0
     self.actor.remove_state(4)
+    @hint_cooldown = 30
   end
   
   def command_gather;  @movement_command = 2 end
     
-  def command_hold  
+  def command_hold
     return if actor.nil?
     @movement_command = 3 
     @pathfinding_moves.clear

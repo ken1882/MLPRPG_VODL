@@ -303,6 +303,7 @@ class Window_CharacterSet < Window_Selectable
   end
   
   def item
+    return nil unless @data
     return @data[self.index]
   end
  
@@ -546,7 +547,10 @@ class Window_ActorQuickTool < Window_Selectable
     unselect
   end
   
-  def item()        return @data[self.index] end
+  def item()
+    return unless @data
+    return @data[self.index] 
+  end
   def col_max()     return 2                 end
   def spacing()     return 6                 end  
   

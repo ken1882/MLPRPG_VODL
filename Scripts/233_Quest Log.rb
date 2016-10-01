@@ -2690,6 +2690,13 @@ class Scene_Menu
       maic_onpok_3ek9(*args, &block) # Run Original Method
     end
   end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # *) command quest
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def command_quest
+    SceneManager.call(Scene_Quest)
+  end
+  
 end
 $imported[:MA_InsertCommand] = true
 end

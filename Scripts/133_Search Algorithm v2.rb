@@ -113,7 +113,6 @@ class PathFinding_Queue
   # *  Push new scanned address
   #--------------------------------------------------------------------------
   def push(source_loc,current_loc,next_loc,dir, goal_loc)
-    
     extra_cost = Math.hypot(next_loc.x - goal_loc.x, next_loc.y - goal_loc.y).to_i * 5
     extra_cost += Math.hypot(next_loc.x - source_loc.x, next_loc.y - source_loc.y).to_i * 5
     
@@ -239,6 +238,7 @@ class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   attr_accessor   :pathfinding_moves
   attr_accessor   :pathfinding_goal
+  attr_accessor   :force_pathfinding
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
   #--------------------------------------------------------------------------
@@ -247,6 +247,7 @@ class Game_Character < Game_CharacterBase
     init_public_members_comp
     @pathfinding_moves = []
     @pathfinding_goal  = nil
+    @force_pathfinding = true
   end
   #--------------------------------------------------------------------------
   # * adjacent posititon? (for free-movement script)
@@ -292,51 +293,68 @@ class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   # * core function, move to assigned position
   #--------------------------------------------------------------------------
-  def move_to_position(goalx,goaly,forced = false, redirect = false, draw_arrow = false,debug = false)
+  def move_to_position(goalx,goaly, tool_range = 1, redirect = false, draw_arrow = false,debug = false)
+    
     $game_map.clean_pathfinding_arrow if draw_arrow
     $pathfinding_debug = debug
-    
+    #puts "Move to Position"
+    @pathfinding_moves.clear
+    @move_poll.clear
     @on_path_finding = true
     fixed_address = fix_address
-    self.moveto(fixed_address[0],fixed_address[1])
+    
+    if self.is_a?(Game_Follower); self.moveto(fixed_address[0],fixed_address[1], true) 
+    else; self.moveto(fixed_address[0],fixed_address[1])
+    end
+    
     
     fixed_address = fix_address(goalx,goaly)
+    ori_goalx = goalx
+    ori_goaly = goaly
     goalx = fixed_address[0]
     goaly = fixed_address[1]
+    offset_x = (ori_goalx - goalx)
+    offset_y = (ori_goaly - goaly)
     
     tox   = [0,-1,1,0]
     toy   = [1,0,0,-1]
     dir   = [2,4,6,8]
-    path_queue = PathFinding_Queue.new(@x,@y)
+    path_queue = PathFinding_Queue.new([@x,0].max,[@y,0].max)
     path_found = false
     
     while !path_found && !path_queue.empty?
      
       curx = path_queue.top[0]
       cury = path_queue.top[1]
-      
       if curx == goalx && cury == goaly
         path_found = true
         break
       end
       
       path_queue.pop
-      
       for i in 0...4
         break if path_found
         next_x = (curx + tox[i]).to_i
         next_y = (cury + toy[i]).to_i
         
         # check next path if passable
-        if $game_map.passable?(next_x,next_y,dir[i]) && !path_queue.visited?(next_x,next_y) && !$game_map.over_edge?(next_x,next_y)
+        if ( $game_map.passable?(next_x,next_y,dir[i]) || adjacent?(next_x, next_y, goalx, goaly) ) && 
+          !path_queue.visited?(next_x,next_y) && !$game_map.over_edge?(next_x,next_y)
+          
           next if !passable?(curx, cury, dir[i])
-          next if path_blocked_by_event?(next_x,next_y) && next_x != goalx && next_y != goaly
+          next if path_blocked_by_event?(next_x,next_y) && !adjacent?(next_x, next_y, goalx, goaly)
           
           if (path_blocked_by_player?(next_x,next_y) && !@through)
             next unless adjacent?(goalx,goaly,$game_player.x,$game_player.y)
           end
           
-          path_found = true if (next_x == goalx && next_y == goaly)
+          if adjacent?(next_x, next_y, goalx, goaly)
+            path_found = true
+          elsif ( (next_x - goalx).abs + (next_y - goaly).abs ) <= tool_range - 1 && path_clear?(curx, cury, goalx, goaly)
+            goalx = next_x
+            goaly = next_y
+            path_found = true
+          end
           
           source_loc  = Map_Address_Node.new(@x,@y)
           current_loc = Map_Address_Node.new(curx,cury)
@@ -350,7 +368,6 @@ class Game_Character < Game_CharacterBase
           if draw_arrow && SceneManager.scene.is_a?(Scene_Map)
             
           end
-          
         end # if passable?
         path_queue.mark_visited(next_x,next_y)
         
@@ -359,6 +376,13 @@ class Game_Character < Game_CharacterBase
     #puts "[Path Finding]: #{path_found} (#{@x},#{@y}) -> (#{goalx},#{goaly})"
     if path_found
       @pathfinding_moves = path_queue.get_walk_path(goalx,goaly)
+      if offset_x != 0
+        @pathfinding_moves.push([[offset_x < 0 ? 4 : 6 ,true]] * (offset_x / 0.25).abs)
+      end
+      if offset_y != 0
+        @pathfinding_moves.push([[offset_y < 0 ? 8 : 2 ,true]] * (offset_y / 0.25).abs)
+      end
+      
       process_pathfinding_movement
     end # if path found
     

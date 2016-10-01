@@ -248,15 +248,23 @@ class Game_Player < Game_Character
         @followers.each do |f|
           next unless f.visible?
           next if f.targeted_character.nil?
-          f.turn_toward_player
-          f.targeted_character = nil
-          f.pop_damage('Scape')
+          withdraw_battle_follower(f)
         end
       end
     else
       @press_timer = 0 if @press_timer != 0
     end
   end
+  
+  #---------------------------------------------------------------------------
+  # *) follower exit battle
+  #---------------------------------------------------------------------------
+  def withdraw_battle_follower(follower, show_msg = true)
+    follower.turn_toward_player
+    follower.targeted_character = nil
+    follower.pop_damage('Scape') if show_msg
+  end
+  
   #---------------------------------------------------------------------------
   # *) follower into the fray
   #---------------------------------------------------------------------------
@@ -270,10 +278,10 @@ class Game_Player < Game_Character
   #---------------------------------------------------------------------------
   # *) follower into the fray
   #---------------------------------------------------------------------------
-  def make_battle_follower(f)
+  def make_battle_follower(f, move_free = true)
     f.pathfinding_moves.clear
     f.setup_followertool_usage if !targeted_character.nil?
-    f.command_follow           if !targeted_character.nil?
+    f.command_follow           if !targeted_character.nil? && move_free
     
     if f.targeted_character.nil?
       if f.fo_tool.tool_data("User Graphic = ", false).nil?

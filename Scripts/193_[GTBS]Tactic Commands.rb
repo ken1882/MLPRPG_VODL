@@ -145,16 +145,15 @@ class Scene_Map < Scene_Base
     result |= $game_player.pixel_passable?(x, y, 8)
     return false if result == false
     
-    target = $game_map.occupied_by?(x, y)
+    target = @selected
     target = target.nil? ? nil : target.at(1)
     
     if target.nil? || (target.is_a?(Game_Follower) || target.is_a?(Game_Player))
       @original_battler.pop_damage("Move to position")
       @original_battler.move_to_position(x, y)
     else
-      @original_battler.pop_damage("Attack target")
-      $game_player.make_battle_follower(@original_battler)
       @original_battler.targeted_character = target
+      $game_player.make_battle_follower(@original_battler, false)
     end
     
     return true

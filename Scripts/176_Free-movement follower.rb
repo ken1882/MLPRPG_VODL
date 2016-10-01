@@ -29,6 +29,7 @@ end
 # Game_Followers class.
 #==============================================================================
 class Game_Follower < Game_Character
+  attr_accessor :swap_with_leader
   #--------------------------------------------------------------------------
   # * Alias: Object Initialization
   #--------------------------------------------------------------------------
@@ -37,13 +38,15 @@ class Game_Follower < Game_Character
     game_follower_initialize_cxj_fm(member_index, preceding_character)
     @force_chase = false
     @board = false
+    @swap_with_leader = false
   end
   
   #--------------------------------------------------------------------------
   # * Move to Designated Position
   #--------------------------------------------------------------------------
-  def moveto(x, y)
-    return if @targeted_character != nil
+  def moveto(x, y, forced = false)
+    return if @targeted_character != nil && !@swap_with_leader && !forced
+    @swap_with_leader = false
     @x = x % $game_map.width
     @y = y % $game_map.height
     @real_x = @x
@@ -65,8 +68,8 @@ class Game_Follower < Game_Character
     return if @blowpower[0] > 0
     return if @targeted_character != nil
     return if $game_player.in_combat_mode?
-    
     return if self.command_holding?
+    
     if !@move_route.nil?
       command = @move_route.list[@move_route_index]
       if command
@@ -89,18 +92,11 @@ class Game_Follower < Game_Character
       end
       
       if type == 1 && move_poll.empty?
-        reachable = false
-        
-        $game_player.followers.each do |follower|
-          follower.move_poll.clear
-          if follower.move_poll.empty? && follower.distance_preceding_leader > 3
-            reachable = follower.move_to_position($game_player.x, $game_player.y)
-             if !reachable
-               follower.moveto($game_player.x,$game_player.y) 
-             end
-             
-          end
-        end
+        @move_poll.clear
+        if @move_poll.empty? && distance_preceding_leader > 3
+          reachable = self.move_to_position($game_player.x, $game_player.y)
+          self.moveto($game_player.x,$game_player.y) if !reachable
+        end # if self(follower) if idle and 3 blocks far from leader
       elsif type == 2
         
         goal = @preceding_character

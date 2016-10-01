@@ -56,7 +56,7 @@ class Game_Party < Game_Unit
   def gain_gold(amount)
     if SceneManager.scene_is?(Scene_Map)
       #$game_system.item_object = [nil, amount]
-      info = sprintf("Party has gained gold: %s", amount)
+      info = sprintf("Party has gained βits: %s", amount)
       SceneManager.display_info(info)
       RPG::SE.new(PearlItemPop::GoldSe, 80).play rescue nil
     end

@@ -355,7 +355,6 @@ class Game_Map
       elsif battler.is_a?(Game_Event)
         _battler = battler.enemy
       end
-      
       return [_battler, battler] if sprite.adjacent?(sx - 16, sy - 32)
     end
     

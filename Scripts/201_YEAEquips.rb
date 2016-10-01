@@ -754,10 +754,11 @@ class Window_EquipStatus < Window_Base
       when 2
         if @original_item.nil?
           draw_hoof_damage(0,line_height * cnt)
+          cnt += 1
         elsif !@original_item.is_ammo?
           draw_dndparam_compare(0,line_height * cnt, 2, true)
+          cnt += 1
         end
-        cnt += 1
       when 3
         if !@original_item.nil? && @original_item.is_a?(RPG::Weapon) && !@original_item.is_ammo?
           draw_dndparam_compare(0,line_height * cnt, 3, true)

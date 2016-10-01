@@ -24,6 +24,7 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def in_sight?(target, size)
     return false if size.nil?
+    
     angle = determind_sight_angles(60)
     result = Math.in_arc?(target.x, target.y, @x, @y, angle[0], angle[1], size)
     result &= path_clear?(@x, @y, target.x, target.y)
@@ -34,7 +35,6 @@ class Game_CharacterBase
   # *) check if straight line path is able to see
   #----------------------------------------------------------------------------
   def path_clear?(x1, y1, x2, y2)
-    
     dx = x2 - x1;
     if(dx == 0)
       return straight_path_clear?(x1,y1,y2)
@@ -47,28 +47,30 @@ class Game_CharacterBase
     delta = (dy.to_f / dx.to_f).abs;
     error = 0.0;
     
-    y = y1;
+    y = y1
     x = x1
     while x <= x2
       result = false
       (1..4).each do |i|
-        result |= pixel_passable?(x, y, i*2 )
+        result |= pixel_passable?((x + 0.5).to_i, (y + 0.5).to_i, i*2 );
       end
-      
+      #p sprintf("%6d,%6d",x,y) if self.is_a?(Game_Follower) && self.actor != nil && !result
       return false if !result
       
-      error += delta;
+      error += (delta / 4)
       while error >= 0.5
         result = false
         (1..4).each do |i|
-          result |= pixel_passable?(x, y, i*2 )
+          result |= pixel_passable?((x + 0.5).to_i, (y + 0.5).to_i, i*2 );
         end
+        #p sprintf("%6d,%6d",x,y) if self.is_a?(Game_Follower) && self.actor != nil && !result
         return false if !result        
         y = y + sgny;
         error -= 1.0;
       end # while
       
       x += 0.25
+      #puts "#{x} #{y}" if self.is_a?(Game_Follower) && self.actor != nil
     end # while x
     
     return true

@@ -32,7 +32,7 @@ class Projectile < Game_Character
     @original_item = @item
     @target_effect = [false, target=nil]
     
-    @tool_special = "autotarget" if user.is_a?(Game_Follower)
+    @tool_special = "autotarget" if user.is_a?(Game_Follower) || (user.is_a?(Game_Player) && $game_party.leader.state?(2))
     set_targeting
     
     return if PearlKernel.user_graphic.nil?
@@ -808,8 +808,9 @@ class Projectile < Game_Character
       else
         enabled = body_size?([event.x, event.y], @tool_size, event)
       end
-      if enabled and event.just_hitted == 0
-        event.just_hitted = 20
+      
+      if enabled and (event.just_hitted[user.hash_id] == 0 || !event.just_hitted[user.hash_id])
+        event.just_hitted[user.hash_id] = 20
         next if event.page.nil?
         if !enable_dame_execution?(event.battler)
           unless event.battler.object
@@ -883,9 +884,8 @@ class Projectile < Game_Character
   #----------------------------------------------------------------------------
   def apply_damageto_player
     return if @tool_effect_delay > 0 || $game_player.battler.dead?
-    if obj_size?($game_player, @tool_size) and $game_player.just_hitted == 0
-      #puts "[Projectile]: Item Apply: #{@item.name}"
-      $game_player.just_hitted = 20
+    if obj_size?($game_player, @tool_size) and (!$game_player.just_hitted[user.hash_id] || $game_player.just_hitted[user.hash_id].zero?)
+      $game_player.just_hitted[user.hash_id] = 20
       return if guard_success?($game_player, 1)
       execute_damage($game_player)
       $game_player.damage_pop.push(DamagePop_Obj.new($game_player)) unless
@@ -902,8 +902,8 @@ class Projectile < Game_Character
     # followers
     for actor in $game_player.followers
       next unless actor.visible?
-      if obj_size?(actor, @tool_size) and actor.just_hitted == 0
-        actor.just_hitted = 20
+      if obj_size?(actor, @tool_size) and (actor.just_hitted[user.hash_id] == 0 || !actor.just_hitted[user.hash_id])
+        actor.just_hitted[user.hash_id] = 20
         next if actor.battler.dead?
         return if guard_success?(actor, 1)
         execute_damage(actor)
@@ -940,7 +940,7 @@ class Projectile < Game_Character
         target.battler.melee_attack_apply(@user.battler, @tool_invoke)
       else
         _item = @ammo_proj.nil? ? @item : @ammo_proj
-        target.battler.attack_apply(@user.battler, @ammo_proj)
+        target.battler.attack_apply(@user.battler, _item)
       end
       @user.apply_weapon_param(@item, false) if @user.battler.is_a?(Game_Enemy)
       precombo(:remove) if @user.battler.is_a?(Game_Actor) && @precombi

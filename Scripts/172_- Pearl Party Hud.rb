@@ -110,6 +110,7 @@ class Spriteset_Map
   
   def refresh_party_hud
     return if @party_hud.nil?
+    @actor_lifebar.refresh_contents
     @party_hud.refresh_members
   end
   

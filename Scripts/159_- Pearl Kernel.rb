@@ -26,7 +26,7 @@ class Game_CharacterBase
   alias falcaopearl_abmain_ini initialize
   def initialize
     @zfx_bol = false
-    @just_hitted = 0
+    @just_hitted = {}
     @anime_speed = 0
     @respawn_count = 0
     @blowpower = [0, dir=2, dirfix=false, s=4, wait_reset=0]
@@ -88,7 +88,7 @@ class Game_CharacterBase
   end
   
   alias falcaopearl_collide_with collide_with_characters?
-  def collide_with_characters?(x, y)
+  def collide_with_characters?(x, y, ingore_ally = false)
     return true if collide_with_projectiles?(x, y)
     falcaopearl_collide_with(x, y)
   end
@@ -300,9 +300,9 @@ class Game_CharacterBase
   def obj_size?(target, size)
     return false if size.nil?
     distance = Math.hypot(@x - target.x, @y - target.y)
-    enable   = (distance <= size - 0.5)
-    return true if enable
-    return false
+    enable   = (distance <= [size - 0.5, 1.2].max) && path_clear?(@x, @y, target.x, target.y)
+    
+    return enable
   end
   
   #----------------------------------------------------------------------------
@@ -633,7 +633,10 @@ class Game_CharacterBase
   
   # Pearl timing
   def update_pearlabs_timing
-    @just_hitted -= 1 if @just_hitted > 0
+    @just_hitted.each_key do |key|
+      @just_hitted[key] -= 1 if @just_hitted[key] > 0
+    end
+    
     @stopped_movement -= 1 if @stopped_movement > 0
     @doingcombo -= 1 if @doingcombo > 0
     
@@ -1058,6 +1061,14 @@ class Game_Event < Game_Character
       end
       pose = @enemy.enemy.tool_data("Enemy Dead Pose = ", false) == "true"
       @deadposee = true if pose and @knockdown_enable
+      
+      _data = [$game_map.map_id, @id, PearlKernel::Enemy_Sensor]
+      $game_self_switches[[_data[0], _data[1], _data[2]]] = false
+      @inrangeev = nil
+      @current_target = nil
+      @move_poll.clear
+      @pathfinding_moves.clear
+      @last_target = nil
     end
   end
   
@@ -1346,6 +1357,7 @@ class Game_Party < Game_Unit
     if index1 == 0
       $game_player.moveto(pos2[0], pos2[1])
     else
+      $game_player.followers[index1 - 1].swap_with_leader = true
       $game_player.followers[index1 - 1].moveto(pos2[0], pos2[1])
       target_battler = $game_player.followers[index1 - 1].targeted_character
       original_index = index1 - 1
@@ -1358,6 +1370,7 @@ class Game_Party < Game_Unit
     if index2 == 0
       $game_player.moveto(pos1[0], pos1[1])
     else
+      $game_player.followers[index2 - 1].swap_with_leader = true
       $game_player.followers[index2 - 1].moveto(pos1[0], pos1[1])
       original_index = index2 - 1
       target_battler = $game_player.followers[index2 - 1].targeted_character
@@ -1366,14 +1379,16 @@ class Game_Party < Game_Unit
         $game_player.followers[index2 - 1].targeted_character = $game_player.targeted_character
       end
     end
+    ori_follower = $game_player.followers[original_index]
     $game_player.command_follow
     $game_party.leader.remove_state(2)
+    $game_player.withdraw_battle_follower(ori_follower, false)
     
     falcaopearl_swap_order(index1, index2)
     $game_map.need_refresh = true
     $tbs_cursor.moveto($game_player.x, $game_player.y)
-    
-    $game_player.followers[original_index].setup_followertool_usage if target_battler
+    $game_player.followers[original_index].targeted_character = target_battler
+    $game_player.make_battle_follower(ori_follower) if target_battler
     #-----------------
   end
 end

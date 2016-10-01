@@ -188,6 +188,7 @@ class Battle_Cursor < Sprite_Base
   end
   def update_location
     return unless @cur_location
+    return
     if @cursor.active
       @cur_location.bitmap.clear
       @cur_location.bitmap.font.size = 30

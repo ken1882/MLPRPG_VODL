@@ -187,7 +187,8 @@ class Skin_Swap
   "Window", # use [2]
   "Window", # use [3]
   "Window_spellbook",
-  "Window_infos"
+  "Window_infos",
+  "Window_itemmoreinfo"
   ]
   $DEFAULT_WINDOWSKIN = "Window"
   $USE_SCENE_SKIN = TRUE
@@ -209,6 +210,7 @@ class Skin_Swap
   $BATTLE_SKIN          = $WINDOWSKINS[1]
   $SPELLBOOK_SKIN       = $WINDOWSKINS[4]
   $MAP_INFO_SKIN        = $WINDOWSKINS[5]
+  $ITEM_INFO_SKIN       = $WINDOWSKINS[6]
 end
 #DON'T FOOL AROUND BELOW UNLESS YOU KNOW WHAT YOU'RE DOING! I DIDN'T 
 #DEACTIVATE ERROR MINES. ONE WRONG STEP AND KABOOM!, ALL YOUR HARD WORK IS 

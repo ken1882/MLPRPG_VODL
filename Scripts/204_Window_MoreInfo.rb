@@ -63,7 +63,8 @@ class Window_Selectable < Window_Base
   #--------------------------------------------------------------------------
   def show_moreinfo?
     item = @data[index] if @data && @data[index]
-    item = self.item if !item && self.methods.include?(:item) && self.item.is_a?(RPG::BaseItem)
+    item = self.item if !item && self.methods.include?(:item)
+    item = nil unless (item.is_a?(RPG::EquipItem) || item.is_a?(RPG::UsableItem))
     return item
   end
   
@@ -83,8 +84,10 @@ class Window_Moreinfo < Window_Base
     @item             = nil
     @display_category = nil
     @actor            = nil
+    self.windowskin = Cache.system($ITEM_INFO_SKIN)
+    self.opacity = 255
     self.hide
-    self.z = 200
+    self.z = 1000
     refresh
   end
   #--------------------------------------------------------------------------
@@ -93,11 +96,13 @@ class Window_Moreinfo < Window_Base
   def refresh
     return if @item.nil?
     contents.clear
+    
     if    @item.is_a?(RPG::Item);   draw_item_info
     elsif @item.is_a?(RPG::Weapon); draw_weapon_info
     elsif @item.is_a?(RPG::Armor);  draw_armor_info
     elsif @item.is_a?(RPG::Skill);  draw_skill_info
     end
+    
   end
   #--------------------------------------------------------------------------
   # *) Set item
@@ -147,18 +152,20 @@ class Window_Moreinfo < Window_Base
     w = contents.width
     change_color(system_color)
     draw_text(0, y, w, line_height, "Description:")
-    change_color(normal_color)
-    
+    #change_color(Color.new(255,210,155))
+    change_color(Color.new(255,240,200))
     cnt = 1
     info = @item.information
-    text = ""
+    text = " "
     i = 0
     while i < info.size
-      while text.size < 75
+      while text.size < 73
         break if info[i].nil?
-        text += info[i]
+        text += info[i] unless info[i] == '|'
+        while info[i] == '|' && text.size < 73 do text += " " end
         i += 1
-        text += '-' if text.size == 75 && info[i].match(/^[[:alpha:]]$/) && info[i-1].match(/^[[:alpha:]]$/)
+        break if info[i].nil?
+        text += '-' if text.size == 73 && info[i].match(/^[[:alpha:]]$/) && info[i-1].match(/^[[:alpha:]]$/)
       end
       draw_text(0, (y + cnt * line_height), w, line_height, text , 4)
       cnt += 1

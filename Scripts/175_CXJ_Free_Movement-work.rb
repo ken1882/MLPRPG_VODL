@@ -572,7 +572,7 @@ class Game_CharacterBase
   # * New: Pixel passable?
   #--------------------------------------------------------------------------
   def pixel_passable?(px,py,d)
-    return true if $game_map.region_id(px, py) == 1 && self.is_a?(Projectile)
+    return true if self.is_a?(Projectile) && projectile_to_lower?(px, py, d)
     return false if (d % 2 != 0)
     px *= 4
     py *= 4
@@ -580,8 +580,33 @@ class Game_CharacterBase
     ny = py + Tile_Range[d][1]
     return false unless $game_map.pixel_valid?(nx,ny)
     return false if $game_map.pixel_table[px+Tile_Range[d][0],py+Tile_Range[d][1],1] == 0
+    return false if $game_map.pixel_table[px,py,1] == 0
     return true
   end
+  #--------------------------------------------------------------------------
+  # * New: Projectile to lower?
+  #--------------------------------------------------------------------------
+  def projectile_to_lower?(x, y, d)
+    dir_loc = { 2 => [0,0.5],  4 => [-0.5,0],  6 => [0.5,0],  8 => [0,-0.5] }
+    
+    pre_allow_ids = [61, 62, 63]
+    cur_allow_ids = [61, 62, 63]
+    nex_allow_ids = [61, 62, 63]
+    
+    pfx = (x - dir_loc[d][0] + 0.5).to_i
+    pfy = (y - dir_loc[d][1] + 0.5).to_i
+    nfx = (x + dir_loc[d][0] + 0.5).to_i
+    nfy = (y + dir_loc[d][1] + 0.5).to_i
+    pre_id = $game_map.region_id(pfx, pfy)
+    cur_id = $game_map.region_id(x, y)
+    nex_id = $game_map.region_id(nfx, nfy)
+    
+    result = false
+    result = true  if pre_allow_ids.include?(pre_id) || cur_allow_ids.include?(cur_id) || nex_allow_ids.include?(nex_id)
+    result = false if (pre_id == 63 && cur_id == 62) || (cur_id == 63 && nex_id == 62) || cur_id == 60
+    return result
+  end
+  
   #--------------------------------------------------------------------------
   # * New: Processes Movement
   #--------------------------------------------------------------------------
@@ -602,6 +627,7 @@ class Game_CharacterBase
   # * Override: Determine Triggering of Frontal Touch Event
   #--------------------------------------------------------------------------
   def check_event_trigger_touch_front
+    return if $game_party.leader.state?(2)
     d = @direction
     horz = (d - 1) % 3 - 1
     vert = 1 - ((d - 1) / 3)
@@ -628,11 +654,13 @@ class Game_CharacterBase
     pixelstep = CXJ::FREE_MOVEMENT::PIXELS_PER_STEP / 32.0
     x2 = $game_map.round_x(x + horz * pixelstep)
     y2 = $game_map.round_y(y + vert * pixelstep)
+    
+    
     return false unless $game_map.valid_rect?(x2, y2, collision_rect)
-    return true if @through || debug_through?
+    return true if (@through || debug_through?) && !force_blocked(x2, y2, true)
+    return false if collide_with_characters?(x2, y2, true)
     return false unless map_passable_rect?(x, y, d, collision_rect)
     return false unless map_passable_rect?(x2, y2, reverse_dir(d), collision_rect)
-    return false if collide_with_characters?(x2, y2)
     return true
   end
   #--------------------------------------------------------------------------
@@ -725,11 +753,26 @@ class Game_CharacterBase
     pos_rect?(x, y, rect) && !@through
   end
   #--------------------------------------------------------------------------
+  # * Detect Collision with Character 
+  #--------------------------------------------------------------------------
+  def collide_with_characters?(x, y, ignore_ally = false)
+    collide_with_events?(x, y, ignore_ally) || collide_with_vehicles?(x, y)
+  end
+  #--------------------------------------------------------------------------
   # * Override: Detect Collision with Event
   #--------------------------------------------------------------------------
-  def collide_with_events?(x, y)
+  def collide_with_events?(x, y, ignore_ally)
     $game_map.events_xy_rect_nt(x, y, collision_rect).any? do |event|
+      next if ignore_ally && event.enemy.nil? && (!event.event.name.include?("<block>") && self.is_a?(Projectile))
       (event.normal_priority? || self.is_a?(Game_Event)) && event != self
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Override: Detect Collision with Event
+  #--------------------------------------------------------------------------
+  def force_blocked(x, y, ignore_ally)
+    $game_map.events_xy_rect_nt(x, y, collision_rect).any? do |event|
+      event.event.name.include?("<block>") && self.is_a?(Projectile)
     end
   end
   #--------------------------------------------------------------------------
@@ -780,13 +823,14 @@ class Game_Character < Game_CharacterBase
   # * Override: Move Toward Character
   #--------------------------------------------------------------------------
   alias move_toward_character_comp move_toward_character
-  def move_toward_character(character, pathfinding = false)
+  def move_toward_character(character, pathfinding = false, tool_range = 1)
     return unless @move_poll.empty?
     
-    if pathfinding && Math.hypot(character.x - @x, character.y - @y) > 3#&& !path_clear?(@x, @y, character.x, character.y)
+    if pathfinding && Math.hypot(character.x - @x, character.y - @y) > 3 &&
+      @pathfinding_moves.empty? && @move_poll.empty?
       @pathfinding_goal = character
-      found = move_to_position(character.x, character.y)
-      @pathfinding_moves.clear if @pathfinding_goal.enemy.dead?
+      found = move_to_position(character.x, character.y, tool_range) unless self.command_holding?
+      @pathfinding_moves.clear if @pathfinding_goal.is_a?(Game_Event) && @pathfinding_goal.enemy.dead?
       return if found
     end
     
@@ -808,26 +852,31 @@ class Game_Character < Game_CharacterBase
       end
       processed = true
     end
-    #puts "move toward #{character} (#{processed})" if self.id == 13
+    
   end
   #--------------------------------------------------------------------------
   # * Override: Move Away from Character
   #--------------------------------------------------------------------------
   def move_away_from_character(character)
-    
     sx = distance_x_from(character.x)
     sy = distance_y_from(character.y)
+    
+    processed = false
     if sx.abs > sy.abs
       if passable?(@x, @y, (sx > 0 ? 6 : 4))
         @move_poll+= [[sx > 0 ? 6 : 4, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
-      else
+      elsif passable?(@x, @y, (sy > 0 ? 2 : 8))
         @move_poll+= [[sy > 0 ? 2 : 8, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
+      else
+        move_random
       end
     elsif sy != 0
       if passable?(@x, @y, (sy > 0 ? 2 : 8))
         @move_poll+= [[sy > 0 ? 2 : 8, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
-      else
+      elsif passable?(@x, @y, (sx > 0 ? 6 : 4))
         @move_poll+= [[sx > 0 ? 6 : 4, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil
+      else
+        move_random
       end
     end
   end
@@ -875,6 +924,8 @@ class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   alias game_character_process_move_command_cxj_fm process_move_command
   def process_move_command(command)
+    return if self.is_a?(Game_Event) && !@pathfinding_moves.empty?
+    
     is_player = self.is_a?(Game_Player)
     saved_poll = nil
     case command.code
@@ -988,7 +1039,7 @@ class Game_Player < Game_Character
   def start_map_event(x, y, triggers, normal, rect = collision_rect)
     return if $game_map.interpreter.running?
     $game_map.events_xy_rect(x, y, rect).each do |event|
-      if event.trigger_in?(triggers) && event.normal_priority? == normal
+      if event.trigger_in?(triggers) && event.normal_priority? == normal && (!$game_party.leader.state?(2) || event.event.name.include?("<forced>"))
         event.start unless event.is_touching?(self)
         event.add_touch(self)
       end
@@ -998,6 +1049,7 @@ class Game_Player < Game_Character
   # * Override: Determine if Front Event is Triggered
   #--------------------------------------------------------------------------
   def check_event_trigger_there(triggers)
+    
     x2 = $game_map.round_x_with_direction(@x, @direction)
     y2 = $game_map.round_y_with_direction(@y, @direction)
     start_map_event(x2, y2, triggers, true, interaction_rect)
@@ -1193,6 +1245,7 @@ class Game_Event < Game_Character
   #--------------------------------------------------------------------------
   def check_event_trigger_touch(x, y)
     return if $game_map.interpreter.running?
+    return if $game_party.leader.state?(2)
     if @trigger == 2 && $game_player.pos_rect?(x, y, $game_player.collision_rect)
       start if !jumping? && normal_priority?
     end

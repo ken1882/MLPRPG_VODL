@@ -152,7 +152,6 @@ module YEA
       #:event_8 => ["Spellbook",                    0,          0,          0],
       :event_9 => ["Bestiary",                    0,          0,          11],
       :event_10 => ["Codex",                    0,          0,          12],
-      :quest => ["Quest",                    0,          0,          18],
       :dismantle => ["Dismantle",                    0,          0,          25],
       :gamejolt => ["Gamejolt",                    0,          0,          21],
       
@@ -175,6 +174,7 @@ module YEA
       :gogototori => ["Brew",                87,         0,   :command_totori],
       :grathnode => [ "Grathnode",            0,         0,   :command_install],
       :level_up =>   ["Level Up",             0,          0,  :command_level_up_stats],
+      :quest  =>  [ "Quest",                  0,          0,  :command_quest]
     } # Do not remove this.
     
   end # MENU

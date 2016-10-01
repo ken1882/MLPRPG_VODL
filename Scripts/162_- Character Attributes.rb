@@ -78,7 +78,7 @@ class Game_Event < Game_Character
   attr_accessor :cool_down
   attr_accessor :recover
   attr_accessor :current_target
-  attr_accessor :taget_switch
+  attr_accessor :target_switch
   #--------------------------------------------------------------------------
   # *) register enemy to event
   #--------------------------------------------------------------------------
@@ -90,7 +90,7 @@ class Game_Event < Game_Character
     @default_weapon = subject.default_weapon
     @recover        = subject.recover
     @cool_down      = 0
-    @taget_switch   = 0
+    @target_switch   = 0
     @current_target = nil
   end
   #--------------------------------------------------------------------------
@@ -110,11 +110,12 @@ class Game_Event < Game_Character
   #----------------------------------------------------------------------------
   def update_cooldown
     @cool_down -= 1 if @cool_down > 0
-    @taget_switch -= 1 if @taget_switch > 0
+    @target_switch -= 1 if @target_switch > 0
   end
   #----------------------------------------------------------------------------
   # enemy sensor
   # tag: sight
+  # tag: enemy
   #----------------------------------------------------------------------------
   def update_enemy_sensor
     return if @hookshoting[0]
@@ -127,11 +128,20 @@ class Game_Event < Game_Character
       for battler in $game_player.followers
         next if battler.nil?
         next if battler.actor.nil?
-        target = battler if in_sight?(battler, @sensor)
-      end
-    end
+        
+        if in_sight?(battler, @sensor)
+          if target 
+            if Math.hypot(@x - target.x, @y - target.y) > Math.hypot(@x - battler.x, @y - battler.y)
+              target = battler
+            end
+          else
+            target = battler
+          end # if target
+        end # in_sight?
+      end # for battler
+    end # if @sensor
     
-    move_toward_character(@current_target) if !@current_target.nil? && @move_type != 0
+    move_toward_character(@current_target, true) if @current_target && @move_type != 0 && @pathfinding_moves.empty? && @move_poll.empty?
     track_down_traget(target)
   end
   #--------------------------------------------------------------------------
@@ -139,37 +149,46 @@ class Game_Event < Game_Character
   #--------------------------------------------------------------------------
   def track_down_traget(target)
     target = $game_player if target.nil?
-    @last_target = Map_Address_Node.new(target.x, target.y)
+    data = [$game_map.map_id, @id, PearlKernel::Enemy_Sensor]
     
-    if in_sight?(target, @sensor)
-      data = [$game_map.map_id, @id, PearlKernel::Enemy_Sensor]
-      if @inrangeev.nil? and !$game_self_switches[[data[0], data[1], data[2]]]
+    if in_sight?(target, @sensor) || (@current_target && in_sight?(@current_target, @sensor))
+      @last_target = Map_Address_Node.new(target.x, target.y)
+      if @inrangeev.nil? && !$game_self_switches[[data[0], data[1], data[2]]]
         $game_self_switches[[data[0], data[1], data[2]]] = true
-        @inrangeev = true
+        @move_poll.clear
         setup_target(target)
-      elsif @current_target.nil?
-        $game_self_switches[[data[0], data[1], data[2]]] = false
+        @inrangeev = true
       end
-    elsif @inrangeev != nil
-      data = [$game_map.map_id, @id, PearlKernel::Enemy_Sensor]
-      if ($game_self_switches[[data[0], data[1], data[2]]] && !obj_size?(target, @sensor))
+    elsif @inrangeev != nil && $game_self_switches[[data[0], data[1], data[2]]]
+      if @current_target.nil? &&
+        ($game_self_switches[ [data[0], data[1], data[2]] ] && (
+        distance_to(target.x, target.y) > @sensor + 3 || 
+        distance_to(@current_target.x, @current_target.y) > @sensor + 3)
+        )
+        
         $game_self_switches[[data[0], data[1], data[2]]] = false
         @inrangeev = nil
+        @current_target = nil
+        @move_poll.clear
+        @pathfinding_moves.clear
+        self.move_to_position(@last_target.x, @last_target.y) if @last_target
         @last_target = nil
       end
     end
     
+    #puts "#{in_sight?(target, @sensor)} #{target}; cur target: #{@current_target}" if self.id == 13
   end
   #--------------------------------------------------------------------------
   # *) Setup target
   #--------------------------------------------------------------------------
   def setup_target(target)
-    return if @taget_switch > 0
+    return if @target_switch > 0 && @current_target.nil?
     @current_target = target
     @target_switch = 300
   end
   #--------------------------------------------------------------------------
   # *) Determind if attack
+  # tag: enemy
   #--------------------------------------------------------------------------
   def determind_attack
     return if @cool_down > 0

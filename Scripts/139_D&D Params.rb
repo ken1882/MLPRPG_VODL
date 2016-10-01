@@ -309,6 +309,9 @@ class RPG::EquipItem < RPG::BaseItem
   def magical?
     false
   end
+  
+  def physical?; super end
+  def magical?; super end
   #--------------------
   
 end
@@ -328,6 +331,9 @@ class RPG::Weapon < RPG::EquipItem
   def armor_class
     super
   end
+  
+  def physical?; super end
+  def magical?; super end
   #--------------------
 end
 #==============================================================================
@@ -346,6 +352,9 @@ class RPG::Armor < RPG::EquipItem
   def armor_class
     (self.rarity - 1 + super)
   end
+  
+  def physical?; super end
+  def magical?; super end
   #--------------------
 end
 #==============================================================================

@@ -558,7 +558,7 @@ class Window_EquipItem < Window_ItemList
       if @slot_id == @actor.class.ammo_slot_id
         return true if item.nil?
         return false unless item.is_a?(RPG::Weapon) && @actor.equips[weapon_slot]
-        return false if item.already_equipped == true
+        #return false if item.already_equipped == true
         if @actor.equips[@slot_id]
           return false if @actor.equips[@slot_id].id == item.id
         end
