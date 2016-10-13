@@ -132,7 +132,7 @@ class Game_CharacterBase
   # * Calculate Move Distance per Frame
   #--------------------------------------------------------------------------
   def distance_per_frame
-    2 ** real_move_speed / 256.0
+    return 2 ** real_move_speed / 256.0
   end
   #--------------------------------------------------------------------------
   # * Determine if Dashing

@@ -77,6 +77,15 @@ module Vocab
   def self.param(param_id)
     $data_system.terms.params[param_id]
   end
+  
+  # Parameter id
+  def self.param_id(param)
+    param = param.upcase
+    for i in 0...$data_system.terms.params.size
+      return i if param == self.param(i)
+    end
+  end
+  
   # Equip Type
   def self.etype(etype_id)
     $data_system.terms.etypes[etype_id]
