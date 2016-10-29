@@ -177,25 +177,7 @@ end # DataManager
 # ($game_troop).
 #==============================================================================
 class Game_Enemy < Game_Battler
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  attr_accessor :level
-  attr_accessor :class
-  attr_accessor :skills                   # learned skill
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
-  alias init_dndlevel initialize
-  def initialize(index, enemy_id)
-    @level = 1
-    init_dndlevel(index, enemy_id)
-    @class = enemy.note =~ /<Boss HP Meter>/ ? "Boss" : "Minon"
-    @class = enemy.note =~ /<Elite>/ ? "Elite" : "Minon"
-    @level = enemy.note =~ /<Level = (\d+)>/i ? $1.to_i : 1.to_i unless enemy.nil?
-    @skills = []
-    get_learned_skills
-  end
+  
 end
 #==============================================================================
 # ** RPG::BaseItem
