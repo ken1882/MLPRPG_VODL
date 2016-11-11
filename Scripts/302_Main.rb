@@ -33,9 +33,12 @@ begin
       SceneManager.run
     end
   end
+  
 rescue SystemExit
   exit
 rescue Exception => error
+  
+  DataManager.save_on_crash
   error_txt = report_exception(error)
   Audio.se_play('Audio/SE/Buzzer1',80,100)
   print "Submit the file \"ErrorLog.txt\" in your project folder to the upper most script creators noted in the message.\n"

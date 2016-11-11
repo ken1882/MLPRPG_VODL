@@ -16,6 +16,7 @@ class Game_Interpreter
   #--------------------------------------------------------------------------
   def initialize(depth = 0)
     @depth = depth
+    @eval_passed = true
     check_overflow
     clear
   end

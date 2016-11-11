@@ -1,21 +1,26 @@
 #==============================================================================
 # ** Window_InformationLog
 #------------------------------------------------------------------------------
-#  This window is for displaying anything happened in map, e.g. a trapped is
+#  This window is for displaying something happened in map, e.g. a trap is
 # triggered, state added, spell cast etc.
+# Use SceneManager.display_info( text ) to show the information(s).
 #==============================================================================
 class Window_InformationLog < Window_Selectable
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
   def initialize
-    super(Graphics.width - window_width - 100, Graphics.height - window_height - 50 , window_width, window_height)
+    super(Graphics.width  - window_width  - 100, 
+          Graphics.height - window_height - 50 , 
+          window_width, window_height)
+          
     self.z = 100
     self.opacity = 255
-    @lines = []
-    @num_wait = 0
+    @lines = []                                    # Window texts index
+    @num_wait = 0                                  # Wait time for next display
     create_back_bitmap
     create_back_sprite
+    
     deactivate
     self.windowskin = Cache.system($MAP_INFO_SKIN)
     refresh

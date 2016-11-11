@@ -56,48 +56,48 @@ class Game_System
   
 end
 class Debug_Functions
-  
+  #----------------------------------------------------------------------------
   def AddBits(amount = 0, useless = 0)
     $game_party.gain_gold(amount)
   end
-  
+  #----------------------------------------------------------------------------
   def SetCurrentXP(value = 100, useless = 0)
     $game_party.members.each do |battler|
       battler.change_exp(value,true)
     end
   end
-  
+  #----------------------------------------------------------------------------
   def MakeItem(id = 1,amount = 1)
     $game_party.gain_item($data_items[id],amount)
   end
-  
+  #----------------------------------------------------------------------------
   def MakeWeapon(id = 1,amount = 1)
     $game_party.gain_item($data_weapons[id],amount)
   end
-  
+  #----------------------------------------------------------------------------
   def MakeArmor(id = 1,amount = 1)
     $game_party.gain_item($data_armors[id],amount)
   end
-  
+  #----------------------------------------------------------------------------
   def RecoverAll
     $game_party.members.each do |battler|
       battler.recover_all
     end
     #YES.recover_stamina
   end
-  
+  #----------------------------------------------------------------------------
   def SaveFile
     SceneManager.call(Scene_Save)
   end
-  
+  #----------------------------------------------------------------------------
   def LoadFile
     SceneManager.call(Scene_Load)
   end
-  
+  #----------------------------------------------------------------------------
   def Show_Current_Position
     puts "Current Position:(#{$game_player.x},#{$game_player.y})"
   end
-  
+  #----------------------------------------------------------------------------
   def Move(dir)
     case dir
     when 2; $game_player.move_down
@@ -107,13 +107,21 @@ class Debug_Functions
     else msgbox("Invailed Command!")
     end
   end
-  
+  #----------------------------------------------------------------------------
   def Teleport(map_id = 5 ,x = 7,y = 7)
     $game_player.reserve_transfer(map_id, x, y,)
   end
-  
+  #----------------------------------------------------------------------------
   def Show_Balloon(id = 1)
     $game_player.csca_balloon_id = id
   end
-  
+  #----------------------------------------------------------------------------
+  def Eval_from_file
+    file = File.new("Eval.txt",'r')
+    while (line = file.gets)
+      eval(line)
+    end
+    file.close
+  end
+  #----------------------------------------------------------------------------
 end

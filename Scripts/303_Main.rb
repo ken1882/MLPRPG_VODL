@@ -45,4 +45,5 @@ rescue Exception => error
   
   File.open(filename, 'w+') {|f| f.write(error_txt + "\n") }
   raise  error.class, error.message, [error.backtrace.first]
+rescue SystemExit
 end
