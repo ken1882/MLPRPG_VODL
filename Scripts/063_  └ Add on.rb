@@ -1,16 +1,15 @@
 #==============================================================================
-# ** Cache
+# ** Game_Map
 #------------------------------------------------------------------------------
-#  This module loads graphics, creates bitmap objects, and retains them.
-# To speed up load times and conserve memory, this module holds the
-# created bitmap object in the internal hash, allowing the program to
-# return preexisting objects when the same bitmap is requested again.
+#  This class handles maps. It includes scrolling and passage determination
+# functions. The instance of this class is referenced by $game_map.
 #==============================================================================
-module Cache
+class Game_Map
   #--------------------------------------------------------------------------
-  # * Get UI Graphic
+  # * dispose sprites b4 save
   #--------------------------------------------------------------------------
-  def self.UI(filename)
-    load_bitmap("Graphics/UI/", filename)
+  def dispose_sprites
+    
   end
+  
 end

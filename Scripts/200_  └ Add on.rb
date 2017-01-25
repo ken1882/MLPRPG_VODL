@@ -1,16 +1,13 @@
 #==============================================================================
-# ** Cache
+# ** Scene_Map
 #------------------------------------------------------------------------------
-#  This module loads graphics, creates bitmap objects, and retains them.
-# To speed up load times and conserve memory, this module holds the
-# created bitmap object in the internal hash, allowing the program to
-# return preexisting objects when the same bitmap is requested again.
+#  This class performs the map screen processing.
 #==============================================================================
-module Cache
+class Scene_Map < Scene_Base
   #--------------------------------------------------------------------------
-  # * Get UI Graphic
+  # * Return Spriteset
   #--------------------------------------------------------------------------
-  def self.UI(filename)
-    load_bitmap("Graphics/UI/", filename)
+  def spriteset
+    @spriteset
   end
 end

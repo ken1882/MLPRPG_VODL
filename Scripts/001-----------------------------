@@ -43,10 +43,3 @@ moving? -> process_moving (Fix free movement can't detect moving while dash)
 ║ ╚══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╝ ║
 ╚════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════╝
 =end
-module PONY
-  TOTAL_BIT_VARIABLE_ID   = 31
-  TOTAL_XP_VARIABLE_ID    = 32
-  
-  COMBAT_STOP_FLAG        = 98
-  ENABLE_FOLLOWER         = true
-end
