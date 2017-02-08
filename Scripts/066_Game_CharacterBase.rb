@@ -216,6 +216,7 @@ class Game_CharacterBase
   # * Move to Designated Position
   #--------------------------------------------------------------------------
   def moveto(x, y)
+    
     @x = x % $game_map.width
     @y = y % $game_map.height
     @real_x = @x

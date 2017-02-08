@@ -43,9 +43,16 @@ module SceneManager
   # *)  Disply texts on info box
   #----------------------------------------------------------------------------
   def self.display_info(text = nil)
+    text.tr('\n','  ')
     scene = self.scene
     return unless scene.is_a?(Scene_Map) && !text.nil?
     scene.display_info(text)
+  end
+  #----------------------------------------------------------------------------
+  # *) Scene Stack
+  #----------------------------------------------------------------------------
+  def self.stack
+    @stack
   end
   #----------------------------------------------------------------------------
 end

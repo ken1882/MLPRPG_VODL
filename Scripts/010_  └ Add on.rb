@@ -6,6 +6,13 @@
 #==============================================================================
 module DataManager
   #---------------------------------------------------------------------------
+  # *) Ensure the file or dictionary
+  #---------------------------------------------------------------------------
+  def self.ensure_file_exist(filename)
+    Dir.mkdir(filename) unless File.exist?(filename)
+  end
+  
+  #---------------------------------------------------------------------------
   # *) Crash Dump
   #---------------------------------------------------------------------------
   def self.save_on_crash
@@ -19,5 +26,19 @@ module DataManager
     end
     return true
   end
-  
+  #--------------------------------------------------------------------------
+  # * Create Filename
+  #     index : File Index
+  #--------------------------------------------------------------------------
+  def self.make_filename(index)
+    self.ensure_file_exist("Save/")
+    sprintf("Save/Save%02d.rvdata2", index + 1)
+  end
+  #--------------------------------------------------------------------------
+  # * Determine Existence of Save File
+  #--------------------------------------------------------------------------
+  def self.save_file_exists?
+    self.ensure_file_exist("Save/")
+    !Dir.glob('Save/Save*.rvdata2').empty?
+  end
 end
