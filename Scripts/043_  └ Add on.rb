@@ -1,9 +1,10 @@
 #==============================================================================
-# ** Game_Action
+# ** Game_BaseItem
 #------------------------------------------------------------------------------
-#  This class handles battle actions. This class is used within the
-# Game_Battler class.
+#  This class uniformly handles skills, items, weapons, and armor. References
+# to the database object itself are not retained to enable inclusion in save
+# data.
 #==============================================================================
-class Game_Action
+class Game_BaseItem
   
 end

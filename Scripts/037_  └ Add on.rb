@@ -1,9 +1,9 @@
 #==============================================================================
-# ** Game_Picture
+# ** Game_Screen
 #------------------------------------------------------------------------------
-#  This class handles pictures. It is created only when a picture of a specific
-# number is required internally for the Game_Pictures class.
+#  This class handles screen maintenance data, such as changes in color tone,
+# flashes, etc. It's used within the Game_Map and Game_Troop classes.
 #==============================================================================
-class Game_Picture
+class Game_Screen
   
 end

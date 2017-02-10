@@ -1,26 +1,10 @@
 #==============================================================================
-# ** Game_Player
+# ** Game_Character
 #------------------------------------------------------------------------------
-#  This class handles the player. It includes event starting determinants and
-# map scrolling functions. The instance of this class is referenced by
-# $game_player.
+#  A character class with mainly movement route and other such processing
+# added. It is used as a super class of Game_Player, Game_Follower,
+# GameVehicle, and Game_Event.
 #==============================================================================
-class Game_Player < Game_Character
-  #---------------------------------------------------------------------------
-  # * Method Missing
-  # ----------------------------------------------------------------------   
-  # DANGER ZONE: Redirect to Game_Enemy
-  #---------------------------------------------------------------------------
-  def method_missing(symbol, *args)
-    super(symbol, *args) if actor.nil?
-    
-    case args.size
-    when 0; actor.method(symbol).call
-    when 1; actor.method(symbol).call(args[0])
-    when 2; actor.method(symbol).call(args[0], args[1])
-    when 3; actor.method(symbol).call(args[0], args[1], args[2])
-    when 4; actor.method(symbol).call(args[0], args[1], args[2], args[3])
-    when 5; actor.method(symbol).call(args[0], args[1], args[2], args[3], args[4])
-    end
-  end
+class Game_Character < Game_CharacterBase
+  
 end

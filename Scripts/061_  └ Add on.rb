@@ -1,9 +1,26 @@
 #==============================================================================
-# ** Game_Troop
+# ** Game_Party
 #------------------------------------------------------------------------------
-#  This class handles enemy groups and battle-related data. Also performs
-# battle events. The instance of this class is referenced by $game_troop.
+#  This class handles parties. Information such as gold and items is included.
+# Instances of this class are referenced by $game_party.
 #==============================================================================
-class Game_Troop < Game_Unit
-  
+class Game_Party < Game_Unit
+  #--------------------------------------------------------------------------
+  # * Increase Gold
+  #--------------------------------------------------------------------------
+  def gain_gold(amount)
+    @gold = [[@gold + amount, 0].max, max_gold].min
+  end
+  #--------------------------------------------------------------------------
+  # * Decrease Gold
+  #--------------------------------------------------------------------------
+  def lose_gold(amount)
+    gain_gold(-amount)
+  end
+  #--------------------------------------------------------------------------
+  # * Get Maximum Value of Gold
+  #--------------------------------------------------------------------------
+  def max_gold
+    return 99999999
+  end
 end

@@ -1,22 +1,37 @@
 #==============================================================================
-# ** Scene_Menu
+# ** Scene_Map
 #------------------------------------------------------------------------------
-#  This class performs the menu screen processing.
+#  This class performs the map screen processing.
 #==============================================================================
-class Scene_Menu < Scene_MenuBase
+class Scene_Map < Scene_Base
   #--------------------------------------------------------------------------
-  # * Create Status Window
+  # * Frame Update
   #--------------------------------------------------------------------------
-  def create_status_window
-    @status_window = Window_MenuStatus.new(0 ,@command_window.height)
+  def update
+    super
+    return if $on_exit
+    $game_map.update(true)
+    $game_player.update
+    $game_timer.update
+    @spriteset.update
+    update_scene if scene_change_ok?
   end
   #--------------------------------------------------------------------------
-  # * Create Gold Window
+  # * Return Spriteset
   #--------------------------------------------------------------------------
-  def create_gold_window
-    @gold_window = Window_Gold.new(0)
-    @gold_window.x = Graphics.width - @gold_window.width
-    @gold_window.y = 0
+  def spriteset
+    @spriteset
+  end
+  #--------------------------------------------------------------------------
+  # * Determine if Menu is Called due to Cancel Button
+  #--------------------------------------------------------------------------
+  def update_call_menu
+    if $game_system.menu_disabled || $game_map.interpreter.running?
+      @menu_calling = false
+    else
+      @menu_calling ||= Input.trigger?(:kESC)
+      call_menu if @menu_calling && !$game_player.moving?
+    end
   end
   
 end

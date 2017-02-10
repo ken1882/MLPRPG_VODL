@@ -1,9 +1,9 @@
 #==============================================================================
-# ** Game_Vehicle
+# ** Game_Followers
 #------------------------------------------------------------------------------
-#  This class handles vehicles. It's used within the Game_Map class. If there
-# are no vehicles on the current map, the coordinates are set to (-1,-1).
+#  This is a wrapper for a follower array. This class is used internally for
+# the Game_Player class. 
 #==============================================================================
-class Game_Vehicle < Game_Character
+class Game_Followers
   
 end

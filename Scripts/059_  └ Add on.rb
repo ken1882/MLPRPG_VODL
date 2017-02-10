@@ -1,9 +1,9 @@
 #==============================================================================
-# ** Game_Party
+# ** Game_Unit
 #------------------------------------------------------------------------------
-#  This class handles parties. Information such as gold and items is included.
-# Instances of this class are referenced by $game_party.
+#  This class handles units. It's used as a superclass of the Game_Party and
+# and Game_Troop classes.
 #==============================================================================
-class Game_Party < Game_Unit
+class Game_Unit
   
 end

@@ -1,9 +1,9 @@
 #==============================================================================
-# ** Game_Actor
+# ** Game_Battler
 #------------------------------------------------------------------------------
-#  This class handles actors. It is used within the Game_Actors class
-# ($game_actors) and is also referenced from the Game_Party class ($game_party).
+#  A battler class with methods for sprites and actions added. This class 
+# is used as a super class of the Game_Actor class and Game_Enemy class.
 #==============================================================================
-class Game_Actor < Game_Battler
+class Game_Battler < Game_BattlerBase
   
 end

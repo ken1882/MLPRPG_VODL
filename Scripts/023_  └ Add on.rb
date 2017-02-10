@@ -1,49 +1,22 @@
 #==============================================================================
-# ** Game_System
+# ** Game_Temp
 #------------------------------------------------------------------------------
-#  This class handles system data. It saves the disable state of saving and 
-# menus. Instances of this class are referenced by $game_system.
+#  This class handles temporary data that is not included with save data.
+# The instance of this class is referenced by $game_temp.
 #==============================================================================
-class Game_System
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  attr_accessor :time_stop
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
-  alias initialize_COMP initialize
-  def initialize
-    @time_stop = false
-    initialize_COMP
+class Game_Temp
+  #-----------------------------------------------------------------------------
+  #  *) check temporary data
+  #-----------------------------------------------------------------------------
+  def check_var_ok?(*args)
+    symbol = args[0]
+    
+    case symbol
+    when :coord_1
+      puts "Hello World!"
+    when :coord_2
+      puts "Hey yal!"
+    end
+    
   end
-  #--------------------------------------------------------------------------
-  # * time stopped?
-  #--------------------------------------------------------------------------
-  def time_stopped?
-    return @time_stop
-  end
-  
-  #--------------------------------------------------------------------------
-  # * show roll result?
-  #--------------------------------------------------------------------------
-  def show_roll_result?
-    return $game_switches[15]
-  end
-  
-  #--------------------------------------------------------------------------
-  # * hide all windows?
-  #--------------------------------------------------------------------------
-  def hide_all_windows?
-    return $game_switches[16]
-  end
-  
-  #--------------------------------------------------------------------------
-  # * return a rand class value
-  #--------------------------------------------------------------------------
-  def make_rand
-    Random.new_seed
-    return Random.new
-  end
-  
 end

@@ -1,15 +1,9 @@
 #==============================================================================
-# ** Game_Map
+# ** Game_Troop
 #------------------------------------------------------------------------------
-#  This class handles maps. It includes scrolling and passage determination
-# functions. The instance of this class is referenced by $game_map.
+#  This class handles enemy groups and battle-related data. Also performs
+# battle events. The instance of this class is referenced by $game_troop.
 #==============================================================================
-class Game_Map
-  #--------------------------------------------------------------------------
-  # * dispose sprites b4 save
-  #--------------------------------------------------------------------------
-  def dispose_sprites
-    
-  end
+class Game_Troop < Game_Unit
   
 end

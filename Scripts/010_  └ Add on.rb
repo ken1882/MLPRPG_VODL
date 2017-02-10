@@ -27,12 +27,48 @@ module DataManager
     return true
   end
   #--------------------------------------------------------------------------
+  # * Execute Save (No Exception Processing)
+  #--------------------------------------------------------------------------
+  class << self; alias save_game_without_rescue_chain save_game_without_rescue; end
+  def self.save_game_without_rescue(index)
+    File.open(make_chainfilename(index), "wb") do |file|
+      Marshal.dump(make_chain_header, file)
+    end
+    save_game_without_rescue_chain(index)
+  end
+  #--------------------------------------------------------------------------
+  # * Execute Load (No Exception Processing)
+  #--------------------------------------------------------------------------
+  class << self; alias load_game_without_rescue_chain load_game_without_rescue; end
+  def self.load_game_without_rescue(index)
+    File.open(make_chainfilename(index), "rb") do |file|
+      BlockChain.load_chain_data( Marshal.load(file) )
+    end
+    load_game_without_rescue_chain(index)
+  end
+  #--------------------------------------------------------------------------
   # * Create Filename
   #     index : File Index
   #--------------------------------------------------------------------------
   def self.make_filename(index)
     self.ensure_file_exist("Save/")
     sprintf("Save/Save%02d.rvdata2", index + 1)
+  end
+  #--------------------------------------------------------------------------
+  # * Create blockchain Filename
+  #     index : File Index
+  #--------------------------------------------------------------------------
+  def self.make_chainfilename(index)
+    self.ensure_file_exist("Save/")
+    sprintf("Save/Chain%02d.rvdata2", index + 1)
+  end
+  #--------------------------------------------------------------------------
+  # * Create Save Header
+  #--------------------------------------------------------------------------
+  def self.make_chain_header
+    header = {}
+    header[:nodes] = BlockChain.chain_nodes
+    header
   end
   #--------------------------------------------------------------------------
   # * Determine Existence of Save File

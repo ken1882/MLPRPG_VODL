@@ -1,11 +1,11 @@
 #==============================================================================
-# ** Game_Follower
+# ** Game_Player
 #------------------------------------------------------------------------------
-#  This class handles followers. A follower is an allied character, other than
-# the front character, displayed in the party. It is referenced within the
-# Game_Followers class.
+#  This class handles the player. It includes event starting determinants and
+# map scrolling functions. The instance of this class is referenced by
+# $game_player.
 #==============================================================================
-class Game_Follower < Game_Character
+class Game_Player < Game_Character
   #---------------------------------------------------------------------------
   # * Method Missing
   # ----------------------------------------------------------------------   

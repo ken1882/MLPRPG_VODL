@@ -1,9 +1,9 @@
 #==============================================================================
-# ** Game_ActionResult
+# ** Game_Action
 #------------------------------------------------------------------------------
-#  This class handles the results of battle actions. It is used internally for
-# the Game_Battler class. 
+#  This class handles battle actions. This class is used within the
+# Game_Battler class.
 #==============================================================================
-class Game_ActionResult
+class Game_Action
   
 end

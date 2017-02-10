@@ -1,9 +1,15 @@
 #==============================================================================
-# ** Game_CommonEvent
+# ** Game_Map
 #------------------------------------------------------------------------------
-#  This class handles common events. It includes functionality for execution of
-# parallel process events. It's used within the Game_Map class ($game_map).
+#  This class handles maps. It includes scrolling and passage determination
+# functions. The instance of this class is referenced by $game_map.
 #==============================================================================
-class Game_CommonEvent
+class Game_Map
+  #--------------------------------------------------------------------------
+  # * dispose sprites b4 save
+  #--------------------------------------------------------------------------
+  def dispose_sprites
+    
+  end
   
 end

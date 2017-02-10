@@ -1,10 +1,9 @@
 #==============================================================================
-# ** Game_Character
+# ** Game_CharacterBase
 #------------------------------------------------------------------------------
-#  A character class with mainly movement route and other such processing
-# added. It is used as a super class of Game_Player, Game_Follower,
-# GameVehicle, and Game_Event.
+#  This base class handles characters. It retains basic information, such as 
+# coordinates and graphics, shared by all characters.
 #==============================================================================
-class Game_Character < Game_CharacterBase
+class Game_CharacterBase
   
 end

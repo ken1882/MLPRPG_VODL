@@ -1,9 +1,9 @@
 #==============================================================================
-# ** Game_CharacterBase
+# ** Game_CommonEvent
 #------------------------------------------------------------------------------
-#  This base class handles characters. It retains basic information, such as 
-# coordinates and graphics, shared by all characters.
+#  This class handles common events. It includes functionality for execution of
+# parallel process events. It's used within the Game_Map class ($game_map).
 #==============================================================================
-class Game_CharacterBase
+class Game_CommonEvent
   
 end
