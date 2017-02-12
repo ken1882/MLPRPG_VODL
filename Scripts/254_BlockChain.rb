@@ -85,4 +85,9 @@ module BlockChain
     end
   end
   
+  def self.test
+    nonce = (rand() * (10 ** 9)).to_i
+    Boolean(PONY.Mining(nonce, PONY::CHAIN::Difficulty))
+  end
+  
 end

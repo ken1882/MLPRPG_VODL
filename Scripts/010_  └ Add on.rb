@@ -73,8 +73,12 @@ module DataManager
   #--------------------------------------------------------------------------
   # * Determine Existence of Save File
   #--------------------------------------------------------------------------
-  def self.save_file_exists?
+  def self.save_file_exists?(slot = nil)
     self.ensure_file_exist("Save/")
-    !Dir.glob('Save/Save*.rvdata2').empty?
+    files = Dir.glob('Save/Save*.rvdata2')
+    
+    return slot.nil? ? !files.empty? :
+    files.any? {|name| name == 'Save/Save' + slot.to_fileid(2) + '.rvdata2'}
+    
   end
 end

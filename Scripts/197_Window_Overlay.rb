@@ -48,7 +48,7 @@ class Window_Overlay < Window_HorzCommand
   #--------------------------------------------------------------------------
   def activate
     self.show
-    self.opacity = 255
+    refresh
     super
   end
   #--------------------------------------------------------------------------
@@ -70,10 +70,9 @@ class Window_Overlay < Window_HorzCommand
   # * Raise ovrelay window
   #--------------------------------------------------------------------------
   def raise_overlay(info = nil, stack_commandname = nil, args = nil, forced = false)
-    @info = info if info
     @force_execute = forced
+    super(info, stack_commandname, args)
     refresh
-    super(stack_commandname, args)
   end
   #--------------------------------------------------------------------------
   # * refresh

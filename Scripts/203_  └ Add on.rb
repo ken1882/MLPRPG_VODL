@@ -34,9 +34,11 @@ class Scene_Base
   # * Overlay Window
   #--------------------------------------------------------------------------
   def create_overlay_windows
-    confirm_exit_win = Window_Confirm.new(160, 180, "Do you really want to leave? Ponies will miss you...", true)
+    confirm_exit_win = Window_Confirm.new(160, 180, "  Do you really want to leave? Ponies will miss you...", true)
+    confirm_win = Window_Confirm.new(160, 180, '', true)
     popup_win = Window_PopInfo.new(160, 180, "", 180, true)
     @@overlay_windows[:exit_confirm] = confirm_exit_win
+    @@overlay_windows[:confirm] = confirm_win
     @@overlay_windows[:popinfo] = popup_win
   end
   #--------------------------------------------------------------------------
@@ -44,8 +46,8 @@ class Scene_Base
   #--------------------------------------------------------------------------
   alias update_pony update
   def update
-    @@button_cooldown -= 1 if @@button_cooldown > 0
-    update_terminate if @@button_cooldown <= 0
+    @@button_cooldown -= 1 unless button_cooled?
+    update_terminate if button_cooled?
     update_overlay
     update_pony
   end
@@ -56,7 +58,7 @@ class Scene_Base
     return if @@overlay_windows[:exit_confirm].overlayed
     return unless Input.trigger?(:kF4)  || Input.press?(:kF4)
     return unless Input.trigger?(:kALT) || Input.press?(:kALT) 
-    @@button_cooldown = Button_CoolDown
+    self.heatup_button
     $on_exit = true
     raise_overlay_window(:exit_confirm , nil, :exit)
   end
@@ -95,6 +97,17 @@ class Scene_Base
       @@overlayed = true if window.overlayed
     end
   end
-  
+  #--------------------------------------------------------------------------
+  # * Start button cooldown
+  #--------------------------------------------------------------------------
+  def heatup_button
+    @@button_cooldown = Button_CoolDown
+  end
+  #--------------------------------------------------------------------------
+  # * Button cooldown finished
+  #--------------------------------------------------------------------------
+  def button_cooled?
+    @@button_cooldown <= 0
+  end
   #--------------------------------------------------------------------------
 end

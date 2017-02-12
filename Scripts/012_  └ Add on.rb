@@ -54,5 +54,21 @@ module SceneManager
   def self.stack
     @stack
   end
+  #--------------------------------------------------------------------------
+  # * Exit Game
+  #--------------------------------------------------------------------------
+  class << self; alias exit_stable exit; end
+  def self.exit
+    self.return unless self.scene_stable?
+    sleep(0.1)
+    self.exit_stable
+  end
+  #--------------------------------------------------------------------------
+  # * Check if current scene is stable for exit
+  #--------------------------------------------------------------------------
+  def self.scene_stable?
+    return false if self.scene.is_a?(Scene_Text)
+    return true
+  end
   #----------------------------------------------------------------------------
 end

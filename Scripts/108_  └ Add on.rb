@@ -8,7 +8,6 @@ class Window_Selectable < Window_Base
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_reader   :overlayed
-  attr_accessor :button_cooldown
   #--------------------------------------------------------------------------
   # * Object Initialization
   #-------------------------------------------------------------------------
@@ -16,7 +15,6 @@ class Window_Selectable < Window_Base
   def initialize(x, y, width, height)
     @overlayed    = false
     @self_overlay = false
-    @button_cooldown = 0
     @overlay_window  = nil
     @stacked_command = nil
     @stacked_args    = nil
@@ -26,9 +24,8 @@ class Window_Selectable < Window_Base
   # * Frame Update
   #--------------------------------------------------------------------------
   alias update_overlayed update
-  def update
-    @button_cooldown -= 1    if @button_cooldown > 0
-    process_overlay_handling unless @button_cooldown > 0
+  def update    
+    process_overlay_handling if button_cooled?
     
     if @overlayed
       self_overlay? ? update_overlay(update_overlayed) : update_overlay
@@ -54,11 +51,11 @@ class Window_Selectable < Window_Base
   def self_overlay?
     @self_overlay
   end
-  
   #--------------------------------------------------------------------------
   # * Raise ovrelay window
   #--------------------------------------------------------------------------
-  def raise_overlay(stack_commandname = nil, args = nil)
+  def raise_overlay(info = nil, stack_commandname = nil, args = nil)
+    @overlay_window.info = info if info
     @stacked_command = self.method(stack_commandname) rescue nil
     @stacked_args    = args.is_a?(Array) ? args : [args]
     self.deactivate unless self_overlay?
@@ -142,7 +139,7 @@ class Window_Selectable < Window_Base
   def process_handling
     return unless open? && active
     return if (@overlayed && !self_overlay?)
-    return if @button_cooldown > 0
+    return unless button_cooled?
     return process_ok       if ok_enabled?        && Input.trigger?(:C)
     return process_cancel   if cancel_enabled?    && Input.trigger?(:B)
     return process_pagedown if handle?(:pagedown) && Input.trigger?(:R)

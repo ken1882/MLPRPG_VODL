@@ -28,7 +28,15 @@ class Game_Interpreter
       script += @list[@index].parameters[0] + "\n"
     end
     @eval_passed = false
-    eval(script)
+    
+    begin
+      eval(script)
+    rescue Exception => e
+      e = e.to_s
+      SceneManager.display_info("Error: " + e)
+      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while eval in Interpreter!\n")
+    end
+    
     @eval_passed = true
   end
   

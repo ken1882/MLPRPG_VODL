@@ -9,7 +9,7 @@ module FileManager
   # * Text wrap for window contents
   #--------------------------------------------------------------------------
   def self.textwrap(full_text, line_width)
-    line_width *= 1.2
+    line_width *= 1.3
     text_width = Font.default_size / 2
     text_limit = line_width / text_width
     line_count = (full_text.size + text_limit - 1) / text_limit
@@ -25,8 +25,9 @@ module FileManager
         break if text.size >= text_limit
       end
       
-      clone_text = clone_text.drop(text.size)
-      text = ensure_lines_connected(text, clone_text)
+      processed  = ensure_lines_connected(text, clone_text.drop(text.size))
+      clone_text = clone_text.drop(text.size + processed[0])
+      text = processed[1]
       wraped_text.push(text)
     end
     
@@ -36,10 +37,17 @@ module FileManager
   # *  If line ended in the mid of word, add '-' connect two lines.
   #--------------------------------------------------------------------------
   def self.ensure_lines_connected(text, clone_text)
-    return text if !clone_text[0] || !text[-1]
-    return text if !clone_text[0].match(/^[[:alpha:]]$/)
-    return text if !text[-1].match(/^[[:alpha:]]$/)
-    return text + '-'
+    return [0, text] if !clone_text[0] || !text[-1]
+    return [0, text] if !clone_text[0].match(/^[[:alpha:]]$/)
+    return [0, text] if !text[-1].match(/^[[:alpha:]]$/)
+    endl_pos = 0
+    surplus = ""
+    3.times do |i|
+      surplus += clone_text[i]
+      endl_pos = i if clone_text[i] == ' ' || clone_text[i] == 10.chr
+    end
+    proc_text = endl_pos > 0 ? text + surplus[0...endl_pos] : text + '-'
+    return [endl_pos, proc_text]
   end
   #--------------------------------------------------------------------------
   # * Modify Game.ini index

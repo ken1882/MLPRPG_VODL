@@ -1,9 +1,30 @@
 
 class Game_System
+  #--------------------------------------------------------------------------
+  # * Public Instance Variables
+  #--------------------------------------------------------------------------
+  attr_accessor :console_list            # Inputed console list
+  #--------------------------------------------------------------------------
+  # * Object Initialization
+  #--------------------------------------------------------------------------
+  alias initialize_console initialize
+  def initialize
+    @console_list = []
+    initialize_console
+  end
+  #--------------------------------------------------------------------------
+  # * Push new console command to record list
+  #--------------------------------------------------------------------------
+  def push_console(text)
+    
+    @console_list.unshift(text)
+    @console_list.uniq!
+    @console_list.pop if @console_list.size >= 10
+  end
   #=================================================
   # *) General console setting
   #=================================================
-  def console(command = "nil")
+  def console(command = "")
     
     identified = false
     allow_eval_code = false
@@ -23,7 +44,6 @@ class Game_System
     end
     
     execute_command = command[1]
-    puts "#{command} | #{execute_command}"
     
     if execute_command.nil? || !identified
       info = "No command input!"
@@ -42,7 +62,6 @@ class Game_System
       
       if executable || allow_eval_code
         execute_command = prefix + execute_command
-        puts "Execute : #{execute_command}"
         info = "success! #{execute_command}"
         begin
           eval(execute_command)
@@ -53,6 +72,7 @@ class Game_System
         info = "Invailed command!"
       end
     end
+    
     info = info.to_s
     info = info.match("success") ? "Info: " + info : "Error: " + info
     SceneManager.display_info(info)
