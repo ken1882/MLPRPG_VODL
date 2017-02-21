@@ -14,6 +14,9 @@ module PONY::ERRNO
     :item_unconsumed  => "Consumable Item can't be consumed",
     :int_overflow     => "Integer Overflow",
     :datatype_error   => "Data Type Error",
+    :nil_block        => "Block nil miner",
+    :chain_broken     => "Block Chain has more than one gensis block!",
+    :neg_balance      => "Negative account balance",
     
   }
   #--------------------------------------------------------------------------

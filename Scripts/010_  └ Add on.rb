@@ -11,7 +11,14 @@ module DataManager
   def self.ensure_file_exist(filename)
     Dir.mkdir(filename) unless File.exist?(filename)
   end
-  
+  #--------------------------------------------------------------------------
+  # * Set Up New Game
+  #--------------------------------------------------------------------------
+  class << self; alias setup_new_game_bc setup_new_game; end
+  def self.setup_new_game
+    BlockChain.init_chain
+    self.setup_new_game_bc
+  end
   #---------------------------------------------------------------------------
   # *) Crash Dump
   #---------------------------------------------------------------------------

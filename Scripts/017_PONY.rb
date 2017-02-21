@@ -17,6 +17,7 @@ module PONY
   CheckSum = Win32API.new("lib/Checksum.dll", "Checksum",'pll','l')
   
   def self.Sha256(input = nil)
+    input = input.to_s unless input.is_a?(String)
     return input.nil? ? Sha256 : Sha256.call(input)
   end
   

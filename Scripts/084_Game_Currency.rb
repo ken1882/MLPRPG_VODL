@@ -20,7 +20,7 @@ class Game_Currency
   def initialize(_id, amount = 0)
     @name = Coin_Name[_id]
     @id = _id
-    @value = amount
+    @value = amount.to_i
     self.hash_object
   end
   #--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ class Game_Currency
   #--------------------------------------------------------------------------
   def hash_object
     prefix = PONY.MD5(@name)
-    suffix = PONY.MD5(@value.to_s(16))
+    suffix = PONY.MD5(@value.to_s)
     @hashid = PONY.Sha256(prefix + suffix).to_i(16)
   end
 end
@@ -52,17 +52,14 @@ class Game_Transaction
   #--------------------------------------------------------------------------
   def initialize(type_id, amount, from, to, info = "")
     @currency  = Game_Currency.new(type_id, amount)
-    @source    = PONY.Sha256(from).to_i(16)
-    @recipient = PONY.Sha256(to).to_i(16)
-    @info   = info
+    @source    = BlockChain.accounts(from, true)
+    @recipient = BlockChain.accounts(to, true)
+    @info      = info
     @timestamp = Time.now
-    @hashid = PONY.Sha256(Time.now.to_s + currency.hashid.to_s(16) + info)
-  end
-  # String to Ponyaccount
-  def transaccount(is_source, account)
-    @source    = account if is_source
-    @recipient = account unless is_source
+    @hashid    = PONY.Sha256(Time.now.to_s + currency.hashid.to_s + from + to + info).to_i(16)
   end
   # value of this transaction
   def value; return currency.value; end
+  # currency type
+  def type;  return currency.id; end
 end

@@ -39,5 +39,20 @@ class Game_Interpreter
     
     @eval_passed = true
   end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Shop Processing
+  #--------------------------------------------------------------------------
+  def command_302
+    return if $game_party.in_battle
+    puts "Interpreter: Event Id: #{@event_id}"
+    goods = [@params]
+    while next_event_code == 605
+      @index += 1
+      goods.push(@list[@index].parameters)
+    end
+    SceneManager.call(Scene_Shop)
+    SceneManager.scene.prepare(goods, @params[4])
+    Fiber.yield
+  end
   
 end

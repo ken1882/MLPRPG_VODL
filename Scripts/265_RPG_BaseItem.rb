@@ -47,6 +47,28 @@ end
 # Quicker way to check the features
 #=======================================================================
 class RPG::BaseItem
+  
+  attr_reader :hashid
+  #---------------------------------------------------------------------------
+  # *) Initialize
+  #---------------------------------------------------------------------------  
+  alias initialize_hash initialize
+  def initialize
+    initialize_hash
+    base = (@id * 42).to_s(8)
+    base += @name ? @name : "nothingness"
+    @hashid = PONY.Sha256(base).to_i(16)
+  end
+  
+  #---------------------------------------------------------------------------
+  # *) Hash self to an id
+  #---------------------------------------------------------------------------  
+  def hash_self
+    base = @icon_index ? @id * (@icon_index + 1) : @id * 42
+    base = @name.nil? ? "" : base.to_s + name
+    PONY.Sha256(base).to_i(16)
+  end
+  
   #-----------------------------------------------------------------------
   # *) Get Attack Element
   #-----------------------------------------------------------------------
