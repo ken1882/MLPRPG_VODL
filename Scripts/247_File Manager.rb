@@ -43,6 +43,7 @@ module FileManager
     endl_pos = 0
     surplus = ""
     3.times do |i|
+      break if clone_text[i].nil?
       surplus += clone_text[i]
       endl_pos = i if clone_text[i] == ' ' || clone_text[i] == 10.chr
     end

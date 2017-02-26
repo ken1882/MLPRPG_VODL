@@ -92,15 +92,15 @@ class Debug_Functions
   end
   #----------------------------------------------------------------------------
   def MakeItem(id = 1,amount = 1)
-    $game_party.gain_item($data_items[id],amount)
+    $game_party.gain_item($data_items[id],amount, false, Vocab::Coinbase, "Console: MakeItem")
   end
   #----------------------------------------------------------------------------
   def MakeWeapon(id = 1,amount = 1)
-    $game_party.gain_item($data_weapons[id],amount)
+    $game_party.gain_item($data_weapons[id],amount, false, Vocab::Coinbase, "Console: MakeWeapon")
   end
   #----------------------------------------------------------------------------
   def MakeArmor(id = 1,amount = 1)
-    $game_party.gain_item($data_armors[id],amount)
+    $game_party.gain_item($data_armors[id],amount, false, Vocab::Coinbase, "Console: MakeArmor")
   end
   #----------------------------------------------------------------------------
   def RecoverAll

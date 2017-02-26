@@ -90,9 +90,9 @@ module PONY::CHAIN
   # * Verify all nodes balance if equal to totalbalance
   #--------------------------------------------------------------------------
   def self.verify_totalbalance
-    sum = 0
-    info = "Bits amount is asynchronous with Block Chain"
-    #PONY::ERRNO.raise(:bits_incorrect, :exit, nil, info) unless sum == TotalBalance
+    return true if BlockChain.node_empty?
+    sum = BlockChain.account_balance
+    PONY::ERRNO.raise(:bits_incorrect, :exit, nil) unless sum == TotalBalance
   end
   
 end

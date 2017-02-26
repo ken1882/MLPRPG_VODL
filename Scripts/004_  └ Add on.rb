@@ -5,5 +5,6 @@
 # variables. Terms in the database are obtained from $data_system.
 #==============================================================================
 module Vocab
-  
+  Player         = "Player"
+  Coinbase       = "Equestria"
 end

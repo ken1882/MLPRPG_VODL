@@ -47,16 +47,21 @@ class Game_Transaction
   attr_reader :recipient
   attr_reader :info
   attr_reader :timestamp
+  attr_reader :goods
+  attr_reader :good_amount
   #--------------------------------------------------------------------------
   # * Initialization
   #--------------------------------------------------------------------------
-  def initialize(type_id, amount, from, to, info = "")
-    @currency  = Game_Currency.new(type_id, amount)
-    @source    = BlockChain.accounts(from, true)
-    @recipient = BlockChain.accounts(to, true)
-    @info      = info
-    @timestamp = Time.now
-    @hashid    = PONY.Sha256(Time.now.to_s + currency.hashid.to_s + from + to + info).to_i(16)
+  def initialize(type_id, amount, from, to, goods, good_amount = 1, info = "")
+    @currency    = Game_Currency.new(type_id, amount)
+    @source      = BlockChain.accounts(from, true)
+    @recipient   = BlockChain.accounts(to, true)
+    @info        = info
+    @goods       = goods if goods
+    @good_amount = good_amount
+    @timestamp   = Time.now
+    @hashid      = goods ? (goods.hashid + good_amount).to_s : "bits"
+    @hashid      = PONY.Sha256(@hashid + Time.now.to_s + currency.hashid.to_s + from + to + info + @timestamp.to_s).to_i(16)
   end
   # value of this transaction
   def value; return currency.value; end

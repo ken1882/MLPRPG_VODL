@@ -6,21 +6,69 @@
 #==============================================================================
 class Game_Party < Game_Unit
   #--------------------------------------------------------------------------
+  # * Gold
+  #--------------------------------------------------------------------------
+  def gold
+    BlockChain.account_balance(Vocab::Player)
+  end
+  #--------------------------------------------------------------------------
   # * Increase Gold
   #--------------------------------------------------------------------------
-  def gain_gold(amount)
-    @gold = [[@gold + amount, 0].max, max_gold].min
+  def gain_gold(amount, opp = "Equestria", info = '')
+    return if amount == 0
+    source   = amount < 0 ? Vocab::Player : opp
+    receiver = amount > 0 ? Vocab::Player : opp
+    BlockChain.bits_transaction(amount.abs, source, receiver, info)
+    
+    info = sprintf("Party has &s βits: %s", amount < 0 ? 'lost': 'gained', amount)
+    SceneManager.display_info(info)
   end
   #--------------------------------------------------------------------------
   # * Decrease Gold
   #--------------------------------------------------------------------------
-  def lose_gold(amount)
-    gain_gold(-amount)
+  def lose_gold(amount, receiver = "Equestria", info = '')
+    gain_gold(-amount, receiver, info)
   end
   #--------------------------------------------------------------------------
-  # * Get Maximum Value of Gold
+  # * Get Number of Items Possessed
   #--------------------------------------------------------------------------
-  def max_gold
-    return 99999999
+  def item_number(item)
+    container = item_container(item.class)
+    if !SceneManager.scene_is?(Scene_Map) && item
+      container[item.id] = BlockChain.item_amount(Vocab::Player, item)
+      container.delete(item.id) if container[item.id] == 0
+    end
+    container ? container[item.id] || 0 : 0
   end
+  #--------------------------------------------------------------------------
+  # * Increase/Decrease Items
+  #     include_equip : Include equipped items
+  #--------------------------------------------------------------------------
+  def gain_item(item, amount, include_equip = false, opp = 'Equestria', info = '')
+    container = item_container(item.class)
+    return unless container
+    last_number = item_number(item)
+    new_number  = [[last_number + amount, 0].max, max_item_number(item)].min
+    container.delete(item.id) if container[item.id] == 0
+    return unless last_number != new_number
+    
+    source   = amount < 0 ? Vocab::Player : opp
+    receiver = amount > 0 ? Vocab::Player : opp
+    BlockChain.item_transaction(item, amount.abs, source, receiver, info)
+    container[item.id] = new_number
+    container.delete(item.id) if container[item.id] == 0
+    if include_equip && new_number < 0
+      discard_members_equip(item, -new_number)
+    end
+    $game_map.need_refresh = true
+  end
+  #--------------------------------------------------------------------------
+  # * Lose Items
+  #     include_equip : Include equipped items
+  #--------------------------------------------------------------------------
+  def lose_item(item, amount, include_equip = false, opp = 'Equestria', info = '')
+    gain_item(item, -amount, true, opp, info)  if include_equip
+    gain_item(item, -amount, false, opp, info) if !include_equip
+  end
+  
 end
