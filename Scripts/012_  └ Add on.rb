@@ -10,8 +10,7 @@ module SceneManager
   # * all battlers
   #----------------------------------------------------------------------------
   def self.all_battlers
-    return unless self.scene.is_a?(Scene_Map)
-    
+    return unless self.scene_is?(Scene_Map)
     battlers = self.party_battlers + self.enemy_battlers
     return battlers
   end
@@ -70,5 +69,10 @@ module SceneManager
     return false if self.scene.is_a?(Scene_Text)
     return true
   end
+  
+  def self.item_for_dump
+    return scene.overlay_windows
+  end
+  
   #----------------------------------------------------------------------------
 end
