@@ -1,22 +1,21 @@
 #==============================================================================
-# ** Scene_Menu
+# ** Window_Loaing
 #------------------------------------------------------------------------------
-#  This class performs the menu screen processing.
+#   Display loading status 
 #==============================================================================
-class Scene_Menu < Scene_MenuBase
+class Window_Loading < Window_Overlay
   #--------------------------------------------------------------------------
-  # * Create Status Window
+  # * Object Initialization
   #--------------------------------------------------------------------------
-  def create_status_window
-    @status_window = Window_MenuStatus.new(0 ,@command_window.height)
+  def initialize(x, y, information, overlay_self = false)
+    super(x, y, information, overlay_self)
+    create_loading_sprites
   end
   #--------------------------------------------------------------------------
-  # * Create Gold Window
+  # * Create Loading Sprites
   #--------------------------------------------------------------------------
-  def create_gold_window
-    @gold_window = Window_Gold.new(0)
-    @gold_window.x = Graphics.width - @gold_window.width
-    @gold_window.y = 0
+  def create_loading_sprites
+    
   end
   
 end

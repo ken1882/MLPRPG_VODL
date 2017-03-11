@@ -4,7 +4,7 @@ module Graphics
   def self.transition(duration = 10, filename = "", vague = 40)
     puts SPLIT_LINE
     puts "[Debug] Map Transition"
-    caller.each {|i| puts "#{i}"}
+    BlockChain.mining
     transition_dnd(duration, filename, vague)
   end
   
