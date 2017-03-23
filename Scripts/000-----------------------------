@@ -1,0 +1,38 @@
+# I know this game can be decrypted. Respect the authors, please.
+# Warning: I have modified tons of stuffs, if any problem occured in your game
+# it's your business.
+=begin
+╔════╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═════╗
+║ ╔══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╗ ║
+╠─╣                                                                          ╠─╣
+╠─╣                          Script Tags                                     ╠─╣
+╠─╣                                                                          ╠─╣
+║ ╚══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╝ ║
+╚════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════╝
+search tag:
+Crtl + Shift + F
+Tags available:
+tag: damage
+tag: cast
+Tag: execute state effect
+tag: customed
+tag: state
+tag: target
+tag: item
+tag: state
+tag: AI
+tag: poison
+tag: modified
+tag: D&D_para
+tag: sight
+TAG: ERROR     // this is bad
+╔════╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═════╗
+║ ╔══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╗ ║
+╠─╣                                                                          ╠─╣
+╠─╣                         Important Global Variables                       ╠─╣
+╠─╣                                                                          ╠─╣
+║ ╚══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╝ ║
+╚════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════╝
+moving? -> process_moving (Fix free movement can't detect moving while dash)
+=end
+def Boolean(n); n == 0 ? false : true; end
