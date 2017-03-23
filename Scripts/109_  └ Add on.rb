@@ -150,4 +150,61 @@ class Window_Selectable < Window_Base
   #--------------------------------------------------------------------------
   def process_overlay_handling
   end
+  #--------------------------------------------------------------------------
+  # * Move Cursor Down
+  #--------------------------------------------------------------------------
+  def cursor_down(wrap = false)
+    mul = Input.press?(:kSHIFT) ? 5 : 1
+    if index < item_max - col_max || (wrap && col_max == 1)
+      next_index = index + col_max * mul
+      next_index = [item_max - 1, next_index].min if index + 1 != item_max
+      next_index = 0                              if index + 1 == item_max
+      select(next_index % item_max)
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Move Cursor Up
+  #--------------------------------------------------------------------------
+  def cursor_up(wrap = false)
+    mul = Input.press?(:kSHIFT) ? 5 : 1
+    if index >= col_max || (wrap && col_max == 1)
+      next_index = index - col_max * mul + item_max
+      next_index = [next_index, 0].max if index != 0
+      next_index = item_max - 1        if index == 0 && next_index > item_max
+      select(next_index % item_max)
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Move Cursor Right
+  #--------------------------------------------------------------------------
+  def cursor_right(wrap = false)
+    mul = Input.press?(:kSHIFT) ? 5 : 1
+    if col_max >= 2 && (index < item_max - 1 || (wrap && horizontal?))
+      next_index = index + 1 * mul
+      next_index = [item_max - 1, next_index].min if index + 1 != item_max
+      next_index = 0                              if index + 1 == item_max
+      select(next_index % item_max)
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Move Cursor Left
+  #--------------------------------------------------------------------------
+  def cursor_left(wrap = false)
+    mul = Input.press?(:kSHIFT) ? 5 : 1
+    if col_max >= 2 && (index > 0 || (wrap && horizontal?))
+      next_index = index - 1 * mul + item_max
+      next_index = [next_index, 0].max if index != 0
+      next_index = item_max - 1        if index == 0 && next_index > item_max
+      select(next_index % item_max)
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Check window if has previos entrance
+  #--------------------------------------------------------------------------
+  def has_parent?
+    return true if self.is_a?(Window_ItemList)
+    return true if self.is_a?(Window_FileAction)
+    return false
+  end
+  
 end

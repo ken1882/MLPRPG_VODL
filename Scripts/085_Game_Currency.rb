@@ -72,6 +72,7 @@ class Game_Transaction
     return if trans.source.id    != @source.id && trans.source.id    != @recipient.id 
     return if trans.recipient.id != @source.id && trans.recipient.id != @recipient.id
     return if trans.goods != @goods
+    
     # tag: last work
   end
   #--------------------------------------------------------------------------

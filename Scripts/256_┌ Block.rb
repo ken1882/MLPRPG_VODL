@@ -272,7 +272,7 @@ module BlockChain
     #--------------------------------------------------------------------------
     # * Sync to succed mined block
     #--------------------------------------------------------------------------
-    def sync(node) #tag: last work: fix bloks hashid missing
+    def sync(node)
       return if node.id == self.id
       @last_block.sync_data(node.last_block.dup)
       @capacity = node.capacity

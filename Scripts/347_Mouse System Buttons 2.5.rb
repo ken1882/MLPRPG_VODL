@@ -962,6 +962,12 @@ class Window_Selectable < Window_Base
     end
   end
   
+  def play_mousecursor_se(index = -1)
+    return if index == @index || @sdelay > 0
+    Sound.play_cursor
+    @sdelay = 5
+  end
+  
   
   def move_cursor(index)
     return if @index == index
@@ -970,11 +976,6 @@ class Window_Selectable < Window_Base
     row1 = @index / self.col_max
     row2 = index / self.col_max
     bottom = self.top_row + (self.page_row_max - 1)
-    
-    if index != @index and @sdelay == 0
-      Sound.play_cursor 
-      @sdelay = 5
-    end
     
     if row1 == self.top_row and row2 < self.top_row
       return if @scroll_wait > 0
@@ -988,7 +989,10 @@ class Window_Selectable < Window_Base
       @index = index
     end
     
-    select(@index) if Mouse.moved?
+    if Mouse.moved? || @scroll_wait > 0
+      play_mousecursor_se
+      select(@index)
+    end
     
     return if @cursor_wait > 0
     @cursor_wait += 2

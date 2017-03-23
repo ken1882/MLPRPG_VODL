@@ -1,4 +1,8 @@
-
+#===========================================================================
+# * Mouse Add on
+# -------------------------------------------------------------------------
+#   Add-ons and utility enhance for mouse
+#===========================================================================
 module Mouse
   
   GetMessage = Win32API.new('user32', 'GetMessage', 'plll', 'l')
@@ -49,3 +53,49 @@ module Mouse
   end
   
 end # Mouse
+#==============================================================================
+# ** Scene_Base
+#------------------------------------------------------------------------------
+#  This is a super class of all scenes within the game.
+#==============================================================================
+class Scene_Base
+  #--------------------------------------------------------------------------
+  # * Instance Variables
+  #--------------------------------------------------------------------------
+  attr_reader :focus_window
+  #--------------------------------------------------------------------------
+  # * Post-Start Processing
+  #--------------------------------------------------------------------------
+  alias post_start_mouse post_start
+  def post_start
+    post_start_mouse
+    @focus_window = nil
+  end
+  #--------------------------------------------------------------------------
+  # * Frame Update
+  #--------------------------------------------------------------------------
+  alias update_mouseauto update
+  def update
+    update_mouse_select
+    update_mouseauto
+  end
+  #--------------------------------------------------------------------------
+  # * Auto-select when mouse select to other window
+  #--------------------------------------------------------------------------
+  def update_mouse_select
+    return unless Mouse.moved?
+    instance_variables.each do |varname|
+      ivar = instance_variable_get(varname)
+      if ivar.is_a?(Window_Selectable)
+        @focus_window = ivar if ivar.active?
+        if !ivar.active? && Mouse.object_area?(ivar.x, ivar.y, ivar.width, ivar.height)
+          @focus_window.deactivate if @focus_window
+          @focus_window.unselect   if @focus_window && @focus_window.has_parent?
+          ivar.activate
+          @focus_window = ivar
+        end
+      end
+    end # each instance var
+  end # update_mouse_select
+  
+end

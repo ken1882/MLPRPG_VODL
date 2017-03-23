@@ -137,8 +137,8 @@ module WALLPAPER_EX
   def set_window_opacity    
       instance_variables.each do |varname|
           ivar = instance_variable_get(varname)
-           if ivar.is_a?(Window) 
-              ivar.opacity = WINDOW_OPACITY  
+           if ivar.is_a?(Window) && !ivar.disposed?
+              ivar.opacity = WINDOW_OPACITY
           end
       end
   end
