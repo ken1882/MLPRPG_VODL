@@ -12,8 +12,8 @@ class Game_Currency
   #--------------------------------------------------------------------------
   attr_reader :name
   attr_reader :id
-  attr_reader :value
   attr_reader :hashid
+  attr_accessor :value
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -72,8 +72,14 @@ class Game_Transaction
     return if trans.source.id    != @source.id && trans.source.id    != @recipient.id 
     return if trans.recipient.id != @source.id && trans.recipient.id != @recipient.id
     return if trans.goods != @goods
+    return trans.merge(self) if trans.value > self.value
     
-    # tag: last work
+    mul = (@source.id == trans.recipient.id) ? -1 : 1
+    @good_amount   += trans.good_amount * mul
+    currency.value += trans.value       * mul
+    @consumed = (value == 0)
+    @info += sprintf(" (Merged with %s)", trans.id.to_s(16))
+    return @consumed
   end
   #--------------------------------------------------------------------------
   # value of this transaction

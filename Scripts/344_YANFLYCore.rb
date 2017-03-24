@@ -773,54 +773,6 @@ class Window_Base < Window
 =end
 end # Window_Base
 #==============================================================================
-# ■ Window_Selectable
-#==============================================================================
-class Window_Selectable < Window_Base
-  
-  #--------------------------------------------------------------------------
-  # overwrite method: process_cursor_move
-  # tag: modified
-  #--------------------------------------------------------------------------
-  if YEA::CORE::QUICK_SCROLLING
-  def process_cursor_move
-    return unless cursor_movable?
-    last_index = @index
-    cursor_down (Input.trigger?(:DOWN))  if Input.repeat?(:DOWN)
-    cursor_up   (Input.trigger?(:UP))    if Input.repeat?(:UP)
-    cursor_right(Input.trigger?(:RIGHT)) if Input.repeat?(:RIGHT)
-    cursor_left (Input.trigger?(:LEFT))  if Input.repeat?(:LEFT)
-    cursor_pagedown   if !handle?(:pagedown) && Input.repeat?(:R)
-    cursor_pageup     if !handle?(:pageup)   && Input.repeat?(:L)
-    Sound.play_cursor if @index != last_index
-  end
-  end # YEA::CORE::QUICK_SCROLLING
-  
-  alias process_cursor_move_wheel process_cursor_move
-  def process_cursor_move
-    return unless cursor_movable?
-    wheel_pagedown   if !handle?(:pagedown) && Mouse.scroll_down?
-    wheel_pageup     if !handle?(:pageup)   && Mouse.scroll_up?
-    process_cursor_move_wheel
-  end
-  
-  def wheel_pagedown
-    if contents.height > self.height && self.oy - contents.height < -self.height + 32
-      self.top_row = self.top_row + 1
-      @index = [@index, self.top_row].max
-      select(@index)
-    end
-  end
-  
-  def wheel_pageup
-    if contents.height > self.height
-      self.top_row = self.top_row - 1
-      @index = [@index, self.top_row].min
-      select(@index)
-    end
-  end
-  
-end # Window_Selectable
-#==============================================================================
 # ■ Window_ItemList
 #==============================================================================
 class Window_ItemList < Window_Selectable

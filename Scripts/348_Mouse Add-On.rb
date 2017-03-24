@@ -59,43 +59,32 @@ end # Mouse
 #  This is a super class of all scenes within the game.
 #==============================================================================
 class Scene_Base
-  #--------------------------------------------------------------------------
-  # * Instance Variables
-  #--------------------------------------------------------------------------
-  attr_reader :focus_window
-  #--------------------------------------------------------------------------
-  # * Post-Start Processing
-  #--------------------------------------------------------------------------
-  alias post_start_mouse post_start
-  def post_start
-    post_start_mouse
-    @focus_window = nil
-  end
+  
   #--------------------------------------------------------------------------
   # * Frame Update
   #--------------------------------------------------------------------------
   alias update_mouseauto update
   def update
-    update_mouse_select
+    update_mouse_select_window
     update_mouseauto
   end
   #--------------------------------------------------------------------------
   # * Auto-select when mouse select to other window
   #--------------------------------------------------------------------------
-  def update_mouse_select
+  def update_mouse_select_window
     return unless Mouse.moved?
     instance_variables.each do |varname|
       ivar = instance_variable_get(varname)
       if ivar.is_a?(Window_Selectable)
-        @focus_window = ivar if ivar.active?
+        $focus_window = ivar if ivar.active?
         if !ivar.active? && Mouse.object_area?(ivar.x, ivar.y, ivar.width, ivar.height)
-          @focus_window.deactivate if @focus_window
-          @focus_window.unselect   if @focus_window && @focus_window.has_parent?
+          $focus_window.deactivate if $focus_window
+          $focus_window.unselect   if $focus_window && $focus_window.has_parent?
           ivar.activate
-          @focus_window = ivar
-        end
-      end
+          $focus_window = ivar
+        end # !ivar.acive?
+      end # is a Window_Selectable?
     end # each instance var
-  end # update_mouse_select
+  end # update_mouse_select_window
   
 end

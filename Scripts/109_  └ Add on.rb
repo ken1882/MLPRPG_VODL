@@ -24,9 +24,8 @@ class Window_Selectable < Window_Base
   # * Frame Update
   #--------------------------------------------------------------------------
   alias update_overlayed update
-  def update    
+  def update
     process_overlay_handling if button_cooled?
-    
     if @overlayed
       self_overlay? ? update_overlay(update_overlayed) : update_overlay
     else
@@ -150,11 +149,38 @@ class Window_Selectable < Window_Base
   #--------------------------------------------------------------------------
   def process_overlay_handling
   end
+  
+  # Alias: wheel cursor move
+  alias process_cursor_move_wheel process_cursor_move
+  def process_cursor_move
+    return unless cursor_movable?
+    wheel_pagedown   if !handle?(:pagedown) && Mouse.scroll_down?
+    wheel_pageup     if !handle?(:pageup)   && Mouse.scroll_up?
+    process_cursor_move_wheel
+  end
+  
+  # Mouse wheel page down
+  def wheel_pagedown
+    if contents.height > self.height && self.oy - contents.height < -self.height + 32
+      self.top_row = self.top_row + 1
+      @index = [@index, self.top_row].max
+      select(@index)
+    end
+  end
+  
+  # Mouse wheel page up
+  def wheel_pageup
+    if contents.height > self.height
+      self.top_row = self.top_row - 1
+      @index = [@index, self.top_row].min
+      select(@index)
+    end
+  end
   #--------------------------------------------------------------------------
   # * Move Cursor Down
   #--------------------------------------------------------------------------
   def cursor_down(wrap = false)
-    mul = Input.press?(:kSHIFT) ? 5 : 1
+    mul = Input.press?(:kSHIFT) && item_max > 5 ? 5 : 1
     if index < item_max - col_max || (wrap && col_max == 1)
       next_index = index + col_max * mul
       next_index = [item_max - 1, next_index].min if index + 1 != item_max
@@ -166,7 +192,7 @@ class Window_Selectable < Window_Base
   # * Move Cursor Up
   #--------------------------------------------------------------------------
   def cursor_up(wrap = false)
-    mul = Input.press?(:kSHIFT) ? 5 : 1
+    mul = Input.press?(:kSHIFT) && item_max > 5 ? 5 : 1
     if index >= col_max || (wrap && col_max == 1)
       next_index = index - col_max * mul + item_max
       next_index = [next_index, 0].max if index != 0
@@ -178,7 +204,7 @@ class Window_Selectable < Window_Base
   # * Move Cursor Right
   #--------------------------------------------------------------------------
   def cursor_right(wrap = false)
-    mul = Input.press?(:kSHIFT) ? 5 : 1
+    mul = Input.press?(:kSHIFT) && item_max > 5 ? 5 : 1
     if col_max >= 2 && (index < item_max - 1 || (wrap && horizontal?))
       next_index = index + 1 * mul
       next_index = [item_max - 1, next_index].min if index + 1 != item_max
@@ -190,7 +216,7 @@ class Window_Selectable < Window_Base
   # * Move Cursor Left
   #--------------------------------------------------------------------------
   def cursor_left(wrap = false)
-    mul = Input.press?(:kSHIFT) ? 5 : 1
+    mul = Input.press?(:kSHIFT) && item_max > 5 ? 5 : 1
     if col_max >= 2 && (index > 0 || (wrap && horizontal?))
       next_index = index - 1 * mul + item_max
       next_index = [next_index, 0].max if index != 0

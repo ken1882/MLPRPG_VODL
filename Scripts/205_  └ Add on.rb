@@ -24,9 +24,11 @@ class Scene_Base
     main_pony
   end
   #--------------------------------------------------------------------------
-  # * Update Frame (Basic)
+  # * Overwrite: Update Frame (Basic)
   #--------------------------------------------------------------------------
   def update_basic
+    #puts SPLIT_LINE
+    #caller.each {|i| puts i}
     Graphics.update
     Input.update
     update_all_windows unless @@overlayed
@@ -105,8 +107,8 @@ class Scene_Base
   def update_overlay
     @@overlayed = false
     @@overlay_windows.each do |sym, window|
-      window.update      if window.overlayed
-      @@overlayed = true if window.overlayed
+      @@overlayed = true if window.visible?
+      window.update      if @@overlayed
     end
   end
   #--------------------------------------------------------------------------

@@ -112,8 +112,9 @@ module BlockChain
     # * Push Extra Transaction
     #--------------------------------------------------------------------------
     def push_transaction(trans)
-      @record.push(trans)
+      @record.push(trans) if !merge_transaction(trans)
       @header.push_info(trans.info)
+      BlockChain.record_transaction(trans)
       update_hash
     end
     #--------------------------------------------------------------------------
@@ -139,6 +140,17 @@ module BlockChain
         sum += trans.good_amount if trans.source    == accid
       end
       return sum
+    end
+    #--------------------------------------------------------------------------
+    # * Merge transaction
+    #--------------------------------------------------------------------------
+    def merge_transaction(trans)
+      succ = false
+      @record.each do |oldtrans|
+        succ = !oldtrans.merge(trans).nil?
+        break if succ
+      end
+      return succ
     end
     #--------------------------------------------------------------------------
     # * Sync data

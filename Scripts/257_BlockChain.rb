@@ -10,7 +10,7 @@ module BlockChain
   #--------------------------------------------------------------------------
   @nodes    = []
   @accounts = {}
-  @garbage  = {}
+  @trans_megadata  = []
   @height   = 0
   @capacity = 0
   @checksum = 0x0
@@ -19,18 +19,16 @@ module BlockChain
   #--------------------------------------------------------------------------
   def self.init_chain
   	self.init_nodes
-    self.init_item_garbage_collector
   end
   
   def self.clear
     @nodes    = []
     @accounts = {}
-    @garbage  = {}
+    @trans_megadata  = []
     @height   = 0
     @capacity = 0
     @checksum = 0x0
   end
-  
   #--------------------------------------------------------------------------
   # * Block Chain Nodes Initialization
   #--------------------------------------------------------------------------
@@ -42,15 +40,6 @@ module BlockChain
     acc = PonyAccount.new("Hasbro", PONY::CHAIN::TotalBalance)
     @accounts["Hasbro"] = acc.clone
     self.depoly_first_contract
-  end
-  #--------------------------------------------------------------------------
-  # * Init garbage collector for items
-  #--------------------------------------------------------------------------
-  def self.init_item_garbage_collector
-    item_pool = $data_items + $data_weapons + $data_armors
-    item_pool.compact.each do |item|
-      @garbage[item.hashid] = 0
-    end
   end
   #--------------------------------------------------------------------------
   # * Depoly first dispute
@@ -73,7 +62,7 @@ module BlockChain
   def self.load_chain_data(contents)
     @nodes    = contents[:nodes]
     @accounts = contents[:accounts]
-    @garbage  = contents[:garbage]
+    @trans_megadata  = contents[:megadata]
     @height   = contents[:height]
     @capacity = contents[:capacity]
     @checksum = contents[:checksum]
@@ -87,7 +76,7 @@ module BlockChain
     contents = {}
     contents[:nodes]    = @nodes
     contents[:accounts] = @accounts
-    contents[:garbage]  = @garbage
+    contents[:megadata]  = @trans_megadata
     contents[:height]   = @height
     contents[:capacity] = @capacity
     contents[:player_balance] = self.account_balance(Vocab::Player)
@@ -185,14 +174,6 @@ module BlockChain
       result_pool[result].push(node.clone)
     end
     return determine_result(result_pool) || 0
-  end
-  #--------------------------------------------------------------------------
-  # * Add used consumable item to garbage collector
-  #--------------------------------------------------------------------------
-  def self.use_item(item, amount = 1)
-    return unless item.consumable
-    @garbage[item.hashid] = 0 if @garbage[item.hashid].nil?
-    @garbage[item.hashid] += amount
   end
   #--------------------------------------------------------------------------
   # * Determind return value & sync
@@ -306,7 +287,12 @@ module BlockChain
     trans = Game_Transaction.new(0, amount.to_i, source, receiver, item, item_amount, info)
     self.push_transaction(trans)
   end
-  
-  
+  #--------------------------------------------------------------------------
+  # * Record transaction detail
+  #--------------------------------------------------------------------------
+  def self.record_transaction(trans)
+    @trans_megadata.push(trans)
+  end
+  # Nodes in Chain
   def self.chain_nodes; return @nodes; end
 end

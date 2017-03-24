@@ -198,11 +198,10 @@ module WALLPAPER_EX
   # ● Update
   #--------------------------------------------------------------------------  
   def update
-      super
-      update_background
-      update_particle
+    super
+    update_background
+    update_particle
   end
-  
   #--------------------------------------------------------------------------
   # ● Update Background
   #--------------------------------------------------------------------------    
