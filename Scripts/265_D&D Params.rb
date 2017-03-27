@@ -351,14 +351,6 @@ end
 #==============================================================================
 class Game_Actor < Game_Battler
   #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
-  def initialize(actor_id)
-    super()
-    setup(actor_id)
-    @last_skill = Game_BaseItem.new
-  end
-  #--------------------------------------------------------------------------
   # * Get Total EXP Required for Rising to Specified Level
   #--------------------------------------------------------------------------
   def exp_for_level(level)
@@ -525,10 +517,13 @@ end
 # Class RPG::Class
 #==============================================================================
 class RPG::Class < RPG::BaseItem
+  
+  attr_reader :level
   #---------------------------------------------------------------------
   # *) Initialize D&D params
   #---------------------------------------------------------------------
   def initialize_dndparams
+    @level = 1
     @params = Table.new(8,100)
     (1..99).each do |i|
       next if DND::ACTOR_PARAMS[id].nil?
@@ -537,4 +532,5 @@ class RPG::Class < RPG::BaseItem
     end
   end
   
+  def level_up; @level += 1; end
 end

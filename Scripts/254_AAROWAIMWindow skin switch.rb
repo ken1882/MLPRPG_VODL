@@ -324,17 +324,7 @@ class Scene_MenuBase < Scene_Base
   end
 end
 class Scene_Menu < Scene_MenuBase
-  def start
-    super
-    create_command_window
-    create_gold_window
-    create_status_window
-    if $USE_SCENE_SKIN == TRUE                                                 #
-      @command_window.scene_swap($PAUSE_MENU_SKIN)                             #
-      @gold_window.scene_swap($PAUSE_MENU_SKIN)                                #
-      @status_window.scene_swap($PAUSE_MENU_SKIN)                              #
-    end                                                                        #
-  end
+  
 end
 class Scene_ItemBase < Scene_MenuBase
   def start

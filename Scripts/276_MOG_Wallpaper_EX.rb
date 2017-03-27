@@ -35,7 +35,7 @@ module MOG_WALLPAPER_EX
   #Deslizar a imagem de fundo.
   BACKGROUND_SCROLL_SPEED = [0,0]
   #Definição da opacidade das janelas.
-  WINDOW_OPACITY = 48
+  WINDOW_OPACITY = 80
   
   Wallpapers = [
     "Circle_of_friendship","Generosity","Kindness","Laughter",

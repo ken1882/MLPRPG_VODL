@@ -161,9 +161,18 @@ module BlockChain
       @prev_transsum = block.prev_transsum
       @height        = block.height
       @magic_num     = block.magic_num
-      @record        = block.record.dup
+      sync_record(block.record)
       @header        = block.header.dup
       update_hash
+    end
+    
+    def sync_record(record)
+      @record.clear
+      n = record.size
+      for i in 0...n do 
+        record[i].dup_currency
+        @record.push(record[i].dup) 
+      end
     end
     #--------------------------------------------------------------------------
     # * Block build time

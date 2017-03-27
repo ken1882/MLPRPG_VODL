@@ -29,6 +29,7 @@ class Scene_Base
   def update_basic
     #puts SPLIT_LINE
     #caller.each {|i| puts i}
+    puts "Mouse  address: (#{Mouse.pos})" if Input.trigger?(:kP)
     Graphics.update
     Input.update
     update_all_windows unless @@overlayed

@@ -594,7 +594,10 @@ class Scene_Title < Scene_Base
     
     for i in 0...@commands.size
       sprite = @commands[i]
-      @command_window.select(i) if Mouse.collide?(sprite)
+      if Mouse.collide?(sprite)
+        Sound.play_cursor if @command_window.index != i
+        @command_window.select(i)
+      end
     end
   end
  

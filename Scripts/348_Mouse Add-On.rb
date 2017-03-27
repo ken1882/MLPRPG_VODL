@@ -75,16 +75,29 @@ class Scene_Base
     return unless Mouse.moved?
     instance_variables.each do |varname|
       ivar = instance_variable_get(varname)
-      if ivar.is_a?(Window_Selectable)
+      $focus_window = nil if $focus_window && $focus_window.disposed?
+      if ivar.is_a?(Window_Selectable) && !ivar.disposed?
         $focus_window = ivar if ivar.active?
-        if !ivar.active? && Mouse.object_area?(ivar.x, ivar.y, ivar.width, ivar.height)
-          $focus_window.deactivate if $focus_window
+        if !ivar.active? && ivar.autoselect? && Mouse.object_area?(ivar.x, ivar.y, ivar.width, ivar.height)
           $focus_window.unselect   if $focus_window && $focus_window.has_parent?
-          ivar.activate
+          $focus_window.deactivate if $focus_window
+          process_autoselect(ivar)
           $focus_window = ivar
         end # !ivar.acive?
       end # is a Window_Selectable?
     end # each instance var
   end # update_mouse_select_window
+  
+  def process_autoselect(window)
+    re = nil
+    if window.is_a?(Window_FileAction)
+      on_file_ok
+      re = true
+    elsif window.is_a?(Window_FileList)
+      on_action_cancel
+      re = true
+    end
+    Sound.play_cursor if re
+  end
   
 end

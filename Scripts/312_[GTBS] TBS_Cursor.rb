@@ -54,8 +54,8 @@ class TBS_Cursor < POS
     end
     
     if Mouse.moved?
-      nu_x = Mouse.map_grid(false).at(0) - 0.5
-      nu_y = Mouse.map_grid(false).at(1) - 0.5
+      nu_x = Mouse.map_grid.at(0) - 0.5
+      nu_y = Mouse.map_grid.at(1) - 0.5
     end
       
     #check if moved and not moved outside the map

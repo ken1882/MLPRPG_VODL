@@ -10,9 +10,9 @@ class Game_Currency
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_reader :name
-  attr_reader :id
-  attr_reader :hashid
+  attr_reader   :name
+  attr_reader   :id
+  attr_reader   :hashid
   attr_accessor :value
   #--------------------------------------------------------------------------
   # * Object Initialization
@@ -31,6 +31,11 @@ class Game_Currency
     suffix = PONY.MD5(@value.to_s)
     @hashid = PONY.Sha256(prefix + suffix).to_i(16)
   end
+  
+  def merge(amount)
+    @value += amount
+  end
+  
 end
 #==============================================================================
 # ** Game_Transaction
@@ -72,15 +77,14 @@ class Game_Transaction
     return if trans.source.id    != @source.id && trans.source.id    != @recipient.id 
     return if trans.recipient.id != @source.id && trans.recipient.id != @recipient.id
     return if trans.goods != @goods
-    return trans.merge(self) if trans.value > self.value
-    
-    mul = (@source.id == trans.recipient.id) ? -1 : 1
+    mul = (@source.id == trans.source.id) ? 1 : -1
     @good_amount   += trans.good_amount * mul
-    currency.value += trans.value       * mul
+    @currency.merge(trans.value * mul)
     @consumed = (value == 0)
-    @info += sprintf(" (Merged with %s)", trans.id.to_s(16))
     return @consumed
   end
+  
+  def dup_currency; @currency = @currency.dup; end
   #--------------------------------------------------------------------------
   # value of this transaction
   def value; return currency.value; end

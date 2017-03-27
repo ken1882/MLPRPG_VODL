@@ -588,7 +588,7 @@ module Mouse
   
   def self.input_keys
     $game_arrows.mode_on ? type = $game_arrows.in_type : type = Input::C
-    keys = {0 => type, 1 => Input::B, 2 => Input::A}
+    keys = {0 => type, 1 => Input::B, 2 => :kESC}
     return keys
   end
   
@@ -980,11 +980,11 @@ class Window_Selectable < Window_Base
     if row1 == self.top_row and row2 < self.top_row
       return if @scroll_wait > 0
       @index = [@index - self.col_max, 0].max
-      @scroll_wait = 10
+      @scroll_wait = 5
     elsif row1 == bottom and row2 > bottom
       return if @scroll_wait > 0
       @index = [@index + self.col_max, self.item_max - 1].min
-      @scroll_wait = 10
+      @scroll_wait = 5
     elsif Mouse.moved?
       @index = index
     end

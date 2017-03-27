@@ -129,7 +129,7 @@ class Scene_Map < Scene_Base
     #--------------------------------------------------------------------------
     # Dubug: show player coordinate
     #--------------------------------------------------------------------------
-    elsif Input.press?(:kP)
+    elsif Input.trigger?(:kP)
       SceneManager.display_info "Player address: (#{$game_player.x},#{$game_player.y})"
       SceneManager.display_info "Mouse  address: (#{Mouse.map_grid[0]},#{Mouse.map_grid[1]})"
       return true

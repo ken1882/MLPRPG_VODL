@@ -230,7 +230,14 @@ class Window_Selectable < Window_Base
   def has_parent?
     return true if self.is_a?(Window_ItemList)
     return true if self.is_a?(Window_FileAction)
+    return true if self.is_a?(Window_MenuStatus)
     return false
   end
-  
+  #--------------------------------------------------------------------------
+  # * Check window if should be auto select by mouse
+  #--------------------------------------------------------------------------
+  def autoselect?
+    return true if SceneManager.scene.is_a?(Scene_File)
+    return false
+  end
 end

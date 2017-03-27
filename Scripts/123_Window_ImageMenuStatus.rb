@@ -6,16 +6,16 @@
 $imported = {} if $imported.nil?
 module PONY
 	module Menu_UI
-		First_Item_Position =  [155, 20]
+		First_Item_Position =  [168, 20]
 		Second_Item_Position = [10, 35]
     
     NAME_COLOR = {
-      1 => 30,
-      2 => 2,
-      4 => 0,
-      5 => 23,
-      6 => 27,
-      7 => 17,
+      1 => Color.new(215, 170, 225),
+      2 => Color.new(245, 140,  90),
+      4 => Color.new(255, 255, 255),
+      5 => Color.new( 60, 175, 230),
+      6 => Color.new(250, 145, 250),
+      7 => Color.new(235, 235, 140),
     }
     
 	end
@@ -25,17 +25,16 @@ end
 #------------------------------------------------------------------------------
 #  This window displays party member status on the menu screen.
 #==============================================================================
-class Window_MenuStatus < Window_Selectable
+class Window_ImageMenuStatus < Window_MenuStatus
   include PONY::Menu_UI
   attr_reader :index_list
   attr_reader :list_indicator
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  alias initialize_menustat initialize
   def initialize(x, y)
   	create_index_list
-  	initialize_menustat(x, y)
+  	super(x, y)
   end
   #--------------------------------------------------------------------------
   def create_index_list
@@ -73,6 +72,7 @@ class Window_MenuStatus < Window_Selectable
   # * Get corresponding character image
   #--------------------------------------------------------------------------
   def get_actor_image(id, leader)
+    leader = false
     image_filename = leader ? "Lead" : ""
   	image_filename += "Char_" + id.to_s
   	Cache.UI(image_filename) rescue nil
@@ -90,17 +90,28 @@ class Window_MenuStatus < Window_Selectable
     200
   end
   #--------------------------------------------------------------------------
+  # * Get Image Height
+  #--------------------------------------------------------------------------
+  def image_height
+    220
+  end
+  #--------------------------------------------------------------------------
   # * Get Position for Item
   #--------------------------------------------------------------------------
-  def item_position(index)
+  def item_position(index, for_image = false, img_width = 0)
   	case index
   	when 0
-  		First_Item_Position
+  		cx = (for_image && img_width > 155) ? First_Item_Position[0] - img_width / 16 : First_Item_Position[0]
+      cy = First_Item_Position[1]
   	when 1
-  		Second_Item_Position
+      cx = Second_Item_Position[0]
+      cy = Second_Item_Position[1]
   	else
-  		[First_Item_Position[0] + 162 * (index - 1), First_Item_Position[1] + 15 * (index - 1)]
+      cx = First_Item_Position[0] + 145 * (index - 1)
+      cx = First_Item_Position[0] + (145 - img_width / 8) * (index - 1) if for_image && img_width > 155
+      cy = First_Item_Position[1] + 15 * (index - 1)
   	end
+    [cx, cy]
   end
   #--------------------------------------------------------------------------
   # * Get Rectangle for Drawing Items
@@ -114,38 +125,22 @@ class Window_MenuStatus < Window_Selectable
     rect
   end
   #--------------------------------------------------------------------------
-  # * Draw Item
+  # * Get Rectangle for Ccursor
   #--------------------------------------------------------------------------
-  def draw_item(index)
-    actor = $game_party.members[index]
-    return if actor.nil?
-    enabled = $game_party.battle_members.include?(actor)
+  def item_rect_for_cursor(index)
     rect = item_rect(index)
-    
-    #draw_item_background(index)
-    draw_actor_image(actor.id, rect.x, index == 0)
-    #draw_actor_simple_status(actor, rect.x + 3 , window_height - fitting_height(2))
+    rect.x += 6
+    rect.y  = 0
+    rect.height = fitting_height(0) + 6
+    rect.width  = 148
+    rect
   end
+ 
   #--------------------------------------------------------------------------
-  # * Draw Actor Image
+  # * Get Number of Lines to Show
   #--------------------------------------------------------------------------
-  def draw_actor_image(id, cx, leader)
-  	bitmap 	= get_actor_image(id, leader)
-  	cy 		= window_height - fitting_height(2) - bitmap.height - 5
-  	rect 	= Rect.new(0, 0, bitmap.width, bitmap.height)
-    contents.blt(cx, cy, bitmap, rect)
-    bitmap.dispose
-  end
-  #--------------------------------------------------------------------------
-  # * Draw Simple Status
-  #--------------------------------------------------------------------------
-  def draw_actor_simple_status(actor, x, y)
-    #draw_actor_name(actor, x, y)
-    #draw_actor_level(actor, x, y + line_height * 1)
-    #draw_actor_icons(actor, x, y + line_height * 2)
-    #draw_actor_class(actor, x + 120, y)
-    draw_actor_hp(actor, x, y + line_height * 1)
-    draw_actor_mp(actor, x, y + line_height * 2)
+  def visible_line_number
+    return 1
   end
   #--------------------------------------------------------------------------
   # * Get Digit Count
@@ -242,12 +237,87 @@ class Window_MenuStatus < Window_Selectable
       select(@index_list[@list_indicator])
     end
   end
-  
   #--------------------------------------------------------------------------
   # * Deselect Item
   #--------------------------------------------------------------------------
   def unselect
     self.index = -1
     @list_indicator = 0
+  end
+  #--------------------------------------------------------------------------
+  # * Update Cursor
+  #--------------------------------------------------------------------------
+  def update_cursor
+    if @cursor_all
+      cursor_rect.set(0, 0, contents.width, row_max * item_height)
+      self.top_row = 0
+    elsif @index < 0
+      cursor_rect.empty
+    else
+      ensure_cursor_visible
+      cursor_rect.set(item_rect_for_cursor(@index))
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Draw All Items
+  #--------------------------------------------------------------------------
+  def draw_all_items
+    n = item_max
+    item_max.times {|i| draw_item(n - 1 - i) }
+  end
+   #--------------------------------------------------------------------------
+  # * Draw Item
+  #--------------------------------------------------------------------------
+  def draw_item(index)
+    actor = $game_party.members[index]
+    return if actor.nil?
+    enabled = $game_party.battle_members.include?(actor)
+    rect = item_rect(index)
+    
+    #draw_item_background(index)
+    draw_actor_image(actor.id, index, index == 0)
+    draw_actor_simple_status(actor, rect.x + 12, 0)
+  end
+  
+  #--------------------------------------------------------------------------
+  # * Draw Actor Image
+  #--------------------------------------------------------------------------
+  def draw_actor_image(id, index, leader)
+  	bitmap = get_actor_image(id, leader)
+    cx     = item_position(index, true, bitmap.width).at(0)
+  	cy 		 = window_height - fitting_height(2) - bitmap.height - 5
+  	rect 	 = Rect.new(0, 0, bitmap.width, bitmap.height)
+    contents.blt(cx, cy, bitmap, rect)
+    bitmap.dispose
+  end
+  #--------------------------------------------------------------------------
+  # * Draw Simple Status
+  #--------------------------------------------------------------------------
+  def draw_actor_simple_status(actor, x, y)
+    draw_actor_name(actor, x, y)
+    draw_actor_class(actor, x, y + line_height, 168)
+    draw_actor_hp(actor, x, y + line_height * 3)
+    draw_actor_mp(actor, x, y + line_height * 4)
+    # tag: last work
+    #draw_actor_icons(actor, x, y + line_height * 2)
+  end
+  #--------------------------------------------------------------------------
+  # * Draw Name
+  #--------------------------------------------------------------------------
+  def draw_actor_name(actor, x, y, width = 112)
+    change_color(NAME_COLOR[actor.id])
+    draw_text(x, y, width, line_height, actor.name)
+  end
+  #--------------------------------------------------------------------------
+  # * Draw Class
+  #--------------------------------------------------------------------------
+  def draw_actor_class(actor, x, y, width = 112)
+    change_color(normal_color)
+    text = sprintf("%s %d", actor.class.name, actor.class.level)
+    draw_text(x, y, width, line_height, text)
+    return false unless actor.dualclass
+    text = sprintf("%s %d",actor.dualclass.name, actor.dualclass.level)
+    draw_text(x, y + line_height, width, line_height, text)
+    return false
   end
 end
