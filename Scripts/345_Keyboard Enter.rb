@@ -49,6 +49,7 @@ module V  ## Checks a virtual key.
     return Ascii::SYM[key]
   end
 end
+# tag: input
 module Ascii  ## Only the keys I bothered to name.  Some have 2 names.
   SYM = { :k0 => 48, :k1 => 49, :k2 => 50, :k3 => 51, :k4 => 52, :k5 => 53,
           :k6 => 54, :k7 => 55, :k8 => 56, :k9 => 57,

@@ -261,7 +261,7 @@ class Projectile < Game_Character
       elsif @user.battler_guarding[0]
         if @user.battler.is_a?(Game_Actor)
           if @user.is_a?(Game_Player)
-            if PearlKey.press?(Key::Armor[0]) and 
+            if PearlKey.press?(HotKeys::Armor[0]) and 
               @tool_destroy_delay <= @originaldestory_delay - 16
               @tool_destroy_delay = 10
               @user.anime_speed = 10
@@ -820,7 +820,7 @@ class Projectile < Game_Character
         next if event.page.nil?
         if !enable_dame_execution?(event.battler)
           unless event.battler.object
-            RPG::SE.new(Key::GuardSe, 80).play
+            RPG::SE.new(HotKeys::GuardSe, 80).play
             event.pop_damage('Guard')
             play_hit_animation(event)
             event.setup_target(@user)
@@ -982,7 +982,7 @@ class Projectile < Game_Character
       if type == 1
         if rand(101) <= userr.battler_guarding[1]
           return false unless faceto_face?(userr)
-          RPG::SE.new(Key::GuardSe, 80).play
+          RPG::SE.new(HotKeys::GuardSe, 80).play
           $game_player.damage_pop.push(DamagePop_Obj.new(userr, 2))
           unless @user.making_spiral
             @tool_distance = 0

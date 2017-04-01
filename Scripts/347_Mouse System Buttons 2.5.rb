@@ -938,13 +938,12 @@ class Window_Selectable < Window_Base
   
   alias mouse_selection_update update
   def update
-    update_mouse_selection if self.active and self.visible and !@overlayed
+    update_mouse_selection if self.active and self.visible and (!@overlayed || self == $focus_window)
     @sdelay -= 1 if @sdelay > 0
     mouse_selection_update
   end
   
   def update_mouse_selection
-    
     @cursor_wait -= 1 if @cursor_wait > 0
     plus_x = self.x + 16 - self.ox
     plus_y = self.y + 8 - self.oy

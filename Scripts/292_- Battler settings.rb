@@ -3,37 +3,70 @@
 #
 # This script handles some battler settings and the keys definitions
 #===============================================================================
-module Key
+=begin
+Keyboard Edit
+  > W forward
+  > S backward
+  > Q left
+  > E right
+  G toggle run/walk
+  > F1-F4 selects party members (single player only)
+      note that in combat, this occasionally causes the game to unpause
+  > Spacebar jumps
+  > SHIFT sprints/gallops
+  > R attack
+  > T toggle tactical camera mode
+  > = toggles mount/dismount
+Mouse
+  left click targets pointer/selects objects
+  right click and release interacts/bash wall/destroy
+  holding right click and moving the mouse rotates the camera
+  mouse wheel scrolls zoom (forward in, backward out)
+  Combat Edit
+  R/left click attacks
+  Y party attacks target of active party member
+  K clear all commands from all party members
+  L all party members disengage
+  1-9 activates respective quickbar abilities
+  TAB cycles targets
+  0 or - selects potion
+Other Edit
+4  ESC Main Menu
+  I Inventory
+  J Journal
+  M map
+  P Character screen
+  F5 Quick Save
+  F9 Quick Load
+=end
+module HotKeys
+  Weapon       = :kR
+  Armor        = :kF
+  HotKeys      = [:k1, :k2, :k3, :k4, :k5, :k6, :k7, :k8, :k9, :k0]
+  AllSkills    = :kTILDE
+  AllItems     = :kMINUS
+  Vancians     = :kEQUAL
+  SwitchMember = [:kF3, :kF4, :kF5]
+  QuickSave    = :kF7
+  QuickLoad    = :kF8
+  Follower     = :kC
   
+  SkillBar     = [AllSkills, HotKeys, AllItems, Vancians, Follower].flatten
+  SkillBarSize = SkillBar.size
   
-# Pearl ABS Input system, there is a full keayboard build in with this system, 
-# you can use keys from A throught Z, and number between 1 throught 9
+  Menu         = :kESC
+  Journal      = :kJ
+  Inventory    = :kI
+  Talents      = :kT
+  Pause        = :kSPACE
   
-# Type            Key         Display name      
-  Weapon    =  [:kA,      'A']            # Weapon usage
-  Armor     =  [:kS,      'S']            # Armor usage
-  Item      =  [:kD,      'D']            # Item  usage
-  Item2     =  [:kF,      'F']            # Item2 usage
-  Item3     =  [:kG,      'G']            # Item2 usage
-  Skill     =  [:kQ,      'Q']            # Skill usage
-  Skill2    =  [:kW,      'W']            # Skill2 usage
-  Skill3    =  [:kE,      'E']            # Skill3 usage
-  Skill4    =  [:kR,      'R']            # Skill4 usage
-  Skill5    =  [:k1,      '1']            # Skill5 usage
-  Skill6    =  [:k2,      '2']            # Skill6 usage
-  Skill7    =  [:k3,      '3']            # Skill7 usage
-  Skill8    =  [:k4,      '4']            # Skill8 usage
-  Skill9    =  [:k5,      '5']            # Skill9 usage
-  Skill10   =  [:k6,      '6']            # Skill10 usage
-  SSkill    =  [:k7,      '7']            # Special Skill usage
-  SSkill2   =  [:k8,      '8']            # Special Skill usage
-  
-  Key_id_table = [:kA, :kS, :kD, :kF, :kG, :kQ, :kW, :kE, :kR, 
-  :k1, :k2, :k3, :k4, :k5, :k6, :k7, :k8]
-  
-  # Follower attack toggle
-  Follower =  [PearlKey::C,      'C']
-  
+  Letter = {
+    :kCOLON => ':',        :kAPOSTROPHE => 39.chr, :kQUOTE => 39.chr,
+    :kCOMMA => ',',        :kPERIOD => '.',        :kSLASH => 47.chr,
+    :kBACKSLASH => 92.chr, :kLEFTBRACE => '(',     :kRIGHTBRACE => ')',
+    :kMINUS => '-',        :kUNDERSCORE => '_',    :kPLUS => '+',
+    :kEQUAL => '=',        :kEQUALS => '=',        :kTILDE => '~',
+  }
   # Quick tool selection key
   QuickTool = PearlKey::N
   
@@ -42,6 +75,23 @@ module Key
   
   # Sound played when success guarding
   GuardSe = "Hammer"
+  
+  def self.name(key)
+    Letter.each do  |name, ch|
+      return ch if key == name
+    end
+    base = key.to_s
+    base = base[1].upcase + base[2...base.length].downcase
+    return base
+  end
+  
+  def self.tool_index(key)
+    return if key.nil?
+    n = SkillBar.size
+    for i in 0...n
+      return i if key == SkillBar[i]
+    end
+  end
   
 end
 module Vocab
@@ -56,7 +106,7 @@ end
 # Game player adds
 class Game_Player < Game_Character
   attr_accessor :projectiles, :damage_pop, :anime_action, :enemy_drops
-  attr_accessor :refresh_status_icons, :refresh_buff_icons, :mouse_over
+  attr_accessor :refresh_status_icons, :refresh_buff_icons, :mouse_skillbar_index
   attr_accessor :refresh_skillbar, :pearl_menu_call, :reserved_swap
   attr_accessor :new_map_id
   
@@ -67,7 +117,7 @@ class Game_Player < Game_Character
     @anime_action = []
     @enemy_drops = []
     @press_timer = 0
-    @mouse_over = 0
+    @mouse_skillbar_index = 0
     @mouse_exist = defined?(Map_Buttons).is_a?(String)
     @refresh_skillbar = 0
     @pearl_menu_call = [sym = nil, 0]
@@ -111,10 +161,8 @@ class Game_Player < Game_Character
     battler.dead? ? return : super
   end
   
-  def trigger_tool?(key, type)
-    return true if type == :keys && PearlKey.trigger?(key)
-    return true if @mouse_exist && Mouse.trigger?(0) && type == :mouse && 
-    @mouse_over == key
+  def trigger_tool?(key)
+    return true if Input.trigger?(key) || Mouse.trigger_tool?(HotKeys.tool_index(key))
     return false
   end
   
@@ -152,34 +200,29 @@ class Game_Player < Game_Character
     falcaopearl_get_on_vehicle
   end
   
+  # tag: last work
+  # Apply the item in the hotkey bar
+  def use_hotkey(index)
+    puts index
+  end
+  
   def update_tool_usage
     return if PearlSkillBar.hidden?
     return unless normal_walk?
     #--------------------------------------------------------------------------
-    unless actor.equips[0].nil?
-      use_weapon(actor.equips[0].id) if trigger_tool?(Key::Weapon[0], :keys) && !Input.press?(:kCTRL)
-      #use_weapon(actor.equips[0].id) if trigger_tool?(1, :mouse) 
-    end
+    use_weapon(actor.equips[0].id) if !actor.equips[0].nil? && 
+                                      trigger_tool?(HotKeys::Weapon)
     #--------------------------------------------------------------------------
-    unless actor.equips[1].nil?
-      use_armor(actor.equips[1].id) if trigger_tool?(Key::Armor[0], :keys)
-      #use_armor(actor.equips[1].id) if trigger_tool?(2, :mouse) 
-    end
+    use_armor(actor.equips[1].id)  if !actor.equips[1].nil? &&
+                                      trigger_tool?(HotKeys::Armor[0])
     #--------------------------------------------------------------------------
-    for i in 0...Key::Key_id_table.size
-      next if i <= 1
-      cur_key = Key::Key_id_table[i]
-      if i <= 4 && !actor.assigned_item[i - 2].nil?         # (2 ~ 4)
-        use_item( actor.assigned_item[i - 2] ) if trigger_tool?(cur_key, :keys)
-      elsif i > 4 && i <= 14 && actor.assigned_skill[i - 5] # (5 ~ 14)
-        use_skill( actor.assigned_skill[i - 5] ) if trigger_tool?(cur_key, :keys)
-      end
-    end
-    #--------------------------------------------------------------------------
-    unless actor.assigned_sskill.nil?
-      use_skill(actor.assigned_sskill.id) if trigger_tool?(Key::SSkill[0],:keys)
+    n = HotKeys::SkillBarSize
+    for i in 0...n
+      use_hotkey(i) if trigger_tool?(HotKeys::SkillBar[i])
     end
     
+    # use_item( actor.assigned_item[i - 2] ) if trigger_tool?(cur_key, :keys)
+    # use_skill( actor.assigned_skill[i - 5] ) if trigger_tool?(cur_key, :keys)
     #--------------------------------------------------------------------------
     update_followers_trigger unless $game_map.interpreter.running?
   end
@@ -188,17 +231,15 @@ class Game_Player < Game_Character
   # tag: follower
   #---------------------------------------------------------------------------
   def update_followers_trigger
-    if PearlKernel::SinglePlayer and trigger_tool?(Key::Follower[0], :keys)
+    if PearlKernel::SinglePlayer and trigger_tool?(HotKeys::Follower)
       return if @knockdown_data[0] > 0
       force_cancel_actions
       @pearl_menu_call = [:tools, 2]
       return
     end
-    make_battle_followers if trigger_tool?(Key::Follower[0], :keys)
-    make_battle_followers if trigger_tool?(9, :mouse)
+    make_battle_followers if trigger_tool?(HotKeys::Follower)
     
-    if PearlKey.press?(Key::Follower[0]) || @mouse_exist && Mouse.press?(0) &&
-      @mouse_over == 9
+    if PearlKey.press?(HotKeys::Follower)
       @press_timer += 1
       if @press_timer == 1 * 60
         @followers.each do |f|
@@ -265,12 +306,12 @@ class Game_Player < Game_Character
     return if $game_map.interpreter.running?
     return if @pearl_menu_call[1] > 0
     
-    if PearlKey.trigger?(Key::QuickTool)
+    if PearlKey.trigger?(HotKeys::QuickTool)
       return if @knockdown_data[0] > 0
       force_cancel_actions
       @pearl_menu_call = [:tools, 2]
     end
-    if !PearlKernel::SinglePlayer and PearlKey.trigger?(Key::PlayerSelect)
+    if !PearlKernel::SinglePlayer and PearlKey.trigger?(HotKeys::PlayerSelect)
       @pearl_menu_call = [:character, 2]
     end
   end

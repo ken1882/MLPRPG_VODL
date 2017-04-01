@@ -8,7 +8,13 @@ module PONY::CHAIN
   # Total Bits available for transaction
   TotalBalance = 10 ** 9
   
-  # Missing bits goes here
+  # Total Chromastal available for transaction
+  TotalChromastal = 0xffff
+  
+  # Transaction fee
+  Transaction_Fee = 0.00042
+  
+  # Unnamed transaction source
   CoinBase = 0xc4f10a20486103dd74203a315edf9200
   # Mining Difficulty
   Difficulty = 0x64

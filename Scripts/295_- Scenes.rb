@@ -15,6 +15,7 @@ module PearlScenes
   GoodStatus =      'Good'       # Displayed when 50 to 75% of hp
   ExellentStatus =  'Exellent'   # Displayed when 75 to 100% of hp
 end
+=begin
 #===============================================================================
 # target slection engine
 class Window_EventSelect < Window_Selectable
@@ -824,3 +825,4 @@ class Scene_QuickTool < Scene_MenuBase
   end
   
 end
+=end

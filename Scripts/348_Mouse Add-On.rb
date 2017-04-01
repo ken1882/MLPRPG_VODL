@@ -52,6 +52,15 @@ module Mouse
     $game_player.adjacent?(map_grid[0], map_grid[1], x + 0.4, y)
   end
   
+  #--------------------------------------------------------------------------
+  # * Determind if trigger toolbar items
+  #--------------------------------------------------------------------------
+  def self.trigger_tool?(index)
+    return false unless index
+    return false unless self.trigger?(0)
+    return true  if index == $game_player.mouse_skillbar_index
+  end
+  
 end # Mouse
 #==============================================================================
 # ** Scene_Base
@@ -78,7 +87,9 @@ class Scene_Base
       $focus_window = nil if $focus_window && $focus_window.disposed?
       if ivar.is_a?(Window_Selectable) && !ivar.disposed?
         $focus_window = ivar if ivar.active?
-        if !ivar.active? && ivar.autoselect? && Mouse.object_area?(ivar.x, ivar.y, ivar.width, ivar.height)
+        if !ivar.active? && ivar.autoselect? && !@@overlayed && 
+            Mouse.object_area?(ivar.x, ivar.y, ivar.width, ivar.height)
+            
           $focus_window.unselect   if $focus_window && $focus_window.has_parent?
           $focus_window.deactivate if $focus_window
           process_autoselect(ivar)
@@ -89,6 +100,7 @@ class Scene_Base
   end # update_mouse_select_window
   
   def process_autoselect(window)
+    return if @@overlayed
     re = nil
     if window.is_a?(Window_FileAction)
       on_file_ok
@@ -99,5 +111,6 @@ class Scene_Base
     end
     Sound.play_cursor if re
   end
+  
   
 end

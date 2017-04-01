@@ -14,7 +14,7 @@ module PearlSkillBar
   Tile_Y = 14
   
   # Layout graphic
-  LayOutImage = "Pearl Skillbar"
+  LayOutImage = "Skillbar"
   
   # Follower attack command icon index
   ToggleIcon = 116
@@ -59,22 +59,14 @@ class Sprite_PearlTool < Sprite
     @icons.bitmap = Bitmap.new(@layout.bitmap.width, @layout.bitmap.height)
     self.bitmap = Bitmap.new(@layout.bitmap.width+32, @layout.bitmap.height+32)
     
-    if custom_pos.nil?
-      @layout.x = 45
-      @layout.y = Graphics.height - 50
-    else
-      @layout.x = custom_pos[0]
-      @layout.y = custom_pos[1]
-    end
     
-    @layout.x = 45
+    @layout.x = (Graphics.width - @layout.bitmap.width) / 2
     @layout.y = Graphics.height - 50
     @icons.x = @layout.x
     @icons.y = @layout.y
-    
-    
-    self.x = 38
-    self.y = Graphics.height - 35
+    $game_variables.global_vars[:skillbar_pos] = POS.new(@layout.x, @layout.y)
+    self.x = @layout.x
+    self.y = @layout.y
     self.z = self.z + 1
     
     
@@ -100,15 +92,12 @@ class Sprite_PearlTool < Sprite
   
   def draw_key_info
     @info_keys.bitmap.font.size = 15
-    letters = [Key::Weapon[1], Key::Armor[1], Key::Item[1], Key::Item2[1], Key::Item3[1],
-    Key::Skill[1], Key::Skill2[1], Key::Skill3[1], Key::Skill4[1],
-    Key::Skill5[1], Key::Skill6[1], Key::Skill7[1], Key::Skill8[1], Key::Skill9[1],
-    Key::Skill10[1],Key::SSkill[1], Key::Follower[1]
-    ]
-    x = 28
+    letters = HotKeys::SkillBar
+    cx = 22
     for i in letters
-      @info_keys.bitmap.draw_text(x, -2, @info_keys.bitmap.width, 32, i) 
-      x += 32
+      name = HotKeys.name(i)
+      @info_keys.bitmap.draw_text(cx, 6, @info_keys.bitmap.width, 32, name)
+      cx += 32
     end
   end
   
@@ -389,21 +378,17 @@ class Sprite_PearlTool < Sprite
   
   # if mouse exist update the mouse settings
   def update_mouse_tiles
-    mx = (Mouse.pos[0] / 32) ; my = (Mouse.pos[1] / 32)
-    case [mx, my]
-    when [Tile_X,     Tile_Y] then $game_player.mouse_over = 1
-    when [Tile_X + 1, Tile_Y] then $game_player.mouse_over = 2
-    when [Tile_X + 2, Tile_Y] then $game_player.mouse_over = 3
-    when [Tile_X + 3, Tile_Y] then $game_player.mouse_over = 4
-    when [Tile_X + 4, Tile_Y] then $game_player.mouse_over = 5
-    when [Tile_X + 5, Tile_Y] then $game_player.mouse_over = 6
-    when [Tile_X + 6, Tile_Y] then $game_player.mouse_over = 7
-    when [Tile_X + 7, Tile_Y] then $game_player.mouse_over = 8
-    when [Tile_X + 8, Tile_Y] then $game_player.mouse_over = 9
-    else 
-      $game_player.mouse_over = 0 if $game_player.mouse_over != 0
-    end
-    if $game_player.mouse_over > 0
+    
+    offset = 30
+    $game_player.mouse_skillbar_index = -1
+    for i in 0...HotKeys::SkillBarSize
+      $game_player.mouse_skillbar_index = i if Mouse.object_area?(@layout.x + i * 32, 
+                                                        @layout.y, 
+                                                        offset, offset)
+    end    
+    
+    return if $ExtraEffects == false
+    if $game_player.mouse_skillbar_index >= 0
       create_mouse_blink
       update_mouse_blink_position
       @mouse_blink.opacity -= 3
@@ -415,17 +400,7 @@ class Sprite_PearlTool < Sprite
   
   # update mouse blink position
   def update_mouse_blink_position
-    case $game_player.mouse_over
-    when 1 then @mouse_blink.x = @layout.x + (5)
-    when 2 then @mouse_blink.x = @layout.x + (5 + 32)
-    when 3 then @mouse_blink.x = @layout.x + (5 + 64)
-    when 4 then @mouse_blink.x = @layout.x + (5 + 96)
-    when 5 then @mouse_blink.x = @layout.x + (5 + 128)
-    when 6 then @mouse_blink.x = @layout.x + (5 + 160)
-    when 7 then @mouse_blink.x = @layout.x + (5 + 192)
-    when 8 then @mouse_blink.x = @layout.x + (5 + 224)
-    when 9 then @mouse_blink.x = @layout.x + (5 + 256)
-    end
+    @mouse_blink.x = @layout.x + 5 + ($game_player.mouse_skillbar_index * 32)
   end
   
   def create_mouse_blink
@@ -433,7 +408,7 @@ class Sprite_PearlTool < Sprite
     @mouse_blink = ::Sprite.new(@view)
     @mouse_blink.bitmap = Bitmap.new(22, 22)
     @mouse_blink.bitmap.fill_rect(0, 0, 22, 22, Color.new(255,255,255))
-    @mouse_blink.y = @layout.y + 8
+    @mouse_blink.y = @layout.y + 3
     @mouse_blink.z = self.z
     @mouse_blink.opacity = 70
   end

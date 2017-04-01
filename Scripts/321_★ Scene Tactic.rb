@@ -84,12 +84,12 @@ class Scene_Map < Scene_Base
     return if $game_map.interpreter.running?
     return if $game_player.pearl_menu_call[1] > 0
     
-    if PearlKey.trigger?(Key::QuickTool)
+    if PearlKey.trigger?(HotKeys::QuickTool)
       return if $game_player.knockdown_data[0] > 0
       $game_player.force_cancel_actions
       SceneManager.call(Scene_QuickTool)
     end
-    if !PearlKernel::SinglePlayer and PearlKey.trigger?(Key::PlayerSelect)
+    if !PearlKernel::SinglePlayer and PearlKey.trigger?(HotKeys::PlayerSelect)
       SceneManager.call(Scene_CharacterSet)
     end
     

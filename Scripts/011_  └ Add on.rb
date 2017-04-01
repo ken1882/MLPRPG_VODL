@@ -6,6 +6,10 @@
 # or returning from the item screen to the main menu.
 #==============================================================================
 module SceneManager
+  #--------------------------------------------------------------------------
+  # * Module Instance Variables
+  #--------------------------------------------------------------------------
+  @ui_visible = true                # user interface visibility
   #----------------------------------------------------------------------------
   # * all battlers
   #----------------------------------------------------------------------------
@@ -70,8 +74,16 @@ module SceneManager
     return true
   end
   
-  def self.item_for_dump
-    return scene.overlay_windows
+  def self.ui_visible?
+    @ui_visible
+  end
+  
+  def self.hide_ui
+    @ui_visible = false
+  end
+  
+  def self.show_ui
+    @ui_visible = true
   end
   
   #----------------------------------------------------------------------------
