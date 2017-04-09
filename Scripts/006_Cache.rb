@@ -84,7 +84,7 @@ module Cache
   #--------------------------------------------------------------------------
   def self.load_bitmap(folder_name, filename, hue = 0)
     @cache ||= {}
-    if filename.empty?
+    if !filename || filename.empty?
       empty_bitmap
     elsif hue == 0
       normal_bitmap(folder_name + filename)

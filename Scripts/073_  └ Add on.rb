@@ -1,10 +1,9 @@
 #==============================================================================
-# ** Game_Character
+# ** Game_CommonEvent
 #------------------------------------------------------------------------------
-#  A character class with mainly movement route and other such processing
-# added. It is used as a super class of Game_Player, Game_Follower,
-# GameVehicle, and Game_Event.
+#  This class handles common events. It includes functionality for execution of
+# parallel process events. It's used within the Game_Map class ($game_map).
 #==============================================================================
-class Game_Character < Game_CharacterBase
+class Game_CommonEvent
   
 end

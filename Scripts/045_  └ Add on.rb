@@ -1,10 +1,10 @@
 #==============================================================================
-# ** Game_BaseItem
+# ** Game_Pictures
 #------------------------------------------------------------------------------
-#  This class uniformly handles skills, items, weapons, and armor. References
-# to the database object itself are not retained to enable inclusion in save
-# data.
+#  This is a wrapper for a picture array. This class is used within the
+# Game_Screen class. Map screen pictures and battle screen pictures are
+# handled separately.
 #==============================================================================
-class Game_BaseItem
+class Game_Pictures
   
 end

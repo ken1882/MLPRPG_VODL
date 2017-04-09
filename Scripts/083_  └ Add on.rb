@@ -1,27 +1,18 @@
 #==============================================================================
-# ** Game_Event
+# ** Game_Followers
 #------------------------------------------------------------------------------
-#  This class handles events. Functions include event page switching via
-# condition determinants and running parallel process events. Used within the
-# Game_Map class.
+#  This is a wrapper for a follower array. This class is used internally for
+# the Game_Player class. 
 #==============================================================================
-class Game_Event < Game_Character
-  #---------------------------------------------------------------------------
-  # * Method Missing
-  # ----------------------------------------------------------------------   
-  # DANGER ZONE: Redirect to Game_Enemy
-  #---------------------------------------------------------------------------
-  def method_missing(symbol, *args)
-    super(symbol, *args) if @enemy.nil?
-    
-    case args.size
-    when 0; @enemy.method(symbol).call
-    when 1; @enemy.method(symbol).call(args[0])
-    when 2; @enemy.method(symbol).call(args[0], args[1])
-    when 3; @enemy.method(symbol).call(args[0], args[1], args[2])
-    when 4; @enemy.method(symbol).call(args[0], args[1], args[2], args[3])
-    when 5; @enemy.method(symbol).call(args[0], args[1], args[2], args[3], args[4])
+class Game_Followers
+  #--------------------------------------------------------------------------
+  # * Frame Update
+  #--------------------------------------------------------------------------
+  def update
+    if gathering?
+      move unless moving? || moving?
+      @gathering = false if gather?
     end
+    each {|follower| follower.update unless follower.nil? || follower.actor.nil?}
   end
-  
 end

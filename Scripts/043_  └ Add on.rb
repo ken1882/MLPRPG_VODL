@@ -1,10 +1,9 @@
 #==============================================================================
-# ** Game_Pictures
+# ** Game_Picture
 #------------------------------------------------------------------------------
-#  This is a wrapper for a picture array. This class is used within the
-# Game_Screen class. Map screen pictures and battle screen pictures are
-# handled separately.
+#  This class handles pictures. It is created only when a picture of a specific
+# number is required internally for the Game_Pictures class.
 #==============================================================================
-class Game_Pictures
+class Game_Picture
   
 end

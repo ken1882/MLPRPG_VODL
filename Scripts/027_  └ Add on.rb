@@ -1,48 +1,20 @@
 #==============================================================================
-# ** Game_System
+# ** Game_Temp
 #------------------------------------------------------------------------------
-#  This class handles system data. It saves the disable state of saving and 
-# menus. Instances of this class are referenced by $game_system.
+#  This class handles temporary data that is not included with save data.
+# The instance of this class is referenced by $game_temp.
 #==============================================================================
-class Game_System
+class Game_Temp
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_accessor :time_stop
+  attr_accessor :pop_windowdata, :loadingg
   #--------------------------------------------------------------------------
-  # * Object Initialization
+  # * Pop Window
   #--------------------------------------------------------------------------
-  alias initialize_COMP initialize
-  def initialize
-    @time_stop = false
-    initialize_COMP
+  def pop_w(time, name, text)
+    return unless @pop_windowdata.nil?
+    @pop_windowdata = [time, text, name]
   end
   #--------------------------------------------------------------------------
-  # * time stopped?
-  #--------------------------------------------------------------------------
-  def time_stopped?
-    return @time_stop
-  end
-  
-  #--------------------------------------------------------------------------
-  # * show roll result?
-  #--------------------------------------------------------------------------
-  def show_roll_result?
-    return $game_switches[15]
-  end
-  
-  #--------------------------------------------------------------------------
-  # * hide all windows?
-  #--------------------------------------------------------------------------
-  def hide_all_windows?
-    return $game_switches[16]
-  end
-  #--------------------------------------------------------------------------
-  # * return a rand class value
-  #--------------------------------------------------------------------------
-  def make_rand
-    Random.new_seed
-    return Random.new
-  end
-  
 end

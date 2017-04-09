@@ -1,38 +1,31 @@
 #==============================================================================
-# ** Game_Player
+# ** Game_CharacterBase
 #------------------------------------------------------------------------------
-#  This class handles the player. It includes event starting determinants and
-# map scrolling functions. The instance of this class is referenced by
-# $game_player.
+#  This base class handles characters. It retains basic information, such as 
+# coordinates and graphics, shared by all characters.
 #==============================================================================
-class Game_Player < Game_Character
+class Game_CharacterBase
   #--------------------------------------------------------------------------
-  # * Public Instance Variables
+  # * Alias: Initialize Public Member Variables
   #--------------------------------------------------------------------------
-  attr_accessor :target_event
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
-  alias initialize_trevent initialize
-  def initialize
-    @target_event = nil
-    initialize_trevent
+  alias init_public_cbmembers init_public_members
+  def init_public_members
+    init_public_cbmembers
+    @move_speed = 4.5
   end
-  #---------------------------------------------------------------------------
-  # * Method Missing
-  # ----------------------------------------------------------------------   
-  # DANGER ZONE: Redirect to Game_Enemy
-  #---------------------------------------------------------------------------
-  def method_missing(symbol, *args)
-    super(symbol, *args) if actor.nil?
-    
-    case args.size
-    when 0; actor.method(symbol).call
-    when 1; actor.method(symbol).call(args[0])
-    when 2; actor.method(symbol).call(args[0], args[1])
-    when 3; actor.method(symbol).call(args[0], args[1], args[2])
-    when 4; actor.method(symbol).call(args[0], args[1], args[2], args[3])
-    when 5; actor.method(symbol).call(args[0], args[1], args[2], args[3], args[4])
-    end
+  #--------------------------------------------------------------------------
+  # * Determine if Dashing
+  #--------------------------------------------------------------------------
+  def dash?
+    return false
+  end
+  #--------------------------------------------------------------------------
+  # * Calculate Move Distance per Frame
+  #--------------------------------------------------------------------------
+  def distance_per_frame
+    re = (2 ** (real_move_speed).to_i / 256.0)
+    base = real_move_speed - real_move_speed.to_i
+    re  += base / 16
+    return re
   end
 end

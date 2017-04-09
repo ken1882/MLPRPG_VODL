@@ -86,8 +86,8 @@ module DataManager
     File.open(make_hashfilename(index), 'rb') do |file|
       prev_contents = Marshal.load(file)
       result = (prev_contents[:checksum] == checksum)
-      puts "[System]:File Index: #{index}"
-      puts "[System]:CheckSum: prev> #{prev_contents[:checksum]} cur> #{checksum}"
+      puts "[System]: File Index: #{index}"
+      puts "[System]: CheckSum: prev> #{prev_contents[:checksum]} cur> #{checksum}"
     end
     return result
   end
@@ -154,11 +154,26 @@ module DataManager
     return "~Game.rvdata2"
   end
   #--------------------------------------------------------------------------
-  # * Dump map property
+  # alias method: load_database
   #--------------------------------------------------------------------------
-  def self.dump_map_cache
-    File.open(make_cachefilename, 'wb') do |file|
-      Marshal.dump(SceneManager.item_for_dump, file)
+  class << self; alias load_database_opt load_database; end
+  def self.load_database
+    load_database_opt
+    load_enemy_attributes
+  end
+  #--------------------------------------------------------------------------
+  # new method: load_character_attributes
+  #--------------------------------------------------------------------------
+  def self.load_enemy_attributes
+    $data_enemies.compact.each do |obj|
+      obj.load_character_attributes
     end
+  end
+end
+class << DataManager
+  alias extract_opt extract_save_contents
+  def DataManager.extract_save_contents(contents)
+    extract_opt(contents)
+    $game_temp.loadingg = true
   end
 end

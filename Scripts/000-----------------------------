@@ -25,7 +25,12 @@ tag: poison
 tag: modified
 tag: D&D_para
 tag: sight
+tag: unfinished
 TAG: ERROR     // this is bad
+Quick Tag:
+1: 
+2:
+3:
 ╔════╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═════╗
 ║ ╔══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╗ ║
 ╠─╣                                                                          ╠─╣
@@ -35,4 +40,5 @@ TAG: ERROR     // this is bad
 ╚════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════╝
 moving? -> process_moving (Fix free movement can't detect moving while dash)
 =end
+$SAFE = 1
 def Boolean(n); n == 0 ? false : true; end

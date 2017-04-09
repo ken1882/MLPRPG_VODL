@@ -1,9 +1,9 @@
 #==============================================================================
-# ** Game_Switches
+# ** Game_Message
 #------------------------------------------------------------------------------
-#  This class handles switches. It's a wrapper for the built-in class "Array."
-# The instance of this class is referenced by $game_switches.
+#  This class handles the state of the message window that displays text or
+# selections, etc. The instance of this class is referenced by $game_message.
 #==============================================================================
-class Game_Switches
+class Game_Message
   
 end
