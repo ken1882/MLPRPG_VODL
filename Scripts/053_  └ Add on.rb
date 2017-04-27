@@ -1,114 +1,72 @@
 #==============================================================================
-# ** Game_BattlerBase
+# ** Game_Action
 #------------------------------------------------------------------------------
-#  This base class handles battlers. It mainly contains methods for calculating
-# parameters. It is used as a super class of the Game_Battler class.
+#  This class handles battle actions. This class is used within the
+# Game_Battler class.
 #==============================================================================
-class Game_BattlerBase
+class Game_Action
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_accessor :reg_time_count             # regeneration time counter
+  attr_accessor :time                       # Cast time required
+  attr_accessor :interruptible              # Can be interrupted?
+  attr_accessor :user                       # Battler who used, may be inverted
+  attr_accessor :target                     # Target destiniation
+  attr_accessor :subject                    # Battlers affected
+  attr_reader   :casting                    # Casting flag
+  attr_reader   :item                       # Item index
+  attr_reader	  :acting                     # Performing flag
+  attr_reader	  :done                       # Executed flag
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  alias initialize_reg_dnd initialize
-  def initialize
-    @reg_time_count = 0
-    initialize_reg_dnd
+  def initialize(user, target, item, forcing = false)
+  	@user	   = user
+    @target  = target
+    @subject = []
+    @forcing = forcing
+    @item 	 = item
+    @time    = user.item_casting_time(item)
+    @interruptible = true
+    @casting       = true
+    @acting		     = false
+    @done		       = false
   end
-  #--------------------------------------------------------------------------   
-  # ● Easier method for check skilll learned
-  #--------------------------------------------------------------------------   
-  def skill_learned?(id)
-    if self.actor?
-      return self.skills.include?($data_skills[id])
-    else
-      return self.skills.include?(id)
+  #---------------------------------------------------------------------------
+  #  *) Return interrupt flag, if false, action will be executed anyway
+  #---------------------------------------------------------------------------
+  def interruptible?
+  	return @interruptible
+  end
+  #---------------------------------------------------------------------------
+  #  *) Return if action is undergoing
+  #---------------------------------------------------------------------------
+  def acting?
+  	return @acting
+  end
+  #---------------------------------------------------------------------------
+  #  *) Return action can be executed effectivly
+  #---------------------------------------------------------------------------
+  def action_impleable?
+  	return false if @user.distance_to(@subject.x, @subject.y) > item.tool_range
+  	return false if !path_clear?(@user.x, @user.y, @subject.x, @subject.y)
+  	return true
+  end
+  #---------------------------------------------------------------------------
+  #  *) casting process
+  # tag: cast
+  #---------------------------------------------------------------------------
+  def do_casting
+  	return if cast_done?
+  	@time -= user.csr if @time > 0
+    if @time <= 0
+      @casting = false
+      @time = 0
     end
   end
-  #--------------------------------------------------------------------------
-  # ● Posioned?
-  #--------------------------------------------------------------------------   
-  def poisoned?
-    
-    for state in self.states
-      return true if state.is_poison?
-    end
-    
-    return false
-  end
-  #--------------------------------------------------------------------------
-  # ● Debuffed?
-  #--------------------------------------------------------------------------   
-  def debuffed?
-    for state in self.states
-      return true if state.is_debuff?
-    end
-    
-    return false
+  #---------------------------------------------------------------------------
+  def cast_done?
+    return !@casting
   end
   
-  #--------------------------------------------------------------------------
-  # ● Dispel Magic
-  #--------------------------------------------------------------------------   
-  def dispel_magic
-    animated = false
-    for state in self.states
-      next if state.nil?
-      animated = true if state.id == 271
-      
-      remove_state(state.id) if state.is_magic?
-    end
-    die if animated
-  end
-  #--------------------------------------------------------------------------
-  # ● Anti Magic?
-  #--------------------------------------------------------------------------   
-  def anti_magic?
-    
-    result = false
-    source = 0
-    
-     if @anti_magic
-       result = true; source = 1
-     end
-     
-    if self.mrf > 0.5
-      result = true; source = 2 
-    end
-    
-    anti_magic_state = [266,267,288]
-    
-    for id in anti_magic_state
-      if self.state?(id)
-        source = id
-        result = true
-        break
-      end
-  
-    end
-    
-    return result
-  end
-  #--------------------------------------------------------------------------
-  # Hide HP/MP info
-  #--------------------------------------------------------------------------
-  def hide_info?
-    false
-  end
-  
-  def popup_hp_change(value)
-    return unless SceneManager.scene_is?(Scene_Map)
-    color = value < 0 ? DND::COLOR::HPDamage : DND::COLOR::HPHeal
-    popup_info(value.abs.to_s, color)
-  end
-  
-  def popup_ep_change(value)
-    return unless SceneManager.scene_is?(Scene_Map)
-    color = value < 0 ? DND::COLOR::EPDamage : DND::COLOR::EPHeal
-    popup_info(value.abs.to_s, color)
-  end
-  
-  #--------------------------------------------------------------------------   
 end

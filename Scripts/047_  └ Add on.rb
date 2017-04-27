@@ -1,14 +1,9 @@
 #==============================================================================
-# ** Game_BaseItem
+# ** Game_Picture
 #------------------------------------------------------------------------------
-#  This class uniformly handles skills, items, weapons, and armor. References
-# to the database object itself are not retained to enable inclusion in save
-# data.
+#  This class handles pictures. It is created only when a picture of a specific
+# number is required internally for the Game_Pictures class.
 #==============================================================================
-class Game_BaseItem
-  
-  def nil?
-    return super || is_nil?
-  end
+class Game_Picture
   
 end

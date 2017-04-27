@@ -1,9 +1,17 @@
 #==============================================================================
-# ** Game_Screen
+# ** Game_Variables
 #------------------------------------------------------------------------------
-#  This class handles screen maintenance data, such as changes in color tone,
-# flashes, etc. It's used within the Game_Map and Game_Troop classes.
+#  This class handles variables. It's a wrapper for the built-in class "Array."
+# The instance of this class is referenced by $game_variables.
 #==============================================================================
-class Game_Screen
-  
+class Game_Variables
+  attr_accessor :global_vars
+  #--------------------------------------------------------------------------
+  # * Object Initialization
+  #--------------------------------------------------------------------------
+  alias initialize_extravar initialize
+  def initialize
+    initialize_extravar
+    @global_vars = {}
+  end
 end

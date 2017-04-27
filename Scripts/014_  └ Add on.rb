@@ -1,286 +1,188 @@
 #==============================================================================
-# ** BattleManager
+# ** SceneManager
 #------------------------------------------------------------------------------
-#  This module manages battle progress.
+#  This module manages scene transitions. For example, it can handle
+# hierarchical structures such as calling the item screen from the main menu
+# or returning from the item screen to the main menu.
 #==============================================================================
-module BattleManager
-  Team_Number     = 3
-  Team_Max_Number = 15
-  Scope_None      = 0
-  Scope_OneEnemy  = 1
-  Scope_AllEnemy  = 2
-  Scope_1Random   = 3
-  Scope_2Random   = 4
-  Scope_3Random   = 5
-  Scope_4Random   = 6
-  Scope_OneAlly   = 7
-  Scope_AllAlly   = 8
-  Scope_OneDead   = 9
-  Scope_AllDead   = 10
-  Scope_User      = 11
-  
+module SceneManager
   #--------------------------------------------------------------------------
-  # * Setup
+  # * Module Instance Variables
   #--------------------------------------------------------------------------
-  def self.setup(npcs, can_escape = true, can_lose = false)
-    init_members(npcs)
-    @can_escape = can_escape
-    @can_lose = can_lose
+  @ui_visible = true                # user interface visibility
+  @load_completed = false
+  @loading_screen = nil
+  #--------------------------------------------------------------------------
+  # * Execute
+  #--------------------------------------------------------------------------
+  def self.run
+    DataManager.unpack_data if $ENCRYPT
+    @timer = 0
+    reserve_loading_screen
+    DataManager.init
+    Audio.setup_midi if use_midi?
+    @scene = first_scene_class.new
+    @scene.main while @scene
   end
   #--------------------------------------------------------------------------
-  # * Initialize Member Variables
-  #--------------------------------------------------------------------------
-  class << self; alias init_members_dnd init_members; end
-  def self.init_members(npcs)
-    init_members_dnd
-    @action_battlers = {}
-    Team_Number.times {|key| @action_battlers[key] = Array.new()}
-    assign_team_number(npcs)
+  def self.update_loading
+    return unless @loading_screen
+    @timer += 1
+    Graphics.update
+    @loading_screen.update
   end
-  #--------------------------------------------------------------------------
-  def self.assign_team_number(npcs)
-    @action_battlers[0] = $game_party.battle_members
-    npcs.compact.each do |npc|
-      next if npc.team_id.nil? || npc.team_id >= Team_Max_Number
-      @action_battlers[npc.team_id].push(npc)
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * Processing at Encounter Time
-  #--------------------------------------------------------------------------
-  def self.on_encounter
-  end
-  #--------------------------------------------------------------------------
-  # * Get Probability of Preemptive Attack
-  #--------------------------------------------------------------------------
-  def self.rate_preemptive
-  end
-  #--------------------------------------------------------------------------
-  # * Get Probability of Surprise
-  #--------------------------------------------------------------------------
-  def self.rate_surprise
-  end
-  #--------------------------------------------------------------------------
-  # * Save BGM and BGS
-  #--------------------------------------------------------------------------
-  def self.save_bgm_and_bgs
-    @map_bgm = RPG::BGM.last
-    @map_bgs = RPG::BGS.last
-  end
-  #--------------------------------------------------------------------------
-  # * Play Battle BGM
-  #--------------------------------------------------------------------------
-  def self.play_battle_bgm
-    $game_system.battle_bgm.play
-    RPG::BGS.stop
-  end
-  #--------------------------------------------------------------------------
-  # * Play Battle End ME
-  #--------------------------------------------------------------------------
-  def self.play_battle_end_me
-    $game_system.battle_end_me.play
-  end
-  #--------------------------------------------------------------------------
-  # * Resume BGM and BGS
-  #--------------------------------------------------------------------------
-  def self.replay_bgm_and_bgs
-    @map_bgm.replay unless $BTEST
-    @map_bgs.replay unless $BTEST
-  end
-  #--------------------------------------------------------------------------
-  # * Create Escape Success Probability
-  #--------------------------------------------------------------------------
-  def self.make_escape_ratio
-  end
-  #--------------------------------------------------------------------------
-  # * Determine if Turn Is Executing
-  #--------------------------------------------------------------------------
-  def self.in_turn?
-    @phase == :turn
-  end
-  #--------------------------------------------------------------------------
-  # * Determine if Turn Is Ending
-  #--------------------------------------------------------------------------
-  def self.turn_end?
-    @phase == :turn_end
-  end
-  #--------------------------------------------------------------------------
-  # * Determine if Battle Is Aborting
-  #--------------------------------------------------------------------------
-  def self.aborting?
-    @phase == :aborting
-  end
-  #--------------------------------------------------------------------------
-  # * Get Whether Escape Is Possible
-  #--------------------------------------------------------------------------
-  def self.can_escape?
-    @can_escape
-  end
-  #--------------------------------------------------------------------------
-  # * Get Actor for Which Command Is Being Entered
-  #--------------------------------------------------------------------------
-  def self.actor
-  end
-  #--------------------------------------------------------------------------
-  # * Clear Actor for Which Command Is Being Entered
-  #--------------------------------------------------------------------------
-  def self.clear_actor
-    @actor_index = -1
-  end
-  #--------------------------------------------------------------------------
-  # * Get Next Action Subject
-  #    Get the battler from the beginning of the action order list.
-  #    If an actor not currently in the party is obtained (occurs when index
-  #    is nil, immediately after escaping in battle events etc.), skip them.
-  #--------------------------------------------------------------------------
-  def self.next_subject
-  end
-  #--------------------------------------------------------------------------
-  # * Return allied battlers
-  #--------------------------------------------------------------------------
-  def self.ally_battler(battler = $game_palyer)
-    return @action_battlers[battler.team_id].compact
-  end
-  #--------------------------------------------------------------------------
-  # * Return allied battlers
-  #--------------------------------------------------------------------------
-  def self.opponent_battler(battler = $game_player)
-    opponents = []
-    @action_battlers.each do |key, members|
-      next if key == battler.team_id
-      opponents << members.compact
-    end
-    return opponents.flatten
-  end
-  #--------------------------------------------------------------------------
-  # * Enter target selection
-  #--------------------------------------------------------------------------
-  def self.target_selection(user, item)
-    return unless SceneManager.scene_is?(Scene_Map)
-    SceneManager.scene.start_tactic
-    return SceneManager.scene.target_selection(user, item)
-  end
-  #--------------------------------------------------------------------------
-  # * Enter target selection
-  #--------------------------------------------------------------------------
-  def self.autotarget(user, item)
-    return user.current_target if user.current_target
-    return user if item.for_none? || item.for_user?
-    return one_random_ally if item.for_friend?
-    return one_random_enemy
-  end
-  #--------------------------------------------------------------------------
-  # * Decide one random ally (nearset if not AOE)
-  #--------------------------------------------------------------------------
-  def self.one_random_ally(user, item)
-    allies = ally_battler(user)
-    return determine_best_position(allies, item) if item.for_all?
-    target = allies[0]
-    allies.each { |battler| 
-      target = battler if user.distance_to_character(battler) > user.distance_to_character(target)
-    }
-    return target ? target : user
-  end
-  #--------------------------------------------------------------------------
-  # * Decide one random enemy (nearset if not AOE)
-  #--------------------------------------------------------------------------
-  def self.one_random_enemy(user, item)
-    enemies = opponent_battler(user)
-    return determine_best_position(enemies, item) if item.for_all?
-    
-    target = enemies[0]
-    enemies.each { |battler| 
-      target = battler if user.distance_to_character(battler) > user.distance_to_character(target)
-    }
-    return target ? target : user
-  end
-  #--------------------------------------------------------------------------
-  # * Take median target as promary one
-  #--------------------------------------------------------------------------
-  def self.determine_best_position(battlers, item)
-    return (battlers.sort!{|a,b| a.hash_pos <=> b.hash_pos}).at(battlers.size / 2)
-  end
-  #--------------------------------------------------------------------------
-  # * Execute Action
-  #--------------------------------------------------------------------------
-  def self.execute_action(action)
-    determine_effected_targets(action)
-    action.user.use_item(action.item)
-    apply_skill(action)  if action.item.is_a?(RPG::Skill)
-    apply_item(action)   if action.item.is_a?(RPG::Item)
-    apply_weapon(action) if action.item.is_a?(RPG::Weapon)
-    apply_armor(action)  if action.item.is_a?(RPG::Armor)
-  end
-  #--------------------------------------------------------------------------
-  # * Determine effected targets
-  #--------------------------------------------------------------------------
-  def self.determine_effected_targets(action)
-    if action.item.for_opponent?
-      candidates = opponent_battler(action.user).sort {|a,b| a.distance_to_character(action.target) <=> b.distance_to_character(action.target)}
-    elsif action.item.for_friend?
-      candidates = ally_battler(action.user).sort {|a,b| a.distance_to_character(action.target) <=> b.distance_to_character(action.target)}
+  #----------------------------------------------------------------------------
+  # *)  Disply texts on info box
+  #----------------------------------------------------------------------------
+  def self.display_info(text = nil)
+    text.tr('\n','  ')
+    scene = self.scene
+    if scene.is_a?(Scene_Map) && !text.nil?
+      scene.display_info(text)
     else
-      candidates = []
-    end
-    
-    if action.item.for_one?
-      action.subject = action.target.is_a?(POS) ? [candidates.first] : [action.target]
-    elsif action.item.tool_type == 1
-      action.subject = candidates.select {|battler| battler.distance_to_character(action.target) <= action.item.tool_distance}
+      @saved_map_infos.push(text)
     end
   end
-  #--------------------------------------------------------------------------
-  # * Apply Skill
-  #--------------------------------------------------------------------------
-  def self.apply_skill(action)
-    invoke_action(action)
+  #----------------------------------------------------------------------------
+  # *) Scene Stack
+  #----------------------------------------------------------------------------
+  def self.stack
+    @stack
   end
   #--------------------------------------------------------------------------
-  # * Apply Item
+  # * Exit Game
   #--------------------------------------------------------------------------
-  def self.apply_item(action)
-    invoke_action(action)
+  class << self; alias exit_stable exit; end
+  def self.exit
+    self.return unless self.scene_stable?
+    sleep(0.1)
+    self.exit_stable
   end
   #--------------------------------------------------------------------------
-  # * Apply 
+  # * Check if current scene is stable for exit
   #--------------------------------------------------------------------------
-  def self.apply_weapon(action)
-    invoke_action(action)
-  end
-  #--------------------------------------------------------------------------
-  # * Apply Armor
-  #--------------------------------------------------------------------------
-  def self.apply_armor(action)
-    invoke_action(action)
-  end
-  #--------------------------------------------------------------------------
-  # * Invoke Action
-  #--------------------------------------------------------------------------
-  def self.invoke_action(action)
-    item = action.item
-    action.subject.each do |target|
-      next if target.nil?
-      target.item_apply(action.user, item)
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * Apply Substitute
-  #--------------------------------------------------------------------------
-  def self.apply_substitute(target, item)
-    if check_substitute(target, item)
-      substitute = substitute_battler(target)
-      if substitute && target != substitute
-        return substitute
-      end
-    end
-    return target
-  end
-  #--------------------------------------------------------------------------
-  # * Get Substitute Battler
-  #   e.g. mirror image
-  #--------------------------------------------------------------------------
-  def self.substitute_battler
-    return nil
+  def self.scene_stable?
+    return false if self.scene.is_a?(Scene_Text)
+    return true
   end
   
+  def self.ui_visible?
+    @ui_visible
+  end
+  
+  def self.hide_ui
+    @ui_visible = false
+  end
+  
+  def self.show_ui
+    @ui_visible = true
+  end
+  #--------------------------------------------------------------------------
+  # * Direct Transition
+  #--------------------------------------------------------------------------
+  class << self; alias goto_proj goto; end
+  def self.goto(scene_class)
+    if !store_projectile(scene_class)
+      Cache.clear_projectiles
+      $game_map.dispose_projectiles
+    end
+    goto_proj(scene_class)
+  end
+  #--------------------------------------------------------------------------
+  # * Call
+  #--------------------------------------------------------------------------
+  class << self; alias call_proj call; end
+  def self.call(scene_class)
+    if !store_projectile(scene_class)
+      Cache.clear_projectiles
+      $game_map.dispose_projectiles
+    end
+    call_proj(scene_class)
+  end
+  #--------------------------------------------------------------------------
+  def self.store_projectile(next_scene)
+    return false unless scene_is?(Scene_Map)
+    return false if next_scene.is_a?(Scene_Title)
+    return false if next_scene.is_a?(Scene_Gameover)
+    Cache.store_projectile($game_map.projectiles)
+    return true
+  end
+  #--------------------------------------------------------------------------
+  # *) Viewports
+  #--------------------------------------------------------------------------
+  def self.viewport1
+    return nil unless scene_is?(Scene_Map)
+    return scene.spriteset.viewport1
+  end
+  
+  def self.viewport2
+    return nil unless scene_is?(Scene_Map)
+    return scene.spriteset.viewport2
+  end
+  
+  def self.viewport3
+    return nil unless scene_is?(Scene_Map)
+    return scene.spriteset.viewport3
+  end
+  #--------------------------------------------------------------------------
+  # *) Loading Screen process
+  #--------------------------------------------------------------------------
+  def self.reserve_loading_screen(map_id = nil)
+    puts "[Debug]: Reserve load screen"
+    info = get_map_loading_info(map_id)
+    @loading_screen = ForeGround_Loading.new(info, map_id.nil?)
+    self.fade_in(@loading_screen)
+  end
+  #--------------------------------------------------------------------------
+  # *) Retrieve map loading information
+  #--------------------------------------------------------------------------
+  def self.get_map_loading_info(map_id)
+    return if map_id.nil?
+    map  = load_data(sprintf("Data/Map%03d.rvdata2", map_id))
+    info = Struct.new(:image, :name).new(nil, map.display_name)
+    map.note.split(/[\r\n]+/).each { |line|
+      case line
+      when DND::REGEX::MapLoad_Image
+        info.image = $1.to_s
+      when DND::REGEX::MapLoad_Name
+        info.name  = $1.to_s
+      end
+    }
+    return info
+  end
+  #--------------------------------------------------------------------------
+  def self.destroy_loading_screen
+    return unless @loading_screen
+    puts "[Debug]: Terminate load screen"
+    self.fade_out(@loading_screen)
+    @loading_screen.terminate
+    @loading_screen = nil
+  end
+  #--------------------------------------------------------------------------
+  # *) Fade in screen
+  #--------------------------------------------------------------------------
+  def self.fade_in(plane)
+    return unless scene_is?(Scene_Map)
+    SceneManager.scene.fade_loop(30) do |value|
+      plane.opacity = value
+    end
+  end
+  #--------------------------------------------------------------------------
+  # *) Fade out screen
+  #--------------------------------------------------------------------------
+  def self.fade_out(plane)
+    return unless scene_is?(Scene_Map)
+    SceneManager.scene.fade_loop(30) do |value|
+      plane.opacity = 0xff - value
+    end
+  end
+  #--------------------------------------------------------------------------
+  def self.set_loading_phase(info, total)    
+    @loading_screen.set_loading_phase(info, total)
+  end
+  #--------------------------------------------------------------------------
+  def self.loading?
+    return @loading_screen && @loading_screen.loading?
+  end
+  #----------------------------------------------------------------------------
 end

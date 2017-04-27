@@ -1,9 +1,9 @@
 #==============================================================================
-# ** Game_SelfSwitches
+# ** Game_Switches
 #------------------------------------------------------------------------------
-#  This class handles self switches. It's a wrapper for the built-in class
-# "Hash." The instance of this class is referenced by $game_self_switches.
+#  This class handles switches. It's a wrapper for the built-in class "Array."
+# The instance of this class is referenced by $game_switches.
 #==============================================================================
-class Game_SelfSwitches
+class Game_Switches
   
 end

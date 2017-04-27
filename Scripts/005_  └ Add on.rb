@@ -1,8 +1,10 @@
 #==============================================================================
-# ** Sound
+# ** Vocab
 #------------------------------------------------------------------------------
-#  This module plays sound effects. It obtains sound effects specified in the
-# database from the global variable $data_system, and plays them.
+#  This module defines terms and messages. It defines some data as constant
+# variables. Terms in the database are obtained from $data_system.
 #==============================================================================
-module Sound
+module Vocab
+  Player         = "Player"
+  Coinbase       = "Equestria"
 end

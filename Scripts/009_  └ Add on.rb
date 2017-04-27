@@ -1,179 +1,68 @@
 #==============================================================================
-# ** DataManager
+# ** Cache
 #------------------------------------------------------------------------------
-#  This module manages the database and game objects. Almost all of the 
-# global variables used by the game are initialized by this module.
+#  This module loads graphics, creates bitmap objects, and retains them.
+# To speed up load times and conserve memory, this module holds the
+# created bitmap object in the internal hash, allowing the program to
+# return preexisting objects when the same bitmap is requested again.
 #==============================================================================
-module DataManager
-  #---------------------------------------------------------------------------
-  # *) Ensure the file or dictionary
-  #---------------------------------------------------------------------------
-  def self.ensure_file_exist(filename)
-    Dir.mkdir(filename) unless File.exist?(filename)
+module Cache
+  #--------------------------------------------------------------------------
+  # * Module instance
+  #--------------------------------------------------------------------------
+  @cache_sprite     = []    # Sprites cache
+  @cache_projectile = []    # Map Projectiles cache
+  #--------------------------------------------------------------------------
+  # * Get UI Graphic
+  #--------------------------------------------------------------------------
+  def self.UI(filename)
+    load_bitmap("Graphics/UI/", filename)
   end
   #--------------------------------------------------------------------------
-  # * Alias: Set Up New Game
+  # * Get BG Graphic
   #--------------------------------------------------------------------------
-  class << self; alias setup_new_game_bc setup_new_game; end
-  def self.setup_new_game
-    BlockChain.init_chain
-    self.setup_new_game_bc
-    $game_party.gain_item($data_items[1], 1, false, Vocab::Coinbase, "Console: MakeItem")
-  end
-  #---------------------------------------------------------------------------
-  # *) Crash Dump
-  #---------------------------------------------------------------------------
-  def self.save_on_crash
-    #file_name = sprintf("CrashSave_%s.rvdata2",Time.now.to_s.tr('<>/\*?!:','-'))
-    #File.open(file_name, "wb") do |file|
-    #  $game_map.dispose_sprites
-    #  $game_system.on_before_save
-    #  Marshal.dump(make_save_header, file)
-    #  Marshal.dump(make_save_contents, file)
-    #  @last_savefile_index = index
-    #end
-    return true
+  def self.background(filename)
+    load_bitmap("Graphics/Background/", filename)
   end
   #--------------------------------------------------------------------------
-  # * Execute Load
+  # * Store projectiles
   #--------------------------------------------------------------------------
-  def self.load_game(index)
-    result = load_game_without_rescue(index) rescue false
-    return result
+  def self.store_projectile(projs)
+    puts "[Debug]: Projectile stored (#{projs.size})"
+    @cache_projectile = projs.dup
   end
   #--------------------------------------------------------------------------
-  # * Execute Save (No Exception Processing)
+  # * Retrieve stored cahce
   #--------------------------------------------------------------------------
-  class << self; alias save_game_without_rescue_chain save_game_without_rescue; end
-  def self.save_game_without_rescue(index)
-    File.open(make_chainfilename(index), "wb") do |file|
-      Marshal.dump(make_chain_content(index), file)
+  def self.projectile
+    re = @cache_projectile.dup
+    @cache_projectile.clear
+    return re
+  end
+  #--------------------------------------------------------------------------
+  def self.clear_projectiles
+    puts "[Debug]: Clear sprite/bitmap cache (#{@cache_sprite.size})"
+    @cache_projectile.clear
+    @cache_sprite.each do |bitmap|
+      destroy_bitmap(bitmap)
     end
-    save_game_without_rescue_chain(index)
-    build_checksum_file(index)
+    @cache_sprite.clear
   end
   #--------------------------------------------------------------------------
-  # * Execute Load (No Exception Processing)
+  def self.link_bitmap(bitmap)
+    @cache_sprite.push(bitmap)
+  end
   #--------------------------------------------------------------------------
-  class << self; alias load_game_without_rescue_chain load_game_without_rescue; end
-  def self.load_game_without_rescue(index)
-    return :chainfile_missing if !File.exist?(make_chainfilename(index))
-    return :checksum_missing  if !File.exist?(make_hashfilename(index))
-    return :checksum_failed   unless verify_file_checksum(index)
-    File.open(make_chainfilename(index), "rb") do |file|
-      BlockChain.load_chain_data( Marshal.load(file) )
+  def self.unchain_bitmap(bitmap)
+    @cache_sprite.delete(bitmap)
+  end
+  #--------------------------------------------------------------------------
+  def self.destroy_bitmap(bitmap)
+    if bitmap && !bitmap.disposed?
+      bitmap.dispose
+      bitmap = nil
     end
-    return :bits_incorrect  unless PONY::CHAIN.verify_totalbalance
-    load_game_without_rescue_chain(index)
+    @cache_sprite.delete(bitmap)
   end
   #--------------------------------------------------------------------------
-  # * Build Check Sum verify for file
-  #--------------------------------------------------------------------------
-  def self.build_checksum_file(index)
-    rpg_filename   = make_filename(index)
-    chain_filename = make_chainfilename(index) 
-    File.open(make_hashfilename(index), 'wb') do |file|
-      Marshal.dump(make_hash_contents(rpg_filename, chain_filename), file)
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * Verify File CheckSum is correspond to last save
-  #--------------------------------------------------------------------------
-  def self.verify_file_checksum(index)
-    hash_contents = make_hash_contents(make_filename(index), make_chainfilename(index))
-    checksum = hash_contents[:checksum]
-    result = false
-    File.open(make_hashfilename(index), 'rb') do |file|
-      prev_contents = Marshal.load(file)
-      result = (prev_contents[:checksum] == checksum)
-      puts "[System]: File Index: #{index}"
-      puts "[System]: CheckSum: prev> #{prev_contents[:checksum]} cur> #{checksum}"
-    end
-    return result
-  end
-  #--------------------------------------------------------------------------
-  # * Create Filename
-  #     index : File Index
-  #--------------------------------------------------------------------------
-  def self.make_filename(index)
-    self.ensure_file_exist("Save/")
-    sprintf("Save/Save%02d.rvdata2", index + 1)
-  end
-  #--------------------------------------------------------------------------
-  # * Create blockchain Filename
-  #     index : File Index
-  #--------------------------------------------------------------------------
-  def self.make_chainfilename(index)
-    self.ensure_file_exist("Save/")
-    sprintf("Save/Chain%02d.rvdata2", index + 1)
-  end
-  #--------------------------------------------------------------------------
-  # * Create Hash Verify Filename
-  #     index : File Index
-  #--------------------------------------------------------------------------
-  def self.make_hashfilename(index)
-    self.ensure_file_exist("Save/")
-    sprintf("Save/CheckSum%02d.rvdata2", index + 1)
-  end
-  #--------------------------------------------------------------------------
-  # * Create Hash Verify Contents
-  #--------------------------------------------------------------------------
-  def self.make_hash_contents(rpg_file, chain_file)
-    contents = {}
-    contents[:checksum] = PONY.CheckSum(rpg_file) * PONY.CheckSum(chain_file)
-    return contents
-  end
-  #--------------------------------------------------------------------------
-  # * Block Chain Save contents
-  #--------------------------------------------------------------------------
-  def self.make_chain_content(index)
-    BlockChain.item_for_save(make_chainfilename(index))
-  end
-  #--------------------------------------------------------------------------
-  # * Determine Existence of Save File
-  #--------------------------------------------------------------------------
-  def self.save_file_exists?(slot = nil)
-    self.ensure_file_exist("Save/")
-    files = Dir.glob('Save/Save*.rvdata2')
-    return slot.nil? ? !files.empty? :
-    files.any? {|name| name == 'Save/Save' + slot.to_fileid(2) + '.rvdata2'}
-  end
-  #--------------------------------------------------------------------------
-  # * Delete Save File
-  #--------------------------------------------------------------------------
-  class << self; alias delete_save_file_chain delete_save_file; end
-  def self.delete_save_file(index)
-    File.delete(make_chainfilename(index)) rescue nil
-    File.delete(make_hashfilename(index))  rescue nil
-    delete_save_file_chain(index)
-  end
-  #--------------------------------------------------------------------------
-  # * Map cache file name
-  #--------------------------------------------------------------------------
-  def self.make_cachefilename
-    return "~Game.rvdata2"
-  end
-  #--------------------------------------------------------------------------
-  # alias method: load_database
-  #--------------------------------------------------------------------------
-  class << self; alias load_database_opt load_database; end
-  def self.load_database
-    load_database_opt
-    load_enemy_attributes
-  end
-  #--------------------------------------------------------------------------
-  # new method: load_character_attributes
-  #--------------------------------------------------------------------------
-  def self.load_enemy_attributes
-    $data_enemies.compact.each do |obj|
-      obj.load_character_attributes
-    end
-  end
-end
-class << DataManager
-  alias extract_opt extract_save_contents
-  def DataManager.extract_save_contents(contents)
-    extract_opt(contents)
-    $game_temp.loadingg = true
-  end
 end

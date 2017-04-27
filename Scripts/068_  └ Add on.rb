@@ -1,9 +1,9 @@
 #==============================================================================
-# ** Game_Troop
+# ** Game_Unit
 #------------------------------------------------------------------------------
-#  This class handles enemy groups and battle-related data. Also performs
-# battle events. The instance of this class is referenced by $game_troop.
+#  This class handles units. It's used as a superclass of the Game_Party and
+# and Game_Troop classes.
 #==============================================================================
-class Game_Troop < Game_Unit
+class Game_Unit
   
 end

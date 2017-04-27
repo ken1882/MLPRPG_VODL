@@ -1,9 +1,9 @@
 #==============================================================================
-# ** Game_Picture
+# ** Game_SelfSwitches
 #------------------------------------------------------------------------------
-#  This class handles pictures. It is created only when a picture of a specific
-# number is required internally for the Game_Pictures class.
+#  This class handles self switches. It's a wrapper for the built-in class
+# "Hash." The instance of this class is referenced by $game_self_switches.
 #==============================================================================
-class Game_Picture
+class Game_SelfSwitches
   
 end

@@ -1,29 +1,14 @@
 #==============================================================================
-# ** Game_ActionResult
+# ** Game_BaseItem
 #------------------------------------------------------------------------------
-#  This class handles the results of battle actions. It is used internally for
-# the Game_Battler class. 
+#  This class uniformly handles skills, items, weapons, and armor. References
+# to the database object itself are not retained to enable inclusion in save
+# data.
 #==============================================================================
-class Game_ActionResult
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  attr_accessor :interrupted
-  attr_accessor :hitted
-  #--------------------------------------------------------------------------
-  # * Alias :Clear Hit Flags
-  #--------------------------------------------------------------------------
-  alias clear_hit_flags_dnd clear_hit_flags
-  def clear_hit_flags
-    @interrupted = false
-    @hitted       = false
-    clear_hit_flags_dnd
-  end
-  #--------------------------------------------------------------------------
-  # * Overwrite :hit?
-  #--------------------------------------------------------------------------
-  def hit?
-    @used && !@missed && !@evaded && !@interrupted && @hitted
+class Game_BaseItem
+  
+  def nil?
+    return super || is_nil?
   end
   
 end
