@@ -82,10 +82,7 @@ module SceneManager
   #--------------------------------------------------------------------------
   class << self; alias goto_proj goto; end
   def self.goto(scene_class)
-    if !store_projectile(scene_class)
-      Cache.clear_projectiles
-      $game_map.dispose_projectiles
-    end
+    Cache.clear_projectiles if !store_projectile(scene_class)
     goto_proj(scene_class)
   end
   #--------------------------------------------------------------------------
@@ -93,23 +90,44 @@ module SceneManager
   #--------------------------------------------------------------------------
   class << self; alias call_proj call; end
   def self.call(scene_class)
-    if !store_projectile(scene_class)
-      Cache.clear_projectiles
-      $game_map.dispose_projectiles
-    end
+    Cache.clear_projectiles if !store_projectile(scene_class)
     call_proj(scene_class)
+  end
+  #--------------------------------------------------------------------------
+  def self.spriteset
+    return unless scene_is?(Scene_Map)
+    scene.spriteset
+  end
+  #--------------------------------------------------------------------------
+  def self.setup_projectile(proj)
+    return unless scene_is?(Scene_Map)
+    spriteset.setup_projectile(proj)
+  end
+  #--------------------------------------------------------------------------
+  def self.setup_popinfo(text, position, color)
+    return unless scene_is?(Scene_Map)
+    spriteset.setup_popinfo(text, position, color)
+  end
+  #--------------------------------------------------------------------------
+  def self.dispose_temp_sprites
+    return unless scene_is?(Scene_Map)
+    spriteset.dispose_temp_sprite
   end
   #--------------------------------------------------------------------------
   def self.store_projectile(next_scene)
     return false unless scene_is?(Scene_Map)
     return false if next_scene.is_a?(Scene_Title)
     return false if next_scene.is_a?(Scene_Gameover)
-    Cache.store_projectile($game_map.projectiles)
+    Cache.store_projectile(spriteset.projectiles)
     return true
   end
   #--------------------------------------------------------------------------
   # *) Viewports
   #--------------------------------------------------------------------------
+  def self.viewport
+    return scene.viewport
+  end
+  
   def self.viewport1
     return nil unless scene_is?(Scene_Map)
     return scene.spriteset.viewport1
@@ -128,7 +146,7 @@ module SceneManager
   # *) Loading Screen process
   #--------------------------------------------------------------------------
   def self.reserve_loading_screen(map_id = nil)
-    puts "[Debug]: Reserve load screen"
+    debug_print "Reserve load screen"
     info = get_map_loading_info(map_id)
     @loading_screen = ForeGround_Loading.new(info, map_id.nil?)
     self.fade_in(@loading_screen)
@@ -153,7 +171,7 @@ module SceneManager
   #--------------------------------------------------------------------------
   def self.destroy_loading_screen
     return unless @loading_screen
-    puts "[Debug]: Terminate load screen"
+    debug_print "Terminate load screen"
     self.fade_out(@loading_screen)
     @loading_screen.terminate
     @loading_screen = nil
@@ -183,6 +201,30 @@ module SceneManager
   #--------------------------------------------------------------------------
   def self.loading?
     return @loading_screen && @loading_screen.loading?
+  end
+  #----------------------------------------------------------------------------
+  def self.focus_game_window
+    # Just to prevent re-spawning the console since
+    # Tsuki uses this same part in his Test Edit script
+    if !$imported["TH_TestEdit"]
+      # Get game window text
+      console_w = Win32API.new('user32','GetForegroundWindow', 'V', 'L').call
+      buf_len = Win32API.new('user32','GetWindowTextLength', 'L', 'I').call(console_w)
+      str = ' ' * (buf_len + 1)
+      Win32API.new('user32', 'GetWindowText', 'LPI', 'I').call(console_w , str, str.length)
+      
+      if true | $debug_mode
+        # Initiate console
+        Win32API.new('kernel32.dll', 'AllocConsole', '', '').call
+        Win32API.new('kernel32.dll', 'SetConsoleTitle', 'P', '').call('RGSS3 Console')
+        $stdout.reopen('CONOUT$')
+      end
+      Win32API.new('user32.dll', 'SetForegroundWindow', 'P', '').call(PONY::API::Hwnd)
+    end
+  end
+  #----------------------------------------------------------------------------
+  def self.send_input(string)
+    scene.retrieve_input(string)
   end
   #----------------------------------------------------------------------------
 end

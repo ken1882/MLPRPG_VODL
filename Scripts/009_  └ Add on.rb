@@ -28,7 +28,7 @@ module Cache
   # * Store projectiles
   #--------------------------------------------------------------------------
   def self.store_projectile(projs)
-    puts "[Debug]: Projectile stored (#{projs.size})"
+    debug_print "Projectile stored (#{projs.size})"
     @cache_projectile = projs.dup
   end
   #--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ module Cache
   end
   #--------------------------------------------------------------------------
   def self.clear_projectiles
-    puts "[Debug]: Clear sprite/bitmap cache (#{@cache_sprite.size})"
+    debug_print "Clear sprite/bitmap cache (#{@cache_sprite.size})"
     @cache_projectile.clear
     @cache_sprite.each do |bitmap|
       destroy_bitmap(bitmap)

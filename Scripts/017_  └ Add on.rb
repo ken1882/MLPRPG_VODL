@@ -157,6 +157,14 @@ module BattleManager
     return opponents.flatten
   end
   #--------------------------------------------------------------------------
+  def self.is_friend?(a, b)
+    return a.team_id == b.team_id
+  end
+  #--------------------------------------------------------------------------
+  def self.is_opponent?(a, b)
+    return a.team_id != b.team_id
+  end
+  #--------------------------------------------------------------------------
   # * Enter target selection
   #--------------------------------------------------------------------------
   def self.target_selection(user, item)

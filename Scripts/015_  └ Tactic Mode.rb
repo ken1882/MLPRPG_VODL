@@ -5,7 +5,8 @@
 # hierarchical structures such as calling the item screen from the main menu
 # or returning from the item screen to the main menu.
 #==============================================================================
-# tag: tactic
+# tag: tactic   (SceneManager)
+# tag: timeflow (SceneManager)
 module SceneManager
   #--------------------------------------------------------------------------
   # * Module Instance Variables
@@ -15,15 +16,21 @@ module SceneManager
   #--------------------------------------------------------------------------
   module_function
   #--------------------------------------------------------------------------
-  def process_tactic
-    @tactic_enabled ? end_tactic : start_tactic
+  def process_tactic(cmd = nil)
+    return unless scene_is?(Scene_Map)
+    return cmd ? start_tactic : end_tactic unless cmd.nil?
+    return @tactic_enabled ? end_tactic : start_tactic
   end
   #--------------------------------------------------------------------------
   def start_tactic
+    return unless scene_is?(Scene_Map)
+    display_info 'Paused'
     @tactic_enabled = true
   end
   #--------------------------------------------------------------------------
   def end_tactic
+    return unless scene_is?(Scene_Map)
+    display_info 'Unpaused'
     @tactic_enabled = false
   end
   #--------------------------------------------------------------------------

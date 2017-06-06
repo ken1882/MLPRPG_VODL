@@ -2,10 +2,10 @@ module Input
   
   class << self; alias dir4_wasd dir4; end
   def self.dir4
-    return 2 if (Input.press?(Input::Y))
-    return 4 if (Input.press?(Input::X))
-    return 6 if (Input.press?(Input::Z))
-    return 8 if (Input.press?(Input::R))
+    return 2 if (Input.press?(Input::Y)) # S
+    return 4 if (Input.press?(Input::X)) # A
+    return 6 if (Input.press?(Input::Z)) # D
+    return 8 if (Input.press?(Input::R)) # W
     return dir4_wasd
   end
   

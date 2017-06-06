@@ -137,7 +137,7 @@ module DataManager
     begin
       save_game_without_rescue(index)
     rescue Exception => e
-      puts "#{e}"
+      SceneManager.scene.raise_overlay_window(:popinfo, e)
       delete_save_file(index)
       false
     end

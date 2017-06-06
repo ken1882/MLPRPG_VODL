@@ -22,7 +22,7 @@ module Sound
     play_system_sound(2)
   end
   # Buzzer
-  def self.play_buzzer
+  def self.play_buzzer    
     play_system_sound(3)
   end
   # Equip

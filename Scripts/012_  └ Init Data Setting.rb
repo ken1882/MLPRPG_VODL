@@ -20,7 +20,7 @@ module DataManager
   def self.load_notetags_dndsubs
     groups = [$data_items, $data_weapons, $data_armors, $data_skills,$data_states, $data_enemies, $data_actors]
     infos  = ["Load Items", "Load Weaopns", "Load Armors", "Load Skills", "Load States", "Load NPCs", "Prepare your ponies"]
-    puts "[Debug]:load note tags"
+    debug_print "load note tags"
     
     cnt = 0
     for group in groups
