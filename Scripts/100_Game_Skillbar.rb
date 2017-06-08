@@ -195,8 +195,16 @@ class Game_Skillbar
   def cancel_edit(continue = false)
     @sprite.release_drag
     @edit_enabled   = continue
+    resume_dragging_item if !continue
     @dragging_item  = nil
     @dragging_index = nil
+    refresh
+  end
+  #--------------------------------------------------------------------------
+  def resume_dragging_item
+    return unless @dragging_item
+    true_index = HotKeys.assigned_hotkey_index(@dragging_index)
+    @actor.assigned_hotkey[true_index] = @dragging_item
   end
   #--------------------------------------------------------------------------
   def determine_destination(index)
@@ -253,5 +261,4 @@ class Game_Skillbar
   end
   
 end
-# last work: drag icon
 # queued work

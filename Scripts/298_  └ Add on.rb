@@ -2,7 +2,6 @@
 # ■ Window_StatusItem
 #==============================================================================
 #tag: 1
-#tag: last work
 class Window_StatusItem < Window_Base
   attr_accessor :skillbar
   #--------------------------------------------------------------------------

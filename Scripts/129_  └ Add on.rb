@@ -26,6 +26,7 @@ class Window_Base < Window
   def draw_code_text(x, y, text)
     width = Font.default_size / 2
     cnt = 0
+    text = "" unless text
     text.each_char do |char|
       bsize = [char.bytesize, 2].min
       rect = Rect.new(x + width * cnt, y, width * bsize, line_height)

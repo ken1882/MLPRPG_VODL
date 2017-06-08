@@ -86,6 +86,15 @@ class Scene_Base
     raise_overlay_window(:exit_confirm , nil, :exit)
   end
   #--------------------------------------------------------------------------
+  # * Update All Windows
+  #--------------------------------------------------------------------------
+  def update_all_windows
+    instance_variables.each do |varname|
+      ivar = instance_variable_get(varname)
+      ivar.update if ivar.is_a?(Window) && !ivar.disposed?
+    end
+  end
+  #--------------------------------------------------------------------------
   # * Free All Windows
   #--------------------------------------------------------------------------
   def dispose_all_windows
@@ -177,8 +186,7 @@ class Scene_Base
   def update_console
     return unless Input.press?(:kCTRL)
     return unless Input.press?(:kSPACE)
-    @window_input = Window_Input.new(Graphics.center_width(480), Graphics.height - 80)
-    @window_input.z = 1000
+    @window_input = Window_Input.new(Graphics.center_width(480), Graphics.height - 80, 480, 24)
     loop do
       Graphics.update
       Input.update
