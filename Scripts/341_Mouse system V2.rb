@@ -143,19 +143,20 @@ end
 #===============================================================================
 module Mouse
   
-  ClipCursor = PONY::API::ClipCursor
-  GetKeyState = PONY::API::GetKeyState
-  GetCursorPo = PONY::API::GetCursorPos
-  SetCursorPos = PONY::API::SetCursorPos
-  GetMessage = PONY::API::GetMessage
-  GetAsyncKeyState = PONY::API::GetAsyncKeyState
-  ScreenToClient = Win32API.new('user32', 'ScreenToClient', 'lp', 'i')
-  GetClientRect = Win32API.new('user32', 'GetClientRect', 'lp', 'i')
-  GetWindowRect = Win32API.new('user32', 'GetWindowRect', 'lp', 'i')
+  ClipCursor        = PONY::API::ClipCursor
+  GetKeyState       = PONY::API::GetKeyState
+  GetCursorPo       = PONY::API::GetCursorPos
+  SetCursorPos      = PONY::API::SetCursorPos
+  GetMessage        = PONY::API::GetMessage
+  GetAsyncKeyState  = PONY::API::GetAsyncKeyState
+  ScreenToClient    = PONY::API::ScreenToClient
+  GetClientRect     = PONY::API::GetClientRect
+  GetWindowRect     = PONY::API::GetWindowRect
+  ShowCursor        = Win32API.new('user32', 'ShowCursor', 'i', 'i')
   
-  @handle = PONY::API::Hwnd
+  ShowCursor.call(0)
   
-  Win32API.new('user32', 'ShowCursor', 'i', 'i').call(0)
+  @handle = PONY::API::Hwnd  
   
   Point = Struct.new(:x, :y)
   

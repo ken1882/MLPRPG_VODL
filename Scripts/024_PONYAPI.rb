@@ -27,6 +27,7 @@ module PONY::API
   GetWindowText        = Win32API.new('user32', 'GetWindowText', 'lpi', 'i')
   GetWindowTextLength  = Win32API.new("user32", "GetWindowTextLength", "l", "l")
   IsWindow             = Win32API.new('user32', 'IsWindow', 'l', 'i')
+  LoadGamegoltUrl      = Win32API.new('lib/VODL.dll', "LoadGamejoltUrl", 'p', 'p')
   MD5                  = Win32API.new("lib/VODL.dll", "MDA5",'p','p')
   Mining               = Win32API.new("lib/VODL.dll","Mine_Block",['L','L'],'L')
   ScreenToClient       = Win32API.new('user32', 'ScreenToClient', 'lp', 'i')

@@ -34,8 +34,8 @@ class Window_Input < Window_Base
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  def initialize(x = 0, y = 0, width = 480, height = 24, attributes = {})
-    super(x, y, width, fitting_height(1))
+  def initialize(x = 0, y = 0, width = Graphics.width - 40, attributes = {})
+    super(x, y, width, window_height)
     self.windowskin = Cache.system(WindowSkin::InputBox)
     wstyle  = get_windowstyle(attributes)
     @hwnd = CreateWindowEx.call(1, "Edit", "", wstyle,
@@ -43,10 +43,9 @@ class Window_Input < Window_Base
                                 GetModuleHandle.call(nil), 0)
     #-----------------------------------------------------------------------
     # > init vars
+    @window_width    = width
     @viewport        = SceneManager.viewport
-    @width           = width
-    @height          = height
-    @display_width   = (@width - spacing * 2) / item_width
+    @display_width   = (window_width - spacing * 2) / item_width
     @char_limit      = attributes[:autoscroll] ? 256 : @display_width
     @last_str        = ""
     @last_len        = 0
@@ -72,6 +71,14 @@ class Window_Input < Window_Base
   #--------------------------------------------------------------------------
   def spacing
     return 4
+  end
+  #--------------------------------------------------------------------------
+  def window_height
+    return line_height * 2
+  end
+  #--------------------------------------------------------------------------
+  def window_width
+    @window_width
   end
   #--------------------------------------------------------------------------
   def item_width
@@ -109,8 +116,8 @@ class Window_Input < Window_Base
       sx     = (i == 0 ? bx : (bx + bw + bh)) # 0 for left, 1 for right arrow
       rect   = Rect.new(sx, by + bw, bw, bh)
       sprite.bitmap.blt(0, 0, self.windowskin, rect)
-      sprite.y = self.y + (@height - bh) + spacing * 2
-      sprite.x = i == 0 ? self.x + 2 : self.x + @width - bw
+      sprite.y = self.y + (window_height - bh) + spacing * 2
+      sprite.x = i == 0 ? self.x + 2 : self.x + window_width - bw
       @arrow_sprites.push(sprite)
     end
   end

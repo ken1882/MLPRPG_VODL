@@ -140,6 +140,8 @@ module BlockChain
       record.each do |trans|
         next unless trans.goods && trans.goods.hashid == item_hashid
         PONY::ERRNO.raise(:checksum_failed, :exit) unless trans.hash_object
+        # recipient is the one who receive the money, sell the good, so good
+        # amount is decreased, and vice versa
         sum -= trans.good_amount if trans.recipient == accid
         sum += trans.good_amount if trans.source    == accid
       end
@@ -271,18 +273,20 @@ module BlockChain
     #--------------------------------------------------------------------------
     def new_workblock
       new_block = Block.new(@last_block.hashid, BlockChain.height, BlockChain.difficulty)
+      @blocks[@last_block.hashid].frozen
       @last_block = new_block
-      update_block(@last_block.clone)
+      update_block(@last_block)
     end
     #--------------------------------------------------------------------------
     # * Prepare commit new work
     #--------------------------------------------------------------------------
     def commit_transaction(trans, difficulty, genesis = false)
       @last_block = Block.new(nil, 0, difficulty, genesis) if genesis && !@last_block
-      self.push_block(@last_block.clone)                   if genesis && !@last_block
-      @blocks.delete(@last_block.hashid)
+      self.push_block(@last_block)                         if genesis && !@last_block
+      # Delete last block because the hashid will change later
+      @blocks.delete(@last_block.hashid) 
       @last_block.push_transaction(trans)
-      update_block(@last_block.clone)
+      update_block(@last_block)
       @capacity += 1
     end
     #--------------------------------------------------------------------------

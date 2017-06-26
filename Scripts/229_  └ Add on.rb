@@ -13,15 +13,25 @@ class Scene_Base
   #--------------------------------------------------------------------------
   # * Main
   #--------------------------------------------------------------------------
-  alias main_pony main
   def main
     @@overlay_windows = {}
     @@button_cooldown = 0
     @@overlayed       = false
     $on_exit          = false
-    #$game_party.sync_blockchain
     create_overlay_windows
-    main_pony
+    #-------------------------------
+    start
+    post_start
+    
+    system_time = Time.now
+    
+    loop do
+      break if scene_changing?
+      update
+    end
+    
+    pre_terminate
+    terminate
   end
   #--------------------------------------------------------------------------
   # * Overwrite: Update Frame (Basic)
@@ -29,7 +39,13 @@ class Scene_Base
   def update_basic
     Graphics.update
     Input.update
+    update_mutex
     update_all_windows unless @@overlayed
+  end
+  #--------------------------------------------------------------------------
+  def update_mutex
+    error = PONY::ERRNO.error_occurred?
+    flag_error(error) if error
   end
   #--------------------------------------------------------------------------
   # * Post-Start Processing
@@ -186,7 +202,7 @@ class Scene_Base
   def update_console
     return unless Input.press?(:kCTRL)
     return unless Input.press?(:kSPACE)
-    @window_input = Window_Input.new(Graphics.center_width(480), Graphics.height - 80, 480, 24)
+    @window_input = Window_Input.new(Graphics.center_width(480), Graphics.height - 80, 480)
     loop do
       Graphics.update
       Input.update

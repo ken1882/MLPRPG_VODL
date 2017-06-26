@@ -108,7 +108,7 @@ class PathFinding_Queue
   #--------------------------------------------------------------------------
   def push(source_loc, current_loc,next_loc, dir, goal_loc, depth)
     
-    extra_cost = depth * 5
+    extra_cost = depth * 10
     node_cost = predict_movement_cost(source_loc,current_loc,goal_loc) + extra_cost
     node = Map_Address.new(next_loc.x,next_loc.y,node_cost)
     @nodes.push(node)
@@ -296,7 +296,7 @@ class Game_Character < Game_CharacterBase
   # * core function, move to assigned position
   #--------------------------------------------------------------------------
   def move_to_position(goalx, goaly, args = {})
-    
+    ti = Time.now
     depth      = args[:depth].nil?      ? 100   : args[:depth]
     tool_range = args[:tool_range].nil? ? 1     : args[:tool_range]
     draw_arrow = args[:draw_arrow].nil? ? false : args[:draw_arrow]
@@ -376,6 +376,7 @@ class Game_Character < Game_CharacterBase
     end # while
     
     if path_found
+      puts "Pathfinding time takes: #{Time.now.to_f - ti.to_f}"
       if offset_x != 0
         @pathfinding_moves.push([[offset_x < 0 ? 4 : 6 ,true]] * (offset_x / 0.125).abs)
       end

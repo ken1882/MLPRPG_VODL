@@ -411,6 +411,7 @@ end
 # * Overwrite the exit method to program-friendly
 #===============================================================================
 def exit(stat = true)
+  $exited = true
   SceneManager.scene.fadeout_all rescue nil
   SceneManager.exit
 end

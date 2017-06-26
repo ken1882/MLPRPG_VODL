@@ -213,7 +213,7 @@ module SceneManager
       str = ' ' * (buf_len + 1)
       Win32API.new('user32', 'GetWindowText', 'LPI', 'I').call(console_w , str, str.length)
       
-      if true | $debug_mode
+      if $debug_mode
         # Initiate console
         Win32API.new('kernel32.dll', 'AllocConsole', '', '').call
         Win32API.new('kernel32.dll', 'SetConsoleTitle', 'P', '').call('RGSS3 Console')

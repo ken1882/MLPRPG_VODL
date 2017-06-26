@@ -40,4 +40,12 @@ module PONY::ERRNO
     @raised = false
   end
   
+  def self.mutex_error(e)
+    @error = e
+  end
+  
+  def self.error_occurred?
+    @error
+  end
+  
 end

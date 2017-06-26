@@ -16,7 +16,6 @@
 module GameJolt
   # Change these for your game
   GameId = "134888"
-  PrivateKey = "1e1ee52963313fa48d22d00b592b9948"
 end
 # Please note that this script has been modified slightly to allow responses up
 # to 1 MB. This does make the script slower, but it was needed to prevent crashes.
@@ -181,6 +180,12 @@ module ZOMD5
     @createMD5string.call(string,md5)
     md5.unpack("A*")
   end
+  
+  def self.url
+    url = calc_md5("http://gamejolt.com/api/game/v1/")
+    url[0]
+  end
+  
 end
 #===============================================================================
 # JSON Encoder/Decoder
@@ -885,9 +890,11 @@ module GameJolt
   
   # Internal functions (you can use these if you need, but you'll want to use
   # the functions above most of the time)
+  # tag: modified
   def self.do_request(baseUrl)
-    urlHash = ZOMD5.calc_md5("http://gamejolt.com/api/game/v1/" + baseUrl + "&game_id=" + GameId + "&format=json" + PrivateKey)
-    urlHash = urlHash[0]
+    urlHash = "http://gamejolt.com/api/game/v1/" + baseUrl + "&game_id=" + GameId + "&format=json"
+    urlHash = PONY::API::LoadGamegoltUrl.call(urlHash)
+    urlHash = PONY.MD5(urlHash)
     result = EFE.request("gamejolt.com", "api/game/v1/" + baseUrl + "&game_id=" + GameId + "&format=json&signature=" + urlHash)
     result = JSON.decode(result)
     if result != nil

@@ -31,29 +31,35 @@ def report_exception(error)
   print error_txt
   return error_txt
 end
+def flag_error(error)
+  if !$error_activated
+    error_txt = report_exception(error)
+    Audio.se_play('Audio/SE/Buzzer1',80,100)
+    print "Submit the file \"ErrorLog.txt\" in your project folder to the upper most script creators noted in the message.\n"
+    msgbox("An error has occurred during the game.\nPlease submit the file \"ErrorLog.txt\" in your game folder to the developer in order to fix the bug.\n")
+    
+    filename = "ErrorLog.txt"
+    File.open(filename, 'w+') {|f| f.write(error_txt + "\n") }
+  end
+  
+  $error_activated = true
+  raise error.class, error.message, [error.backtrace.first]
+end
+$rgss   = self
+$assist = RubyVM::InstructionSequence.compile("Thread.new{Thread_Assist.assist_main}.run")
 begin
   rgss_main do
     begin
       Graphics.frame_rate = 60
       Mouse.init
       Mouse.cursor.visible = false
+      $assist.eval
       SceneManager.run
     end
   end
-  
 rescue SystemExit
   exit
 rescue Exception => error
-  
-  # DataManager.save_on_crash
-  error_txt = report_exception(error)
-  Audio.se_play('Audio/SE/Buzzer1',80,100)
-  print "Submit the file \"ErrorLog.txt\" in your project folder to the upper most script creators noted in the message.\n"
-  msgbox("An error has occurred during the game.\nPlease submit the file \"ErrorLog.txt\" in your game folder to the developer in order to fix the bug.\n")
-  
-  filename = "ErrorLog.txt"
-  
-  File.open(filename, 'w+') {|f| f.write(error_txt + "\n") }
-  raise  error.class, error.message, [error.backtrace.first]
-end
+  flag_error error
+end # begin
 end # unless $ENCRYPT
