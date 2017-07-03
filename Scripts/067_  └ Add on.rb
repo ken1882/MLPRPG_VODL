@@ -1,59 +1,52 @@
 #==============================================================================
-# ** Game_Enemy
+# ** Game_Actor
 #------------------------------------------------------------------------------
-#  This class handles enemies. It used within the Game_Troop class 
-# ($game_troop).
+#  This class handles actors. It is used within the Game_Actors class
+# ($game_actors) and is also referenced from the Game_Party class ($game_party).
 #==============================================================================
-class Game_Enemy < Game_Battler
+class Game_Actor < Game_Battler
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_accessor :level
-  attr_accessor :rank
-  attr_accessor :skills                   # learned skill
+  attr_reader   :dualclass_id                 # Second class ID
+  attr_accessor :assigned_hotkey
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  alias init_dndlevel initialize
-  def initialize(index, enemy_id)
-    @level = 1
-    init_dndlevel(index, enemy_id)
-    @rank = enemy.note =~ /<Boss HP Meter>/ ? "Boss" : "Minon"
-    @rank = enemy.note =~ /<Elite>/ ? "Elite" : "Minon"
-    @level = enemy.note =~ /<Level = (\d+)>/i ? $1.to_i : 1.to_i unless enemy.nil?
-    @skills = []
-    get_learned_skills
+  alias init_muticlass initialize
+  def initialize(actor_id)
+    @dualclass_id = 0
+    @team_id = 0
+    @assigned_hotkey = Array.new(HotKeys::HotKeys.size){nil}
+    init_muticlass(actor_id)
   end
-  #-----------------------------------------------------------
-  # *) is_boss?
-  #-----------------------------------------------------------
-  def is_boss?
-    return @rank == "Boss"
+  
+  def dualclass
+    $data_classes[@dualclass_id]
   end
-  #-----------------------------------------------------------
-  # *) is_elite?
-  #-----------------------------------------------------------
-  def is_elite?
-    return @rank == "Elite"
-  end
-  #-----------------------------------------------------------
-  # *) is_minon?
-  #-----------------------------------------------------------
-  def is_minon?
-    return @rank == "Minon"
-  end
-  #--------------------------------------------------------------------------   
-  def team_id
-    return enemy.team_id
+  
+  def setup_dualclass(class_id)
+    @dualclass_id = class_id
   end
   #--------------------------------------------------------------------------
-  # * Create Battle Action
+  # *) Get equipped all items
   #--------------------------------------------------------------------------
-  def get_learned_skills
-    #actions = Array.new(make_action_times) { Game_Action.new(self) }
-    #for action in enemy.actions
-    #  @skills.push(action.skill_id)
-    #end
+  def get_hotkeys(equip_only = false)
+    items = [@equips[0], @equips[1]]
+    unless equip_only
+      @assigned_hotkey.each {|item| items.push(item)}
+    end
+    return items
+  end
+  #---------------------------------------------------------------------------
+  # * Method Missing
+  # ----------------------------------------------------------------------   
+  # DANGER ZONE: Redirect to Actor
+  #---------------------------------------------------------------------------
+  def method_missing(symbol, *args)
+    super(symbol, args) unless @map_char
+    super(symbol, args) unless @map_char.methods.include?(symbol)
+    @map_char.method(symbol).call(*args)
   end
   
 end

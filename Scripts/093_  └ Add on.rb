@@ -1,9 +1,25 @@
 #==============================================================================
-# ** Game_Vehicle
+# ** Game_Followers
 #------------------------------------------------------------------------------
-#  This class handles vehicles. It's used within the Game_Map class. If there
-# are no vehicles on the current map, the coordinates are set to (-1,-1).
+#  This is a wrapper for a follower array. This class is used internally for
+# the Game_Player class. 
 #==============================================================================
-class Game_Vehicle < Game_Character
+class Game_Followers
+  #--------------------------------------------------------------------------
+  # * Frame Update
+  #--------------------------------------------------------------------------
+  def update
+    if gathering?
+      move unless moving? || moving?
+      @gathering = false if gather?
+    end
+    each {|follower| follower.update unless follower.nil? || follower.actor.nil?}
+  end
+  #--------------------------------------------------------------------------
+  # * Combat mode on
+  #--------------------------------------------------------------------------
+  def into_fray
+    each {|follower| follower.process_combat_phase}
+  end
   
 end

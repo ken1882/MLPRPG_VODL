@@ -135,7 +135,7 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.next_subject
   end
-  
+  #--------------------------------------------------------------------------
   def self.all_battlers
     return @action_battlers.collect{|key, battler| battler}
   end
@@ -294,5 +294,40 @@ module BattleManager
   def self.substitute_battler
     return nil
   end
+  #--------------------------------------------------------------------------
+  # * Get Array of Actors Targeted by Item Use
+  #--------------------------------------------------------------------------
+  def self.item_target_actors(item)
+    if !item.for_friend?
+      []
+    elsif item.for_all?
+      $game_party.members
+    else
+      [$game_party.members[@actor_window.index]]
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Determine if Item is Usable
+  #--------------------------------------------------------------------------
+  def self.item_usable?(user)
+    user.usable?(item) && item_effects_valid?(user)
+  end
+  #--------------------------------------------------------------------------
+  # * Determine if Item Is Effective
+  #--------------------------------------------------------------------------
+  def self.item_effects_valid?(user)
+    item_target_actors.any? do |target|
+      target.item_test(user, item)
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Use Item on Actor
+  #--------------------------------------------------------------------------
+  def self.use_item_to_actors(user)
+    return unless user.is_a?(Game_Actor)
+    item_target_actors.each do |target|
+      item.repeats.times { target.item_apply(user, item) }
+    end
+  end # last work
   
 end

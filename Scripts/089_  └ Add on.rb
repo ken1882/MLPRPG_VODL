@@ -1,36 +1,78 @@
 #==============================================================================
-# ** Game_Follower
+# ** Game_Player
 #------------------------------------------------------------------------------
-#  This class handles followers. A follower is an allied character, other than
-# the front character, displayed in the party. It is referenced within the
-# Game_Followers class.
+#  This class handles the player. It includes event starting determinants and
+# map scrolling functions. The instance of this class is referenced by
+# $game_player.
 #==============================================================================
-class Game_Follower < Game_Character
+class Game_Player < Game_Character
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_accessor :phase
+  attr_accessor :target_event   # Event auto trigger when touched
+  attr_reader   :new_x, :new_y
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  alias init_gafo_opt initialize
-  def initialize(member_index, preceding_character)
-    @phase = DND::BattlerSetting::PhaseIdle
-    init_gafo_opt(member_index, preceding_character)
+  alias initialize_gapc_opt initialize
+  def initialize
+    @target_event = nil
+    initialize_gapc_opt
   end
   #--------------------------------------------------------------------------
-  # * Combat mode on
+  # * Disable Dash utility
   #--------------------------------------------------------------------------
-  def process_combat_phase
-    
+  def dash?
+    return false
+  end
+  #--------------------------------------------------------------------------
+  # * Vehicle Processing
+  #--------------------------------------------------------------------------
+  def update_vehicle
+  end
+  #--------------------------------------------------------------------------
+  # * Clear Transfer Player Information
+  #--------------------------------------------------------------------------
+  def clear_transfer_info
+    @transferring = false            # Player transfer flag
+    @new_map_id = 0                  # Destination map ID
+    @new_x = 0                      # Destination X coordinate
+    @new_y = 0                      # Destination Y coordinate
+    @new_direction = 0               # Post-movement direction
+  end
+  #--------------------------------------------------------------------------
+  # * Execute Player Transfer
+  #--------------------------------------------------------------------------
+  def perform_transfer
+    if transfer?
+      set_direction(@new_direction)
+      if @new_map_id != $game_map.map_id
+        $game_map.setup(@new_map_id)
+        $game_map.autoplay
+      end
+      moveto(@new_x, @new_y)
+      clear_transfer_info
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Determine if Player Transfer is Reserved
+  #--------------------------------------------------------------------------
+  def transfer?
+    return @transferring
   end
   #---------------------------------------------------------------------------
   # * Method Missing
   # ----------------------------------------------------------------------   
-  # DANGER ZONE: Redirect to Game_Enemy
+  # DANGER ZONE: Redirect to Actor
   #---------------------------------------------------------------------------
   def method_missing(symbol, *args)
-    super(symbol, *args) if actor.nil?
+    super(symbol, args) unless actor
+    super(symbol, args) unless actor.methods.include?(symbol)
     actor.method(symbol).call(*args)
+  end
+  #--------------------------------------------------------------------------
+  # * Update Encounter
+  #--------------------------------------------------------------------------
+  def update_encounter
   end
 end

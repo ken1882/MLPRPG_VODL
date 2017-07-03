@@ -1,9 +1,9 @@
 #==============================================================================
-# ** Game_Message
+# ** Game_Timer
 #------------------------------------------------------------------------------
-#  This class handles the state of the message window that displays text or
-# selections, etc. The instance of this class is referenced by $game_message.
+#  This class handles timers. Instances of this class are referenced by 
+# $game_timer.
 #==============================================================================
-class Game_Message
+class Game_Timer
   
 end

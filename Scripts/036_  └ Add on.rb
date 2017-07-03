@@ -1,59 +1,21 @@
 #==============================================================================
-# ** Game_System
+# ** Game_Temp
 #------------------------------------------------------------------------------
-#  This class handles system data. It saves the disable state of saving and 
-# menus. Instances of this class are referenced by $game_system.
+#  This class handles temporary data that is not included with save data.
+# The instance of this class is referenced by $game_temp.
 #==============================================================================
-class Game_System
+class Game_Temp
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_accessor :skillbar
-  attr_accessor :autotarget, :autotarget_aoe
-  attr_accessor :loading_pressure
+  attr_accessor :loading_destroy_delay # Cancel loading screen destroy by map.setup
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  alias initialize_system_opt initialize
+  alias init_temp_dnd initialize
   def initialize
-    @skillbar  = nil
-    @autotarget = true
-    @autotarget_aoe = true
-    @loading_pressure = 0
-    initialize_system_opt
-  end  
-  #--------------------------------------------------------------------------
-  # * show roll result?
-  #--------------------------------------------------------------------------
-  def show_roll_result?
-    return $game_switches[15]
-  end
-  
-  #--------------------------------------------------------------------------
-  # * hide all windows?
-  #--------------------------------------------------------------------------
-  def hide_all_windows?
-    return $game_switches[16]
+    @loading_destroy_delay = $game_temp ? $game_temp.loading_destroy_delay : false
+    init_temp_dnd
   end
   #--------------------------------------------------------------------------
-  # * return a rand class value
-  #--------------------------------------------------------------------------
-  def make_rand
-    Random.new_seed
-    return Random.new
-  end
-  
-  def load_process
-    @loading_pressure += 1
-  end
-  
-  def load_complete
-    @loading_pressure = 0
-  end
-  
-  def load_complete?; return @loading_pressure == 0; end
-  
-  def cache_loading
-  end
-  
 end

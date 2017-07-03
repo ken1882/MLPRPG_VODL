@@ -1,94 +1,118 @@
 #==============================================================================
-# ** Game_Battler
+# ** Game_BattlerBase
 #------------------------------------------------------------------------------
-#  A battler class with methods for sprites and actions added. This class 
-# is used as a super class of the Game_Actor class and Game_Enemy class.
+#  This base class handles battlers. It mainly contains methods for calculating
+# parameters. It is used as a super class of the Game_Battler class.
 #==============================================================================
-class Game_Battler < Game_BattlerBase
+class Game_BattlerBase
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_reader   :state_steps
-  attr_accessor :map_char     # character on the map
-  attr_accessor :skill_cooldown, :item_cooldown, :weapon_cooldown, :armor_cooldown
+  attr_accessor :reg_time_count             # regeneration time counter
+  #--------------------------------------------------------------------------
+  # * Access Method by Parameter Abbreviations
+  #--------------------------------------------------------------------------
+  def ctr;  (sparam(3) * 100).to_i; end     # CTR Casting Time Reducation
+  def csr;   1 + sparam(5);         end     # CSR Casting Speed Rate
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  alias init_battler_opt initialize
+  alias initialize_reg_dnd initialize
   def initialize
-    @skill_cooldown = {}
-    @item_cooldown = {}
-    @weapon_cooldown = {}
-    @armor_cooldown = {}
-    @map_char = nil
-    init_battler_opt
+    @reg_time_count = 0
+    initialize_reg_dnd
+  end
+  #--------------------------------------------------------------------------   
+  # ● Easier method for check skilll learned
+  #--------------------------------------------------------------------------   
+  def skill_learned?(id)
+    if self.actor?
+      return self.skills.include?($data_skills[id])
+    else
+      return self.skills.include?(id)
+    end
   end
   #--------------------------------------------------------------------------
-  def cooldown_ready?(item)
-    return @skill_cooldown[item.id] > 0  if @skill_cooldown[item.id]  && item.is_a?(RPG::Skill)
-    return @item_cooldown[item.id] > 0   if @item_cooldown[item.id]   && item.is_a?(RPG::Item)
-    return @weapon_cooldown[item.id] > 0 if @weapon_cooldown[item.id] && item.is_a?(RPG::Weapon)
-    return @armor_cooldown[item.id] > 0  if @armor_cooldown[item.id]  && item.is_a?(RPG::Armor)
-    return true
-  end
-  #--------------------------------------------------------------------------
-  # * Determine Skill/Item Usability
-  #--------------------------------------------------------------------------
-  def usable?(item)
-    return false if !item
-    return false if !cooldown_ready?(item)
-    return skill_conditions_met?(item)  if item.is_a?(RPG::Skill)
-    return item_conditions_met?(item)   if item.is_a?(RPG::Item)
-    return weapon_conditions_met?(item) if item.is_a?(RPG::Weapon)
+  # ● Posioned?
+  #--------------------------------------------------------------------------   
+  def poisoned?
+    
+    for state in self.states
+      return true if state.is_poison?
+    end
+    
     return false
   end
   #--------------------------------------------------------------------------
-  # * Weapon Ammo Ready?
-  #--------------------------------------------------------------------------
-  def weapon_conditions_met?(item)
-    if item.tool_itemcost != nil || item.tool_itemcosttype != nil
-      return weapon_ammo_ready?(item)
+  # ● Debuffed?
+  #--------------------------------------------------------------------------   
+  def debuffed?
+    for state in self.states
+      return true if state.is_debuff?
     end
-    return true
+    
+    return false
   end
+  
   #--------------------------------------------------------------------------
-  # * Determine if Cost of Using Skill Can Be Paid
-  #--------------------------------------------------------------------------
-  def skill_cost_payable?(skill)
-    re = super(skill)
-    if !item.tool_itemcost && item.tool_itemcost > 0
-      item = $data_items[itemcost]
-      re  &= $game_party.item_number(item)
-    elsif item.tool_itemcosttype != nil
-      re  &= weapon_ammo_ready?(@equips[0])
+  # ● Dispel Magic
+  #--------------------------------------------------------------------------   
+  def dispel_magic
+    animated = false
+    for state in self.states
+      next if state.nil?
+      animated = true if state.id == 271
+      
+      remove_state(state.id) if state.is_magic?
     end
-    return re
+    die if animated
   end
   #--------------------------------------------------------------------------
-  # * Damage Processing
-  #    @result.hp_damage @result.mp_damage @result.hp_drain
-  #    @result.mp_drain must be set before call.
+  # ● Anti Magic?
+  #--------------------------------------------------------------------------   
+  def anti_magic?
+    
+    result = false
+    source = 0
+    
+     if @anti_magic
+       result = true; source = 1
+     end
+     
+    if self.mrf > 0.5
+      result = true; source = 2 
+    end
+    
+    anti_magic_state = [266,267,288]
+    
+    for id in anti_magic_state
+      if self.state?(id)
+        source = id
+        result = true
+        break
+      end
+  
+    end
+    
+    return result
+  end
   #--------------------------------------------------------------------------
-  alias execute_damage_popup execute_damage
-  def execute_damage(user)
-    popup_hp_change(-@result.hp_damage)    if @result.hp_damage != 0
-    popup_ep_change(-@result.mp_damage)    if @result.mp_damage != 0
-    user.popup_hp_change(@result.hp_drain) if @result.hp_drain  != 0
-    user.popup_ep_change(@result.mp_drain) if @result.mp_drain  != 0
-    execute_damage_popup(user)
+  # Hide HP/MP info
+  #--------------------------------------------------------------------------
+  def hide_info?
+    false
   end
   #--------------------------------------------------------------------------   
-  def team_id
-    return @team_id.nil? ? 0 : @team_id
+  def popup_hp_change(value)
+    return unless SceneManager.scene_is?(Scene_Map)
+    color = value < 0 ? DND::COLOR::HPDamage : DND::COLOR::HPHeal
+    popup_info(value.abs.to_s, color)
   end
   #--------------------------------------------------------------------------   
-  def is_opponent?(charactor)
-    return BattleManager.is_opponent?(self, charactor)
+  def popup_ep_change(value)
+    return unless SceneManager.scene_is?(Scene_Map)
+    color = value < 0 ? DND::COLOR::EPDamage : DND::COLOR::EPHeal
+    popup_info(value.abs.to_s, color)
   end
-  alias is_enemy? is_opponent?
   #--------------------------------------------------------------------------   
-  def is_friend?(charactor)
-    return BattleManager.is_friend?(self, charactor)
-  end
-  alias is_ally? is_friend?
 end

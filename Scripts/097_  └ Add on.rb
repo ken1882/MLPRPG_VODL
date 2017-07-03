@@ -1,82 +1,56 @@
 #==============================================================================
-# ** Game_Interpreter
+# ** Game_Event
 #------------------------------------------------------------------------------
-#  An interpreter for executing event commands. This class is used within the
-# Game_Map, Game_Troop, and Game_Event classes.
+#  This class handles events. Functions include event page switching via
+# condition determinants and running parallel process events. Used within the
+# Game_Map class.
 #==============================================================================
-class Game_Interpreter
+class Game_Event < Game_Character
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_accessor :eval_passed
+  attr_accessor :enemy
+  attr_reader   :event
+  #--------------------------------------------------------------------------
+  attr_accessor :default_weapon
+  attr_accessor :last_target
+  attr_accessor :cool_down
+  attr_accessor :recover
+  attr_accessor :target_switch
   #--------------------------------------------------------------------------
   # * Object Initialization
-  #     depth : nest depth
+  #     event:  RPG::Event
   #--------------------------------------------------------------------------
-  alias initialize_comp initialize
-  def initialize(depth = 0)
-    initialize_comp(depth)
-    @eval_passed = true
+  alias initialize_event_opt initialize
+  def initialize(map_id, event)
+    initialize_event_opt(map_id, event)
   end
-  #--------------------------------------------------------------------------
-  # * Script
-  #--------------------------------------------------------------------------
-  def command_355
-    script = @list[@index].parameters[0] + "\n"
-    while next_event_code == 655
-      @index += 1
-      script += @list[@index].parameters[0] + "\n"
-    end
-    @eval_passed = false
-    
-    begin
-      eval(script)
-    rescue Exception => e
-      e = e.to_s
-      SceneManager.display_info("Error: " + e)
-      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while eval in Interpreter!\n")
-    end
-    
-    @eval_passed = true
+  #--------------------------------------------------------
+  # *) check if comment is in event page
+  #--------------------------------------------------------
+  def comment_include?(comment)
+    return if comment.nil? || @list.nil?
+    comment = comment.to_s
+    for command in @list
+      if command.code == 108
+        return true if command.parameters[0].include?(comment)
+      end # if command.code
+    end # for command
+    return false
+  end # def comment
+  #--------------------------------------------------------
+  def team_id
+    return @enemy.team_id if @enemy
+    return 0
   end
-  #--------------------------------------------------------------------------
-  # * Overwrite: Shop Processing
-  #--------------------------------------------------------------------------
-  def command_302
-    return if $game_party.in_battle
-    puts "Interpreter: Event Id: #{@event_id}"
-    goods = [@params]
-    while next_event_code == 605
-      @index += 1
-      goods.push(@list[@index].parameters)
-    end
-    SceneManager.call(Scene_Shop)
-    SceneManager.scene.prepare(goods, @params[4])
-    Fiber.yield
+  #---------------------------------------------------------------------------
+  # * Method Missing
+  # ----------------------------------------------------------------------   
+  # DANGER ZONE: Redirect to Game_Enemy
+  #---------------------------------------------------------------------------
+  def method_missing(symbol, *args)
+    super(symbol, *args) if @enemy.nil?
+    @enemy.method(symbol).call(*args)
   end
-  #--------------------------------------------------------------------------
-  # * Transfer Player
-  #--------------------------------------------------------------------------
-  def command_201
-    return if $game_party.in_battle
-    Fiber.yield while $game_player.transfer? || $game_message.visible
-    @params[5] = 2 if @params[5] == 0
-    
-    if @params[0] == 0                      # Direct designation
-      map_id = @params[1]
-      x = @params[2]
-      y = @params[3]
-    else                                    # Designation with variables
-      map_id = $game_variables[@params[1]]
-      x = $game_variables[@params[2]]
-      y = $game_variables[@params[3]]
-    end
-    
-    $game_player.reserve_transfer(map_id, x, y, @params[4])
-    $game_temp.fade_type = @params[5]
-    $game_temp.loading_destroy_delay = true
-    Fiber.yield while $game_player.transfer? || SceneManager.loading?
-    SceneManager.destroy_loading_screen
-    $game_temp.loading_destroy_delay = false
-  end
+  
 end
