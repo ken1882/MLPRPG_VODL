@@ -44,7 +44,7 @@ class Fixnum
       cnt += 1
     end
     cnt = [cnt, 1].max
-    PONY::ERRNO.raise(:intid_overflow, :exit) if cnt > deg
+    PONY::ERRNO.raise(:fileid_overflow, :exit) if cnt > deg
     return ('0' * (deg - cnt)) + self.to_s
   end
   

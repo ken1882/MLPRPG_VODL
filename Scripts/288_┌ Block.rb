@@ -75,7 +75,6 @@ module BlockChain
     # * Block Initialization
     #--------------------------------------------------------------------------
     def initialize(parent, _height, difficulty, genesis = false)
-      PONY::ERRNO.raise(:chain_broken, :exit) if !genesis && !parent
       @magic_num = rand() * (10 ** 9)
       @parent_hash = parent
       @height = _height
@@ -85,6 +84,17 @@ module BlockChain
       @prev_transsum = 0
       @value = 0
       update_hash
+      verify_genesis
+    end
+    #--------------------------------------------------------------------------
+    def verify_genesis
+      if genesis? && @parent_hash
+        info = "Child genesis block"
+        PONY::ERRNO.raise(:chain_broken, :exit, nil, info)
+      elsif !genesis? && !@parent_hash
+        info = "Chain broken"
+        PONY::ERRNO.raise(:chain_broken, :exit, nil, info)
+      end
     end
     #--------------------------------------------------------------------------
     # * Block Mining
@@ -140,12 +150,52 @@ module BlockChain
       sum = 0
       record.each do |trans|
         next unless trans.goods && trans.goods.hashid == item_hashid
+        sleep(Thread_Assist::Uwait) if async
         # recipient is the one who receive the money, sell the good, so good
         # amount is decreased, and vice versa
         sum -= trans.good_amount if trans.recipient == accid
         sum += trans.good_amount if trans.source    == accid
       end
       return sum
+    end
+    #--------------------------------------------------------------------------
+    def all_items(items, accid, async)
+      record.each do |trans|
+        next unless trans.goods
+        sleep(Thread_Assist::Uwait) if async
+        item     = trans.goods
+        itemname = trans.goods.name rescue nil
+        type = :item   if item.is_a?(RPG::Item)
+        type = :weapon if item.is_a?(RPG::Weapon)
+        type = :armor  if item.is_a?(RPG::Armor)
+        if !type
+          info = "Invalid item transaction: #{itemname} for #{item.class}"
+          PONY::ERRNO.raise(:datatype_error, :exit, nil, info)
+        end
+        items[type][item.hashid] -= trans.good_amount if trans.recipient == accid
+        items[type][item.hashid] += trans.good_amount if trans.source    == accid
+      end
+      return items
+    end
+    #--------------------------------------------------------------------------
+    def all_data(data, accid, async)
+      record.each do |trans|
+        sleep(Thread_Assist::Uwait) if async
+        item     = trans.goods
+        itemname = trans.goods.name rescue nil
+        type = :item   if item.is_a?(RPG::Item)
+        type = :weapon if item.is_a?(RPG::Weapon)
+        type = :armor  if item.is_a?(RPG::Armor)
+        if !type
+          info = "Invalid item transaction: #{itemname} for #{item.class}"
+          PONY::ERRNO.raise(:datatype_error, :exit, nil, info)
+        end
+        data[:gold] += trans.value if trans.recipient == accid
+        data[:gold] -= trans.value if trans.source    == accid
+        data[type][item.hashid] -= trans.good_amount if trans.recipient == accid
+        data[type][item.hashid] += trans.good_amount if trans.source    == accid
+      end
+      return data
     end
     #--------------------------------------------------------------------------
     # * Merge transaction
@@ -185,6 +235,8 @@ module BlockChain
     #--------------------------------------------------------------------------
     # * Block build time
     def date; @header.timestamp.to_i; end
+    #--------------------------------------------------------------------------
+    def genesis?; @header.genesis; end
     #--------------------------------------------------------------------------
     # * Nonce
     def nonce; @header.nonce; end
@@ -227,7 +279,8 @@ module BlockChain
         next unless trans.goods
         good_hash = trans.goods.hashid
         @item_amount[good_hash] = 0 if @item_amount[good_hash].nil?
-        @item_amount[good_hash] += trans.good_amount if trans.recipient.id == @id
+        @item_amount[good_hash] += trans.good_amount if trans.source.id    == @id
+        @item_amount[good_hash] -= trans.good_amount if trans.recipient.id == @id
       end
     end
     
@@ -337,12 +390,44 @@ module BlockChain
       sum = 0
       cur_key = @last_block.hashid
       while @blocks[cur_key]
+        @blocks[cur_key].verify_genesis
         sleep(Thread_Assist::Uwait) if async
         sum    += @blocks[cur_key].item_amount(accid, item_hashid, async)
         cur_key = @blocks[cur_key].parent_hash
       end
-      PONY::ERRNO.raise(:neg_balance, :exit) if sum < 0
       return sum
+    end
+    #--------------------------------------------------------------------------
+    def all_items(accid, async)
+      items = {}
+      items[:item]   = {}
+      items[:weapon] = {}
+      items[:armor]  = {}
+      cur_key = @last_block.hashid
+      while @blocks[cur_key]
+        @blocks[cur_key].verify_genesis
+        sleep(Thread_Assist::Uwait) if async
+        items = @blocks[cur_key].all_items(items, accid, async)
+        cur_key = @blocks[cur_key].parent_hash
+      end
+      ensure_goods_legal(items)
+      return items
+    end
+    #--------------------------------------------------------------------------
+    def all_data(accid, async)
+      data = {}
+      data[:gold]   = 0
+      data[:item]   = {}
+      data[:weapon] = {}
+      data[:armor]  = {}
+      cur_key = @last_block.hashid
+      while @blocks[cur_key]
+        @blocks[cur_key].verify_genesis
+        sleep(Thread_Assist::Uwait) if async
+        data = @blocks[cur_key].all_data(data, accid, async)
+        cur_key = @blocks[cur_key].parent_hash
+      end
+      return data
     end
     #--------------------------------------------------------------------------
     # * Query account or total balance
@@ -351,6 +436,7 @@ module BlockChain
       sum = 0
       cur_key = @last_block.hashid
       while @blocks[cur_key]
+        @blocks[cur_key].verify_genesis
         sleep(Thread_Assist::Uwait) if async
         sum    += @blocks[cur_key].account_balance(accid, currency_id, async)
         cur_key = @blocks[cur_key].parent_hash

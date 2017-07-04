@@ -429,14 +429,15 @@ class Game_Interpreter
       if character
         result = (character.direction == @params[2])
       end
-    when 7  # Gold
+    when 7  # Gold tag: modified
+      bits = PONY.SecureInt($game_party.gold(true), false)
       case @params[2]
       when 0  # Greater than or equal to
-        result = ($game_party.gold >= @params[1])
+        result = (bits >= @params[1])
       when 1  # Less than or equal to
-        result = ($game_party.gold <= @params[1])
+        result = (bits <= @params[1])
       when 2  # Less than
-        result = ($game_party.gold < @params[1])
+        result = (bits < @params[1])
       end
     when 8  # Item
       result = $game_party.has_item?($data_items[@params[1]])

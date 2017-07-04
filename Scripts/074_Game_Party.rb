@@ -243,6 +243,8 @@ class Game_Party < Game_Unit
   #     include_equip : Include equipped items
   #--------------------------------------------------------------------------
   def gain_item(item, amount, include_equip = false)
+    #tag: modified
+    decrypt_data
     container = item_container(item.class)
     return unless container
     last_number = item_number(item)
@@ -253,6 +255,7 @@ class Game_Party < Game_Unit
       discard_members_equip(item, -new_number)
     end
     $game_map.need_refresh = true
+    encrypt_data
   end
   #--------------------------------------------------------------------------
   # * Discard Members' Equipment

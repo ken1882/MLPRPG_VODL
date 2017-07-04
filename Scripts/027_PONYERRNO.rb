@@ -9,14 +9,13 @@ module PONY::ERRNO
   #--------------------------------------------------------------------------
   ERR_INFO = {
     :bits_incorrect   => "Bits amount asynchronous with Block Chain",
-    :xp_overflow      => "XP overflow",
-    :intid_overflow   => "Object id overflow while convert to savefile format",
+    :fileid_overflow  => "Object id overflow while convert to savefile format",
     :item_unconsumed  => "Consumable Item can't be consumed",
     :int_overflow     => "Integer Overflow",
-    :datatype_error   => "Data Type Error",
+    :datatype_error   => "Data Type Error:\n",
     :nil_block        => "Block nil miner",
-    :chain_broken     => "Block Chain has more than one gensis block!",
-    :neg_balance      => "Negative account balance",
+    :chain_broken     => "Block Chain Error:\n",
+    :illegel_value    => "Illegel value:\n",
     :checksum_failed  => "File CheckSum failure",
     :file_missing     => "File missing:\n",
   }

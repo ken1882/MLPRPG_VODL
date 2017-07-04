@@ -173,8 +173,8 @@ module BlockChain
         result += self.accounts(accid).balance
       end
       if result < 0
-        msgbox(accounts(accid).name)
-        PONY::ERRNO.raise(:neg_balance, :exit)
+        info = "Negative account balance for #{accounts(accid).name}"
+        PONY::ERRNO.raise(:illegel_value, :exit, nil, info) if sum < 0
       end
       result_pool[result] = Array.new() unless result_pool[result].is_a?(Array)
       result_pool[result].push(node.clone)
@@ -182,7 +182,7 @@ module BlockChain
     self.determine_result(result_pool)
   end
   #--------------------------------------------------------------------------
-  # * Query item amount in player's saddlebag
+  # * Query specified item amount
   #--------------------------------------------------------------------------
   def self.item_amount(accid, item, async = false)
     accid = PONY.MD5(accid).to_i(16) if accid.is_a?(String)
@@ -193,6 +193,34 @@ module BlockChain
       result_pool[result].push(node.clone)
     end
     return determine_result(result_pool) || 0
+  end
+  #--------------------------------------------------------------------------
+  # * Query all item amount
+  #--------------------------------------------------------------------------
+  def self.all_items(accid, async = false)
+    self.recover_nodes
+    accid = PONY.MD5(accid).to_i(16) if accid.is_a?(String)
+    items = @nodes[0].all_items(accid, async)
+    [:item, :weapon, :armor].each do |type|
+      items[type].each {|id, amount|
+        items[type][id] += self.accounts(accid).item_amount(id)
+      }
+    end
+    return items
+  end
+  #--------------------------------------------------------------------------
+  # * Query all data
+  #--------------------------------------------------------------------------
+  def self.all_data(accid, async = false)
+    self.recover_nodes
+    accid = PONY.MD5(accid).to_i(16) if accid.is_a?(String)
+    data  = @nodes[0].all_data(accid, async)
+    [:item, :weapon, :armor].each do |type|
+      data[type].each {|id, amount|
+        data[type][id] += self.accounts(accid).item_amount(id)
+      }
+    end
+    return data
   end
   #--------------------------------------------------------------------------
   # * Determind return value & sync

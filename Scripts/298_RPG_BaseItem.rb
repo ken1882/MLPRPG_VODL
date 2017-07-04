@@ -57,6 +57,13 @@ class RPG::BaseItem
   def hash_self
     base = (@id * 42).to_s(8)
     base += @name ? @name : "nothingness"
+    base += "Actor"  if self.is_a?(RPG::Actor)
+    base += "Class"  if self.is_a?(RPG::Class)
+    base += "Enemy"  if self.is_a?(RPG::Enemy)
+    base += "Item"   if self.is_a?(RPG::Item)
+    base += "Weapon" if self.is_a?(RPG::Weapon)
+    base += "Armor"  if self.is_a?(RPG::Armor)
+    base += "State"  if self.is_a?(RPG::State)
     @hashid = PONY.Sha256(base).to_i(16)
   end
   #-----------------------------------------------------------------------
