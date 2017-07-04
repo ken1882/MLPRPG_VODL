@@ -26,9 +26,11 @@ class Game_Party < Game_Unit
   def gold
     BlockChain.account_balance(Vocab::Player)
   end
+  
   def max_gold; return 10 ** 6; end
-    
-  # Mining reward
+  #--------------------------------------------------------------------------  
+  # * Mining reward
+  #--------------------------------------------------------------------------
   def mining_reward(value)
     @chromastal += value
     if @chromastal >= 1.0

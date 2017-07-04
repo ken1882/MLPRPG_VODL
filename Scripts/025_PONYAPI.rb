@@ -31,6 +31,7 @@ module PONY::API
   MD5                  = Win32API.new("System/VODL.dll", "MDA5",'p','p')
   Mining               = Win32API.new("System/VODL.dll","Mine_Block",['L','L'],'L')
   ScreenToClient       = Win32API.new('user32', 'ScreenToClient', 'lp', 'i')
+  SecureInt            = Win32API.new('System/VODL.dll', 'SecureInteger', 'll', 'l')
   SetCursorPos         = Win32API.new('user32', 'SetCursorPos', 'nn', 'n')
   SetFocus             = Win32API.new('user32', "SetFocus", 'l', 'l')
   SetParent            = Win32API.new('user32', 'SetParent', 'll', 'l')
