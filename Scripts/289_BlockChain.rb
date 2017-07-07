@@ -102,17 +102,18 @@ module BlockChain
   #--------------------------------------------------------------------------
   # * Start process mining
   #--------------------------------------------------------------------------
-  def self.mining
+  def self.mining(async = false)
+    puts "[BlockChain]: Start Mining"
     return if node_empty?
-    puts "[BlockChain] Start Mining"
     winner = nil
+    Thread_Assist.yield if !async && Thread_Assist.work?(:BCmine)
     
     while !winner
       no_record_cnt = 0
       @nodes.each do |node|
+        sleep(Thread_Assist::Uwait) if async
         SceneManager.update_loading
         result = node.mining
-        
         no_record_cnt += 1                   if result == :no_record
         PONY::ERRNO.raise(:nil_block, :exit) if result == :nil_block
         winner = node.clone                  if result == true

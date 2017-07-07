@@ -25,7 +25,7 @@ class Game_Party < Game_Unit
   #--------------------------------------------------------------------------
   def initialize
     super
-    @gold = 0
+    #@gold = 0 tag: modified
     @steps = 0
     @last_item = Game_BaseItem.new
     @menu_actor_id = 0
@@ -243,10 +243,8 @@ class Game_Party < Game_Unit
   #     include_equip : Include equipped items
   #--------------------------------------------------------------------------
   def gain_item(item, amount, include_equip = false)
-    #tag: modified
-    decrypt_data
     container = item_container(item.class)
-    return unless container
+    return encrypt_data unless container
     last_number = item_number(item)
     new_number = last_number + amount
     container[item.id] = [[new_number, 0].max, max_item_number(item)].min
@@ -255,7 +253,6 @@ class Game_Party < Game_Unit
       discard_members_equip(item, -new_number)
     end
     $game_map.need_refresh = true
-    encrypt_data
   end
   #--------------------------------------------------------------------------
   # * Discard Members' Equipment

@@ -79,31 +79,31 @@ module DND
   
   # See "tag: equiparam" for details
   module REGEX::Equipment
-    UserGraphic       = /(?:User Graphic =)[ ](.+)/           # Sprite display on user
-    ToolGraphic       = /(?:Tool Graphic =)[ ](.+)/           # Tool sprite
-    ToolIndex         = /(?:Tool Index =)[ ](\d+)/            # Index of Graphic
-    CoolDown          = /(?:Tool Cooldown =)[ ](\d+)/         # CoolDownTime(CDT)
-    ToolDistance      = /(?:Tool Distance =)[ ](\d+)/         # Effective Range (for missiles)
-    ToolEffectDelay   = /(?:Tool Effect Delay =)[ ](\d+)/     # Delay until effect occur
-    ToolDestroyDelay  = /(?:Tool Destroy Delay =)[ ](\d+)/    # Tool Sprite dispose delay timeing
-    ToolSpeed         = /(?:Tool Speed =)[ ](.+)/             # Tool Move Speed
-    ToolCastime       = /(?:Tool Cast Time =)[ ](\d+)/        # Cast needed time until done
-    ToolCastAnimation = /(?:Tool Cast Animation =)[ ](\d+)/   # Casting animation
-    ToolBlowPower     = /(?:Tool Blow Power =)[ ](\d+)/       # Knockback power
-    ToolPiercing      = /(?:Tool Piercing =)[ ](\d+)/         # Piercing number
-    ToolAnimMoment    = /(?:Tool Animation Moment =)[ ](\d+)/ # Start moment of tool's animation
-    ToolSpecial       = /(?:Tool Special =)[ ](\d+),[ ](\d*)/ # Tool Special, see the list below
-    ToolScope         = /(?:Tool Scope =)[ ](\d+)/            # Tool target scope, same as skill/item one
-    ToolInvokeSkill   = /(?:Tool Invoke Skill =)[ ](\d+)/     # Skill id invoked upon the tool used
-    ToolSE            = /(?:Tool SE =)[ ](.+)/                # Sound Effect when tool is used
-    ToolItemCost      = /(?:Tool Item Cost =)[ ](\d+)/        # Item  id needed for using this tool
-    ToolItemCostType  = /(?:Tool Wtype Cost =)[ ](\d+)/       # Wtype id needed for using this tool
-    ToolThrough       = /(?:Tool Through =)[ ](\d+)/          # Tool go through obstacle?(0/1 = false/true)
-    ToolPriority      = /(?:Tool Priority =)[ ](\d+)/         # (Chatacter)Display Priority Type
-    ToolHitShake      = /(?:Tool Hit Shake =)[ ](\d+)/        # Level of screen shake upon tool hitting
-    ToolType          = /(?:Tool Type =)[ ](\d+)/             # Tool Type, 0 = missile, 1 = bomb
-    ToolCombo         = /(?:Tool Combo =)[ ](\d+)/            # Next Weapon Id use after player contiune to
-                                                              #   using this tool (default: in 20 frames)
+    UserGraphic       = /(?:User Graphic =)[ ](.+)/i           # Sprite display on user
+    ToolGraphic       = /(?:Tool Graphic =)[ ](.+)/i           # Tool sprite
+    ToolIndex         = /(?:Tool Index =)[ ](\d+)/i            # Index of Graphic
+    CoolDown          = /(?:Tool Cooldown =)[ ](\d+)/i         # CoolDownTime(CDT)
+    ToolDistance      = /(?:Tool Distance =)[ ](\d+)/i         # Effective Range (for missiles)
+    ToolEffectDelay   = /(?:Tool Effect Delay =)[ ](\d+)/i     # Delay until effect occur
+    ToolDestroyDelay  = /(?:Tool Destroy Delay =)[ ](\d+)/i    # Tool Sprite dispose delay timeing
+    ToolSpeed         = /(?:Tool Speed =)[ ](.+)/i             # Tool Move Speed
+    ToolCastime       = /(?:Tool Cast Time =)[ ](\d+)/i        # Cast needed time until done
+    ToolCastAnimation = /(?:Tool Cast Animation =)[ ](\d+)/i   # Casting animation
+    ToolBlowPower     = /(?:Tool Blow Power =)[ ](\d+)/i       # Knockback power
+    ToolPiercing      = /(?:Tool Piercing =)[ ](\d+)/i         # Piercing number
+    ToolAnimMoment    = /(?:Tool Animation Moment =)[ ](\d+)/i # Start moment of tool's animation
+    ToolSpecial       = /(?:Tool Special =)[ ](\d+),[ ](\d*)/i # Tool Special, see the list below
+    ToolScope         = /(?:Tool Scope =)[ ](\d+)/i            # Tool target scope, same as skill/item one
+    ToolInvokeSkill   = /(?:Tool Invoke Skill =)[ ](\d+)/i     # Skill id invoked upon the tool used
+    ToolSE            = /(?:Tool SE =)[ ](.+)/i                # Sound Effect when tool is used
+    ToolItemCost      = /(?:Tool Item Cost =)[ ](\d+)/i        # Item  id needed for using this tool
+    ToolItemCostType  = /(?:Tool Wtype Cost =)[ ](\d+)/i       # Wtype id needed for using this tool
+    ToolThrough       = /(?:Tool Through =)[ ](\d+)/i          # Tool go through obstacle?(0/1 = false/true)
+    ToolPriority      = /(?:Tool Priority =)[ ](\d+)/i         # (Chatacter)Display Priority Type
+    ToolHitShake      = /(?:Tool Hit Shake =)[ ](\d+)/i        # Level of screen shake upon tool hitting
+    ToolType          = /(?:Tool Type =)[ ](\d+)/i             # Tool Type, 0 = missile, 1 = bomb
+    ToolCombo         = /(?:Tool Combo =)[ ](\d+)/i            # Next Weapon Id use after player contiune to
+                                                               #   using this tool (default: in 20 frames)
   end
   
   module COLOR

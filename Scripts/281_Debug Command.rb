@@ -64,9 +64,11 @@ class Game_System
         execute_command = prefix + execute_command
         info = "success! #{execute_command}"
         begin
+          puts "Eval: #{execute_command}"
           eval(execute_command)
         rescue Exception => e
           info = e
+          puts e.backtrace
         end
       else
         info = "Invailed command!"
@@ -91,6 +93,7 @@ class Game_Console
     $show_roll_result = FileManager.load_ini(group, 'ShowRollResult').to_i.to_bool
     $debug_mode       = FileManager.load_ini(group, 'DebugMode').to_i.to_bool
     $light_effect     = FileManager.load_ini(group, 'LightEffects').to_i.to_bool
+    $SkipLoading      = FileManager.load_ini(group, 'SkipLoading').to_i.to_bool
     load_volume
   end
   #----------------------------------------------------------------------------
@@ -106,9 +109,10 @@ class Game_Console
     debug_print("Volume:", $sound_volume)
   end
   #----------------------------------------------------------------------------
-  def AddBits(amount = 0, useless = 0)
-    amount = [[amount, 1000000 - $game_party.gold].min, 0].max
-    if $game_party.gold >= 1000000
+  def AddBits(amount, useless = 0)
+    bits = $game_party.gold # tag: queued >> security PONY.DecInt($game_party.gold(true))
+    amount = [[amount, 1000000 - bits].min, 0].max
+    if bits >= 1000000
       SceneManager.display_info("You can only AddBits when you have less than 1M Bits.")
       return
     end

@@ -22,6 +22,41 @@ end
 #===============================================================================
 class Fixnum
   #----------------------------------------------------------------------------
+  alias plus +
+  def +(*args)
+    plus(*args)
+  end
+  #----------------------------------------------------------------------------
+  alias minus -
+  def -(*args)
+    minus(*args)
+  end
+  #----------------------------------------------------------------------------
+  alias bigger >
+  def >(*args)
+    bigger(*args)
+  end
+  #----------------------------------------------------------------------------
+  alias ebigger >=
+  def >=(*args)
+    ebigger(*args)
+  end
+  #----------------------------------------------------------------------------
+  alias smaller <
+  def <(*args)
+    smaller(*args)
+  end
+  #----------------------------------------------------------------------------
+  alias esmaller <=
+  def <=(*args)
+    esmaller(*args)
+  end
+  #----------------------------------------------------------------------------
+  alias :divid :/
+  def /(*args)
+    divid(*args)
+  end
+  #----------------------------------------------------------------------------
   # *) Convert to radians
   #----------------------------------------------------------------------------
   def to_rad
@@ -47,9 +82,13 @@ class Fixnum
     PONY::ERRNO.raise(:fileid_overflow, :exit) if cnt > deg
     return ('0' * (deg - cnt)) + self.to_s
   end
-  
+  #----------------------------------------------------------------------------
   def to_sec
     return (self / 60).to_i + 1
+  end
+  
+  def self
+    return PONY.EncInt(self)
   end
 end
 #===============================================================================
@@ -187,8 +226,8 @@ class RPG::BaseItem
   attr_accessor :tool_piercing       # Pierece amount of effect executed
   
   attr_accessor :tool_animmoment     # Animation display moment
-                                     # 0: Display on projectile
-                                     # 1: Display on recipient
+                                     # 1: Display on projectile
+                                     # 0: Display on recipient
                                       
   attr_accessor :tool_special        # Special attributes
   attr_accessor :tool_special_param  # 0: Nothing
@@ -198,7 +237,7 @@ class RPG::BaseItem
                                      # 2: Projectile will reflect after collide
                                      # parameter: max reflection count
                                       
-  attr_accessor :tool_scope          # Target scope, same as Damage::Scope
+  attr_accessor :tool_scope          # Effective scope on execute
   attr_accessor :tool_invoke         # Invoke other skill(id) on execute
   attr_accessor :tool_soundeffect    # Sound effect played on execuute
   attr_accessor :tool_itemcost       # Specified item(id) required
@@ -210,7 +249,7 @@ class RPG::BaseItem
   attr_accessor :tool_combo          # Next Weapon id use after player contiune
                                      # to using this tool(default: in 20 frames)
                                      
-  attr_reader   :scope               # Inheritance of :tool_scope
+  attr_reader   :scope               # Damage::Scope
   attr_reader   :information         # Linked to folder /History
   #------------------------------------------------------------------------
   attr_accessor :saving_throw_adjust
@@ -305,8 +344,13 @@ class RPG::BaseItem
   end
   #---------------------------------------------------------------------------
   def ensure_property_correct
-    @scope = @tool_scope ? 0 : @tool_scope unless @scope
-    @tool_castime  = 0 unless @tool_castime
+    #@scope = @tool_scope ? 0 : @tool_scope unless @scope
+    @tool_distance     = 8 unless @tool_distance
+    @@tool_animmoment  = 0 unless @tool_animmoment
+    @tool_castime      = 0 unless @tool_castime
+    @tool_itemcost     = 0 unless @tool_itemcost
+    @tool_itemcosttype = 0 unless @tool_itemcosttype
+    @tool_scope        = 1 unless @tool_scope
   end
   #---------------------------------------------------------------------------
   # *) Load item infos for detailed inforamtion, located at "History/type/id"

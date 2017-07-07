@@ -31,7 +31,8 @@ class Sprite_Character < Sprite_Base
   # * Check if sprite should update
   #--------------------------------------------------------------------------
   def update_needed?
-    return true  if graphic_changed? || animation? rescue false
+    return true  if @character.animation_id > 0 rescue nil
+    return true  if graphic_changed? || animation? rescue nil
     return false if !@character
     return true  if @character.pattern != @old_pattern
     return false if @old_pos == hash_pos

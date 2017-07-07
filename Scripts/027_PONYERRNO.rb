@@ -32,6 +32,10 @@ module PONY::ERRNO
     Audio.se_play("Audio/SE/Pinkie_Pie_Sad_Trombone",100,100)
     prefix = "  An Error has occurred during gameplay: "
     info   = ERR_INFO[symbol] + ' ' + extra_info
+    puts SPLIT_LINE
+    puts "An Error occurred!: #{symbol}"
+    puts "#{extra_info}"
+    puts SPLIT_LINE
     SceneManager.scene.raise_overlay_window(:popinfo ,prefix + info, cmd, args, true)
   end
   

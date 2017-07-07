@@ -62,7 +62,8 @@ class Game_Skillbar
   # *) Object Update
   #--------------------------------------------------------------------------
   def update
-    refresh if @phase == Phase_Map && @last_actor_id == $game_player.id
+    current_actor = determine_actor
+    refresh(current_actor) if @phase == Phase_Map# && @last_actor_id != current_actor.id
     process_input
     update_edit    if @edit_enabled
     @sprite.update if sprite_valid?
@@ -104,7 +105,6 @@ class Game_Skillbar
     @stack.clear
     @stack[0] = @actor
     refresh_item
-    @sprite.refresh if sprite_valid?
   end
   #--------------------------------------------------------------------------
   # *) Refresh items
@@ -190,7 +190,7 @@ class Game_Skillbar
   end
   #--------------------------------------------------------------------------
   def process_item_use(item)
-    if item && @actor.item_test(@actor, item)
+    if !item.nil? && @actor.item_test(@actor, item)
       @actor.process_tool_action(item)
     else
       Sound.play_buzzer
@@ -266,4 +266,3 @@ class Game_Skillbar
   end
   
 end
-# queued work

@@ -52,7 +52,9 @@ class Game_CharacterBase
   #--------------------------------------------------------------------------
   alias update_multi_animation update_animation
   def update_animation
-    @animation_queue.each{|sprite| sprite.update if sprite.animation?}
+    if @animation_queue
+      @animation_queue.each{|sprite| sprite.update if sprite.animation?}
+    end
     update_multi_animation
   end
   

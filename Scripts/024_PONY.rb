@@ -46,14 +46,31 @@ module PONY
     return input.nil? ? API::CheckSum : API::CheckSum.call(input, is_file, is_bin)
   end
   #-----------------------------------------------------------------------------
-  def SecureInt(value, encrypt = true)
-    encrypt = encrypt ? 1 : 0
-    if !value.between?(0, 2147483647)
+  def EncInt(value)
+    return unless value.is_a?(Numeric)
+    if value < 0
       info = "Numeric out of range: #{value}"
       ERRNO.raise(:illegel_value, :exit, nil, info)
     else
-      API::SecureInt.call(value, encrypt)
+      num = API::EncryptInt.call([value].pack("Q"))
+      return num.to_i
     end
   end
+  class << self; alias EncryptInt EncInt; end
+  #-----------------------------------------------------------------------------
+  def DecInt(value)
+    return unless value.is_a?(Numeric)
+    if value < 0
+      info = "Numeric out of range: #{value}"
+      ERRNO.raise(:illegel_value, :exit, nil, info)
+    else
+      if value == 0
+        #caller.each {|i| puts i}
+      end
+      num = API::DecryptInt.call([value].pack("Q"))
+      return num.to_i
+    end
+  end
+  class << self; alias DecryptInt DecInt; end
   #-----------------------------------------------------------------------------
 end

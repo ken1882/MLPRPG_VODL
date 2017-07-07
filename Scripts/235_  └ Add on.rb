@@ -214,6 +214,7 @@ class Scene_Base
     rescue Exception => err
       puts SPLIT_LINE
       debug_print err
+      puts err.backtrace
     end
     @input_string = nil
   end

@@ -9,6 +9,8 @@ class Game_BattlerBase
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor :reg_time_count             # regeneration time counter
+  attr_reader   :shp                        # HP
+  attr_reader   :smp                        # MP
   #--------------------------------------------------------------------------
   # * Access Method by Parameter Abbreviations
   #--------------------------------------------------------------------------
@@ -21,6 +23,26 @@ class Game_BattlerBase
   def initialize
     @reg_time_count = 0
     initialize_reg_dnd
+    @shp = PONY.EncInt(@hp)
+    @smp = PONY.EncInt(@mp)
+  end
+  #--------------------------------------------------------------------------
+  # * Change HP
+  #--------------------------------------------------------------------------
+  def hp=(hp)
+    delta = hp - @hp
+    popup_hp_change(delta) if delta != 0
+    @hp  = hp
+    refresh
+  end
+  #--------------------------------------------------------------------------
+  # * Change MP
+  #--------------------------------------------------------------------------
+  def mp=(mp)
+    delta = mp - @mp
+    popup_ep_change(delta) if delta > 30
+    @mp  = mp
+    refresh
   end
   #--------------------------------------------------------------------------   
   # ● Easier method for check skilll learned
@@ -102,6 +124,12 @@ class Game_BattlerBase
   def hide_info?
     false
   end
+  #--------------------------------------------------------------------------
+  # * Check When Skill/Item Can Be Used
+  #--------------------------------------------------------------------------
+  def occasion_ok?(item)
+    $game_party.in_battle ? item.battle_ok? : item.menu_ok?
+  end
   #--------------------------------------------------------------------------   
   def popup_hp_change(value)
     return unless SceneManager.scene_is?(Scene_Map)
@@ -114,5 +142,5 @@ class Game_BattlerBase
     color = value < 0 ? DND::COLOR::EPDamage : DND::COLOR::EPHeal
     popup_info(value.abs.to_s, color)
   end
-  #--------------------------------------------------------------------------   
+  #--------------------------------------------------------------------------
 end

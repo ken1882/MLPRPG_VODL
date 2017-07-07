@@ -18,7 +18,8 @@ module SceneManager
   def self.run
     DataManager.unpack_data if $ENCRYPT
     @timer = 0
-    reserve_loading_screen
+    info = "To ensure your best gameplay experience, please close the app that will consume your system resource, such as Flash or other games."
+    reserve_loading_screen(nil, subtitle: info)
     DataManager.init
     Audio.setup_midi if use_midi?
     @scene = first_scene_class.new
@@ -111,7 +112,7 @@ module SceneManager
   #--------------------------------------------------------------------------
   def self.dispose_temp_sprites
     return unless scene_is?(Scene_Map)
-    spriteset.dispose_temp_sprite
+    spriteset.dispose_temp_sprites
   end
   #--------------------------------------------------------------------------
   def self.store_projectile(next_scene)
@@ -145,10 +146,11 @@ module SceneManager
   #--------------------------------------------------------------------------
   # *) Loading Screen process
   #--------------------------------------------------------------------------
-  def self.reserve_loading_screen(map_id = nil)
+  def self.reserve_loading_screen(map_id = nil, configs = {})
+    return if $SkipLoading
     debug_print "Reserve load screen"
     info = get_map_loading_info(map_id)
-    @loading_screen = ForeGround_Loading.new(info, map_id.nil?)
+    @loading_screen = ForeGround_Loading.new(info, map_id.nil?, configs)
     self.fade_in(@loading_screen)
   end
   #--------------------------------------------------------------------------
@@ -196,6 +198,7 @@ module SceneManager
   end
   #--------------------------------------------------------------------------
   def self.set_loading_phase(info, total)    
+    return if $SkipLoading
     @loading_screen.set_loading_phase(info, total)
   end
   #--------------------------------------------------------------------------

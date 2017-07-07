@@ -10,6 +10,8 @@ module PONY::API
   CloseWindow          = Win32API.new('user32', 'CloseWindow', 'l', 'l')
   CreateWindowEx       = Win32API.new('user32', 'CreateWindowEx', 'lppliiiipppp', 'l')
   DispatchMessage      = Win32API.new('user32', 'DispatchMessage', 'p', 'p')
+  DecryptInt           = Win32API.new('System/VODL.dll', 'DecryptInt', 'p', 'p')
+  EncryptInt           = Win32API.new('System/VODL.dll', 'EncryptInt', 'p', 'p')
   FindWindow           = Win32API.new('user32', 'FindWindow', 'pp', 'i')
   FindWindowEX         = Win32API.new('user32', 'FindWindowEx', ['l','l','p','p'], 'i')
   GamejoltConnect      = Win32API.new("System/VODL.dll", "GetGamejoltInfo", 'i', 'pp') rescue nil
@@ -31,7 +33,6 @@ module PONY::API
   MD5                  = Win32API.new("System/VODL.dll", "MDA5",'p','p')
   Mining               = Win32API.new("System/VODL.dll","Mine_Block",['L','L'],'L')
   ScreenToClient       = Win32API.new('user32', 'ScreenToClient', 'lp', 'i')
-  SecureInt            = Win32API.new('System/VODL.dll', 'SecureInteger', 'll', 'l')
   SetCursorPos         = Win32API.new('user32', 'SetCursorPos', 'nn', 'n')
   SetFocus             = Win32API.new('user32', "SetFocus", 'l', 'l')
   SetParent            = Win32API.new('user32', 'SetParent', 'll', 'l')

@@ -116,7 +116,7 @@ class Window_Input < Window_Base
       sx     = (i == 0 ? bx : (bx + bw + bh)) # 0 for left, 1 for right arrow
       rect   = Rect.new(sx, by + bw, bw, bh)
       sprite.bitmap.blt(0, 0, self.windowskin, rect)
-      sprite.y = self.y + (window_height - bh) + spacing * 2
+      sprite.y = self.y + (window_height - bh) - spacing * 2
       sprite.x = i == 0 ? self.x + 2 : self.x + window_width - bw
       @arrow_sprites.push(sprite)
     end

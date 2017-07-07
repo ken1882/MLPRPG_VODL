@@ -152,9 +152,11 @@ module BattleManager
     opponents = []
     @action_battlers.each do |key, members|
       next if key == battler.team_id
-      opponents << members.compact
+      members.compact.each do |member|
+        opponents.push(member)
+      end
     end
-    return opponents.flatten
+    return opponents
   end
   #--------------------------------------------------------------------------
   def self.is_friend?(a, b)
@@ -175,7 +177,7 @@ module BattleManager
   #--------------------------------------------------------------------------
   # * Enter target selection
   #--------------------------------------------------------------------------
-  def self.autotarget(user, item, sensor = 8)
+  def self.autotarget(user, item, sensor = item.tool_distance)
     return user.current_target if user.current_target
     return user if item.for_none? || item.for_user?
     return one_random_ally(user, item, sensor) if item.for_friend?
@@ -184,27 +186,40 @@ module BattleManager
   #--------------------------------------------------------------------------
   # * Decide one random ally (nearset if not AOE)
   #--------------------------------------------------------------------------
-  def self.one_random_ally(user, item, sensor = 8)
+  def self.one_random_ally(user, item, sensor)
     allies = ally_battler(user)
     return determine_best_position(allies, item) if item.for_all?
-    target = allies[0]
-    allies.each { |battler| 
-      target = battler if user.distance_to_character(battler) > user.distance_to_character(target)
-    }
+    
+    target = nil
+    target_distance = 0xffffff
+    allies.each do |ally|
+      range = user.distance_to_character(ally)
+      next if range > sensor
+      if target_distance > range
+        target = ally
+        target_distance = range
+      end
+    end
     return target ? target : user
   end
   #--------------------------------------------------------------------------
   # * Decide one random enemy (nearset if not AOE)
   #--------------------------------------------------------------------------
-  def self.one_random_enemy(user, item, sensor = 8)
+  def self.one_random_enemy(user, item, sensor)
     enemies = opponent_battler(user)
     return determine_best_position(enemies, item) if item.for_all?
     
-    target = enemies[0]
-    enemies.each { |battler| 
-      target = battler if user.distance_to_character(battler) > user.distance_to_character(target)
-    }
-    return target ? target : user
+    target = nil
+    target_distance = 0xffffff
+    enemies.each do |enemy|
+      range = user.distance_to_character(enemy)
+      next if range > sensor
+      if target_distance > range
+        target = enemy
+        target_distance = range
+      end
+    end
+    return target ? target : POS.new(user.x, user.y)
   end
   #--------------------------------------------------------------------------
   # * Take median target as promary one
@@ -216,8 +231,9 @@ module BattleManager
   # * Execute Action
   #--------------------------------------------------------------------------
   def self.execute_action(action)
+    puts "[Debug]: Action executed"
     determine_effected_targets(action)
-    action.user.use_item(action.item)
+    action.user.use_item(action.item) if action.item.tool_animmoment == 0 # Directly use
     apply_skill(action)  if action.item.is_a?(RPG::Skill)
     apply_item(action)   if action.item.is_a?(RPG::Item)
     apply_weapon(action) if action.item.is_a?(RPG::Weapon)
@@ -234,12 +250,14 @@ module BattleManager
     else
       candidates = []
     end
-    
+    pos = [action.target.x, action.target.y]
+    candidates.select!{|battler| battler.distance_to(*pos) < action.item.tool_scope}
     if action.item.for_one?
       action.subject = action.target.is_a?(POS) ? [candidates.first] : [action.target]
     elsif action.item.tool_type == 1
       action.subject = candidates.select {|battler| battler.distance_to_character(action.target) <= action.item.tool_distance}
     end
+    debug_print "Action subjects: #{action.subject.collect{|char| char.name if char}}"
   end
   #--------------------------------------------------------------------------
   # * Apply Skill
@@ -328,6 +346,6 @@ module BattleManager
     item_target_actors.each do |target|
       item.repeats.times { target.item_apply(user, item) }
     end
-  end # last work
+  end
   
 end

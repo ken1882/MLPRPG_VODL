@@ -54,4 +54,10 @@ class Window_Gold < Window_Base
     draw_text(x, y, width - 2, line_height, value, 2)
     change_color(system_color)
   end
+  #--------------------------------------------------------------------------
+  # * Get Party Gold
+  #--------------------------------------------------------------------------
+  def value
+    PONY.DecryptInt($game_party.gold(true))
+  end
 end

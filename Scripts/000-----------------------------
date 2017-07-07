@@ -12,6 +12,7 @@
 search tag:
 Crtl + Shift + F
 Tags available:
+tag: queued     // work that may be done on later days
 tag: unfinished // unfinished stuff
 tag: lasst work // just like what it says
 tag: damage     // damage handles

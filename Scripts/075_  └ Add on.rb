@@ -10,24 +10,29 @@ class Game_Party < Game_Unit
   #--------------------------------------------------------------------------
   attr_reader   :chromastal                     # Chromastal mined value
   attr_accessor :skillbar
+  attr_reader   :encrypted
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
   alias init_chromastal initialize
   def initialize
+    @gold = PONY.EncryptInt(0)
     init_chromastal
     @chromastal = 0.0
     @skillbar = Game_Skillbar.new
     @skillbar.hide
-    @gold = 0
+    @encrypted = true
+    @gold = PONY.EncryptInt(0)
   end
   #--------------------------------------------------------------------------
   # * Gold & Max gold
   #--------------------------------------------------------------------------
-  def gold(quick_access)
+  def gold(quick_access = true)
+    # tag: queued >> security
+    #@gold = PONY.EncInt(BlockChain.account_balance(Vocab::Player)) if !quick_access
     @gold = BlockChain.account_balance(Vocab::Player) if !quick_access
     return @gold
-  end # last work: gold enctyption!
+  end # queued: gold enctyption!
   #--------------------------------------------------------------------------
   def max_gold; return 10 ** 6; end
   #--------------------------------------------------------------------------  
@@ -46,16 +51,14 @@ class Game_Party < Game_Unit
   #--------------------------------------------------------------------------
   def gain_gold(amount, opp = Vocab::Coinbase, info = '')
     return if amount == 0
-    decrypt_data
-    amount   = [max_gold - gold, amount].min
-    overflow = (gold + amount) > max_gold
+    amount   = [max_gold - gold(true), amount].min
+    overflow = (gold(true) + amount) > max_gold
     source   = amount < 0 ? Vocab::Player : opp
     receiver = amount > 0 ? Vocab::Player : opp
     BlockChain.bits_transaction(amount.abs, source, receiver, info)
     @gold += amount
-    info = sprintf("Party has %s βits: %s%s", amount < 0 ? 'lost': 'gained', amount, overflow ? "(maxium reached)" : "")
+    info = sprintf("Party has %s βits: %s%s", amount < 0 ? 'lost': 'gained', amount.abs, overflow ? "(maxium reached)" : "")
     SceneManager.display_info(info)
-    encrypt_data
   end
   #--------------------------------------------------------------------------
   # * Decrease Gold
@@ -104,12 +107,12 @@ class Game_Party < Game_Unit
   def gain_item(item, amount, include_equip = false, opp = Vocab::Coinbase, info = '')
     decrypt_data
     container = item_container(item.class)
-    return unless container
+    return encrypt_data unless container
     last_number = item_number(item)
     new_number  = [[last_number + amount, 0].max, max_item_number(item)].min
     container.delete(item.id) if new_number == 0
     discard_members_equip(item, -new_number) if include_equip && new_number < 0
-    return unless last_number != new_number
+    return encrypt_data unless last_number != new_number
     
     # source is who pay the bits, thus source will gain the item
     source   = amount > 0 ? Vocab::Player : opp
@@ -130,29 +133,35 @@ class Game_Party < Game_Unit
   end
   #--------------------------------------------------------------------------
   def encrypt_data
+    return # tag: queued >> security
+    return if @encrypted
     @items.each do |key, number|
-      @items[key] = PONY.SecureInt(@items[key])
+      @items[key] = PONY.EncryptInt(@items[key])
     end
     @weapons.each do |key, number|
-      @weapons[key] = PONY.SecureInt(@weapons[key])
+      @weapons[key] = PONY.EncryptInt(@weapons[key])
     end
     @armors.each do |key, number|
-      @armors[key] = PONY.SecureInt(@armors[key])
+      @armors[key] = PONY.EncryptInt(@armors[key])
     end
-    @gold = PONY.SecureInt(@gold)
+    @gold = PONY.EncryptInt(@gold)
+    @encrypted = true
   end
   #--------------------------------------------------------------------------
   def decrypt_data
+    return # tag: queued >> security
+    return unless @encrypted
     @items.each do |key, number|
-      @items[key] = PONY.SecureInt(@items[key], false)
+      @items[key] = PONY.DecryptInt(@items[key])
     end
     @weapons.each do |key, number|
-      @weapons[key] = PONY.SecureInt(@weapons[key], false)
+      @weapons[key] = PONY.DecryptInt(@weapons[key])
     end
     @armors.each do |key, number|
-      @armors[key] = PONY.SecureInt(@armors[key], false)
+      @armors[key] = PONY.DecryptInt(@armors[key])
     end
-    @gold = PONY.SecureInt(@gold, false)
+    @gold = PONY.DecryptInt(@gold)
+    @encrypted = false
   end
   #--------------------------------------------------------------------------
   # * Swap order

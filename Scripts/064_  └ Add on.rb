@@ -56,10 +56,11 @@ class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
   def skill_cost_payable?(skill)
     re = super(skill)
+    item = skill
     if !item.tool_itemcost && item.tool_itemcost > 0
       item = $data_items[itemcost]
       re  &= $game_party.item_number(item)
-    elsif item.tool_itemcosttype != nil
+    elsif item.tool_itemcosttype > 0
       re  &= weapon_ammo_ready?(@equips[0])
     end
     return re
@@ -71,10 +72,10 @@ class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
   alias execute_damage_popup execute_damage
   def execute_damage(user)
-    popup_hp_change(-@result.hp_damage)    if @result.hp_damage != 0
-    popup_ep_change(-@result.mp_damage)    if @result.mp_damage != 0
-    user.popup_hp_change(@result.hp_drain) if @result.hp_drain  != 0
-    user.popup_ep_change(@result.mp_drain) if @result.mp_drain  != 0
+    #popup_hp_change(-@result.hp_damage)    if @result.hp_damage != 0
+    #popup_ep_change(-@result.mp_damage)    if @result.mp_damage != 0
+    #user.popup_hp_change(@result.hp_drain) if @result.hp_drain  != 0
+    #user.popup_ep_change(@result.mp_drain) if @result.mp_drain  != 0
     execute_damage_popup(user)
   end
   #--------------------------------------------------------------------------   
@@ -91,4 +92,17 @@ class Game_Battler < Game_BattlerBase
     return BattleManager.is_friend?(self, charactor)
   end
   alias is_ally? is_friend?
+  #--------------------------------------------------------------------------
+  # * Test Skill/Item Application
+  #    Used to determine, for example, if a character is already fully healed
+  #   and so cannot recover anymore.
+  #--------------------------------------------------------------------------
+  def item_test(user, item)
+    return false if item.for_dead_friend? != dead?
+    return true if item.for_opponent?
+    return true if item.damage.recover? && item.damage.to_hp? && hp < mhp
+    return true if item.damage.recover? && item.damage.to_mp? && mp < mmp
+    return true if item_has_any_valid_effects?(user, item)
+    return false
+  end
 end

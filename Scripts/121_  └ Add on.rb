@@ -89,7 +89,7 @@ class Spriteset_Map
         @popups.delete_at(i); next
       end
       @popups[i].update
-      @popups.delete_at(i) if @popups[i].sprite.disposed?
+      @popups.delete_at(i) if !@popups[i].sprite || @popups[i].sprite.disposed?
     end
   end
   #--------------------------------------------------------------------------
@@ -122,7 +122,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def dispose_projectiles
     @projectiles.each do |proj|
-      proj.disepose_sprite
+      proj.dispose_sprite
     end
     @projectiles.clear
   end
@@ -131,7 +131,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def dispose_popups
     @popups.each do |sprite|
-      sprite.disepose_sprite
+      sprite.dispose_sprite
     end
     @popups.clear
   end

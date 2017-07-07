@@ -22,8 +22,8 @@ class Window_ItemAction < Window_Command
   # * Create Command List
   #--------------------------------------------------------------------------
   def make_command_list
-    add_command('Use', :use_ok)
-    add_command('Hotkey', :sel_hotkey)
+    add_command('Use', :use_ok, item_usable?)
+    add_command('Hotkey', :sel_hotkey, item_targetable?)
   end
   #--------------------------------------------------------------------------
   def activate(item = nil, actor = nil)
@@ -34,15 +34,16 @@ class Window_ItemAction < Window_Command
     refresh
   end
   #--------------------------------------------------------------------------
-  def draw_item(index)
-    change_color(normal_color, item_usable?)
-    draw_text(item_rect_for_text(index), command_name(index), alignment)
-  end
-  #--------------------------------------------------------------------------
   # * Determine if item is usable
   #--------------------------------------------------------------------------
   def item_usable?
     return false unless @item
     return @actor ? @actor.usable?(@item) : $game_player.usable?(@item)
   end
+  #--------------------------------------------------------------------------
+  def item_targetable?
+    return false unless @item
+    return @item.scope != 0
+  end
+  
 end

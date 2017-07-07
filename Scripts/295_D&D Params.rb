@@ -1,3 +1,4 @@
+#tag: D&D_actor_class_settings
 module DND
   
   SKILL_STYPE_ID      =   1
@@ -517,19 +518,13 @@ end
 # Class RPG::Class
 #==============================================================================
 class RPG::Class < RPG::BaseItem
-  
+  # tag: queued >> D&D Class Settings
   attr_reader :level
   #---------------------------------------------------------------------
   # *) Initialize D&D params
   #---------------------------------------------------------------------
   def initialize_dndparams
     @level = 1
-    @params = Table.new(8,100)
-    (1..99).each do |i|
-      next if DND::ACTOR_PARAMS[id].nil?
-      (0...1).each {|j| @params[j,i] = DND::ACTOR_PARAMS[id][j] * i}
-      (1...8).each {|j| @params[j,i] = DND::ACTOR_PARAMS[id][j] }
-    end
   end
   
   def level_up; @level += 1; end

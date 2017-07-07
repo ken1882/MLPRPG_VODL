@@ -430,7 +430,7 @@ class Game_Interpreter
         result = (character.direction == @params[2])
       end
     when 7  # Gold tag: modified
-      bits = PONY.SecureInt($game_party.gold(true), false)
+      bits = PONY.DecryptInt($game_party.gold(true))
       case @params[2]
       when 0  # Greater than or equal to
         result = (bits >= @params[1])
@@ -611,8 +611,8 @@ class Game_Interpreter
         return $game_map.map_id
       when 1  # number of party members
         return $game_party.members.size
-      when 2  # gold
-        return $game_party.gold
+      when 2  # gold tag: modified
+        return $game_party.gold(true)
       when 3  # steps
         return $game_party.steps
       when 4  # play time

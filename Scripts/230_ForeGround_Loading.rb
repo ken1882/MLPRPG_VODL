@@ -8,15 +8,17 @@ class ForeGround_Loading
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  def initialize(info = nil, animate_sprite = true)
-    @opacity = 0
-    @image = info ? info.image : nil
-    @title = info ? info.name  : nil
+  def initialize(info = nil, animate_sprite = true, configs = {})
+    @opacity  = 0
+    @image    = info ? info.image : nil
+    @title    = info ? info.name  : nil
+    @subtitle = configs[:subtitle]
     create_background
     create_viewport
     create_loading_sprite
     create_text_sprite
     create_title_sprite
+    create_subtitle_sprite
     @enable_sprite = animate_sprite
     @timer  = 0
     @goal   = 0
@@ -47,7 +49,7 @@ class ForeGround_Loading
   #--------------------------------------------------------------------------
   def text_width(text, text_width = Font.default_size)
     return 1 if !text
-    return [(text.size * text_width / 2), 1].max
+    return [[(text.size * text_width / 2), 1].max, Graphics.width - 24].min
   end
   #--------------------------------------------------------------------------
   # *) Opacity
@@ -86,7 +88,7 @@ class ForeGround_Loading
     @sprite = Sprite.new(@viewport)
     @sprite.bitmap = get_load_sprite
     @sprite.x = Graphics.center_width(bitmap_width)
-    @sprite.y = Graphics.center_height(bitmap_height * 1.5)
+    @sprite.y = Graphics.center_height(bitmap_height * 1.3)
     @sprite.visible = false
   end
   #--------------------------------------------------------------------------
@@ -116,6 +118,26 @@ class ForeGround_Loading
     @title_sprite.bitmap.draw_text(rect, @title, 1)
   end
   #--------------------------------------------------------------------------
+  def create_subtitle_sprite
+    return unless @subtitle
+    fs = 24
+    tw = text_width(@subtitle, fs)
+    texts = FileManager.textwrap(@subtitle, tw)
+    lines = texts.size
+    
+    @subtitle_sprite = Sprite.new(@viewport)
+    @subtitle_sprite.bitmap = Bitmap.new(tw, fs * lines)
+    @subtitle_sprite.x = Graphics.center_width(tw)
+    @subtitle_sprite.y = Graphics.height / 6
+    @subtitle_sprite.bitmap.font.size = fs
+    
+    rect = Rect.new(0, 0, tw, fs)
+    texts.each do |text|
+      @subtitle_sprite.bitmap.draw_text(rect, text, 1)
+      rect.y += fs
+    end
+  end
+  #--------------------------------------------------------------------------
   def get_load_sprite
     filename = "$twilight_gallop_left"
     
@@ -125,6 +147,7 @@ class ForeGround_Loading
   # * Frame update
   #--------------------------------------------------------------------------
   def update(loaded = 1)
+    return if $SkipLoading
     @timer  += 1
     @timer   = 0 if @timer == 120
     @loaded += loaded
@@ -176,9 +199,10 @@ class ForeGround_Loading
   def terminate
     @viewport.dispose
     @background.dispose
-    @sprite.dispose       if @sprite
     @text_sprite.dispose
-    @title_sprite.dispose if @title_sprite
+    @sprite.dispose          if @sprite
+    @title_sprite.dispose    if @title_sprite
+    @subtitle_sprite.dispose if @subtitle_sprite
   end
   #--------------------------------------------------------------------------
   # * Loading?

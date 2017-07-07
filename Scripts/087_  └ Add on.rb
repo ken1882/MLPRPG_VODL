@@ -92,5 +92,9 @@ class Game_Character < Game_CharacterBase
   def distance_to_character(charactor)
     return Math.hypot(@x - charactor.x, @y - charactor.y)
   end
-  
+  #----------------------------------------------------------------------------
+  def id
+    return actor.id if methods.include?(:actor)
+    return @id
+  end
 end

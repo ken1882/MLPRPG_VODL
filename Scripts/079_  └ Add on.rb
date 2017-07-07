@@ -31,8 +31,7 @@ class Game_Map
     SceneManager.reserve_loading_screen(map_id)
     Graphics.fadein(60)
     SceneManager.set_loading_phase("Mining Block Chain", -1)
-    BlockChain.mining
-    
+    BlockChain.mining    
     setup_battlers
     setup_loading(map_id)
     setup_camera
@@ -84,7 +83,6 @@ class Game_Map
       @events[i] = eve unless eve.comment_include?("<no update>")
       @enemies.push(@events[i]) if @events[i] && setup_npc_battler(@events[i])
     end
-    
     BattleManager.setup(@enemies)
     
     @common_events = parallel_common_events.collect do |common_event|

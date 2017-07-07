@@ -6,4 +6,8 @@
 #==============================================================================
 class Game_Unit
   
+  def in_battle
+    return SceneManager.scene_is?(Scene_Map)
+  end
+  
 end
