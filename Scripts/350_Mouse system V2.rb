@@ -97,7 +97,7 @@ module Jet
     CHECK_FOR_MOVES = true
     
     # Would you like a black box to outline the exact tile the mouse is over?
-    DEV_OUTLINE = true
+    DEV_OUTLINE = false
     
     # Do you want the mouse to be confined to the game window?
     CLIP_CURSOR = false
@@ -732,7 +732,7 @@ class Scene_Map
   alias jet3745_update update
   def update(*args, &block)
     jet3745_update
-    check_mouse_movement
+    check_mouse_movement if $game_system.mouse_movement
     check_mouse_icon_change
   end
   #------------------------------------------------------------------------------
@@ -749,6 +749,8 @@ class Scene_Map
   def mouse_char
     $game_temp.mouse_character
   end
+  #------------------------------------------------------------------------------
+  # * tag: merge
   #------------------------------------------------------------------------------
   def check_mouse_icon_change
     changed_mouse = false

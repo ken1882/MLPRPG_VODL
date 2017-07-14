@@ -6,6 +6,62 @@
 # GameVehicle, and Game_Event.
 #==============================================================================
 class Game_Character < Game_CharacterBase
+  #--------------------------------------------------------------------------
+  # * Public Instance Variables
+  #--------------------------------------------------------------------------
+  attr_reader :zoom_x
+  attr_reader :zoom_y
+  #--------------------------------------------------------------------------
+  # * Initialize Public Member Variables
+  #--------------------------------------------------------------------------
+  alias init_public_memdnd init_public_members
+  def init_public_members
+    @zoom_x = @zoom_y = 1.0
+    @zoom_duration_x = @zoom_duration_y = 0
+    init_public_memdnd
+  end
+  #----------------------------------------------------------------------------
+  # *) Frame update
+  #----------------------------------------------------------------------------
+  def update
+    super
+    update_zoom
+  end
+  #----------------------------------------------------------------------------
+  # *) Update Zooming
+  #----------------------------------------------------------------------------
+  def update_zoom
+    return unless @zooming
+    dx, dy = @zoom_duration_x, @zoom_duration_y
+    
+    if @zoom_x == @target_zoom_x
+      @zoom_duration_x = 0
+    elsif dx == 0
+      @zoom_x = @target_zoom_x
+    elsif dx > 0
+      @zoom_x = (@zoom_x * (dx - 1) + @target_zoom_x) / dx
+      @target_zoom_x -= 1
+    end
+    
+    if @zoom_y == @target_zoom_y
+      @zoom_duration_y = 0
+    elsif dy == 0
+      @zoom_y = @target_zoom_y
+    elsif dy > 0
+      @zoom_y = (@zoom_y * (dy - 1) + @target_zoom_y) / dy
+      @target_zoom_y -= 1
+    end
+    puts "Zoom: #{@zoom_x} #{@zoom_y}"
+    @zooming = false if dx == 0 && dy == 0
+  end
+  #----------------------------------------------------------------------------
+  # *) Zoom Character
+  #----------------------------------------------------------------------------
+  def zoom(x, y, dx = 0, dy = 0)
+    @target_zoom_x, @target_zoom_y = x, y
+    @zoom_duration_x, @zoom_duration_y = dx, dy
+    @zooming = true
+  end
   #----------------------------------------------------------------------------
   # *) Determind sight angle
   #----------------------------------------------------------------------------

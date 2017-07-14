@@ -76,7 +76,7 @@ class Scene_Text < Scene_MenuBase
     @@text     = ""    
     @@title    = title    
     @@align    = align    
-    @@max_char = max_char   
+    @@max_char = max_char
     @@ltr      = ltr    
     SceneManager.call(Scene_Text)    
     Fiber.yield while SceneManager.scene_is?(Scene_Text)    

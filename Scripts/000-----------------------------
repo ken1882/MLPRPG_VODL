@@ -28,6 +28,7 @@ tag: loading    // loading screen handles
 tag: hotkey     // hotkey or button input handles
 tag: tactic     // Tactic mode process
 tag: timeflow   // Time flow process, e.g. haste, slow, time stop.
+tag: merge      // function that vould be merged for opt
 tag: error      // this is bad
 Quick Tag for temp:
 1: 

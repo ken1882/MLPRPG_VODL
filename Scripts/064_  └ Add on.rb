@@ -105,4 +105,12 @@ class Game_Battler < Game_BattlerBase
     return true if item_has_any_valid_effects?(user, item)
     return false
   end
+  #--------------------------------------------------------------------------
+  # * Alias: die (Knock Out)
+  #--------------------------------------------------------------------------
+  alias die_dnd die
+  def die
+    die_dnd
+    @map_char.kill if @map_char
+  end
 end

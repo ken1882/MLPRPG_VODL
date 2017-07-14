@@ -25,7 +25,19 @@ class Sprite_Character < Sprite_Base
   #--------------------------------------------------------------------------
   alias update_spchar_opt update
   def update
+    sync_characher_zoom
     update_spchar_opt if update_needed?
+  end
+  #--------------------------------------------------------------------------
+  # * Synchornize zooming with insatnace class
+  #--------------------------------------------------------------------------
+  def sync_characher_zoom
+    return unless @character
+    newzoom = POS.new(@character.zoom_x, @character.zoom_y)
+    return if @zoomhash && @zoomhash == newzoom
+    self.zoom_x = @character.zoom_x
+    self.zoom_y = @character.zoom_y
+    @zoomhash = newzoom
   end
   #--------------------------------------------------------------------------
   # * Check if sprite should update

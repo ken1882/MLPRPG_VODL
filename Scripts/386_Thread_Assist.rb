@@ -59,7 +59,8 @@ module Thread_Assist
   end
   #----------------------------------------------------------------------------
   def yield
-    puts "Kill Thread: #{$thassist}"
+    @work = 0
+    File.open("test.txt", 'a'){|file| file.write("Kill Thread: #{$thassist}\n")}
     Thread.kill($thassist)
     $assist.eval
     puts "#{Time.now} #{$thassist.stop?}"
