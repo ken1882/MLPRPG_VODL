@@ -32,34 +32,29 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def update_zoom
     return unless @zooming
-    dx, dy = @zoom_duration_x, @zoom_duration_y
-    
-    if @zoom_x == @target_zoom_x
-      @zoom_duration_x = 0
-    elsif dx == 0
+    @zooming = false
+    flag = @zoom_delta_x <=> 0
+    if @zoom_x * flag > @target_zoom_x * flag
       @zoom_x = @target_zoom_x
-    elsif dx > 0
-      @zoom_x = (@zoom_x * (dx - 1) + @target_zoom_x) / dx
-      @target_zoom_x -= 1
+    elsif @zoom_x != @target_zoom_x
+      @zoom_x += @zoom_delta_x
+      @zooming = true
     end
-    
-    if @zoom_y == @target_zoom_y
-      @zoom_duration_y = 0
-    elsif dy == 0
+    flag = @zoom_delta_y <=> 0
+    if @zoom_y * flag > @target_zoom_y * flag
       @zoom_y = @target_zoom_y
-    elsif dy > 0
-      @zoom_y = (@zoom_y * (dy - 1) + @target_zoom_y) / dy
-      @target_zoom_y -= 1
+    elsif @zoom_y != @target_zoom_y
+      @zoom_y += @zoom_delta_y
+      @zooming = true
     end
-    puts "Zoom: #{@zoom_x} #{@zoom_y}"
-    @zooming = false if dx == 0 && dy == 0
   end
   #----------------------------------------------------------------------------
   # *) Zoom Character
   #----------------------------------------------------------------------------
   def zoom(x, y, dx = 0, dy = 0)
     @target_zoom_x, @target_zoom_y = x, y
-    @zoom_duration_x, @zoom_duration_y = dx, dy
+    @zoom_delta_x = (x - @zoom_x).to_f / dx
+    @zoom_delta_y = (y - @zoom_y).to_f / dy
     @zooming = true
   end
   #----------------------------------------------------------------------------
