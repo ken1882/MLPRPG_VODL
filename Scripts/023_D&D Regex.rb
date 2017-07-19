@@ -46,10 +46,6 @@ module DND
     #-------------------------------------------------------------------------
     DAMAGE = /<(?:DAMAGE|damage)[ ](.+)[ ]([\+\-]\d+),[ ](.+),[ ](.+)>/i
     #-------------------------------------------------------------------------
-    # <default weapon: x>
-    #-------------------------------------------------------------------------
-    DEFAULT_WEAPON = /<(?:DEFAULT_WEAPON|default weapon):[ ](\d+)>/i
-    #-------------------------------------------------------------------------
     # <item max: x>
     #-------------------------------------------------------------------------
     ITEM_MAX = /<(?:ITEM_MAX|item max):[ ](\d+)>/i
@@ -76,6 +72,30 @@ module DND
     MapLoad_Name  = /<(?:LOAD_NAME|load name):[ ](.+?)>/
     #-------------------------------------------------
   end
+  
+  # See "tag: charparam" for details
+  module REGEX::Character
+    DefaultWeapon     = /(?:Default Weapon =)[ ](\d+)/i           # Weapon id when no weapon is equipped
+    TeamID            = /(?:Team ID =)[ ](\d+)/i                  # Team ID
+    DeathSwitchSelf   = /(?:Death Self Switch =)[ ](.+?)/i        # Self Switch trigger when dead
+    DeathSwitchGlobal = /(?:Death Global Switch =)[ ](\d+)/i      # Game_Switch trigger when dead
+    DeathVarSelf      = /(?:Death Self Variable =)[ ](\d+), [ ](\d+)/i
+    DeathVarGlobal    = /(?:Death Global Variable =)[ ](\d+), [ ](\d+)/i
+    # Variable change when dead, $2 = number, $3 = value
+    
+    DeathAnimation    = /(?:Death Animation =)[ ](\d+)/i          # Animation display when dead
+    VisibleSight      = /(?:Visible Sight =)[ ](\d+)/i            # Sight range when not blinded
+    BlindSight        = /(?:Blind Sight =)[ ](\d+)/i               # Sight range whem blinded
+    Infravision       = /(?:Infravision =)[ ](\d+)/i              # As it says
+    MoveLimit         = /(?:Move Limit =)[ ](\d+)/i               # Move Limit
+    AggressiveLevel   = /(?:Aggressive Level =)[ ](\d+)/i         # 0~5, see tag for details
+    
+    KOGraphic         = /(?:Knockdown Graphic =)[ ](.+)/i         # KO Graphic Filename
+    KOIndex           = /(?:Knockdown Index =)[ ](\d+)/i          # KO Graphic Index
+    KOPattern         = /(?:Knockdown pattern =)[ ](\d+)/i        # KO Graphics Pattern
+    KODirection       = /(?:Knockdown Direction =)[ ](\d+)/i      # KO Character Direction
+  end
+  
   
   # See "tag: equiparam" for details
   module REGEX::Equipment

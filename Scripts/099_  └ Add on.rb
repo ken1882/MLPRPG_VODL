@@ -23,6 +23,7 @@ class Game_Interpreter
   #--------------------------------------------------------------------------
   def command_355
     script = @list[@index].parameters[0] + "\n"
+    $event = $game_map.events[@event_id]
     while next_event_code == 655
       @index += 1
       script += @list[@index].parameters[0] + "\n"

@@ -163,40 +163,116 @@ class RPG::BaseItem
     return sprintf("%s%s%s",dict, '0' * (3 - cnt), @id)
   end
 end
+                      #===============================#
+                      #  ▼ Beware of magic numbers ▼  #
+                      #===============================#
 #==============================================================================
 # ** RPG::Enemy
 #------------------------------------------------------------------------------
-#  This class handles enemies. It used within the Game_Troop class 
-# ($game_troop). 
+#  Instance class in database, store enemies data
 #==============================================================================
 class RPG::Enemy
   #--------------------------------------------------------------------------
   # * Public Instance Variables
+  # tag: charparam
   #--------------------------------------------------------------------------
-  attr_accessor :default_weapon
-  attr_accessor :recover
-  attr_accessor :team_id
+  attr_accessor :default_weapon       # Weapon ID when no primary weapon equipped
+  attr_accessor :team_id              # Team ID
+  attr_accessor :visible_sight        # Sight range with bare eye
+  attr_accessor :blind_sight          # Sight ragne without actuallt see things
+  attr_accessor :infravision          # No penalty in dark
+  attr_accessor :move_limit           # Back to original position once distance out of this value
+  attr_accessor :aggressive_level     # Aggressive Level:
+    #--------------------------------------------------------------------------
+    # 0: Won't attack no matter what
+    # 1: Won't attack unless enemy attack first, if in combat, change to 4
+    # 2: Attack sighted enemy without chasing
+    # 3: Chase enemy in short range (7), until enemy out of last sighted spot
+    # 4: Chase enemy until target out of last sighted spot, won't corss areas
+    # 5: Chase enemy through local areas until target out of last sighted spot
+    #--------------------------------------------------------------------------
+  attr_reader   :death_animation      # Animation display on death
+  attr_reader   :death_switch_self    # Self switch trigger when dead
+  attr_reader   :death_switch_global  # Global switch trigger when dead
+  attr_reader   :death_var_self       # Self var change when dead
+  attr_reader   :death_var_global     # Self var change when dead
   #--------------------------------------------------------------------------
-  # * Object Initialization
+  # * Attributes setup
   #--------------------------------------------------------------------------
   def load_character_attributes
-    
-    @defalut_weapon = 1
-    @recover        = 30
-    @team_id        = 1
-    
+    ensure_dndattr_correct
     self.note.split(/[\r\n]+/).each { |line|
       case line
-      when DND::REGEX::DEFAULT_WEAPON
+      when DND::REGEX::Character::DefaultWeapon
         @default_weapon = $1.to_i
         puts "[Enemy Weapon]: #{self.name}'s default weapon: #{$data_weapons[@default_weapon].name}" if @default_weapon != 1
-      when DND::REGEX::TeamID
+      when DND::REGEX::Character::TeamID
         @team_id = $1.to_i
+      when DND::REGEX::Character::DeathSwitchSelf
+        @death_switch_self = $1.upcase
+      when DND::REGEX::Character::DeathSwitchGlobal
+        @death_switch_global = $1.to_i
+      when DND::REGEX::Character::DeathVarSelf
+        @death_var_self = [$1.to_i, $2.to_i]
+      when DND::REGEX::Character::DeathVarGlobal
+        @death_var_global = [$1.to_i, $2.to_i]
+      when DND::REGEX::Character::VisibleSight
+        @visible_sight = $1.to_i
+      when DND::REGEX::Character::BlindSight
+        @blind_sight   = $1.to_i
+      when DND::REGEX::Character::Infravision
+        @infravision   = $1.to_i.to_bool
+      when DND::REGEX::Character::AggressiveLevel
+        @agressive_level = $1.to_i
+      when DND::REGEX::Character::DeathAnimation
+        @death_animation = $1.to_i
       end
     } # self.note.split
-    #---
+    #--------------------------------------------------
+  end
+  #--------------------------------------------------------------------------
+  def ensure_dndattr_correct
+    @defalut_weapon       = 1
+    @team_id              = 1
+    @visible_sight        = 8
+    @blind_sight          = 0
+    @infravision          = false
+    @move_limit           = 30
+    @aggressive_level     = 4
+    @death_switch_self    = nil
+    @death_switch_global  = 0
+    @death_var_self       = [0, 0]
+    @death_var_global     = [0, 0]
+    @death_animation      = 114
   end
   #------------------------------------
+end
+#==========================================================================
+# ■ RPG::BaseItem
+#==========================================================================
+class RPG::Actor < RPG::BaseItem
+  #------------------------------------------------------------------------
+  # * instance variables
+  #------------------------------------------------------------------------
+  #tag: charparam
+  attr_reader :death_graphic        # Graphic filename when K.O
+  attr_reader :death_index          # Graphic index
+  attr_reader :death_pattern        # Pattern
+  attr_reader :death_direction      # Direction
+  #--------------------------------------------------------------------------
+  # * Attributes setup
+  #--------------------------------------------------------------------------
+  def load_character_attributes
+    self.note.split(/[\r\n]+/).each do |line|
+      case line
+      when DND::REGEX::Character::KOGraphic;   @death_graphic   = $1
+      when DND::REGEX::Character::KOIndex;     @death_index     = $1.to_i
+      when DND::REGEX::Character::KOPattern;   @death_pattern   = $1.to_i
+      when DND::REGEX::Character::KODirection; @death_direction = $1.to_i
+      end
+    end
+  end
+  
 end
 #==========================================================================
 # ■ RPG::BaseItem

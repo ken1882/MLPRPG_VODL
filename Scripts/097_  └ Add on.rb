@@ -17,12 +17,14 @@ class Game_Event < Game_Character
   attr_accessor :cool_down
   attr_accessor :recover
   attr_accessor :target_switch
+  attr_accessor :self_vars
   #--------------------------------------------------------------------------
   # * Object Initialization
   #     event:  RPG::Event
   #--------------------------------------------------------------------------
   alias initialize_event_opt initialize
   def initialize(map_id, event)
+    @self_vars = Array.new(4){|i| i = 0}
     initialize_event_opt(map_id, event)
   end
   #--------------------------------------------------------

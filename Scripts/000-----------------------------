@@ -29,6 +29,8 @@ tag: hotkey     // hotkey or button input handles
 tag: tactic     // Tactic mode process
 tag: timeflow   // Time flow process, e.g. haste, slow, time stop.
 tag: merge      // function that vould be merged for opt
+tag: charparam  // Character attribute Config
+tag: equiparam // Equip/Skill/Item attribute config
 tag: error      // this is bad
 Quick Tag for temp:
 1: 
@@ -42,6 +44,7 @@ Quick Tag for temp:
 ║ ╚══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╝ ║
 ╚════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════╝
 moving? -> @process_moving (Fix free movement can't detect moving while dash)
+$event => quick access to the event called Game_Interpreter's command 335(script)
 =end
 #--------------------------------------------------------------------------
 # * Package data into one

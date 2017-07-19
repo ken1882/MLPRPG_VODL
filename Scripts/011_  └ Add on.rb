@@ -164,8 +164,9 @@ module DataManager
   # new method: load_character_attributes
   #--------------------------------------------------------------------------
   def self.load_enemy_attributes
-    $data_enemies.compact.each do |obj|
-      obj.load_character_attributes
+    groups = [$data_enemies, $data_actors]
+    groups.each do |group|
+      group.compact.each{|obj| obj.load_character_attributes}
     end
   end
   #--------------------------------------------------------------------------

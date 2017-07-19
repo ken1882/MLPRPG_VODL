@@ -140,10 +140,18 @@ module BattleManager
     return @action_battlers.collect{|key, battler| battler}
   end
   #--------------------------------------------------------------------------
+  def self.all_alive_battlers
+    return @action_battlers.collect{|key, battler| battler unless battler.dead?}
+  end
+  #--------------------------------------------------------------------------
+  def self.dead_battlers
+    return @action_battlers.collect{|key, battler| battler if battler.dead?}
+  end
+  #--------------------------------------------------------------------------
   # * Return allied battlers
   #--------------------------------------------------------------------------
   def self.ally_battler(battler = $game_palyer)
-    return @action_battlers[battler.team_id].compact
+    return @action_battlers[battler.team_id].compact.select{|char| !char.dead?}
   end
   #--------------------------------------------------------------------------
   # * Return allied battlers
@@ -153,11 +161,12 @@ module BattleManager
     @action_battlers.each do |key, members|
       next if key == battler.team_id
       members.compact.each do |member|
+        next if member.dead?
         opponents.push(member)
       end
     end
     return opponents
-  end
+  end # last work: define alive battlers
   #--------------------------------------------------------------------------
   def self.is_friend?(a, b)
     return a.team_id == b.team_id

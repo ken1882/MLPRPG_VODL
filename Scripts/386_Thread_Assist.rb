@@ -62,7 +62,8 @@ module Thread_Assist
     @work = 0
     File.open("test.txt", 'a'){|file| file.write("Kill Thread: #{$thassist}\n")}
     Thread.kill($thassist)
-    $assist.eval
-    puts "#{Time.now} #{$thassist.stop?}"
+    puts "[Thread]: #{Time.now} #{$thassist.stop?}"
+    #sleep(1)
+    #$assist.eval
   end
 end

@@ -140,6 +140,36 @@ class Game_Character < Game_CharacterBase
     return true
   end
   #----------------------------------------------------------------------------
+  # * Die when hitpoint drop to zero
+  #----------------------------------------------------------------------------
+  def kill
+    return process_event_death if self.is_a?(Game_Event)
+    return process_actor_death
+  end
+  #----------------------------------------------------------------------------
+  def process_event_death
+    apply_event_death_effect
+    start_animation(@enemy.enemy.death_animation)
+  end
+  #----------------------------------------------------------------------------
+  def apply_event_death_effect
+    sws = @enemy.enemy.death_switch_self
+    swg = @enemy.enemy.death_switch_global
+    vrsi, vrsv = *@enemy.enemy.death_var_self
+    vrgi, vrgv = *@enemy.enemy.death_var_global
+    if sws
+      key = [@map_id, @event.id, sws]
+      $game_self_switches[key] = true
+    end
+    $game_switches[swg] = true    if swg  > 0
+    @self_vars[vrsi] = vrsv       if vrsi && vrsv
+    $game_variables[vrgi] = vrgv  if vrgi > 0
+  end
+  #----------------------------------------------------------------------------
+  def process_actor_death
+    
+  end
+  #----------------------------------------------------------------------------
   def distance_to_character(charactor)
     return Math.hypot(@x - charactor.x, @y - charactor.y)
   end

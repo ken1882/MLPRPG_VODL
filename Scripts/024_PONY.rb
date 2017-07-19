@@ -64,9 +64,7 @@ module PONY
       info = "Numeric out of range: #{value}"
       ERRNO.raise(:illegel_value, :exit, nil, info)
     else
-      if value == 0
-        #caller.each {|i| puts i}
-      end
+      #caller.each {|i| puts i} if value == 0
       num = API::DecryptInt.call([value].pack("Q"))
       return num.to_i
     end

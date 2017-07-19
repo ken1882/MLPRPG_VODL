@@ -67,4 +67,5 @@ class Game_Enemy < Game_Battler
     super(symbol, args) unless @map_char.methods.include?(symbol)
     @map_char.method(symbol).call(*args)
   end
+  #---------------------------------------------------------------------------
 end
