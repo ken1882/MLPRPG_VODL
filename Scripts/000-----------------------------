@@ -30,7 +30,8 @@ tag: tactic     // Tactic mode process
 tag: timeflow   // Time flow process, e.g. haste, slow, time stop.
 tag: merge      // function that vould be merged for opt
 tag: charparam  // Character attribute Config
-tag: equiparam // Equip/Skill/Item attribute config
+tag: equiparam  // Equip/Skill/Item attribute config
+tag: event config // Event configs
 tag: error      // this is bad
 Quick Tag for temp:
 1: 

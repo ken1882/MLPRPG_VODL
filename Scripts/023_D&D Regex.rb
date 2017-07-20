@@ -96,6 +96,11 @@ module DND
     KODirection       = /(?:Knockdown Direction =)[ ](\d+)/i      # KO Character Direction
   end
   
+  #atag: event config
+  module REGEX::Event
+    Terminated        = /<(?:terminated)>/i                    # Finalize event
+    Frozen            = /<(?:no update)>/i
+  end
   
   # See "tag: equiparam" for details
   module REGEX::Equipment

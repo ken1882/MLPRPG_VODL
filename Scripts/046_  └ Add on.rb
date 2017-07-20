@@ -14,4 +14,5 @@ class Game_Variables
     initialize_extravar
     @global_vars = {}
   end
+  
 end

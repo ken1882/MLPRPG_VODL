@@ -109,37 +109,18 @@ class Array
   
 end
 #===============================================================================
-# * Bitset
+# * Mutex
 #===============================================================================
-class Bitset
-  
-  def initialize(n = 0)
-    raise ArgumentError, "Argument must be an integer" unless n.is_a?(Integer)
-    @index = []
-    while n > 0
-      @index.unshift(n & 1)
-      n >>= 1
+class Mutex
+  #----------------------------------------------------------------------------
+  def synchronize
+    self.lock
+    begin
+      yield
+    ensure
+      self.unlock rescue nil
     end
   end
-  
-  def [](index)
-    return @index[index]
-  end
-  
-  def each
-    @index.each{|bin| yield bin } if block_given?
-  end
-  
-  def to_i(n = 2)
-    to_s.to_i(n)
-  end
-  
-  def to_s
-    str = ""
-    @index.each{|bin| str << bin.to_s}
-    return str.to_s
-  end
-  
 end
 #===============================================================================
 # * Superclass of almost database items

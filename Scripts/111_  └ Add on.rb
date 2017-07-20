@@ -10,6 +10,7 @@ class Sprite_Character < Sprite_Base
   #--------------------------------------------------------------------------
   attr_accessor :old_pos
   attr_accessor :old_pattern
+  attr_accessor :old_direction
   #--------------------------------------------------------------------------
   # * Object Initialization
   #     character : Game_Character
@@ -26,6 +27,7 @@ class Sprite_Character < Sprite_Base
   alias update_spchar_opt update
   def update
     sync_characher_zoom
+    return update_position if @character.frozen?
     update_spchar_opt if update_needed?
   end
   #--------------------------------------------------------------------------
@@ -43,7 +45,7 @@ class Sprite_Character < Sprite_Base
   # * Check if sprite should update
   #--------------------------------------------------------------------------
   def update_needed?
-    return true  if @character.animation_id > 0 rescue nil
+    return true  if @character.animation_id > 0    rescue nil
     return true  if graphic_changed? || animation? rescue nil
     return false if !@character
     return true  if @character.pattern != @old_pattern
@@ -90,4 +92,17 @@ class Sprite_Character < Sprite_Base
     @old_pos = hash_pos
     update_spchar_position
   end
+  #--------------------------------------------------------------------------
+  # * Move Animation
+  #--------------------------------------------------------------------------
+  def move_animation(dx, dy)
+    return unless @animation && @animation.position != 3
+    @ani_ox += dx
+    @ani_oy += dy
+    @ani_sprites.each do |sprite|
+      sprite.x += dx
+      sprite.y += dy
+    end
+  end
+  
 end

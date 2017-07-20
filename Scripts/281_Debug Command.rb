@@ -197,4 +197,13 @@ class Game_Console
     SceneManager.display_info("Objects have been output to #{filename}")
   end
   #----------------------------------------------------------------------------
+  def Performance
+    ch_sp  = "Character Sprites: #{SceneManager.spriteset.character_sprites.size}"
+    ev_num = "Events Avaliable: #{$game_map.events.size}" 
+    fps    = "Frame Count: #{Graphics.frame_count}"
+    infos = [ch_sp, ev_num, fps]
+    for info in infos
+      SceneManager.display_info(info)
+    end
+  end
 end

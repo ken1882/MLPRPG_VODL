@@ -33,4 +33,5 @@ class Game_Follower < Game_Character
     super(symbol, *args) if actor.nil?
     actor.method(symbol).call(*args)
   end
+  
 end

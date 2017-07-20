@@ -110,6 +110,7 @@ class Game_Skillbar
   # *) Refresh items
   #--------------------------------------------------------------------------
   def refresh_item
+    @primary_tool = @actor.get_hotkeys.first
     case @stack.size
     when HotKeySelection
       @first_scan_index = 0
@@ -134,8 +135,12 @@ class Game_Skillbar
   # *) Process Input
   #--------------------------------------------------------------------------
   def process_input
-    for i in @first_scan_index...HotKeys::SkillBarSize
-      select(i) if Input.trigger?(HotKeys::SkillBar[i]) || Mouse.trigger_skillbar?(i)
+    if Mouse.click?(1)
+      process_item_use(@primary_tool)
+    else
+      for i in @first_scan_index...HotKeys::SkillBarSize
+        select(i) if Input.trigger?(HotKeys::SkillBar[i]) || Mouse.trigger_skillbar?(i)
+      end
     end
   end
   #--------------------------------------------------------------------------

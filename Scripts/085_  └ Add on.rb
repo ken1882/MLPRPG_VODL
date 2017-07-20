@@ -78,4 +78,18 @@ class Game_CharacterBase
     re = (2 ** (real_move_speed).to_i / 256.0)
     return re
   end
+  #--------------------------------------------------------------------------
+  # * Passable?                                                         
+  #--------------------------------------------------------------------------
+  def passable?(x, y, d)
+    ox = d == 4 ? -1 : d == 6 ? 1 : 0
+    oy = d == 8 ? -1 : d == 2 ? 1 : 0
+    return false unless $game_map.valid?(x + ox, y + oy)
+    return true if @through || debug_through?
+    return false unless map_passable?(x, y, d)
+    return false unless map_passable?(x + ox, y + oy, 10 - d)
+    return false if collide_with_characters?(x + ox, y + oy)
+    return true
+  end
+  
 end

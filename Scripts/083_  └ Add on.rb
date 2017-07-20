@@ -5,5 +5,4 @@
 # parallel process events. It's used within the Game_Map class ($game_map).
 #==============================================================================
 class Game_CommonEvent
-  
 end

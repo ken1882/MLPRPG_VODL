@@ -35,4 +35,5 @@ class Game_Map ## Rounds X and Y display values DOWN so the nearest 32 is found.
       y - display_y
     end
   end
+  
 end

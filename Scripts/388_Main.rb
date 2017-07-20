@@ -47,6 +47,7 @@ def flag_error(error)
 end
 $rgss   = self
 $assist = RubyVM::InstructionSequence.compile("$thassist=Thread.new{Thread_Assist.assist_main}.run")
+$mutex  = Mutex.new
 begin
   rgss_main do
     begin

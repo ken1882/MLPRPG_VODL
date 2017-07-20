@@ -12,7 +12,12 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def update_characters
     refresh_characters if @map_id != $game_map.map_id
-    @character_sprites.each {|sprite| sprite.update }
+    @character_sprites.each do |sprite|
+      sprite.update
+      if sprite.character && !event_usable?(sprite.character)
+        @character_sprites.delete(sprite)
+      end
+    end
   end
   #-----------------------------------------------------------------------------
   def update_timelapse

@@ -49,7 +49,7 @@ module Thread_Assist
     case @work
     when WorkTable[:BCmine]
       puts "[Thread]: Assist mining"
-      BlockChain.mining(true)
+      $mutex.synchronize{BlockChain.mining(true)}
     end
     @work = 0
   end

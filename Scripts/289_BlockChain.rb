@@ -106,7 +106,7 @@ module BlockChain
     puts "[BlockChain]: Start Mining"
     return if node_empty?
     winner = nil
-    Thread_Assist.yield if !async && Thread_Assist.work?(:BCmine)
+    #Thread_Assist.yield if !async && Thread_Assist.work?(:BCmine)
     
     while !winner
       no_record_cnt = 0

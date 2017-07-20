@@ -11,6 +11,7 @@ class Spriteset_Map
   attr_reader :viewport2
   attr_reader :projectiles
   attr_reader :popups
+  attr_reader :character_sprites
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -20,6 +21,27 @@ class Spriteset_Map
     @popups      = []
     init_spsetmap_dnd
     create_hud
+  end
+  #--------------------------------------------------------------------------
+  # * Frame Update
+  #--------------------------------------------------------------------------
+  def update
+    update_tileset if @tileset != $game_map.tileset    
+    update_tilemap
+    update_parallax
+    update_characters
+    update_shadow
+    update_weather
+    update_pictures
+    update_timer
+    update_viewports
+  end
+  #--------------------------------------------------------------------------
+  # * Update Tileset
+  #--------------------------------------------------------------------------
+  def update_tileset
+    load_tileset
+    refresh_characters
   end
   #--------------------------------------------------------------------------
   # *) Create heads-up display on map
@@ -166,4 +188,42 @@ class Spriteset_Map
     dispose_temp_sprites
     $game_party.skillbar.dispose_layout
   end
+  #--------------------------------------------------------------------------
+  def event_usable?(character)
+    return true unless character.is_a?(Game_Event)
+    return character.character_name || character.terminated
+  end
+  #--------------------------------------------------------------------------
+  # * Update Airship Shadow Sprite
+  #--------------------------------------------------------------------------
+  def update_shadow
+    
+  end
+  #--------------------------------------------------------------------------
+  # * Update Viewport
+  #--------------------------------------------------------------------------
+  def update_viewports
+    @viewport1.tone.set($game_map.screen.tone)
+    @viewport1.ox = $game_map.screen.shake
+    @viewport2.color.set($game_map.screen.flash_color)
+    @viewport3.color.set(0, 0, 0, 255 - $game_map.screen.brightness)
+    @viewport1.update
+    @viewport2.update
+    @viewport3.update
+  end
+  #--------------------------------------------------------------------------
+  # * Update Parallax
+  #--------------------------------------------------------------------------
+  def update_parallax
+    if @parallax_name != $game_map.parallax_name
+      @parallax_name = $game_map.parallax_name
+      @parallax.bitmap.dispose if @parallax.bitmap
+      @parallax.bitmap = Cache.parallax(@parallax_name)
+      Graphics.frame_reset
+    end
+    return if @parallax_name.size == 0
+    @parallax.ox = $game_map.parallax_ox(@parallax.bitmap)
+    @parallax.oy = $game_map.parallax_oy(@parallax.bitmap)
+  end
+  
 end

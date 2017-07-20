@@ -80,4 +80,17 @@ class Game_Interpreter
     SceneManager.destroy_loading_screen
     $game_temp.loading_destroy_delay = false
   end
+  #--------------------------------------------------------------------------
+  # * Execute
+  #--------------------------------------------------------------------------
+  def run
+    wait_for_message
+    while @list[@index] do
+      execute_command
+      @index += 1
+    end
+    @fiber = nil
+    Fiber.yield
+  end
+ 
 end

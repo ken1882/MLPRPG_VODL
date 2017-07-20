@@ -31,7 +31,7 @@ class Game_Map
     SceneManager.reserve_loading_screen(map_id)
     Graphics.fadein(60)
     SceneManager.set_loading_phase("Mining Block Chain", -1)
-    BlockChain.mining    
+    $mutex.synchronize{BlockChain.mining}
     setup_battlers
     setup_loading(map_id)
     setup_camera
@@ -80,7 +80,8 @@ class Game_Map
     @map.events.each do |i, event|
       SceneManager.update_loading # tag: loading
       eve = Game_Event.new(@map_id, event)
-      @events[i] = eve unless eve.comment_include?("<no update>")
+      next if eve.terminated
+      @events[i] = eve
       @enemies.push(@events[i]) if @events[i] && setup_npc_battler(@events[i])
     end
     BattleManager.setup(@enemies)
@@ -128,8 +129,14 @@ class Game_Map
     debug_print "Map Refreshed"
   end
   #--------------------------------------------------------------------------
+  def terminate_event(event)
+    @events.delete(event.id)
+    @cached_events.delete(event)
+  end
+  #--------------------------------------------------------------------------
   # * Update Vehicles
   #--------------------------------------------------------------------------
   def update_vehicles
   end
+  
 end

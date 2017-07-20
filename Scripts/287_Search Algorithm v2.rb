@@ -439,45 +439,7 @@ end # class Game_Character
 # Game_Map class.
 #==============================================================================
 class Game_Event < Game_Character
-  #--------------------------------------------------------------------------
-  # * overwrite method: setup_page_settings
-  #--------------------------------------------------------------------------
-  def setup_page_settings
-    @tile_id          = @page.graphic.tile_id
-    @character_name   = @page.graphic.character_name
-    @character_index  = @page.graphic.character_index
-    
-    if @original_direction != @page.graphic.direction
-      @direction          = @page.graphic.direction
-      @original_direction = @direction
-      @prelock_direction  = 0
-    end
-    
-    if @original_pattern != @page.graphic.pattern
-      @pattern            = @page.graphic.pattern
-      @original_pattern   = @pattern
-    end
-    
-    @move_type          = @page.move_type
-    @move_speed         = @page.move_speed
-    @move_frequency     = @page.move_frequency
-    
-    #tag: modified here
-    if !@on_path_finding || @on_path_finding.nil?
-      @move_route         = @page.move_route
-      @move_route_index   = 0               
-      @move_route_forcing = false           
-    end
-    
-    @walk_anime         = @page.walk_anime
-    @step_anime         = @page.step_anime
-    @direction_fix      = @page.direction_fix
-    @through            = @page.through
-    @priority_type      = @page.priority_type
-    @trigger            = @page.trigger
-    @list               = @page.list
-    @interpreter = @trigger == 4 ? Game_Interpreter.new : nil
-  end
+  
 end
 #==============================================================================
 # ** SceneManager

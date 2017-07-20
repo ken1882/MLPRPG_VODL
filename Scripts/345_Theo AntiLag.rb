@@ -350,7 +350,10 @@ class Game_Map
       offscreen_events = last_events - events
       offscreen_events.each {|event| event.delete_sprite}
     end
-    events.each {|event| event.update}
+    events.each do |event| 
+      event.update unless event.frozen? # tag: modified
+      terminate_event(event) if event.terminated
+    end
     @common_events.each {|event| event.update}
   end
   #-----------------------------------------------------------------------------
@@ -378,6 +381,10 @@ class Game_Map
         next if xpos >= width || ypos >= height
         ary = @table.get(xpos, ypos)
         ary.each do |ev| 
+          if ev.terminated # tag: modified
+            ary.delete(ev)
+            next
+          end
           unless @refreshed_events.include?(ev.id)
             ev.refresh
             @tile_events << ev if ev.tile?
