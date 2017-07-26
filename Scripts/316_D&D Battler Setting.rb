@@ -156,7 +156,7 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def action_stiff
     return 30
-  end # last work: add stiff
+  end # queued >> add stiff
   #----------------------------------------------------------------------------
   # * Determine cast time needed for item
   # tag: casting

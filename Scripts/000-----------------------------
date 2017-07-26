@@ -12,25 +12,25 @@
 search tag:
 Crtl + Shift + F
 Tags available:
-tag: queued     // work that may be done on later days
-tag: unfinished // unfinished stuff
-tag: lasst work // just like what it says
-tag: damage     // damage handles
-tag: cast       // skill/spell casting processions
-tag: target     // combat target processions
-tag: item       // item handles
-tag: state      // states handles
-tag: AI         // AI stuff
-tag: modified   // original code modified
-tag: D&D        // D&D class, parameter class
-tag: sight      // sight stuff
-tag: loading    // loading screen handles
-tag: hotkey     // hotkey or button input handles
-tag: tactic     // Tactic mode process
-tag: timeflow   // Time flow process, e.g. haste, slow, time stop.
-tag: merge      // function that vould be merged for opt
-tag: charparam  // Character attribute Config
-tag: equiparam  // Equip/Skill/Item attribute config
+tag: queued       // work that may be done on later days
+tag: unfinished   // unfinished stuff
+tag: last work   // just like what it says
+tag: damage       // damage handles
+tag: cast         // skill/spell casting processions
+tag: target       // combat target processions
+tag: item         // item handles
+tag: state        // states handles
+tag: AI           // AI stuff
+tag: modified     // original code modified
+tag: D&D          // D&D class, parameter class
+tag: sight        // sight stuff
+tag: loading      // loading screen handles
+tag: hotkey       // hotkey or button input handles
+tag: tactic       // Tactic mode process
+tag: timeflow     // Time flow process, e.g. haste, slow, time stop.
+tag: merge        // function that vould be merged for opt
+tag: charparam    // Character attribute Config
+tag: equiparam    // Equip/Skill/Item attribute config
 tag: event config // Event configs
 tag: error      // this is bad
 Quick Tag for temp:

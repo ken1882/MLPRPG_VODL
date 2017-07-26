@@ -54,27 +54,20 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def create_characters
     @character_sprites = []
-    @battler_sprites   = []
     @unitcir_sprites   = []
+    @unit_table        = {}
     
     $game_map.events.values.each do |event|
-      sprite = Sprite_Character.new(@viewport1, event)
-      @character_sprites.push(sprite)
-      event.create_animation_queue
-      regist_battle_unit(sprite) if event.enemy
+      create_character_sprite(event)
     end
     
     $game_player.followers.reverse_each do |follower|
-      sprite = Sprite_Character.new(@viewport1, follower)
-      @character_sprites.push(sprite)
-      follower.create_animation_queue
-      regist_battle_unit(sprite) if follower.actor
+      sprite = create_character_sprite(follower)
+      register_battle_unit(follower) if follower.actor
     end
     
-    player_sprite = Sprite_Character.new(@viewport1, $game_player)
-    $game_player.create_animation_queue
-    @character_sprites.push(player_sprite)
-    regist_battle_unit(player_sprite)
+    player_sprite = create_character_sprite($game_player)
+    register_battle_unit($game_player)
     
     @map_id = $game_map.map_id
   end
@@ -87,6 +80,13 @@ class Spriteset_Map
     update_projectiles
     update_popups
     update_spsetmap_opt
+  end
+  #--------------------------------------------------------------------------
+  def create_character_sprite(character)
+    sprite = Sprite_Character.new(@viewport1, character)
+    @character_sprites.push(sprite)
+    character.create_animation_queue
+    return sprite
   end
   #--------------------------------------------------------------------------
   def update_skillbar
@@ -115,11 +115,25 @@ class Spriteset_Map
     end
   end
   #--------------------------------------------------------------------------
-  def regist_battle_unit(sprite)
-    @battler_sprites.push(sprite)
-    @unitcir_sprites.push(Unit_Circle.new(@viewport1, sprite))
-    return true
+  # * Attach sprite a unit circle
+  #--------------------------------------------------------------------------
+  # tag: 1 ( Spriteset_Map
+  def register_battle_unit(battler)
+    sprite = Unit_Circle.new(@viewport1, battler)
+    @unitcir_sprites << sprite
+    @unit_table[battler.hashid] = @unitcir_sprites.size - 1
   end
+  #--------------------------------------------------------------------------
+  # * Remove unit circle
+  #--------------------------------------------------------------------------
+  def resign_battle_unit(battler)
+    loc = @unit_table[battler.hashid]
+    sprite = @unitcir_sprites.delete_at(loc)
+    @unit_table.delete(battler.hashid)
+    dispose_sprite(sprite)
+  end
+  #--------------------------------------------------------------------------
+  # * Free all unit sprites
   #--------------------------------------------------------------------------
   def dispose_units
     @battler_sprites.each do |sprite|
@@ -131,10 +145,14 @@ class Spriteset_Map
     @battler_sprites.clear
     @unitcir_sprites.clear
   end
-   #--------------------------------------------------------------------------
+  #--------------------------------------------------------------------------
+  # * Push new projectile sprite
+  #--------------------------------------------------------------------------
   def setup_projectile(obj)
     @projectiles.push(obj)
   end
+  #--------------------------------------------------------------------------
+  # * Setup popup text
   #--------------------------------------------------------------------------
   def setup_popinfo(text, position, color)
     @popups.push( Game_PopInfo.new(text, position, color) )
@@ -174,9 +192,13 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def dispose_characters
     @character_sprites.each do |sprite| 
-      sprite.character.dispose_sprites if sprite.character
-      sprite.dispose
+      dispose_sprite(sprite)
     end
+  end
+  #--------------------------------------------------------------------------
+  def dispose_sprite(sprite)
+    sprite.character.dispose_sprites if sprite.character
+    sprite.dispose
   end
   #--------------------------------------------------------------------------
   # * Free
@@ -194,7 +216,7 @@ class Spriteset_Map
     return character.character_name || character.terminated
   end
   #--------------------------------------------------------------------------
-  # * Update Airship Shadow Sprite
+  # * Update Aircraft Shadow Sprite
   #--------------------------------------------------------------------------
   def update_shadow
     

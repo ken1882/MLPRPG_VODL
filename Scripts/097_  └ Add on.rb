@@ -68,29 +68,6 @@ class Game_Event < Game_Character
     @list               = @page.list
     @interpreter = @trigger == 4 ? Game_Interpreter.new : nil
   end
-  #--------------------------------------------------------------------------
-  # * Set Up Event Page Settings
-  #--------------------------------------------------------------------------
-  alias setup_page_config setup_page_settings
-  def setup_page_settings
-    setup_page_config
-    setup_configs
-  end
-  #--------------------------------------------------------------------------
-  # * Setup configs 
-  # tag: event config
-  #--------------------------------------------------------------------------
-  def setup_configs
-    comments = get_comments
-    comments.split(/[\r\n]+/).each do |line|
-      case line
-      when DND::REGEX::Event::Terminated
-        terminate
-      when DND::REGEX::Event::Frozen
-        freeze
-      end
-    end
-  end
   #----------------------------------------------------------------------------
   # * Get comments in event page
   #----------------------------------------------------------------------------
@@ -116,6 +93,49 @@ class Game_Event < Game_Character
     end # for command
     return false
   end # def comment
+  #-------------------------------------------------------------------------------
+  # * Alias: setup page
+  #-------------------------------------------------------------------------------
+  alias setup_page_dnd setup_page
+  def setup_page(new_page)
+    setup_page_dnd(new_page)
+    setup_enemy(new_page.nil?)
+  end
+  #-------------------------------------------------------------------------------
+  # * Setup enemy
+  #-------------------------------------------------------------------------------
+  def setup_enemy(invalid)
+    if @enemy
+      BattleManager.resign_battle_unit(self)
+      @enemy = nil
+    end
+    unless invalid && @list.nil?
+      load_npc_attributes
+    end
+  end
+  #-------------------------------------------------------------------------------
+  # * Load comment command configs in page
+  #-------------------------------------------------------------------------------
+  def load_npc_attributes
+    comments = get_comments
+    comments.split(/[\r\n]+/).each do |line|
+      case line
+      when DND::REGEX::Event::Terminated
+        terminate
+      when DND::REGEX::Event::Frozen
+        freeze
+      end
+    end
+  end # last work: redefine enemy attributes
+  #-------------------------------------------------------------------------------
+  # * Spawn NPC battler
+  #-------------------------------------------------------------------------------
+  # tag: 1 ( Game event
+  def spawn_npc_battler
+    @enemy = Game_Enemy.new($game_map.enemies.size, $1.to_i)
+    @enemy.map_char = self
+    BattleManager.register_battler(self)
+  end
   #----------------------------------------------------------------------------
   # * Permanently delete the event
   #----------------------------------------------------------------------------

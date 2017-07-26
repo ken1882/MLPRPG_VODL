@@ -390,7 +390,7 @@ class Game_Character < Game_CharacterBase
     
     if !path_found
       goalx, goaly = bestx, besty
-      puts "x,y: #{goalx}, #{goaly}"
+      debug_print "Destination x,y: #{goalx}, #{goaly}"
     end # if !path found
     
     debug_print "Pathfinding time takes: #{Time.now.to_f - ti.to_f}"

@@ -43,24 +43,6 @@ module DataManager
   #--------------------------------------------------------------------------
   # * Execute Save (No Exception Processing)
   #--------------------------------------------------------------------------
-  def save_game_without_rescue(index)
-    $game_map.effectus_party_pos.default = nil
-    $game_map.effectus_event_pos.default = nil
-    $game_map.effectus_etile_pos.default = nil
-    $game_map.effectus_etriggers.default = nil
-    File.open(make_filename(index), "wb") do |file|
-      $game_system.on_before_save
-      Marshal.dump(make_save_header, file)
-      Marshal.dump(make_save_contents, file)
-      @last_savefile_index = index
-    end
-    $game_map.effectus_party_pos.default_proc = proc { |h, k| h[k] = [] }
-    $game_map.effectus_event_pos.default_proc = proc { |h, k| h[k] = [] }
-    $game_map.effectus_etile_pos.default_proc = proc { |h, k| h[k] = [] }
-    $game_map.effectus_etriggers.default_proc = proc { |h, k| h[k] = [] }
-    true
-  end
-    
   class << self; alias save_game_without_rescue_chain save_game_without_rescue; end
   def self.save_game_without_rescue(index)
     File.open(make_chainfilename(index), "wb") do |file|
@@ -68,27 +50,6 @@ module DataManager
     end
     save_game_without_rescue_chain(index)
     build_checksum_file(index)
-  end
-  #------------------------------------------------------------------------
-  # * Extract Save Contents.                                          [REP]
-  #------------------------------------------------------------------------
-  def extract_save_contents(contents)
-    $game_system        = contents[:system]
-    $game_timer         = contents[:timer]
-    $game_message       = contents[:message]
-    $game_switches      = contents[:switches]
-    $game_variables     = contents[:variables]
-    $game_self_switches = contents[:self_switches]
-    $game_actors        = contents[:actors]
-    $game_party         = contents[:party]
-    $game_troop         = contents[:troop]
-    $game_map           = contents[:map]
-    $game_player        = contents[:player]
-    return unless $game_map.effectus_party_pos
-    $game_map.effectus_party_pos.default_proc = proc { |h, k| h[k] = [] }
-    $game_map.effectus_event_pos.default_proc = proc { |h, k| h[k] = [] }
-    $game_map.effectus_etile_pos.default_proc = proc { |h, k| h[k] = [] }
-    $game_map.effectus_etriggers.default_proc = proc { |h, k| h[k] = [] }
   end
   #--------------------------------------------------------------------------
   # * Execute Load (No Exception Processing)

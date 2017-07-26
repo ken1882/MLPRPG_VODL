@@ -1,4 +1,32 @@
 #===============================================================================
+# * DND::Graphics
+#-------------------------------------------------------------------------------
+#   Graphics settings
+#===============================================================================
+module DND::Graphics
+  
+  # Melee weapon wielding angles
+  Angles = {
+    2 => [ 80, 110, 140, 170],
+    4 => [340,  10,  40,  70],
+    6 => [290, 260, 230, 200],
+    8 => [290, 320, 350,  20],
+  }
+  
+  # Angles address correction
+  Dir_Offest = {
+    2 => [-8, -10],
+    4 => [ 0, -10],
+    6 => [ 0,  -4],
+    8 => [ 4, -10],
+  }
+  
+  # Z Axis value correction
+  Depth_Correction = { 2 => 120, 4 => 50, 6 => 120, 8 => 50 }
+  
+  
+end
+#===============================================================================
 # * Game_Projectile
 #-------------------------------------------------------------------------------
 #   Projectiles in the game, game cannot be saved if any projectile exist
@@ -50,7 +78,7 @@ class Game_Projectile < Game_Character
     return false if $game_map.over_edge?(@x, @y)
     return process_move_formula if @move_formula
     
-    pixelstep = CXJ::FREE_MOVEMENT::PIXELS_PER_STEP
+    pixelstep = Pixel_Core::Pixel
     len = [Math.hypot(@x -  target.x, @y - target.y), 0.1].max
     dx  = (target.x - @x).to_f / len
     dy  = (target.y - @y).to_f / len

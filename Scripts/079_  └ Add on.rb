@@ -25,6 +25,7 @@ class Game_Map
   #--------------------------------------------------------------------------
   def setup(map_id)
     SceneManager.dispose_temp_sprites if map_id != @map_id
+    BattleManager.setup
     @enemies.clear
     debug_print "Setup map: #{map_id}"
     
@@ -82,23 +83,12 @@ class Game_Map
       eve = Game_Event.new(@map_id, event)
       next if eve.terminated
       @events[i] = eve
-      @enemies.push(@events[i]) if @events[i] && setup_npc_battler(@events[i])
     end
-    BattleManager.setup(@enemies)
     
     @common_events = parallel_common_events.collect do |common_event|
       Game_CommonEvent.new(common_event.id)
     end
     refresh_tile_events
-  end
-  #--------------------------------------------------------------------------
-  # * Setup Non-Player Battler
-  #--------------------------------------------------------------------------
-  def setup_npc_battler(event)
-    return false unless event.event.name =~ DND::REGEX::NPCEvent
-    event.enemy = Game_Enemy.new(@enemies.size, $1.to_i)
-    event.enemy.map_char = event
-    return true
   end
   #--------------------------------------------------------------------------
   # * Processes after setups

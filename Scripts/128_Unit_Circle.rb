@@ -7,10 +7,9 @@ class Unit_Circle < Sprite_Base
   #----------------------------------------------------------------------------
   # *) Object initialization
   #----------------------------------------------------------------------------
-  def initialize(viewport, parent_sprite)
+  def initialize(viewport, character)
     super(viewport)
-    @parent_sprite = parent_sprite
-    @battler = parent_sprite.character
+    @character = character
     set_bitmap
     hide
   end
@@ -20,12 +19,13 @@ class Unit_Circle < Sprite_Base
   def set_bitmap
     self.bitmap = Bitmap.new(32, 32)
     
-    if @battler.is_a?(Game_Event)
-      color = DND::COLOR::White
+    if @character.is_a?(Game_Event)
+      color = DND::COLOR::Red
       #draw_sight
     else
       color = DND::COLOR::Blue
     end
+    
     self.bitmap.draw_circle( 16, 16, 13, color, 2)
     self.z = 0
   end
@@ -53,8 +53,8 @@ class Unit_Circle < Sprite_Base
   def update
     return unless self.visible?
     self.hide if dead?
-    self.x = @parent_sprite.x - 16
-    self.y = @parent_sprite.y - 28
+    self.x = @character.screen_x - 16
+    self.y = @character.screen_y - 28
     super
   end
   #----------------------------------------------------------------------------
@@ -70,20 +70,16 @@ class Unit_Circle < Sprite_Base
     end
   end
   #----------------------------------------------------------------------------
-  # Draw sight limit, useless for now
+  # * Draw sight limit, useless for now
   #----------------------------------------------------------------------------
   def draw_sight
-    return if @battler.sensor.nil?
+    return if @character.sensor.nil?
     self.bitmap = load_bitmap("Graphics/Lights/", "RS5")
   end
   #----------------------------------------------------------------------------
-  def parent_sprite; @parent_sprite end
-  #----------------------------------------------------------------------------
-  def battler; @battler end
-  #----------------------------------------------------------------------------
   def dead?
-    return true if @battler.is_a?(Game_Event) && @battler.enemy.nil?
-    return @battler.dead?
+    return true if @character.is_a?(Game_Event) && @character.enemy.nil?
+    return @character.dead?
   end
   #----------------------------------------------------------------------------
   def adjacent?(sx, sy)

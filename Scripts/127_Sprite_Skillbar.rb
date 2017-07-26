@@ -125,7 +125,6 @@ class Sprite_Skillbar < Sprite
     @instance.items.each do |item|
       cx += 32
       next if item.nil?
-      # tag: 1
       enabled = item.is_a?(Numeric) || (actor.item_test(actor, item) && actor.usable?(item))
       icon_index = item.is_a?(Fixnum) ? item : item.icon_index
       bitmap = Cache.system("Iconset")

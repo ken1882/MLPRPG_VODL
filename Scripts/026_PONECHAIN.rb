@@ -61,7 +61,7 @@ module PONY::CHAIN
   #--------------------------------------------------------------------------#
   # * Each node's initial Bits in new game                                   #
   #--------------------------------------------------------------------------#
-  #                 *  Magic Numbers  *                                      #
+  #                   *  Magic Numbers  *                                    #
   Dispute_Weight = {
     0xc4f10a20486103dd74203a315edf9200 => 0.150, # Equestria
     0x636da1d35e805b00eae0fcd8333f9234 => 0    , # Player

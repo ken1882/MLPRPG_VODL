@@ -4,8 +4,12 @@
 #  This module manages battle progress.
 #==============================================================================
 module BattleManager
+  #--------------------------------------------------------------------------
+  # * Constants
+  #--------------------------------------------------------------------------
   Team_Number     = 3
   Team_Max_Number = 15
+  # ~~~ Scope Constants ~~~ #
   Scope_None      = 0
   Scope_OneEnemy  = 1
   Scope_AllEnemy  = 2
@@ -18,12 +22,12 @@ module BattleManager
   Scope_OneDead   = 9
   Scope_AllDead   = 10
   Scope_User      = 11
-  
   #--------------------------------------------------------------------------
-  # * Setup
+  # * Setup 
   #--------------------------------------------------------------------------
-  def self.setup(npcs, can_escape = true, can_lose = false)
-    init_members(npcs)
+  # tag: 1 (BM
+  def self.setup(can_escape = true, can_lose = false)
+    init_members
     @can_escape = can_escape
     @can_lose = can_lose
   end
@@ -31,109 +35,25 @@ module BattleManager
   # * Initialize Member Variables
   #--------------------------------------------------------------------------
   class << self; alias init_members_dnd init_members; end
-  def self.init_members(npcs)
-    init_members_dnd
+  def self.init_members
     @action_battlers = {}
     Team_Number.times {|key| @action_battlers[key] = Array.new()}
-    assign_team_number(npcs)
+    assign_party_number
   end
   #--------------------------------------------------------------------------
-  def self.assign_team_number(npcs)
+  # * Set party member's team id to 0
+  #--------------------------------------------------------------------------
+  def self.assign_party_number
     @action_battlers[0] = $game_party.battle_members
-    npcs.compact.each do |npc|
-      next if npc.team_id.nil? || npc.team_id >= Team_Max_Number
-      @action_battlers[npc.team_id].push(npc)
-    end
   end
   #--------------------------------------------------------------------------
-  # * Processing at Encounter Time
+  # * Push character into active battlers
   #--------------------------------------------------------------------------
-  def self.on_encounter
-  end
-  #--------------------------------------------------------------------------
-  # * Get Probability of Preemptive Attack
-  #--------------------------------------------------------------------------
-  def self.rate_preemptive
-  end
-  #--------------------------------------------------------------------------
-  # * Get Probability of Surprise
-  #--------------------------------------------------------------------------
-  def self.rate_surprise
-  end
-  #--------------------------------------------------------------------------
-  # * Save BGM and BGS
-  #--------------------------------------------------------------------------
-  def self.save_bgm_and_bgs
-    @map_bgm = RPG::BGM.last
-    @map_bgs = RPG::BGS.last
-  end
-  #--------------------------------------------------------------------------
-  # * Play Battle BGM
-  #--------------------------------------------------------------------------
-  def self.play_battle_bgm
-    $game_system.battle_bgm.play
-    RPG::BGS.stop
-  end
-  #--------------------------------------------------------------------------
-  # * Play Battle End ME
-  #--------------------------------------------------------------------------
-  def self.play_battle_end_me
-    $game_system.battle_end_me.play
-  end
-  #--------------------------------------------------------------------------
-  # * Resume BGM and BGS
-  #--------------------------------------------------------------------------
-  def self.replay_bgm_and_bgs
-    @map_bgm.replay unless $BTEST
-    @map_bgs.replay unless $BTEST
-  end
-  #--------------------------------------------------------------------------
-  # * Create Escape Success Probability
-  #--------------------------------------------------------------------------
-  def self.make_escape_ratio
-  end
-  #--------------------------------------------------------------------------
-  # * Determine if Turn Is Executing
-  #--------------------------------------------------------------------------
-  def self.in_turn?
-    @phase == :turn
-  end
-  #--------------------------------------------------------------------------
-  # * Determine if Turn Is Ending
-  #--------------------------------------------------------------------------
-  def self.turn_end?
-    @phase == :turn_end
-  end
-  #--------------------------------------------------------------------------
-  # * Determine if Battle Is Aborting
-  #--------------------------------------------------------------------------
-  def self.aborting?
-    @phase == :aborting
-  end
-  #--------------------------------------------------------------------------
-  # * Get Whether Escape Is Possible
-  #--------------------------------------------------------------------------
-  def self.can_escape?
-    @can_escape
-  end
-  #--------------------------------------------------------------------------
-  # * Get Actor for Which Command Is Being Entered
-  #--------------------------------------------------------------------------
-  def self.actor
-  end
-  #--------------------------------------------------------------------------
-  # * Clear Actor for Which Command Is Being Entered
-  #--------------------------------------------------------------------------
-  def self.clear_actor
-    @actor_index = -1
-  end
-  #--------------------------------------------------------------------------
-  # * Get Next Action Subject
-  #    Get the battler from the beginning of the action order list.
-  #    If an actor not currently in the party is obtained (occurs when index
-  #    is nil, immediately after escaping in battle events etc.), skip them.
-  #--------------------------------------------------------------------------
-  def self.next_subject
+  def self.register_battler(battler)
+    return if battler.team_id.nil? || team_id >= Team_Max_Number
+    @action_battlers[battler.team_id] << battler
+    $game_map.enemies << battler
+    SceneManager.spriteset.register_battle_unit(battler)
   end
   #--------------------------------------------------------------------------
   def self.all_battlers
@@ -141,11 +61,19 @@ module BattleManager
   end
   #--------------------------------------------------------------------------
   def self.all_alive_battlers
-    return @action_battlers.collect{|key, battler| battler unless battler.dead?}
+    re = []
+    @action_battlers.each do |key, battlers|
+      battlers.each {|battler| re << battler unless battler.dead?}
+    end
+    return re
   end
   #--------------------------------------------------------------------------
   def self.dead_battlers
-    return @action_battlers.collect{|key, battler| battler if battler.dead?}
+    re = []
+    @action_battlers.each do |key, battlers|
+      battlers.each {|battler| re << battler if battler.dead?}
+    end
+    return re
   end
   #--------------------------------------------------------------------------
   # * Return alive allied battlers
@@ -220,7 +148,7 @@ module BattleManager
     return determine_best_position(allies, item) if item.for_all?
     
     target = nil
-    target_distance = 0xffffff
+    target_distance = 0xffff
     allies.each do |ally|
       range = user.distance_to_character(ally)
       next if range > sensor
@@ -376,5 +304,94 @@ module BattleManager
       item.repeats.times { target.item_apply(user, item) }
     end
   end
-  
+  #--------------------------------------------------------------------------
+  # * Processing at Encounter Time
+  #--------------------------------------------------------------------------
+  def self.on_encounter
+  end
+  #--------------------------------------------------------------------------
+  # * Get Probability of Preemptive Attack
+  #--------------------------------------------------------------------------
+  def self.rate_preemptive
+  end
+  #--------------------------------------------------------------------------
+  # * Get Probability of Surprise
+  #--------------------------------------------------------------------------
+  def self.rate_surprise
+  end
+  #--------------------------------------------------------------------------
+  # * Save BGM and BGS
+  #--------------------------------------------------------------------------
+  def self.save_bgm_and_bgs
+    @map_bgm = RPG::BGM.last
+    @map_bgs = RPG::BGS.last
+  end
+  #--------------------------------------------------------------------------
+  # * Play Battle BGM
+  #--------------------------------------------------------------------------
+  def self.play_battle_bgm
+    $game_system.battle_bgm.play
+    RPG::BGS.stop
+  end
+  #--------------------------------------------------------------------------
+  # * Play Battle End ME
+  #--------------------------------------------------------------------------
+  def self.play_battle_end_me
+    $game_system.battle_end_me.play
+  end
+  #--------------------------------------------------------------------------
+  # * Resume BGM and BGS
+  #--------------------------------------------------------------------------
+  def self.replay_bgm_and_bgs
+    @map_bgm.replay unless $BTEST
+    @map_bgs.replay unless $BTEST
+  end
+  #--------------------------------------------------------------------------
+  # * Create Escape Success Probability
+  #--------------------------------------------------------------------------
+  def self.make_escape_ratio
+  end
+  #--------------------------------------------------------------------------
+  # * Determine if Turn Is Executing
+  #--------------------------------------------------------------------------
+  def self.in_turn?
+    @phase == :turn
+  end
+  #--------------------------------------------------------------------------
+  # * Determine if Turn Is Ending
+  #--------------------------------------------------------------------------
+  def self.turn_end?
+    @phase == :turn_end
+  end
+  #--------------------------------------------------------------------------
+  # * Determine if Battle Is Aborting
+  #--------------------------------------------------------------------------
+  def self.aborting?
+    @phase == :aborting
+  end
+  #--------------------------------------------------------------------------
+  # * Get Whether Escape Is Possible
+  #--------------------------------------------------------------------------
+  def self.can_escape?
+    @can_escape
+  end
+  #--------------------------------------------------------------------------
+  # * Get Actor for Which Command Is Being Entered
+  #--------------------------------------------------------------------------
+  def self.actor
+  end
+  #--------------------------------------------------------------------------
+  # * Clear Actor for Which Command Is Being Entered
+  #--------------------------------------------------------------------------
+  def self.clear_actor
+    @actor_index = -1
+  end
+  #--------------------------------------------------------------------------
+  # * Get Next Action Subject
+  #    Get the battler from the beginning of the action order list.
+  #    If an actor not currently in the party is obtained (occurs when index
+  #    is nil, immediately after escaping in battle events etc.), skip them.
+  #--------------------------------------------------------------------------
+  def self.next_subject
+  end
 end
