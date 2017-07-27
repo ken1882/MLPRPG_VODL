@@ -185,13 +185,12 @@ class PathFinding_Queue
       
       puts "#{debug_info} (#{curx},#{cury})" if $pathfinding_debug
       if command_id > 0
-        cmd_list.push([[command_id, true]] * (32.0 / CXJ::FREE_MOVEMENT::PIXELS_PER_STEP).ceil)
+        Pixel_Core::Pixel.times{ cmd_list << [command_id, true] }
       end # if command_id > 0
     end # for i in path_address.size
     
     return cmd_list
   end
-  
   #--------------------------------------------------------------------------
   # *  Return the path address and direction
   #--------------------------------------------------------------------------
@@ -234,6 +233,7 @@ class Game_Character < Game_CharacterBase
   attr_accessor   :pathfinding_moves
   attr_accessor   :pathfinding_goal
   attr_accessor   :force_pathfinding
+  attr_accessor   :move_poll
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
   #--------------------------------------------------------------------------
@@ -241,6 +241,7 @@ class Game_Character < Game_CharacterBase
   def init_public_members
     init_public_members_comp
     @pathfinding_moves = []
+    @move_poll         = []
     @pathfinding_goal  = nil
     @force_pathfinding = true
   end
@@ -265,7 +266,7 @@ class Game_Character < Game_CharacterBase
     
     return [fixed_x,fixed_y]
   end
-  
+  #--------------------------------------------------------------------------
   def clear_pathfinding_moves
     @pathfinding_moves.clear
   end
@@ -395,10 +396,12 @@ class Game_Character < Game_CharacterBase
     
     debug_print "Pathfinding time takes: #{Time.now.to_f - ti.to_f}"
     if offset_x != 0
-      @pathfinding_moves.push([[offset_x < 0 ? 4 : 6 ,true]] * (offset_x / 0.125).abs)
+      t = (offset_x / 0.125).abs.to_i
+      t.times { @pathfinding_moves << [offset_x < 0 ? 4 : 6 ,true] }
     end
     if offset_y != 0
-      @pathfinding_moves.push([[offset_y < 0 ? 8 : 2 ,true]] * (offset_y / 0.125).abs)
+      t = (offset_y / 0.125).abs.to_i
+      t.times { @pathfinding_moves << [offset_y < 0 ? 8 : 2 ,true] }
     end
     @pathfinding_moves = @pathfinding_moves + best_path.get_walk_path(goalx,goaly)
     debug_print "Pathfinding moves: #{@pathfinding_moves.size}"
@@ -422,12 +425,21 @@ class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   # * Process pathfinding movement
   #--------------------------------------------------------------------------
+  # tag: movement
   def process_pathfinding_movement
-    if @pathfinding_moves.size > 0 && @move_poll.empty?
-      @move_poll += @pathfinding_moves[0]
-      @followers.move if self.is_a?(Game_Player)
-      @pathfinding_moves.shift
-    end
+    return if moving?
+    return unless @pathfinding_moves.size > 0 && @move_poll.empty?
+    @move_poll << @pathfinding_moves.shift
+    @followers.move if self.is_a?(Game_Player)
+    interpret_move
+  end
+  #-------------------------------------------------------------------------
+  # * Execute queued movement
+  #-------------------------------------------------------------------------
+  def interpret_move
+    return if @move_poll.empty?
+    route = @move_poll.shift
+    move_pixel(route[0], route[1])
   end
   
 end # class Game_Character

@@ -56,7 +56,7 @@ class Game_Follower < Game_Character
     @move_poll.clear if !@move_poll.empty? && distance_preceding_leader < 0.8
     
     far_dist = distance_preceding_character
-    far_dist > 3
+    type = far_dist > 3 ? 1 : 2
       
     # if self(follower) is idle and 3 blocks away from leader
     if type == 1 && @move_poll.empty? && distance_preceding_leader > 3

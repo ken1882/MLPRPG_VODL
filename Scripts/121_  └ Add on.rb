@@ -61,6 +61,8 @@ class Spriteset_Map
       create_character_sprite(event)
     end
     
+    $game_map.enemies.each {|battler| register_battle_unit(battler)}
+    
     $game_player.followers.reverse_each do |follower|
       sprite = create_character_sprite(follower)
       register_battle_unit(follower) if follower.actor
@@ -136,13 +138,9 @@ class Spriteset_Map
   # * Free all unit sprites
   #--------------------------------------------------------------------------
   def dispose_units
-    @battler_sprites.each do |sprite|
-      sprite.dispose unless !sprite || sprite.disposed?
-    end
     @unitcir_sprites.each do |sprite|
       sprite.dispose unless !sprite || sprite.disposed?
     end
-    @battler_sprites.clear
     @unitcir_sprites.clear
   end
   #--------------------------------------------------------------------------

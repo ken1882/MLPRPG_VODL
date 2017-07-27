@@ -71,8 +71,10 @@ module DND
   
   # tag: event config
   module REGEX::NPCEvent
-    Enemy  = /<(?:enemy):[ ](\d+)>/i
-    Static = /<(?:static)>/i
+    Enemy     = /<(?:enemy):[ ](\d+)>/i
+    Static    = /<(?:static)>/i
+    ConfigON  = /(?:config)/i
+    ConfigOFF = /<(?:\/config)>/i
   end
   
   # See "tag: charparam" for details
@@ -153,9 +155,21 @@ module DND
   end
   
   module BattlerSetting
-    PhaseIdle    = 0
-    PhaseCombat  = 1
-    SensorRange  = 5
+    PhaseIdle         = 0
+    PhaseCombat       = 1
+    
+    DefaultWeapon     = 0
+    TeamID            = 1
+    DeathSwitchSelf   = nil
+    DeathSwitchGlobal = 0
+    DeathVarSelf      = nil
+    DeathVarGlobal    = [0, 0]
+    VisibleSight      = 8
+    BlindSight        = 0
+    DeathAnimation    = 114
+    Infravision       = false
+    MoveLimit         = 30
+    AggressiveLevel   = 4
   end
   
 end

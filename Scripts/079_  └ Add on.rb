@@ -124,6 +124,18 @@ class Game_Map
     @cached_events.delete(event)
   end
   #--------------------------------------------------------------------------
+  def register_battle_unit(battler)
+    if @spriteset
+      @spriteset.register_battle_unit(battler)
+    end
+  end
+  #--------------------------------------------------------------------------
+  def resign_battle_unit(battler)
+    if @spriteset
+      @spriteset.resign_battle_unit(battler)
+    end
+  end
+  #--------------------------------------------------------------------------
   # * Update Vehicles
   #--------------------------------------------------------------------------
   def update_vehicles

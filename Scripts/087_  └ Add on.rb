@@ -149,14 +149,14 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def process_event_death
     apply_event_death_effect
-    start_animation(@enemy.enemy.death_animation)
+    start_animation(@enemy.death_animation)
   end
   #----------------------------------------------------------------------------
   def apply_event_death_effect
-    sws = @enemy.enemy.death_switch_self
-    swg = @enemy.enemy.death_switch_global
-    vrsi, vrsv = *@enemy.enemy.death_var_self
-    vrgi, vrgv = *@enemy.enemy.death_var_global
+    sws = @enemy.death_switch_self
+    swg = @enemy.death_switch_global
+    vrsi, vrsv = *@enemy.death_var_self if @enemy.death_var_self
+    vrgi, vrgv = *@enemy.death_var_global
     if sws
       key = [@map_id, @event.id, sws]
       $game_self_switches[key] = true

@@ -183,48 +183,55 @@ class RPG::Enemy
   def load_character_attributes
     ensure_dndattr_correct
     self.note.split(/[\r\n]+/).each { |line|
-      case line
-      when DND::REGEX::Character::DefaultWeapon
-        @default_weapon = $1.to_i
-        puts "[Enemy Weapon]: #{self.name}'s default weapon: #{$data_weapons[@default_weapon].name}" if @default_weapon != 1
-      when DND::REGEX::Character::TeamID
-        @team_id = $1.to_i
-      when DND::REGEX::Character::DeathSwitchSelf
-        @death_switch_self = $1.upcase
-      when DND::REGEX::Character::DeathSwitchGlobal
-        @death_switch_global = $1.to_i
-      when DND::REGEX::Character::DeathVarSelf
-        @death_var_self = [$1.to_i, $2.to_i]
-      when DND::REGEX::Character::DeathVarGlobal
-        @death_var_global = [$1.to_i, $2.to_i]
-      when DND::REGEX::Character::VisibleSight
-        @visible_sight = $1.to_i
-      when DND::REGEX::Character::BlindSight
-        @blind_sight   = $1.to_i
-      when DND::REGEX::Character::Infravision
-        @infravision   = $1.to_i.to_bool
-      when DND::REGEX::Character::AggressiveLevel
-        @agressive_level = $1.to_i
-      when DND::REGEX::Character::DeathAnimation
-        @death_animation = $1.to_i
-      end
+      do_load_enemy_params(line)
     } # self.note.split
     #--------------------------------------------------
   end
   #--------------------------------------------------------------------------
+  def do_load_enemy_params(line)
+    case line
+    when DND::REGEX::Character::DefaultWeapon
+      @default_weapon = $1.to_i
+      puts "[Enemy Weapon]: #{self.name}'s default weapon: #{$data_weapons[@default_weapon].name}" if @default_weapon != 1
+    when DND::REGEX::Character::TeamID
+      @team_id = $1.to_i
+    when DND::REGEX::Character::DeathSwitchSelf
+      @death_switch_self = $1.upcase
+    when DND::REGEX::Character::DeathSwitchGlobal
+      @death_switch_global = $1.to_i
+    when DND::REGEX::Character::DeathVarSelf
+      @death_var_self = [$1.to_i, $2.to_i]
+    when DND::REGEX::Character::DeathVarGlobal
+      @death_var_global = [$1.to_i, $2.to_i]
+    when DND::REGEX::Character::VisibleSight
+      @visible_sight = $1.to_i
+    when DND::REGEX::Character::BlindSight
+      @blind_sight   = $1.to_i
+    when DND::REGEX::Character::Infravision
+      @infravision   = $1.to_i.to_bool
+    when DND::REGEX::Character::AggressiveLevel
+      @agressive_level = $1.to_i
+    when DND::REGEX::Character::MoveLimit
+      @move_limit      = $1.to_i
+    when DND::REGEX::Character::DeathAnimation
+      @death_animation = $1.to_i
+    end
+  end
+  #--------------------------------------------------------------------------
+  # tag: 2
   def ensure_dndattr_correct
-    @defalut_weapon       = 1
-    @team_id              = 1
-    @visible_sight        = 8
-    @blind_sight          = 0
-    @infravision          = false
-    @move_limit           = 30
-    @aggressive_level     = 4
-    @death_switch_self    = nil
-    @death_switch_global  = 0
-    @death_var_self       = [0, 0]
-    @death_var_global     = [0, 0]
-    @death_animation      = 114
+    @defalut_weapon       = DND::BattlerSetting::DefaultWeapon
+    @team_id              = DND::BattlerSetting::TeamID
+    @visible_sight        = DND::BattlerSetting::VisibleSight
+    @blind_sight          = DND::BattlerSetting::BlindSight
+    @infravision          = DND::BattlerSetting::Infravision 
+    @move_limit           = DND::BattlerSetting::MoveLimit
+    @aggressive_level     = DND::BattlerSetting::AggressiveLevel 
+    @death_switch_self    = DND::BattlerSetting::DeathSwitchSelf
+    @death_switch_global  = DND::BattlerSetting::DeathSwitchGlobal
+    @death_var_self       = DND::BattlerSetting::DeathVarSelf
+    @death_var_global     = DND::BattlerSetting::DeathVarGlobal
+    @death_animation      = DND::BattlerSetting::DeathAnimation
   end
   #------------------------------------
 end

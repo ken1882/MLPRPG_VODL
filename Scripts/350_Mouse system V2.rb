@@ -371,12 +371,10 @@ module Mouse
       super(nil)
       self.z = 50000
       @bitmap_cache = initial_bitmap
-      if Jet::MouseSystem::DEV_OUTLINE
-        @outline = Sprite.new(nil)
-        @outline.bitmap = Bitmap.new(32, 32)
-        @outline.bitmap.fill_rect(0, 0, 32, 32, Color.new(0, 0, 0, 190))
-        @outline.bitmap.fill_rect(1, 1, 30, 30, Color.new(0, 0, 0, 0))
-      end
+      # tag: modified
+      #if Jet::MouseSystem::DEV_OUTLINE
+        create_outline
+      #end
     end
     
     def swap_bitmap(data)

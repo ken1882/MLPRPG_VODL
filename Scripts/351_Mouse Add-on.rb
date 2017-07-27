@@ -70,7 +70,29 @@ module Mouse
     return base - 3 if @pos[1] > sprite.y + sprite.height
     return base
   end
-  #------------------------------------------------------------------------------
+  #=============================================================================
+  # * Sprite_Cursor
+  #-----------------------------------------------------------------------------
+  #   The Cursor Sprite for mouse
+  #=============================================================================
+  class Sprite_Cursor < Sprite
+    #---------------------------------------------------------------------------
+    # * Outline sprite
+    #-----------------------------------------------------------------------------
+    def create_outline
+      @outline = Sprite.new(nil)
+      @outline.bitmap = Bitmap.new(32, 32)
+      @outline.bitmap.fill_rect(0, 0, 32, 32, Color.new(0, 0, 0, 190))
+      @outline.bitmap.fill_rect(1, 1, 30, 30, Color.new(0, 0, 0, 0))
+      @outline.hide
+    end
+    #-----------------------------------------------------------------------------
+    alias update_tactic update
+    def update
+      update_tactic
+      @outline.visible = SceneManager.tactic_enabled?
+    end
+  end
 end
 #==============================================================================
 # * Scene_Map

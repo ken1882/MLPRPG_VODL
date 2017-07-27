@@ -135,7 +135,7 @@ class Game_Skillbar
   # *) Process Input
   #--------------------------------------------------------------------------
   def process_input
-    if Mouse.click?(1)
+    if Mouse.click?(1) && !Mouse.hover_UI?
       process_item_use(@primary_tool)
     else
       for i in @first_scan_index...HotKeys::SkillBarSize

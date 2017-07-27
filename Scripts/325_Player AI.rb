@@ -30,6 +30,7 @@ class Game_Player < Game_Character
   def process_party_movement
     process_pathfinding_movement
     trigger_target_event if @target_event
+    
   end
   #-------------------------------------------------------------------------
   def trigger_target_event

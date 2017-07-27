@@ -12,6 +12,7 @@ class Game_Event < Game_Character
   attr_accessor :enemy
   attr_reader   :event
   attr_reader   :terminated
+  attr_accessor :static_object
   #--------------------------------------------------------------------------
   attr_accessor :default_weapon
   attr_accessor :last_target
@@ -27,6 +28,7 @@ class Game_Event < Game_Character
   def initialize(map_id, event)
     @self_vars       = Array.new(4){|i| i = 0}
     @terminated      = false
+    @static_object   = false
     initialize_event_opt(map_id, event)
   end
   #--------------------------------------------------------------------------
@@ -105,7 +107,7 @@ class Game_Event < Game_Character
   # * Setup enemy
   #-------------------------------------------------------------------------------
   def setup_enemy(invalid)
-    if @enemy
+    if @enemy && !terminated?
       BattleManager.resign_battle_unit(self)
       @enemy = nil
     end
@@ -118,21 +120,62 @@ class Game_Event < Game_Character
   #-------------------------------------------------------------------------------
   def load_npc_attributes
     comments = get_comments
+    npc_config = false
     comments.split(/[\r\n]+/).each do |line|
       case line
       when DND::REGEX::Event::Terminated
         terminate
       when DND::REGEX::Event::Frozen
         freeze
+      when DND::REGEX::NPCEvent::Enemy
+        spawn_npc_battler($1.to_i)
+      when DND::REGEX::NPCEvent::Static
+        @static_object = true
+      when DND::REGEX::NPCEvent::ConfigON
+        npc_config = true
+      when DND::REGEX::NPCEvent::ConfigOFF
+        npc_config = false
       end
-    end
+      process_npc_event_config(line) if npc_config
+    end # each comment line
   end # last work: redefine enemy attributes
+  #-------------------------------------------------------------------------------
+  # * Load params of REGEX::Character in event comment command
+  #-------------------------------------------------------------------------------
+  def process_npc_event_config(line)
+    case line
+    when DND::REGEX::Character::DefaultWeapon
+      @default_weapon = $1.to_i
+    when DND::REGEX::Character::TeamID
+      @team_id = $1.to_i
+    when DND::REGEX::Character::DeathSwitchSelf
+      @death_switch_self = $1.upcase
+    when DND::REGEX::Character::DeathSwitchGlobal
+      @death_switch_global = $1.to_i
+    when DND::REGEX::Character::DeathVarSelf
+      @death_var_self = [$1.to_i, $2.to_i]
+    when DND::REGEX::Character::DeathVarGlobal
+      @death_var_global = [$1.to_i, $2.to_i]
+    when DND::REGEX::Character::VisibleSight
+      @visible_sight = $1.to_i
+    when DND::REGEX::Character::BlindSight
+      @blind_sight   = $1.to_i
+    when DND::REGEX::Character::Infravision
+      @infravision   = $1.to_i.to_bool
+    when DND::REGEX::Character::AggressiveLevel
+      @agressive_level = $1.to_i
+    when DND::REGEX::Character::MoveLimit
+      @move_limit      = $1.to_i
+    when DND::REGEX::Character::DeathAnimation
+      @death_animation = $1.to_i
+    end
+  end
   #-------------------------------------------------------------------------------
   # * Spawn NPC battler
   #-------------------------------------------------------------------------------
   # tag: 1 ( Game event
-  def spawn_npc_battler
-    @enemy = Game_Enemy.new($game_map.enemies.size, $1.to_i)
+  def spawn_npc_battler(id)
+    @enemy = Game_Enemy.new($game_map.enemies.size, id)
     @enemy.map_char = self
     BattleManager.register_battler(self)
   end
@@ -142,6 +185,10 @@ class Game_Event < Game_Character
   def terminate
     @terminated = true
     $game_map.terminate_event(self)
+  end
+  #----------------------------------------------------------------------------
+  def terminated?
+    @terminated
   end
   #----------------------------------------------------------------------------
   # * Freeze event from update
@@ -160,9 +207,83 @@ class Game_Event < Game_Character
     @frozen
   end
   #----------------------------------------------------------------------------
+  def dead?
+    return true if @enemy.nil?
+    return @enemy.dead?
+  end
+  #-------------------------------------------------------------------------------
+  # * Params to method
+  #-------------------------------------------------------------------------------
+  def default_weapon
+    return @default_weapon             if @default_weapon
+    return @enemy.enemy.default_weapon if @enemy
+    returnDND::BattlerSetting::DefaultWeapon
+  end
+  #----------------------------------------------------------------------------
   def team_id
-    return @enemy.team_id if @enemy
-    return 0
+    return @team_id       if @team_id
+    return @enemy.enemy.team_id if @enemy
+    return DND::BattlerSetting::TeamID
+  end
+  #----------------------------------------------------------------------------
+  def death_switch_self
+    return @death_switch_self             if @death_switch_self
+    return @enemy.enemy.death_switch_self if @enemy
+    return DND::BattlerSetting::DeathSwitchSelf
+  end
+  #----------------------------------------------------------------------------
+  def death_switch_global
+    return @death_switch_global             if @death_switch_global
+    return @enemy.enemy.death_switch_global if @enemy
+    return DND::BattlerSetting::DeathSwitchGlobal
+  end
+  #----------------------------------------------------------------------------
+  def death_var_self
+    return @death_var_self             if @death_var_self
+    return @enemy.enemy.death_var_self if @enemy
+    return DND::BattlerSetting::DeathVarSelf
+  end
+  #----------------------------------------------------------------------------
+  def death_var_global
+    return @death_var_global             if @death_var_global
+    return @enemy.enemy.death_var_global if @enemy
+    return DND::BattlerSetting::DeathVarGlobal
+  end
+  #----------------------------------------------------------------------------
+  def visible_sight
+    return @visible_sight             if @visible_sight
+    return @enemy.enemy.visible_sight if @enemy
+    return DND::BattlerSetting::VisibleSight
+  end
+  #----------------------------------------------------------------------------
+  def blind_sight
+    return @blind_sight             if @blind_sight
+    return @enemy.enemy.blind_sight if @enemy
+    return DND::BattlerSetting::BlindSight
+  end
+  #----------------------------------------------------------------------------
+  def infravision
+    return @infravision             if @infravision
+    return @enemy.enemy.infravision if @enemy
+    return DND::BattlerSetting::Infravision
+  end
+  #----------------------------------------------------------------------------
+  def agressive_level
+    return @agressive_level             if @agressive_level
+    return @enemy.enemy.agressive_level if @enemy
+    return DND::BattlerSetting::AggressiveLevel
+  end
+  #----------------------------------------------------------------------------
+  def move_limit
+    return @move_limit       if @move_limit
+    return @enemy.move_limit if @enemy
+    return DND::BattlerSetting::MoveLimit
+  end
+  #----------------------------------------------------------------------------
+  def death_animation
+    return @death_animation             if @death_animation
+    return @enemy.enemy.death_animation if @enemey
+    return DND::BattlerSetting::DeathAnimation
   end
   #---------------------------------------------------------------------------
   # * Method Missing

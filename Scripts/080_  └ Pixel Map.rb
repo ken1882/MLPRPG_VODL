@@ -22,14 +22,14 @@ module Pixel_Core
   #-----------------------------------------------------------------------------
   Pixel = 4
   Tile = (1.0 / Pixel)
-  Default_Collision_X = 3
-  Default_Collision_Y = 3
+  Default_Collision_X = 2
+  Default_Collision_Y = 2
   Body_Axis = [0.25,0.25,0.5,0.75]
   Bush_Axis = [0.5,0.75]
   Counter_Axis = [0.25,0.25,0.25,0.25]
   Ladder_Axis = [0.25,0.25]
   Pixel_Range = {2=>[0,0.25],4=>[-0.25,0],6=>[0.25,0],8=>[0,-0.25]}
-  Tile_Range = {2=>[0,1],4=>[-1,0],6=>[1,0],8=>[0,-1]}
+  Tile_Range  = {2=>[0,1],4=>[-1,0],6=>[1,0],8=>[0,-1]}
   Water_Range = {2=>[0,3],4=>[-3,0],6=>[3,0],8=>[0,-3]}
   Trigger_Range = {2=>[0,2],4=>[-2,0],6=>[2,0],8=>[0,-2]}
   Counter_Range = {2=>[0,3],4=>[-3,0],6=>[3,0],8=>[0,-3]}

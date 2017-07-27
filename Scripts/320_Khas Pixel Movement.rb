@@ -208,8 +208,8 @@ class Game_CharacterBase
   # * New: Pixel passable?
   #-------------------------------------------------------------------------------
   def pixel_passable?(px,py,d)
-    nx = px+Tile_Range[d][0]
-    ny = py+Tile_Range[d][1]
+    nx = px + Tile_Range[d][0]
+    ny = py + Tile_Range[d][1]
     return false unless $game_map.pixel_valid?(nx,ny)
     return true if @through || debug_through?
     return false if $game_map.pixel_table[nx,ny,0] == 0
@@ -482,12 +482,15 @@ class Game_Player < Game_Character
   # * Pixel move passable?
   #-------------------------------------------------------------------------------
   def pixel_passable?(px,py,d)
-    nx = px+Tile_Range[d][0]
-    ny = py+Tile_Range[d][1]
+    nx = px + Tile_Range[d][0]
+    ny = py + Tile_Range[d][1]
     return false unless $game_map.pixel_valid?(nx,ny)
+    p 1 if Input.press?(:kZ)
     return true if @through || debug_through?
     return false if $game_map.pixel_table[nx,ny,0] == 0
+    p 2 if Input.press?(:kZ)
     return false if collision?(nx,ny)
+    p 3 if Input.press?(:kZ)
     return true
   end
   #-------------------------------------------------------------------------------

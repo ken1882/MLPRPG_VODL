@@ -50,10 +50,18 @@ module BattleManager
   # * Push character into active battlers
   #--------------------------------------------------------------------------
   def self.register_battler(battler)
-    return if battler.team_id.nil? || team_id >= Team_Max_Number
+    return if battler.team_id.nil? || battler.team_id >= Team_Max_Number
     @action_battlers[battler.team_id] << battler
     $game_map.enemies << battler
-    SceneManager.spriteset.register_battle_unit(battler)
+    $game_map.register_battle_unit(battler)
+  end
+  #--------------------------------------------------------------------------
+  # * Remove unit
+  #--------------------------------------------------------------------------
+  def self.resign_battle_unit(battler)
+    $game_map.enemies.delete(battler)
+    @action_battlers[battler.team_id].delete(battler)
+    $game_map.resign_battle_unit(battler)
   end
   #--------------------------------------------------------------------------
   def self.all_battlers
@@ -214,6 +222,7 @@ module BattleManager
     elsif action.item.tool_type == 1
       action.subject = candidates.select {|battler| battler.distance_to_character(action.target) <= action.item.tool_distance}
     end
+    action.subject.select!{|battler| !battler.dead?}
     debug_print "Action subjects: #{action.subject.collect{|char| char.name if char}}"
   end
   #--------------------------------------------------------------------------
