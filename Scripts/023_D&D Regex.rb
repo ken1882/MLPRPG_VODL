@@ -152,6 +152,9 @@ module DND
     Brown             = Color.new(128,  64,   0)
     Pink              = Color.new(255, 128, 255)
     Tan               = Color.new(200, 200, 110)
+    
+    HitPoint          = Green
+    EnergyPoint       = Color.new(100, 200, 255)
   end
   
   module BattlerSetting
