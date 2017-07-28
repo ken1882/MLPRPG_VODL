@@ -21,22 +21,30 @@ class Sprite_Hud < Sprite_Base
   attr_reader   :mp
   attr_reader   :states
   attr_reader   :action
+  attr_accessor :face_phase
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
   def initialize(actor, party_index, viewport = nil)
     super(viewport)
-    @actor       = actor
-    @party_index = party_index
-    @hp          = 0
-    @mp          = 0
-    @states      = []
-    @action      = nil
-    @last_hash   = 0
-    self.x       = 4
-    self.y       = 4 + HudSize * party_index
+    @actor         = actor
+    @party_index   = party_index
+    @hp            = 0
+    @mp            = 0
+    @mhp           = 1
+    @mmp           = 1
+    @states        = []
+    @action        = nil
+    @last_hash     = 0
+    @last_face     = 0xff
+    @face_timer    = 0
+    @se_timer      = 0
+    @action_timer  = 0
+    @actor_changed = true
+    self.x         = 4
+    self.y         = 4 + HudSize.at(1) * party_index
+    self.z         = viewport ? viewport.z : 1000
     create_layout(viewport)
-    refresh
   end
   #--------------------------------------------------------------------------
   # * Load layout
@@ -44,17 +52,32 @@ class Sprite_Hud < Sprite_Base
   def create_layout(viewport)
     filename         = @party_index == 0 ? LeadLayoutFilename : LayoutFilename
     self.bitmap      = Cache.UI(filename)
-    @faces           = Cache.UI(FaceFilename + actor.id)
     @contents        = Sprite.new(viewport)
-    @contents.bitmap = Bitmap.new(@layout.width, @layout.height)
+    @contents.bitmap = Bitmap.new(*ContentBitmapSize)
+    @face_sprite     = Sprite.new(viewport)
+    @face_sprite.bitmap = Bitmap.new(FaceHudRect.width, FaceHudRect.height)
+    @contents.x, @contents.y       = self.x, self.y
+    @face_sprite.x, @face_sprite.y = self.x, self.y
+    @contents.z = self.z - 1
+    @face_sprite.z  = self.z + 1
   end
   #--------------------------------------------------------------------------
   # * Frame update
   #--------------------------------------------------------------------------
   def update
     super
-    self.visible = $game_switches[16] rescue true
+    #self.visible = $game_switches[16] rescue true
+    dectect_actor_change
     update_values
+    update_timer
+  end
+  #--------------------------------------------------------------------------
+  def dectect_actor_change
+    return if !@actor_changed && $game_party.members[@party_index] == @actor
+    actor = $game_party.members[@party_index]
+    @mhp, @mmp = actor.mhp, actor.mmp
+    @actor = actor
+    @actor_changed = true
   end
   #--------------------------------------------------------------------------
   # * Update value and bars
@@ -64,83 +87,128 @@ class Sprite_Hud < Sprite_Base
     @mp     = @actor.mp
     @states = @actor.states.collect{|state| state.id}
     @action = @actor.action
-    refresh if @last_hash != hash_vlaue
+    refresh if @actor_changed || @last_hash != hash_value
+  end
+  #--------------------------------------------------------------------------
+  def update_timer
+    @face_timer   += 1 if @flag_temp_face
+    @se_timer     += 1 if @flag_low_hp
+    @action_timer += 1 if @flag_action
+    clear_action       if @action_timer >= 60
   end
   #--------------------------------------------------------------------------
   # * Hash value
   #--------------------------------------------------------------------------
   def hash_value
-    value  = @mp * 100 + @hp * 10
-    value += @action.nil? ? 0 : @action.item.hashid
+    actor = $game_party.members[@party_index]
+    return -1 if actor.nil?
+    value  = actor.mp * 100 + actor.hp * 10 + actor.hashid
+    value += actor.action.nil? ? 0 : actor.action.item.hashid
     return value
   end
   #--------------------------------------------------------------------------
   # * Refresh
   #--------------------------------------------------------------------------
-  def refresh(actor = @actor)
-    @actor = actor
-    return hide if actor.nil?
+  def refresh
+    return hide if @actor.nil?
+    show if !visible?
+    draw_name
     draw_hp
     draw_mp
     draw_states
     draw_action
     draw_face
-    @last_hash = hash_vlaue
+    @last_hash = hash_value
+    @actor_changed = false
+  end
+  #--------------------------------------------------------------------------
+  def draw_name
+    return unless @actor_changed
+    rect = NameRect
+    @contents.bitmap.font.size = 18
+    @contents.bitmap.clear_rect(rect)
+    @contents.bitmap.draw_text(rect, @actor.name, 1) 
   end
   #--------------------------------------------------------------------------
   def draw_hp
-    rect = HPBarRect
-    rect.width *= actor.hp / actor.mhp
-    @contents.fill_rect(rect, DND::COLOR::HitPoint)
+    rect = HPBarRect.dup
+    @contents.bitmap.clear_rect(rect)
+    rect.width = rect.width * @hp / @mhp
+    @contents.bitmap.fill_rect(rect, DND::COLOR::HitPoint)
   end
   #--------------------------------------------------------------------------
   def draw_mp
-    rect = EPBarRect
-    rect.width *= actor.mp / actor.mmp
-    @contents.fill_rect(rect, DND::COLOR::EnergyPoint)
+    rect = EPBarRect.dup
+    @contents.bitmap.clear_rect(rect)
+    rect.width = rect.width.to_i * @mp / @mmp
+    @contents.bitmap.fill_rect(rect, DND::COLOR::EnergyPoint)
   end
   #--------------------------------------------------------------------------
   def draw_states
-    rect = StatRect
-    @contents.clear_rect(rect)
+    
   end
   #--------------------------------------------------------------------------
   def draw_action
-    return if @action
-    rect = StatRect
+    return unless @action
+    clear_action
+    rect = StatRect.dup
     backcolor1 = Color.new(0, 0, 0, 192)
     backcolor2 = Color.new(0, 0, 0, 0)
-    @contents.clear_rect(rect)
-    @contents.gradient_fill_rect(rect, backcolor1, backcolor2)
-    @contents.draw_icon(@action.item.icon_index, recy.x, rect.y)
+    @contents.bitmap.gradient_fill_rect(rect, backcolor1, backcolor2)
+    draw_icon(@action.item.icon_index, rect.x, rect.y)
     rect.x += 26
-    @contents.draw_text(rect, @action.item.name)
+    @contents.bitmap.draw_text(rect, @action.item.name)
+    @flag_action  = true
   end # tag: last work
   #--------------------------------------------------------------------------
+  def clear_action
+    rect = StatRect.dup
+    @contents.bitmap.clear_rect(rect)
+    @flag_action = false
+    @action_timer = 0
+  end
+  #--------------------------------------------------------------------------
   def draw_face
-    
+    phase = get_actor_status
+    return if phase == @last_face && !@actor_changed
+    @last_face = phase
+    filename = FaceFilename + @actor.id.to_s
+    bitmap   = Cache.UI(filename) rescue nil
+    return if bitmap.nil?
+    rect     = FaceHudRect
+    src_rect = FaceSrcRect.dup
+    src_rect.x = phase * src_rect.width
+    @face_sprite.bitmap.clear_rect(rect)
+    @face_sprite.bitmap.blt(0, 0, bitmap, src_rect)
+  end
+  #--------------------------------------------------------------------------
+  def get_actor_status
+    return PONY::Hud::FaceIdle
   end
   #--------------------------------------------------------------------------
   def draw_icon(icon_index, x, y)
     bitmap = Cache.system("Iconset")
     rect = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
-    @contents.blt(x, y, bitmap, rect, 0xff)
+    @contents.bitmap.blt(x, y, bitmap, rect)
   end
   #--------------------------------------------------------------------------
   # * Free
   #--------------------------------------------------------------------------
   def dispose
+    @face_sprite.dispose
+    @contents.dispose
     super
-    
   end
    #--------------------------------------------------------------------------
   def hide
-    
+    @face_sprite.hide
+    @contents.hide
     super
   end
   #--------------------------------------------------------------------------
   def show
-    
+    @face_sprite.show
+    @contents.show
     super
   end
   #--------------------------------------------------------------------------

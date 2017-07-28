@@ -4,6 +4,7 @@
 #  This base class handles characters. It retains basic information, such as 
 # coordinates and graphics, shared by all characters.
 #==============================================================================
+# tag: battler
 class Game_CharacterBase
   #--------------------------------------------------------------------------
   # * Public Instance Variables
@@ -11,7 +12,6 @@ class Game_CharacterBase
   attr_accessor :weight, :velocity, :opacity, :x, :y, :move_speed
   attr_accessor :movment_formula  # delta y = f(x)
   attr_accessor :action
-  attr_accessor :target
   attr_accessor :current_target
   attr_reader   :hashid
   #----------------------------------------------------------------------------
@@ -25,7 +25,7 @@ class Game_CharacterBase
     @opacity  = 0xff
     @movment_formula = nil
     @action          = nil
-    @target          = nil
+    @current_target  = nil
     @hint_cooldown   = 0
     @hashid = PONY.Sha256(@character_name + @id.to_s + self.class.to_s + Time.now.to_s).to_i(16)
   end
@@ -171,4 +171,6 @@ class Game_CharacterBase
   def hash_pos
     return (@x * 1000 + @y)
   end
+  
+  def action; @action end
 end

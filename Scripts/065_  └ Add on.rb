@@ -113,4 +113,14 @@ class Game_Battler < Game_BattlerBase
     die_dnd
     @map_char.kill if @map_char
   end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Processing at End of Turn
+  #--------------------------------------------------------------------------
+  def on_turn_end
+    @result.clear
+    update_state_turns
+    update_buff_turns
+    remove_states_auto(2)
+  end
+  #--------------------------------------------------------------------------
 end

@@ -26,11 +26,6 @@ class Game_Player < Game_Character
     return false
   end
   #--------------------------------------------------------------------------
-  # * Vehicle Processing
-  #--------------------------------------------------------------------------
-  def update_vehicle
-  end
-  #--------------------------------------------------------------------------
   # * Clear Transfer Player Information
   #--------------------------------------------------------------------------
   def clear_transfer_info
@@ -71,12 +66,7 @@ class Game_Player < Game_Character
     actor.method(symbol).call(*args)
   end
   #--------------------------------------------------------------------------
-  # * Update Encounter
-  #--------------------------------------------------------------------------
-  def update_encounter
-  end
-  #--------------------------------------------------------------------------
-  # * Frame Update.                                                     [REP]
+  # * Overwrite: Frame Update
   #--------------------------------------------------------------------------
   def update
     last_real_x = @real_x
@@ -86,7 +76,7 @@ class Game_Player < Game_Character
     super
     update_scroll(last_real_x, last_real_y) if last_real_x != @real_x ||
                                                last_real_y != @real_y
-    update_vehicle unless @followers.gathering?
+    #update_vehicle unless @followers.gathering?
     update_nonmoving(last_moving) unless moving?
     @followers.update
   end
@@ -103,5 +93,26 @@ class Game_Player < Game_Character
     $game_map.scroll_right(ax2 - ax1) if ax2 > ax1 && ax2 > center_x
     $game_map.scroll_up   (ay1 - ay2) if ay2 < ay1 && ay2 < center_y
   end
-  
+  #--------------------------------------------------------------------------
+  # * Processing When Not Moving
+  #     last_moving : Was it moving previously?
+  #--------------------------------------------------------------------------
+  def update_nonmoving(last_moving)
+    return if $game_map.interpreter.running?
+    if last_moving
+      $game_party.on_player_walk
+      return if check_touch_event
+    end
+    if movable? && Input.trigger?(:C)
+      #return if get_on_off_vehicle
+      return if check_action_event
+    end
+    #update_encounter if last_moving
+  end
+  #--------------------------------------------------------------------------
+  def update_vehicle
+  end
+  #--------------------------------------------------------------------------
+  def update_encounter
+  end
 end

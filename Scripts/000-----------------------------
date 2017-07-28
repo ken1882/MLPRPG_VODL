@@ -14,7 +14,8 @@ Crtl + Shift + F
 Tags available:
 tag: queued       // work that may be done on later days
 tag: unfinished   // unfinished stuff
-tag: last work   // just like what it says
+tag: last work    // just like what it says
+tag: battler      // Combat stuff
 tag: damage       // damage handles
 tag: cast         // skill/spell casting processions
 tag: target       // combat target processions

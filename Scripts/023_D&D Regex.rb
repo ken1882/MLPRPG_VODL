@@ -158,6 +158,9 @@ module DND
   end
   
   module BattlerSetting
+    
+    RegenerateTime    = 30
+    
     PhaseIdle         = 0
     PhaseCombat       = 1
     

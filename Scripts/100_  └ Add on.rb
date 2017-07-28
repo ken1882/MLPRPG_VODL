@@ -44,7 +44,7 @@ class Game_Interpreter
   # * Overwrite: Shop Processing
   #--------------------------------------------------------------------------
   def command_302
-    return if $game_party.in_battle
+    return if $game_party.in_combat?
     puts "Interpreter: Event Id: #{@event_id}"
     goods = [@params]
     while next_event_code == 605
@@ -59,7 +59,7 @@ class Game_Interpreter
   # * Transfer Player
   #--------------------------------------------------------------------------
   def command_201
-    return if $game_party.in_battle
+    return if $game_party.in_combat?
     Fiber.yield while $game_player.transfer? || $game_message.visible
     @params[5] = 2 if @params[5] == 0
     
@@ -92,5 +92,10 @@ class Game_Interpreter
     @fiber = nil
     Fiber.yield
   end
- 
+ #--------------------------------------------------------------------------
+  # * Get Target of Screen Command
+  #--------------------------------------------------------------------------
+  def screen
+    return $game_map.screen
+  end
 end

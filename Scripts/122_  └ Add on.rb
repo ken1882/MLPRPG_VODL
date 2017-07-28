@@ -19,8 +19,8 @@ class Spriteset_Map
   def initialize
     @projectiles = []
     @popups      = []
-    init_spsetmap_dnd
     create_hud
+    init_spsetmap_dnd
   end
   #--------------------------------------------------------------------------
   # * Frame Update
@@ -47,7 +47,12 @@ class Spriteset_Map
   # *) Create heads-up display on map
   #--------------------------------------------------------------------------
   def create_hud
+    debug_print "Craete Huds"
     $game_party.skillbar.create_layout(@viewport2)
+    @hud_sprite = []
+    $game_party.members.each_with_index do |member, index|
+      @hud_sprite << Sprite_Hud.new(member, index, @viewport2)
+    end
   end
   #--------------------------------------------------------------------------
   # * Overwrite: Create Character Sprite (group)
@@ -81,6 +86,7 @@ class Spriteset_Map
     update_skillbar
     update_projectiles
     update_popups
+    update_huds
     update_spsetmap_opt
   end
   #--------------------------------------------------------------------------
@@ -93,6 +99,10 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def update_skillbar
     $game_party.skillbar.update
+  end
+  #--------------------------------------------------------------------------
+  def update_huds
+    @hud_sprite.each{|sp| sp.update}
   end
   #--------------------------------------------------------------------------
   def update_projectiles
@@ -194,6 +204,12 @@ class Spriteset_Map
     end
   end
   #--------------------------------------------------------------------------
+  def dispose_huds
+    $game_party.skillbar.dispose_layout
+    @hud_sprite.each {|sprite| sprite.dispose}
+    @hud_sprite.clear
+  end
+  #--------------------------------------------------------------------------
   def dispose_sprite(sprite)
     sprite.character.dispose_sprites if sprite.character
     sprite.dispose
@@ -206,7 +222,7 @@ class Spriteset_Map
     dispose_spmap_opt
     dispose_units
     dispose_temp_sprites
-    $game_party.skillbar.dispose_layout
+    dispose_huds
   end
   #--------------------------------------------------------------------------
   def event_usable?(character)

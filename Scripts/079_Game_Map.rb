@@ -687,6 +687,7 @@ class Game_Map
   def setup_starting_map_event
     event = @events.values.find {|event| event.starting }
     event.clear_starting_flag if event
+    puts "Setup Starting event: #{event.id}"
     @interpreter.setup(event.list, event.id) if event
     event
   end

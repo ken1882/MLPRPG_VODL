@@ -38,6 +38,26 @@ class Game_Actor < Game_Battler
     end
     return items
   end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Processing Performed When Player Takes 1 Step
+  #--------------------------------------------------------------------------
+  def on_player_walk
+    #@result.clear
+    check_floor_effect
+    if $game_player.normal_walk?
+      #turn_end_on_map
+      states.each {|state| update_state_steps(state) }
+      show_added_states
+      show_removed_states
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * End of Turn Processing on Map Screen
+  #--------------------------------------------------------------------------
+  def turn_end_on_map
+    on_turn_end
+    perform_map_damage_effect if @result.hp_damage > 0
+  end
   #---------------------------------------------------------------------------
   # * Method Missing
   # ----------------------------------------------------------------------   

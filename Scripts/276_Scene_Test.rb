@@ -1,9 +1,11 @@
+# tag: test
 class Scene_Test < Scene_Base
   def post_start
     super
     create_background
     create_layer
     create_all_window
+    @se_timer = 0
   end
   
   def create_background
@@ -25,6 +27,9 @@ class Scene_Test < Scene_Base
       @window_input = Window_Input.new(Graphics.center_width(480), Graphics.center_height(28), 480, autoscroll: true)
     end
     process_input
+    #Sound.low_hp if @se_timer == 0
+    @se_timer += 1
+    @se_timer = 0 if @se_timer >= 65
   end
   
   def process_input

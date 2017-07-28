@@ -423,10 +423,17 @@ class Game_Character < Game_CharacterBase
     @move_type = @previous_move_type
   end
   #--------------------------------------------------------------------------
+  def trigger_movement_key?
+    return false unless self.is_a?(Game_Player)
+    return Input.press?(:DOWN) || Input.press?(:kS) || Input.press?(:LEFT)  || Input.press?(:kA) ||
+           Input.press?(:UP)   || Input.press?(:kW) || Input.press?(:RIGHT) || Input.press?(:kD)
+  end
+  #--------------------------------------------------------------------------
   # * Process pathfinding movement
   #--------------------------------------------------------------------------
   # tag: movement
   def process_pathfinding_movement
+    return clear_pathfinding_moves if trigger_movement_key?
     return if moving?
     return unless @pathfinding_moves.size > 0 && @move_poll.empty?
     @move_poll << @pathfinding_moves.shift

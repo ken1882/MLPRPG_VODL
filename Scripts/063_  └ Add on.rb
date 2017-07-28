@@ -128,7 +128,7 @@ class Game_BattlerBase
   # * Check When Skill/Item Can Be Used
   #--------------------------------------------------------------------------
   def occasion_ok?(item)
-    $game_party.in_battle ? item.battle_ok? : item.menu_ok?
+    SceneManager.scene_is?(Scene_Map) ? item.battle_ok? : item.menu_ok?
   end
   #--------------------------------------------------------------------------   
   def popup_hp_change(value)

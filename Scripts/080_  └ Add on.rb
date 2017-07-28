@@ -9,6 +9,7 @@ class Game_Map
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_reader   :map
+  attr_accessor :timer
   attr_accessor :projectiles, :enemies
   #--------------------------------------------------------------------------
   # * Object Initialization
@@ -17,6 +18,7 @@ class Game_Map
   def initialize
     @projectiles = []
     @enemies = []
+    @timer   = 0
     initialize_opt
   end
   #--------------------------------------------------------------------------
@@ -117,6 +119,34 @@ class Game_Map
     setup_battlers
     refresh_map_dnd
     debug_print "Map Refreshed"
+  end
+  #--------------------------------------------------------------------------
+  # * Frame Update
+  #     main:  Interpreter update flag
+  #--------------------------------------------------------------------------
+  # tag: timeflow
+  alias update_gmap_timer update
+  def update(main = false)
+    update_timer
+    update_gmap_timer(main)
+  end
+  #--------------------------------------------------------------------------
+  # * Update timer 
+  #--------------------------------------------------------------------------
+  def update_timer
+    @timer += 1
+    process_battler_regenerate if @timer % DND::BattlerSetting::RegenerateTime == 0
+    process_timecycle_end      if @timer >= PONY::TimeCycle
+  end
+  #--------------------------------------------------------------------------
+  def process_battler_regenerate
+    BattleManager.regenerate_all
+  end
+  #--------------------------------------------------------------------------
+  def process_timecycle_end
+    @timer = 0
+    BattleManager.on_turn_end
+    BattleManager.clear_flag(:in_battle)
   end
   #--------------------------------------------------------------------------
   def terminate_event(event)

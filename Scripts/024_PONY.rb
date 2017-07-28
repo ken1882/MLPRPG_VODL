@@ -13,6 +13,8 @@ module PONY
   
   COMBAT_STOP_FLAG        = 98
   Enable_Loading          = true
+  
+  TimeCycle               = 60  # Frame
   #----------------------------------
   ICON_ID = {
     :bit        => 558,
