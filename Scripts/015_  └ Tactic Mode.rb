@@ -26,12 +26,14 @@ module SceneManager
     return unless scene_is?(Scene_Map)
     display_info 'Paused'
     @tactic_enabled = true
+    scene.start_tactic
   end
   #--------------------------------------------------------------------------
   def end_tactic
     return unless scene_is?(Scene_Map)
     display_info 'Unpaused'
     @tactic_enabled = false
+    scene.end_tactic
   end
   #--------------------------------------------------------------------------
   def tactic_enabled?

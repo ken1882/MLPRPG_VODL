@@ -59,6 +59,7 @@ class Sprite_Projectile < Sprite_Character
   #--------------------------------------------------------------------------
   def start_collide_animation
     if !animation? && @character.item.animation_id > 0
+      @character.transparent = true
       animation = $data_animations[@character.item.animation_id]
       start_animation(animation)
       @executed = true

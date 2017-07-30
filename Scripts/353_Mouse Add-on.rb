@@ -31,11 +31,13 @@ module Mouse
     return false unless SceneManager.scene_is?(Scene_Map)
     return true  if hover_window_log?
     return true  if collide_sprite?($game_party.skillbar.sprite)
+    return false
   end
   #------------------------------------------------------------------------------
   def hover_window_log?
     window = SceneManager.scene.window_log
-    return window ? collide_sprite?(window) && !window.active? : false
+    #return window ? collide_sprite?(window) && !window.active? : false
+    return window ? collide_sprite?(window) : false
   end
   #------------------------------------------------------------------------------
   def trigger_sprite?(sprite)

@@ -4,13 +4,14 @@
 #  This class performs the map screen processing.
 #==============================================================================
 class Scene_Map < Scene_Base
-  
+  #--------------------------------------------------------------------------
   attr_reader :window_log
   #--------------------------------------------------------------------------
   # * Start Processing
   #--------------------------------------------------------------------------
   alias start_opt start
   def start
+    @tactic_enabled = false
     start_opt
     @window_log = Window_InformationLog.new(SceneManager.resume_map_info)
   end

@@ -10,7 +10,7 @@ class Scene_Map < Scene_Base
   #--------------------------------------------------------------------------
   alias update_scmap_tactic update
   def update
-    if SceneManager.tactic_enabled?
+    if @tactic_enabled
       super
       return update_tactic
     end
@@ -23,6 +23,14 @@ class Scene_Map < Scene_Base
     update_tactic_cursor
     return update_scmap_tactic if Input.press?(:kALT)
     @spriteset.update_tactic
+  end
+  #--------------------------------------------------------------------------
+  def start_tactic
+    @tactic_enabled = true
+  end
+  #--------------------------------------------------------------------------
+  def end_tactic
+    @tactic_enabled = false
   end
   #--------------------------------------------------------------------------
   def update_tactic_cursor

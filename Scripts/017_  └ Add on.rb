@@ -158,7 +158,7 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.one_random_ally(user, item, sensor)
     allies = ally_battler(user)
-    return determine_best_position(allies, item) if item.for_all?
+    return determine_best_position(user, allies, item) if item.for_all?
     
     target = nil
     target_distance = 0xffff
@@ -177,7 +177,7 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.one_random_enemy(user, item, sensor)
     enemies = opponent_battler(user)
-    return determine_best_position(enemies, item) if item.for_all?
+    return determine_best_position(user, enemies, item) if item.for_all?
     
     target = nil
     target_distance = 0xffffff
@@ -194,8 +194,10 @@ module BattleManager
   #--------------------------------------------------------------------------
   # * Take median target as promary one
   #--------------------------------------------------------------------------
-  def self.determine_best_position(battlers, item)
-    return (battlers.sort!{|a,b| a.hash_pos <=> b.hash_pos}).at(battlers.size / 2)
+  def self.determine_best_position(user, battlers, item)
+    battlers.select!{|battler| battler.distance_to_character(user) < item.tool_distance}
+    target = battlers.sort!{|a,b| a.hash_pos <=> b.hash_pos}.at(battlers.size / 2)
+    return target.nil? ? user : target
   end
   #--------------------------------------------------------------------------
   # * Execute Action
@@ -221,11 +223,11 @@ module BattleManager
       candidates = []
     end
     pos = [action.target.x, action.target.y]
-    candidates.select!{|battler| battler.distance_to(*pos) < action.item.tool_scope}
+    candidates.select!{|battler| battler.distance_to(*pos) <= action.item.tool_scope}
     if action.item.for_one?
       action.subject = action.target.is_a?(POS) ? [candidates.first] : [action.target]
-    elsif action.item.tool_type == 1
-      action.subject = candidates.select {|battler| battler.distance_to_character(action.target) <= action.item.tool_distance}
+    elsif action.item.for_all?
+      action.subject = candidates
     end
     action.subject.compact.select!{|battler| !battler.dead?}
     names = []
