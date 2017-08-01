@@ -1,8 +1,7 @@
 #==============================================================================
 # ** Sprite_Hud
 #------------------------------------------------------------------------------
-#  Sprite for displaying the stat of party members, including hp, ep, states
-# and current action.
+#  Sprite for displaying the stat of party members, including hp, ep and action
 #==============================================================================
 # tag: 1 ( Sprite Hud
 class Sprite_Hud < Sprite_Base
@@ -19,7 +18,6 @@ class Sprite_Hud < Sprite_Base
   attr_reader   :party_index
   attr_reader   :hp
   attr_reader   :mp
-  attr_reader   :states
   attr_reader   :action
   attr_accessor :face_phase
   #--------------------------------------------------------------------------
@@ -33,7 +31,6 @@ class Sprite_Hud < Sprite_Base
     @mp            = 0
     @mhp           = 1
     @mmp           = 1
-    @states        = []
     @action        = nil
     @last_hash     = 0
     @last_face     = 0xff
@@ -85,7 +82,6 @@ class Sprite_Hud < Sprite_Base
   def update_values
     @hp     = @actor.hp
     @mp     = @actor.mp
-    @states = @actor.states.collect{|state| state.id}
     @action = @actor.action
     refresh if @actor_changed || @last_hash != hash_value
   end
@@ -115,7 +111,6 @@ class Sprite_Hud < Sprite_Base
     draw_name
     draw_hp
     draw_mp
-    draw_states
     draw_action
     draw_face
     @last_hash = hash_value
@@ -144,10 +139,6 @@ class Sprite_Hud < Sprite_Base
     @contents.bitmap.fill_rect(rect, DND::COLOR::EnergyPoint)
   end
   #--------------------------------------------------------------------------
-  def draw_states
-    
-  end
-  #--------------------------------------------------------------------------
   def draw_action
     return unless @action
     clear_action
@@ -159,7 +150,7 @@ class Sprite_Hud < Sprite_Base
     rect.x += 26
     @contents.bitmap.draw_text(rect, @action.item.name)
     @flag_action  = true
-  end # tag: last work
+  end
   #--------------------------------------------------------------------------
   def clear_action
     rect = StatRect.dup

@@ -51,5 +51,5 @@ module SceneManager
   def time_stopped?
     return @time_stopped
   end
-  
+  #--------------------------------------------------------------------------
 end

@@ -27,10 +27,12 @@ class Scene_Map < Scene_Base
   #--------------------------------------------------------------------------
   def start_tactic
     @tactic_enabled = true
-  end
+    @spriteset.show_units
+  end # last work: tactic mode processing
   #--------------------------------------------------------------------------
   def end_tactic
     @tactic_enabled = false
+    @spriteset.hide_units
   end
   #--------------------------------------------------------------------------
   def update_tactic_cursor

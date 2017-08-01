@@ -5,8 +5,16 @@ module Mouse
   #------------------------------------------------------------------------------
   module_function
   #------------------------------------------------------------------------------
+  def scroll_up?
+    return !@flag_scroll.nil? && @flag_scroll > 0
+  end
+  #------------------------------------------------------------------------------
+  def scroll_down?
+    return !@flag_scroll.nil? && @flag_scroll < 0
+  end
+  #------------------------------------------------------------------------------
   def collide_sprite?(sprite)
-    return false if sprite.disposed?
+    return false if !sprite.is_a?(Rect) && sprite.disposed?
     return area?(sprite.x, sprite.y, sprite.width, sprite.height) rescue false
   end
   #------------------------------------------------------------------------------

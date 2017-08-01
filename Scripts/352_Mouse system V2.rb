@@ -482,13 +482,14 @@ class Window_Selectable
     @scrolled ||= false
     return if $game_switches[Jet::MouseSystem::TURN_MOUSE_OFF_SWITCH]
     update_scroll if self.active && self.visible && Jet::MouseSystem::USE_WHEEL_DETECTION
-    update_mouse if self.active && self.visible && (Mouse.moved? or @scrolled)
+    update_mouse  if self.active && self.visible && (Mouse.moved? or @scrolled)
   end
   
   def update_scroll
     return if !scrollable?
     f = Mouse.scroll
     if !f.nil?
+      @flag_scroll = f[2]
       if f[2] < 0
         if contents.height > self.height && self.oy - contents.height < -self.height + 32
           self.top_row = self.top_row + 1
@@ -497,6 +498,8 @@ class Window_Selectable
         self.top_row = self.top_row - 1 if contents.height > self.height
       end
       @scrolled = true
+    else
+      @flag_scroll = nil
     end
   end
   

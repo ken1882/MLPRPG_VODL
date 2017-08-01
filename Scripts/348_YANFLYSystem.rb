@@ -107,9 +107,9 @@ module YEA
       :volume_bgm,   # Changes the BGM volume used.
       :volume_bgs,   # Changes the BGS volume used.
       :volume_sfx,   # Changes the SFX volume used.
-      :blank,
-      :autodash,     # Sets the player to automatically dash.
-     # :instantmsg,   # Sets message text to appear instantly.
+      #:blank,
+      #:autodash,     # Sets the player to automatically dash.
+      #:instantmsg,   # Sets message text to appear instantly.
       #:animations,   # Enables battle animations or disables them.
       :blank,
       :switch_1,     # auto save
@@ -224,7 +224,7 @@ module YEA
                       "More ponies join the battle require more system resource. \nBeware if your computer can handle this!"
                      ],
     # ------------------------------------------------------------------------- 
-      :variable_5 => [ 33, "Combat Difficulty", 30,31 , 1,4,
+      :variable_5 => [ 33, "Combat Difficulty", 30,31 , 0,3,
                       "Change enemy's HP/Stat value. Easy: 0.5x/0.8x;  Normal:1x/ \n" +
                       "1x;  Hard:1.5x/1.2x;  Expert:2x/1.5x."
                      ],
@@ -314,6 +314,7 @@ module YEA
     
   end # SYSTEM
 end # YEA
+#tag: system
 #==============================================================================
 # ▼ Editting anything past this point may potentially result in causing
 # computer damage, incontinence, explosion of user's head, coma, death, and/or
@@ -453,13 +454,21 @@ class Game_System
     init_volume_control if @volume.nil?
     return [[@volume[type], 0].max, 100].min
   end
-  
   #--------------------------------------------------------------------------
   # new method: volume_change
   #--------------------------------------------------------------------------
   def volume_change(type, increment)
     init_volume_control if @volume.nil?
     @volume[type] += increment
+    @volume[type] = [[@volume[type], 0].max, 100].min
+    
+    goal = sprintf("[%d,%d,%d]",@volume[:bgm],@volume[:bgs],@volume[:sfx])
+    FileManager.write_ini('Option', 'Volume', goal)
+  end
+  #--------------------------------------------------------------------------
+  def set_volume(type, value)
+    init_volume_control if @volume.nil?
+    @volume[type] = value
     @volume[type] = [[@volume[type], 0].max, 100].min
     
     goal = sprintf("[%d,%d,%d]",@volume[:bgm],@volume[:bgs],@volume[:sfx])
@@ -583,6 +592,7 @@ class Window_SystemOptions < Window_Command
     @help_window = help_window
     #tag: modified
     super(0, @help_window.height)
+    @scroll_enable = true
     create_overlay_window
     refresh
   end
@@ -609,7 +619,6 @@ class Window_SystemOptions < Window_Command
     text = "" if text.nil?
     @help_window.set_text(text)
   end
-  
   #--------------------------------------------------------------------------
   # ok_enabled?
   #--------------------------------------------------------------------------
@@ -617,12 +626,11 @@ class Window_SystemOptions < Window_Command
     return true if [:to_title, :shutdown].include?(current_symbol)
     return false
   end
-  
+  #--------------------------------------------------------------------------
   def create_overlay_window
     info = "  Unsaved change will be lost, continue?"
     @overlay_window = Window_Confirm.new(160, 180, info)
   end
-  
   #--------------------------------------------------------------------------
   # * Call OK Handler
   #--------------------------------------------------------------------------
@@ -679,13 +687,26 @@ class Window_SystemOptions < Window_Command
     name = YEA::SYSTEM::CUSTOM_VARIABLES[command][1]
     add_command(name, :custom_variable, true, command)
     @help_descriptions[command] = YEA::SYSTEM::CUSTOM_VARIABLES[command][6]
-    
     #precent overflow
-    
   end
-  
   #--------------------------------------------------------------------------
-  # draw_item
+  # * Get bar rect of value stuff
+  #--------------------------------------------------------------------------
+  def get_value_rect
+    rect = item_rect(index)
+    dx = contents.width / 2
+    return Rect.new(dx, rect.y + 12, contents.width - dx - 48, rect.height)
+  end
+  #--------------------------------------------------------------------------
+  def calc_mouseclick_value(value_rect, minn, maxn)
+    rect = value_rect.dup; rect.width += 24
+    return unless Mouse.collide_sprite?(rect)
+    delta   = maxn - minn
+    percent = ((Mouse.pos[0] - value_rect.x).to_f / value_rect.width)
+    return (delta * percent).round
+  end
+  #--------------------------------------------------------------------------
+  # * draw_item
   #--------------------------------------------------------------------------
   def draw_item(index)
     reset_font_settings
@@ -706,7 +727,6 @@ class Window_SystemOptions < Window_Command
       draw_custom_variable(rect, index, @list[index][:ext])
     end
   end
-  
   #--------------------------------------------------------------------------
   # draw_window_tone
   #--------------------------------------------------------------------------
@@ -835,7 +855,7 @@ class Window_SystemOptions < Window_Command
     
     type = ""
     case id
-    when 17
+    when 17 # useless for now,  A* heuristic algorithm
       case value
       when 0
         type = "Fast"
@@ -847,18 +867,16 @@ class Window_SystemOptions < Window_Command
         type = "Maze"
       end
     when 33
-      case value
-        when 1
+      case value # Combat difficulty
+        when 0
           type = "Novice"
-        when 2
+        when 1
           type = "Normal"
-        when 3
+        when 2
           type = "Advanced"
-        when 4
+        when 3
           type = "Expert"
       end
-    when 34
-      $game_system.battle_speed = value
     end
     
     show_text = type.size > 1 ? type : value
@@ -867,7 +885,43 @@ class Window_SystemOptions < Window_Command
     $game_variables[id] = minimum if value < minimum
     $game_variables[id] = maximum if value > maximum
   end
-  
+  #--------------------------------------------------------------------------
+  # * Cursor Movement Processing
+  #--------------------------------------------------------------------------
+  def process_cursor_move
+    super
+    process_mouse_click if Mouse.click?(1)
+    process_mouse_press if Mouse.press?(1)
+  end
+  #--------------------------------------------------------------------------
+  def process_mouse_click
+    case current_symbol
+    when :custom_switch
+      change_custom_switch(:xor)
+    end
+  end
+  #--------------------------------------------------------------------------
+  def process_mouse_press
+    rect = get_value_rect
+    rect.y += self.y
+    case current_symbol
+    when :volume_bgm
+      value = calc_mouseclick_value(rect, 0, 100)
+      set_volume(value) if value
+    when :volume_bgs
+      value = calc_mouseclick_value(rect, 0, 100)
+      set_volume(value) if value
+    when :volume_sfx
+      value = calc_mouseclick_value(rect, 0, 100)
+      set_volume(value) if value
+    when :custom_variable
+      ext = current_ext
+      minn = YEA::SYSTEM::CUSTOM_VARIABLES[ext][4]
+      maxn = YEA::SYSTEM::CUSTOM_VARIABLES[ext][5]
+      value = calc_mouseclick_value(rect, minn, maxn)
+      change_custom_variables(nil, value) if value
+    end
+  end
   #--------------------------------------------------------------------------
   # cursor_right
   #--------------------------------------------------------------------------
@@ -875,7 +929,6 @@ class Window_SystemOptions < Window_Command
     cursor_change(:right)
     super(wrap)
   end
-  
   #--------------------------------------------------------------------------
   # cursor_left
   #--------------------------------------------------------------------------
@@ -883,7 +936,6 @@ class Window_SystemOptions < Window_Command
     cursor_change(:left)
     super(wrap)
   end
-  
   #--------------------------------------------------------------------------
   # cursor_change
   #--------------------------------------------------------------------------
@@ -901,7 +953,6 @@ class Window_SystemOptions < Window_Command
       change_custom_variables(direction)
     end
   end
-  
   #--------------------------------------------------------------------------
   # change_window_tone
   #--------------------------------------------------------------------------
@@ -918,7 +969,6 @@ class Window_SystemOptions < Window_Command
     $game_system.window_tone = tone
     draw_item(index)
   end
-  
   #--------------------------------------------------------------------------
   # change_window_tone
   #--------------------------------------------------------------------------
@@ -938,9 +988,22 @@ class Window_SystemOptions < Window_Command
     end
     draw_item(index)
   end
-  
   #--------------------------------------------------------------------------
-  # change_toggle
+  def set_volume(value)
+    case current_symbol
+    when :volume_bgm
+      $game_system.set_volume(:bgm, value)
+      RPG::BGM::last.play
+    when :volume_bgs
+      $game_system.set_volume(:bgs, value)
+      RPG::BGS::last.play
+    when :volume_sfx
+      $game_system.set_volume(:sfx, value)
+    end
+    draw_item(index)
+  end
+  #--------------------------------------------------------------------------
+  # * change_toggle
   #--------------------------------------------------------------------------
   def change_toggle(direction)
     value = direction == :left ? false : true
@@ -962,13 +1025,11 @@ class Window_SystemOptions < Window_Command
   # check if allow to change_custom_switch
   #--------------------------------------------------------------------------
   def allow_to_change_switch?(id)
-    if id == 21
-      if $light_effects_forced
-        msgbox("The Light Effects is forced to turn on currently,\n" + "so you can't disable it right now.")
-        return false
-      end
+    case id
+    when 21
+      info = "The Light Effects is forced to turn on currently,\n" + "so you can't disable it right now."
+      return !$light_effects_forced
     end
-    
     return true
   end
   #--------------------------------------------------------------------------
@@ -983,7 +1044,11 @@ class Window_SystemOptions < Window_Command
     
     return unless allow_to_change_switch?(current_id)
     
-    $game_switches[YEA::SYSTEM::CUSTOM_SWITCHES[ext][0]] = value
+    if direction == :xor
+      $game_switches[YEA::SYSTEM::CUSTOM_SWITCHES[ext][0]] ^= 1
+    else
+      $game_switches[YEA::SYSTEM::CUSTOM_SWITCHES[ext][0]] = value
+    end
     
     $battle_party_status_UI = $game_switches[14]
     $light_effects          = $game_switches[21]
@@ -1012,15 +1077,17 @@ class Window_SystemOptions < Window_Command
   #--------------------------------------------------------------------------
   # change_custom_variables
   #--------------------------------------------------------------------------
-  def change_custom_variables(direction)
-    Sound.play_cursor
+  def change_custom_variables(direction = nil, d_value = nil)
     value = direction == :left ? -1 : 1
     value *= 10 if Input.press?(:A)
+    directly_set = !direction && d_value
+    value = d_value   if directly_set
+    Sound.play_cursor if !directly_set
     ext = current_ext
     var = YEA::SYSTEM::CUSTOM_VARIABLES[ext][0]
     minimum = YEA::SYSTEM::CUSTOM_VARIABLES[ext][4]
     maximum = YEA::SYSTEM::CUSTOM_VARIABLES[ext][5]
-    $game_variables[var] += value
+    $game_variables[var] = directly_set ? value : $game_variables[var] + value
     $game_variables[var] = [[$game_variables[var], minimum].max, maximum].min
     draw_item(index)
   end
