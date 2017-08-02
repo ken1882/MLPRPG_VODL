@@ -44,12 +44,12 @@ class Game_Character
   def command_gathering?;   return  @movement_command == 2; end
   def command_holding?  ;   return  @movement_command == 3; end
   #----------------------------------------------------------------------------
-  # *) alias: update follower movement
+  # *) update follower movement
   #----------------------------------------------------------------------------
   def update_follower_movement
     process_pathfinding_movement
     return if command_holding? || command_gathering?
-    update_follower_movement_dnd
+    # tag: unfinished
   end
   #----------------------------------------------------------------------------
 end

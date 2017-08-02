@@ -22,9 +22,8 @@ class Game_Player < Game_Character
     update_dndAI
     process_party_movement
     return unless $game_party.leader.state?(2)
-    return if $game_party.leader.equips[0].nil?
-    self.update_followers_attack
-    self.update_follower_movement
+    update_followers_attack
+    update_follower_movement
   end
   #-------------------------------------------------------------------------
   def process_party_movement

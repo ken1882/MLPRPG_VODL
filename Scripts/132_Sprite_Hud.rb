@@ -38,20 +38,22 @@ class Sprite_Hud < Sprite_Base
     @se_timer      = 0
     @action_timer  = 0
     @actor_changed = true
+    @viewport      = viewport
     self.x         = 4
     self.y         = 4 + HudSize.at(1) * party_index
     self.z         = viewport ? viewport.z : 1000
-    create_layout(viewport)
+    create_layout
   end
   #--------------------------------------------------------------------------
   # * Load layout
   #--------------------------------------------------------------------------
-  def create_layout(viewport)
+  def create_layout
+    return if @actor.nil?
     filename         = @party_index == 0 ? LeadLayoutFilename : LayoutFilename
     self.bitmap      = Cache.UI(filename)
-    @contents        = Sprite.new(viewport)
+    @contents        = Sprite.new(@viewport)
     @contents.bitmap = Bitmap.new(*ContentBitmapSize)
-    @face_sprite     = Sprite.new(viewport)
+    @face_sprite     = Sprite.new(@viewport)
     @face_sprite.bitmap = Bitmap.new(FaceHudRect.width, FaceHudRect.height)
     @contents.x, @contents.y       = self.x, self.y
     @face_sprite.x, @face_sprite.y = self.x, self.y
@@ -63,18 +65,28 @@ class Sprite_Hud < Sprite_Base
   #--------------------------------------------------------------------------
   def update
     super
-    #self.visible = $game_switches[16] rescue true
     dectect_actor_change
+    update_visibility
+    return if actor.nil?
     update_values
     update_timer
   end
   #--------------------------------------------------------------------------
   def dectect_actor_change
-    return if !@actor_changed && $game_party.members[@party_index] == @actor
+    actor = $game_party.members[@party_index]
+    return if !@actor_changed && actor == @actor
+    return if actor.nil?
+    @actor = actor
+    create_layout if !@face_sprite
     actor = $game_party.members[@party_index]
     @mhp, @mmp = actor.mhp, actor.mmp
     @actor = actor
     @actor_changed = true
+  end
+  #--------------------------------------------------------------------------
+  def update_visibility
+    return hide if @actor.nil? || ($game_switches[16] && visible?)
+    return show if !$game_switches[16] && !visible?
   end
   #--------------------------------------------------------------------------
   # * Update value and bars
@@ -186,20 +198,20 @@ class Sprite_Hud < Sprite_Base
   # * Free
   #--------------------------------------------------------------------------
   def dispose
-    @face_sprite.dispose
-    @contents.dispose
+    @face_sprite.dispose if @face_sprite
+    @contents.dispose    if @contents
     super
   end
    #--------------------------------------------------------------------------
   def hide
-    @face_sprite.hide
-    @contents.hide
+    @face_sprite.hide if @face_sprite
+    @contents.hide    if @contents
     super
   end
   #--------------------------------------------------------------------------
   def show
-    @face_sprite.show
-    @contents.show
+    @face_sprite.show if @face_sprite
+    @contents.show    if @contents
     super
   end
   #--------------------------------------------------------------------------

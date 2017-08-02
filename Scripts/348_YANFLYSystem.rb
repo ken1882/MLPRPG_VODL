@@ -814,7 +814,6 @@ class Window_SystemOptions < Window_Command
   def draw_custom_switch(rect, index, ext)
     if YEA::SYSTEM::CUSTOM_SWITCHES[ext][0] == 14
       $game_switches[14] = $battle_party_status_UI
-      #puts "#{$game_switches[YEA::SYSTEM::CUSTOM_SWITCHES[ext][0]]} , #{$battle_party_status_UI}"
     elsif YEA::SYSTEM::CUSTOM_SWITCHES[ext][0] == 21
       $game_switches[21] = $light_effects || $light_effects_forced
     end

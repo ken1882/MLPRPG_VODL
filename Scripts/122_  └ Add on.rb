@@ -19,7 +19,7 @@ class Spriteset_Map
   def initialize
     @projectiles = []
     @popups      = []
-    create_hud
+    create_huds
     init_spsetmap_dnd
   end
   #--------------------------------------------------------------------------
@@ -46,11 +46,11 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   # *) Create heads-up display on map
   #--------------------------------------------------------------------------
-  def create_hud
-    debug_print "Craete Huds"
+  def create_huds
     $game_party.skillbar.create_layout(@viewport2)
     @hud_sprite = []
-    $game_party.members.each_with_index do |member, index|
+    4.times do |index|
+      member = $game_party.members[index]
       @hud_sprite << Sprite_Hud.new(member, index, @viewport2)
     end
   end
@@ -206,7 +206,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def dispose_huds
     $game_party.skillbar.dispose_layout
-    @hud_sprite.each {|sprite| sprite.dispose}
+    @hud_sprite.each {|sprite| sprite.dispose if sprite && !sprite.disposed?}
     @hud_sprite.clear
   end
   #--------------------------------------------------------------------------

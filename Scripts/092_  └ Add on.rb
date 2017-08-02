@@ -17,12 +17,25 @@ class Game_Follower < Game_Character
   def initialize(member_index, preceding_character)
     @phase = DND::BattlerSetting::PhaseIdle
     init_gafo_opt(member_index, preceding_character)
+    @through = false
+  end
+  #--------------------------------------------------------------------------
+  # * Frame Update
+  #--------------------------------------------------------------------------
+  alias update_dnd update
+  def update
+    update_dnd
+    update_movement
   end
   #--------------------------------------------------------------------------
   # * Combat mode on
   #--------------------------------------------------------------------------
   def process_combat_phase
     
+  end
+  #---------------------------------------------------------------------------
+  def update_movement
+    process_pathfinding_movement
   end
   #---------------------------------------------------------------------------
   # * Method Missing

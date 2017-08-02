@@ -261,6 +261,7 @@ class Game_CharacterBase
       set_direction(d)
       front_pixel_touch?(@px + Tile_Range[d][0],@py + Tile_Range[d][1])
     end
+    $game_player.followers.move if self.is_a?(Game_Player)
   end
   #-------------------------------------------------------------------------------
   # * New: move diagonal pixel
@@ -297,6 +298,7 @@ class Game_CharacterBase
       set_direction(h)
       front_pixel_touch?(@px + Tile_Range[h][0],@py + Tile_Range[h][1])
     end
+    $game_player.followers.move if self.is_a?(Game_Player)
   end
   #-------------------------------------------------------------------------------
   # * Overwrite: on bush tile?

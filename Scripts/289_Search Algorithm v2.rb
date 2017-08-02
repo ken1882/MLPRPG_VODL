@@ -274,19 +274,8 @@ class Game_Character < Game_CharacterBase
   # * next step is blocked by events?
   #--------------------------------------------------------------------------
   def path_blocked_by_event?(next_x,next_y)
-    
-    for event_id in 1...$game_map.events.size
-      next if $game_map.events[event_id].nil?
-      
-      if !$game_map.events[event_id].through
-        ob_x = $game_map.events[event_id].x
-        ob_y = $game_map.events[event_id].y
-        
-        return true if adjacent?(ob_x,ob_y,next_x,next_y)
-        
-      end #if event is not through 
-    end # for event_id
-    return false
+    px, py = next_x * 4, next_y * 4
+    return collision?(px, py)
   end # def path_blocked
   
   #--------------------------------------------------------------------------
@@ -302,10 +291,12 @@ class Game_Character < Game_CharacterBase
   def move_to_position(goalx, goaly, args = {})
     ti = Time.now
     depth      = args[:depth].nil?      ? 100   : args[:depth]
-    tool_range = args[:tool_range].nil? ? 1     : args[:tool_range]
+    tool_range = args[:tool_range].nil? ? 0     : args[:tool_range]
     draw_arrow = args[:draw_arrow].nil? ? false : args[:draw_arrow]
     debug      = args[:debug].nil?      ? false : args[:debug]
-    
+    debug = true
+    puts "Current Address: #{@x} #{@y}" if debug
+    puts "Goal: #{goalx} #{goaly}"      if debug
     $game_map.clean_pathfinding_arrow if draw_arrow
     $pathfinding_debug = debug
     @pathfinding_moves.clear
@@ -319,8 +310,6 @@ class Game_Character < Game_CharacterBase
     ori_goaly = goaly
     goalx = fixed_address[0]
     goaly = fixed_address[1]
-    offset_x = fx - @x + (ori_goalx - goalx)
-    offset_y = fy - @y + (ori_goaly - goaly)
     
     tox   = [0,-1,1,0]
     toy   = [1,0,0,-1]
@@ -330,7 +319,8 @@ class Game_Character < Game_CharacterBase
     path_found = false
     best_path  = path_queue.dup
     bestx, besty = fx, fy
-    
+    puts "Current pos fixed: #{fx} #{fy}" if debug
+    puts "Goal Fixed: #{goalx} #{goaly}"  if debug
     while !path_found && !path_queue.empty? && cnt <= depth
       
       cnt += 1
@@ -340,6 +330,7 @@ class Game_Character < Game_CharacterBase
       path_queue.distance = [path_queue.distance, Math.hypot(goalx - curx, goaly - cury)].min
       if curx == goalx && cury == goaly
         path_found = true
+        puts "Path found: #{curx} #{cury}"
         break
       elsif path_queue.distance < best_path.distance
         best_path = path_queue.dup
@@ -367,12 +358,12 @@ class Game_Character < Game_CharacterBase
           
           if adjacent?(next_x, next_y, goalx, goaly)
             path_found = true
-          elsif (((next_x - goalx).abs + (next_y - goaly).abs ) <= tool_range ||
-                  adjacent?(goalx, goaly - tool_range + 0.5, next_x, next_y)) && 
-                  path_clear?(curx, cury, goalx, goaly)
+            puts "Path found by adjacent: #{next_x} #{next_y}"
+          elsif ((next_x - goalx).abs + (next_y - goaly).abs ) <= tool_range && path_clear?(curx, cury, goalx, goaly)
             goalx = next_x
             goaly = next_y
             path_found = true
+            puts "Path found by range: #{next_x} #{next_y}"
           end
           
           source_loc  = Map_Address.new(fx,fy)
@@ -395,20 +386,28 @@ class Game_Character < Game_CharacterBase
     end # if !path found
     
     debug_print "Pathfinding time takes: #{Time.now.to_f - ti.to_f}"
-    if offset_x != 0
-      t = (offset_x / 0.125).abs.to_i
-      t.times { @pathfinding_moves << [offset_x < 0 ? 4 : 6 ,true] }
-    end
-    if offset_y != 0
-      t = (offset_y / 0.125).abs.to_i
-      t.times { @pathfinding_moves << [offset_y < 0 ? 8 : 2 ,true] }
-    end
+    push_movement_offset(fx, fy, @x, @y)
     @pathfinding_moves = @pathfinding_moves + best_path.get_walk_path(goalx,goaly)
+    push_movement_offset(ori_goalx, ori_goaly, goalx, goaly)
     debug_print "Pathfinding moves: #{@pathfinding_moves.size}"
     return path_found
   end # def move_to_position
-  
-  
+  #--------------------------------------------------------------------------
+  def push_movement_offset(fx, fy, tx, ty)
+    offset_x, offset_y = fx - tx, fy - ty
+    if offset_x != 0
+      t = (offset_x / 0.25).abs.to_i
+      dir = offset_x < 0 ? 4 : 6
+      puts "Offset dir X: #{dir}, times: #{t}"
+      t.times { @pathfinding_moves << [dir ,true] }
+    end
+    if offset_y != 0
+      t = (offset_y / 0.25).abs.to_i
+      dir = offset_y < 0 ? 8 : 2
+      puts "Offset dir Y: #{dir}, times: #{t}"
+      t.times { @pathfinding_moves << [dir ,true] }
+    end
+  end
   #--------------------------------------------------------------------------
   # * Overwrite Method: Process Move Route End
   #--------------------------------------------------------------------------
