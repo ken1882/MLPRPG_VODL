@@ -10,6 +10,7 @@ class Game_Follower < Game_Character
   #--------------------------------------------------------------------------
   # tag: follower
   Followers_Distance        = 16
+  Follwers_Margin           = 4
   #--------------------------------------------------------------------------
   attr_accessor :swap_with_leader
   #--------------------------------------------------------------------------
@@ -48,30 +49,43 @@ class Game_Follower < Game_Character
   alias chase_preceding_character_dnd chase_preceding_character
   def chase_preceding_character
     return if !movable?
-    return if !normal_walk?
-    return process_pathfinding_movement if @pathfinding_moves.size > 0
+    if !normal_walk?
+      @force_chase = false
+      return
+    end
+    #return process_pathfinding_movement if @pathfinding_moves.size > 0
     return process_move_route if !@move_route.nil?
     return if moving? && !@force_chase
     @move_poll.clear if !@move_poll.empty? && distance_preceding_leader < 0.8
     dist = distance_preceding_character
     return chase_preceding_pathfinding if dist > 1.5
     return chase_preceding_normal
-  end # last work: fix strange follower moves
+  end
   #--------------------------------------------------------------------------
   def chase_preceding_pathfinding
-    clear_pathfinding_moves
+    @force_chase = true
     reachable = move_to_position($game_player.x, $game_player.y)
     moveto($game_player.x,$game_player.y) if !reachable
   end
   #--------------------------------------------------------------------------
   def chase_preceding_normal
+    @force_chase = false
     dist = Followers_Distance / 32.0
+    mrgn = Follwers_Margin / 32.0
     goal = command_gathering? ? $game_player : @preceding_character
     sx = distance_x_from(goal.x)
     sy = distance_y_from(goal.y)
-    
-    if sx != 0 && sy != 0
-      move_dpixel(sx > 0 ? 4 : 6, sy > 0 ? 8 : 2)
+    sd = Math.hypot(sx, sy)
+    #if sx != 0 && sy != 0
+    #  move_dpixel(sx > 0 ? 4 : 6, sy > 0 ? 8 : 2)
+    if(sd > dist && sx.abs > mrgn && sy.abs > mrgn)
+      dir = (sx > 0 ? -1 : 1) + (sy > 0 ? 8 : 2)
+      case dir
+      when 1; move_dpixel(4,2, true);
+      when 3; move_dpixel(6,2, true);
+      when 7; move_dpixel(4,8, true);
+      when 9; move_dpixel(6,8, true);
+      end
     elsif sx.abs > dist && sx.abs > sy.abs
       move_pixel(sx > 0 ? 4 : 6, true)
     elsif sy.abs > dist && sx.abs < sy.abs

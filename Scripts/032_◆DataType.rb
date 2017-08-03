@@ -116,9 +116,11 @@ class Mutex
   def synchronize
     self.lock
     begin
+      puts "[Thread]: Yield Block"
       yield
     ensure
       self.unlock rescue nil
+      puts "[Thread]: Block completed"
     end
   end
 end

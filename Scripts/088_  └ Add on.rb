@@ -26,6 +26,7 @@ class Game_Character < Game_CharacterBase
   def update
     super
     update_zoom
+    @pathfinding_timer -= 1 if @pathfinding_timer > 0
   end
   #----------------------------------------------------------------------------
   # *) Update Zooming

@@ -207,13 +207,13 @@ class Game_CharacterBase
   #-------------------------------------------------------------------------------
   # * New: Pixel passable?
   #-------------------------------------------------------------------------------
-  def pixel_passable?(px,py,d)
+  def pixel_passable?(px,py,d, through_character = false)
     nx = px + Tile_Range[d][0]
     ny = py + Tile_Range[d][1]
     return false unless $game_map.pixel_valid?(nx,ny)
     return true if @through || debug_through?
     return false if $game_map.pixel_table[nx,ny,0] == 0
-    return false if collision?(nx,ny)
+    return false if !through_character && collision?(nx,ny)
     return true
   end
   #-------------------------------------------------------------------------------
@@ -232,6 +232,11 @@ class Game_CharacterBase
     return false
   end
   #-------------------------------------------------------------------------------
+  def collision_character?(char)
+    return false if char == self
+    return (char.px - px) <= char.cx && (char.py - py).abs <= char.cy
+  end
+  #-------------------------------------------------------------------------------
   # * Overwrite: move_straight
   #-------------------------------------------------------------------------------
   def move_straight(d,turn_ok = true)
@@ -246,8 +251,8 @@ class Game_CharacterBase
   #-------------------------------------------------------------------------------
   # * New: move_pixel     # tag: movement
   #-------------------------------------------------------------------------------
-  def move_pixel(d,t)
-    @move_succeed = pixel_passable?(@px,@py,d)
+  def move_pixel(d,t, through_character = false)
+    @move_succeed = pixel_passable?(@px,@py,d,through_character)
     if @move_succeed
       set_direction(d)
       @px += Tile_Range[d][0]
@@ -266,9 +271,9 @@ class Game_CharacterBase
   #-------------------------------------------------------------------------------
   # * New: move diagonal pixel
   #-------------------------------------------------------------------------------
-  def move_dpixel(h,v)
+  def move_dpixel(h,v, through_character = false)
     @move_succeed = false
-    if pixel_passable?(@px,@py,v)
+    if pixel_passable?(@px,@py,v, through_character)
       @move_succeed = true
       @real_x = @x
       @real_y = @y
@@ -282,7 +287,7 @@ class Game_CharacterBase
       set_direction(v)
       front_pixel_touch?(@px + Tile_Range[v][0],@py + Tile_Range[v][1])
     end
-    if pixel_passable?(@px,@py,h)
+    if pixel_passable?(@px,@py,h, through_character)
       unless @move_succeed 
         @real_x = @x
         @real_y = @y
@@ -483,13 +488,13 @@ class Game_Player < Game_Character
   #-------------------------------------------------------------------------------
   # * Pixel move passable?
   #-------------------------------------------------------------------------------
-  def pixel_passable?(px,py,d)
+  def pixel_passable?(px,py,d, through_character = false)
     nx = px + Tile_Range[d][0]
     ny = py + Tile_Range[d][1]
     return false unless $game_map.pixel_valid?(nx,ny)
     return true if @through || debug_through?
     return false if $game_map.pixel_table[nx,ny,0] == 0
-    return false if collision?(nx,ny)
+    return false if !through_character && collision?(nx,ny)
     return true
   end
   #-------------------------------------------------------------------------------

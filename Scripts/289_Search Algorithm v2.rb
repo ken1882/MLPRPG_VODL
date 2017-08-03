@@ -244,6 +244,7 @@ class Game_Character < Game_CharacterBase
     @move_poll         = []
     @pathfinding_goal  = nil
     @force_pathfinding = true
+    @pathfinding_timer = 0
   end
   #--------------------------------------------------------------------------
   # * adjacent posititon? (for free-movement script)
@@ -269,6 +270,7 @@ class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   def clear_pathfinding_moves
     @pathfinding_moves.clear
+    @move_poll.clear
   end
   #--------------------------------------------------------------------------
   # * next step is blocked by events?
@@ -282,25 +284,29 @@ class Game_Character < Game_CharacterBase
   # * next step is blocked by events?
   #--------------------------------------------------------------------------
   def path_blocked_by_player?(next_x,next_y)
-    return adjacent?(next_x,next_y,$game_player.x,$game_player.y)
+    return collision_character?($game_player)
   end # def path_blocked_by_player
-  
   #--------------------------------------------------------------------------
   # * core function, move to assigned position
   #--------------------------------------------------------------------------
   def move_to_position(goalx, goaly, args = {})
+    return true unless @pathfinding_timer == 0 || args[:forced]
+    @pathfinding_timer = 60
+    clear_pathfinding_moves
+    
     ti = Time.now
-    depth      = args[:depth].nil?      ? 100   : args[:depth]
-    tool_range = args[:tool_range].nil? ? 0     : args[:tool_range]
-    draw_arrow = args[:draw_arrow].nil? ? false : args[:draw_arrow]
-    debug      = args[:debug].nil?      ? false : args[:debug]
-    debug = true
+    depth          = args[:depth].nil?          ? 100   : args[:depth]
+    tool_range     = args[:tool_range].nil?     ? 0     : args[:tool_range]
+    draw_arrow     = args[:draw_arrow].nil?     ? false : true
+    through_player = args[:through_player].nil? ? false : true
+    through_event  = args[:through_event].nil?  ? false : true
+    debug          = args[:debug].nil?          ? false : true
+    
+    puts SPLIT_LINE if debug
     puts "Current Address: #{@x} #{@y}" if debug
     puts "Goal: #{goalx} #{goaly}"      if debug
     $game_map.clean_pathfinding_arrow if draw_arrow
     $pathfinding_debug = debug
-    @pathfinding_moves.clear
-    @move_poll.clear
     @on_path_finding = true
     fixed_address = fix_address
     
@@ -330,7 +336,7 @@ class Game_Character < Game_CharacterBase
       path_queue.distance = [path_queue.distance, Math.hypot(goalx - curx, goaly - cury)].min
       if curx == goalx && cury == goaly
         path_found = true
-        puts "Path found: #{curx} #{cury}"
+        puts "Path found: #{curx} #{cury}" if debug
         break
       elsif path_queue.distance < best_path.distance
         best_path = path_queue.dup
@@ -350,20 +356,20 @@ class Game_Character < Game_CharacterBase
           !path_queue.visited?(next_x,next_y) && !$game_map.over_edge?(next_x,next_y)
           
           next if !passable?(curx, cury, dir[i])
-          next if path_blocked_by_event?(next_x,next_y) && !adjacent?(next_x, next_y, goalx, goaly)
+          next if !through_event && path_blocked_by_event?(next_x,next_y) && !adjacent?(next_x, next_y, goalx, goaly)
           
-          if (path_blocked_by_player?(next_x,next_y) && !@through)
+          if (!through_player && path_blocked_by_player?(next_x,next_y) && !@through)
             next unless adjacent?(goalx,goaly,$game_player.x,$game_player.y)
           end
           
           if adjacent?(next_x, next_y, goalx, goaly)
             path_found = true
-            puts "Path found by adjacent: #{next_x} #{next_y}"
+            puts "Path found by adjacent: #{next_x} #{next_y}" if debug
           elsif ((next_x - goalx).abs + (next_y - goaly).abs ) <= tool_range && path_clear?(curx, cury, goalx, goaly)
             goalx = next_x
             goaly = next_y
             path_found = true
-            puts "Path found by range: #{next_x} #{next_y}"
+            puts "Path found by range: #{next_x} #{next_y}" if debug
           end
           
           source_loc  = Map_Address.new(fx,fy)
@@ -382,29 +388,55 @@ class Game_Character < Game_CharacterBase
     
     if !path_found
       goalx, goaly = bestx, besty
-      debug_print "Destination x,y: #{goalx}, #{goaly}"
+      debug_print "Destination x,y: #{goalx}, #{goaly}" if debug
     end # if !path found
     
-    debug_print "Pathfinding time takes: #{Time.now.to_f - ti.to_f}"
-    push_movement_offset(fx, fy, @x, @y)
-    @pathfinding_moves = @pathfinding_moves + best_path.get_walk_path(goalx,goaly)
+    debug_print "Pathfinding time takes: #{Time.now.to_f - ti.to_f}" if debug
+    @pathfinding_moves = best_path.get_walk_path(goalx,goaly)
+    finalize_offset(fx, fy)
     push_movement_offset(ori_goalx, ori_goaly, goalx, goaly)
-    debug_print "Pathfinding moves: #{@pathfinding_moves.size}"
+    debug_print "Pathfinding moves: #{@pathfinding_moves.size}" if debug
+    interpret_debug_moves if debug
     return path_found
   end # def move_to_position
+  #--------------------------------------------------------------------------
+  def finalize_offset(fx,fy)
+    return if fx == @x && fy == @y
+    return if @pathfinding_moves.size < 4
+    next_step   = @pathfinding_moves.shift(4).at(0)
+    corrections = []
+    next_dir = next_step[0]
+    next_pos = POS.new(fx, fy)
+    case next_dir
+    when 2; next_pos.y += 1;
+    when 4; next_pos.x -= 1;
+    when 6; next_pos.x += 1;
+    when 8; next_pos.y -= 1;
+    end
+    delta_x = next_pos.x - @x; delta_y = next_pos.y - @y
+    puts "Next pos: #{next_pos.x} #{next_pos.y}" if $pathfinding_debug
+    puts "Offset delta: #{delta_x} #{delta_y}" if $pathfinding_debug
+    (delta_x * Pixel_Core::Pixel).abs.to_i.times do 
+      corrections << [delta_x > 0 ? 6 : 4 , next_step[1]]
+    end
+    (delta_y * Pixel_Core::Pixel).abs.to_i.times do 
+      corrections << [delta_y > 0 ? 2 : 8 , next_step[1]]
+    end
+    corrections.reverse.each{|step| @pathfinding_moves.unshift(step)}
+  end
   #--------------------------------------------------------------------------
   def push_movement_offset(fx, fy, tx, ty)
     offset_x, offset_y = fx - tx, fy - ty
     if offset_x != 0
       t = (offset_x / 0.25).abs.to_i
       dir = offset_x < 0 ? 4 : 6
-      puts "Offset dir X: #{dir}, times: #{t}"
+      puts "Offset dir X: #{dir}, times: #{t}" if $pathfinding_debug
       t.times { @pathfinding_moves << [dir ,true] }
     end
     if offset_y != 0
       t = (offset_y / 0.25).abs.to_i
       dir = offset_y < 0 ? 8 : 2
-      puts "Offset dir Y: #{dir}, times: #{t}"
+      puts "Offset dir Y: #{dir}, times: #{t}" if $pathfinding_debug
       t.times { @pathfinding_moves << [dir ,true] }
     end
   end
@@ -437,15 +469,40 @@ class Game_Character < Game_CharacterBase
     return unless @pathfinding_moves.size > 0 && @move_poll.empty?
     @move_poll << @pathfinding_moves.shift
     @followers.move if self.is_a?(Game_Player)
-    interpret_move
+    interpret_move(true)
   end
   #-------------------------------------------------------------------------
   # * Execute queued movement
   #-------------------------------------------------------------------------
-  def interpret_move
+  def interpret_move(through_character = false)
     return if @move_poll.empty?
     route = @move_poll.shift
-    move_pixel(route[0], route[1])
+    move_pixel(route[0], route[1], through_character)
+  end
+  #-------------------------------------------------------------------------
+  def interpret_debug_moves
+    pos = POS.new(@x, @y)
+    @pathfinding_moves.each do |step|
+      dir = step[0]
+      case dir
+      when 2
+        debug_info = "↓"
+        pos.y += 1.0 / Pixel_Core::Pixel
+      when 4
+        debug_info = "←"
+        pos.x -= 1.0 / Pixel_Core::Pixel
+      when 6
+        debug_info = "→"
+        pos.x += 1.0 / Pixel_Core::Pixel
+      when 8
+        debug_info = "↑"
+        pos.y -= 1.0 / Pixel_Core::Pixel
+      else
+        debug_info = "O"
+      end #case
+      debug_info += " (#{pos.x},#{pos.y})"
+      puts debug_info
+    end
   end
   
 end # class Game_Character
