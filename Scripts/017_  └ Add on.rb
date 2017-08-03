@@ -194,9 +194,16 @@ module BattleManager
   #--------------------------------------------------------------------------
   # * Take median target as promary one
   #--------------------------------------------------------------------------
+  #tag: 1
   def self.determine_best_position(user, battlers, item)
     battlers.select!{|battler| battler.distance_to_character(user) < item.tool_distance}
-    target = battlers.sort!{|a,b| a.hash_pos <=> b.hash_pos}.at(battlers.size / 2)
+    so1 = battlers.sort!{|a,b| (a.x + a.y) <=> (b.x + b.y)}.at(battlers.size / 2)
+    so2 = POS.new(0, 0)
+    battlers.each{|obj| so2.x += obj.x; so2.y += obj.y}
+    so2.x /= battlers.size; so2.y /= battlers.size
+    n1  = determine_effected_targets(user, item, so1).size
+    n2  = determine_effected_targets(user, item, so1).size
+    target = n1 > n2 ? so1 : so2
     return target.nil? ? user : target
   end
   #--------------------------------------------------------------------------
@@ -204,7 +211,7 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.execute_action(action)
     puts "[Debug]: Action executed"
-    determine_effected_targets(action)
+    action.subject = determine_effected_targets(action.user, action.item, action.target)
     action.user.use_item(action.item) if action.item.tool_animmoment == 0 # Directly use
     apply_skill(action)  if action.item.is_a?(RPG::Skill)
     apply_item(action)   if action.item.is_a?(RPG::Item)
@@ -214,29 +221,29 @@ module BattleManager
   #--------------------------------------------------------------------------
   # * Determine effected targets
   #--------------------------------------------------------------------------
-  def self.determine_effected_targets(action)
-    if action.item.for_opponent?
-      candidates = opponent_battler(action.user).sort {|a,b| a.distance_to_character(action.target) <=> b.distance_to_character(action.target)}
-    elsif action.item.for_friend?
-      candidates = ally_battler(action.user).sort {|a,b| a.distance_to_character(action.target) <=> b.distance_to_character(action.target)}
+  def self.determine_effected_targets(user, item, target)
+    if item.for_opponent?
+      candidates = opponent_battler(user).sort {|a,b| a.distance_to_character(target) <=> b.distance_to_character(target)}
+    elsif item.for_friend?
+      candidates = ally_battler(user).sort {|a,b| a.distance_to_character(target) <=> b.distance_to_character(target)}
     else
       candidates = []
     end
-    pos = [action.target.x, action.target.y]
-    candidates.select!{|battler| battler.distance_to(*pos) <= action.item.tool_scope}
-    if action.item.for_one?
-      action.subject = action.target.is_a?(POS) ? [candidates.first] : [action.target]
-    elsif action.item.for_all?
-      action.subject = candidates
+    pos = [target.x, target.y]
+    
+    candidates.select!{|battler| battler.distance_to(*pos) <= item.tool_scope}
+    if item.for_one?
+      candidates = target.is_a?(POS) ? [candidates.first] : [target]
     end
-    action.subject.compact.select!{|battler| !battler.dead?}
+    candidates.compact!; candidates.select!{|battler| !battler.dead?}
     names = []
-    action.subject.compact.each do |char|
+    candidates.each do |char|
       names << char.enemy.name if char.is_a?(Game_Event)    && char.enemy
       names << char.actor.name if char.is_a?(Game_Player)   && char.actor
       names << char.actor.name if char.is_a?(Game_Follower) && char.actor
     end
     debug_print "Action subjects: #{names}}"
+    return candidates
   end
   #--------------------------------------------------------------------------
   # * Apply Skill

@@ -298,7 +298,7 @@ class Game_Character < Game_CharacterBase
     depth          = args[:depth].nil?          ? 100   : args[:depth]
     tool_range     = args[:tool_range].nil?     ? 0     : args[:tool_range]
     draw_arrow     = args[:draw_arrow].nil?     ? false : true
-    through_player = args[:through_player].nil? ? false : true
+    through_player = self.is_a?(Game_Follower) || (args[:through_player].nil? ? false : true)
     through_event  = args[:through_event].nil?  ? false : true
     debug          = args[:debug].nil?          ? false : true
     

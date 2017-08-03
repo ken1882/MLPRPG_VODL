@@ -99,8 +99,8 @@ module Mouse
     #-----------------------------------------------------------------------------
     alias update_tactic update
     def update
-      update_tactic
       @outline.visible = SceneManager.tactic_enabled?
+      update_tactic
     end
   end
 end

@@ -30,6 +30,7 @@ class Spriteset_Map
   def update_tactic
     update_skillbar
     update_tactic_cursor
+    update_units
   end
   #-----------------------------------------------------------------------------
   def update_tactic_cursor

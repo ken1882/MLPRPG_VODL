@@ -424,7 +424,6 @@ module Mouse
       self.x, self.y = *Mouse.pos
       self.visible = !$game_switches[Jet::MouseSystem::TURN_MOUSE_OFF_SWITCH]
       if !@outline.nil?
-        @outline.visible = SceneManager.scene_is?(Scene_Map)
         x = Mouse.true_grid_by_pos[0] * 32
         x -= $game_map.display_x.floor * 32
         x -= ($game_map.display_x % 1) * 32

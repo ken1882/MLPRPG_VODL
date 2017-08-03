@@ -10,6 +10,7 @@ class Unit_Circle < Sprite_Base
   def initialize(viewport, character)
     super(viewport)
     @character = character
+    self.z = viewport.z
     set_bitmap
     hide
   end
@@ -18,16 +19,22 @@ class Unit_Circle < Sprite_Base
   #----------------------------------------------------------------------------
   def set_bitmap
     self.bitmap = Bitmap.new(32, 32)
-    
-    if @character.is_a?(Game_Event)
+    if @character.is_a?(Game_Event) && (@character && @character.team_id != 0)
       color = DND::COLOR::Red
       #draw_sight
     else
       color = DND::COLOR::Blue
     end
-    
     self.bitmap.draw_circle( 16, 16, 13, color, 2)
-    self.z = 0
+    update_position
+  end
+  #----------------------------------------------------------------------------
+  # * Position update
+  #----------------------------------------------------------------------------
+  def update_position
+    return hide if @character.nil? || @character.dead?
+    self.x = @character.screen_x
+    self.y = @character.screen_y
   end
   #----------------------------------------------------------------------------
   # *) Dispose method

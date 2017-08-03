@@ -127,6 +127,10 @@ class Spriteset_Map
     end
   end
   #--------------------------------------------------------------------------
+  def update_units
+    @unitcir_sprites.each {|sprite| sprite.update}
+  end
+  #--------------------------------------------------------------------------
   # * Attach sprite a unit circle
   #--------------------------------------------------------------------------
   # tag: 1 ( Spriteset_Map
@@ -164,6 +168,22 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def setup_popinfo(text, position, color)
     @popups.push( Game_PopInfo.new(text, position, color) )
+  end
+  #--------------------------------------------------------------------------
+  # * Display unit circles
+  #--------------------------------------------------------------------------
+  def show_units
+    @unitcir_sprites.each do |sprite|
+      sprite.show
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Hide unit circles
+  #--------------------------------------------------------------------------
+  def hide_units
+    @unitcir_sprites.each do |sprite|
+      sprite.hide
+    end
   end
   #--------------------------------------------------------------------------
   # * Dispose projectiles
