@@ -8,7 +8,6 @@ module BattleManager
   # * Constants
   #--------------------------------------------------------------------------
   Team_Number     = 3
-  Team_Max_Number = 15
   # ~~~ Scope Constants ~~~ #
   Scope_None      = 0
   Scope_OneEnemy  = 1
@@ -27,85 +26,54 @@ module BattleManager
   #--------------------------------------------------------------------------
   # tag: 1 (BM
   def self.setup(can_escape = true, can_lose = false)
-    init_members
     @flags = {}
     @can_escape = can_escape
     @can_lose = can_lose
-  end
-  #--------------------------------------------------------------------------
-  # * Initialize Member Variables
-  #--------------------------------------------------------------------------
-  class << self; alias init_members_dnd init_members; end
-  def self.init_members
-    @action_battlers = {}
-    Team_Number.times {|key| @action_battlers[key] = Array.new()}
-    assign_party_number
-  end
-  #--------------------------------------------------------------------------
-  # * Set party member's team id to 0
-  #--------------------------------------------------------------------------
-  def self.assign_party_number
-    @action_battlers[0] = $game_party.battle_members
+    debug_print "Battle Manager setup"
   end
   #--------------------------------------------------------------------------
   # * Push character into active battlers
   #--------------------------------------------------------------------------
   def self.register_battler(battler)
-    return if battler.team_id.nil? || battler.team_id >= Team_Max_Number
-    @action_battlers[battler.team_id] << battler
-    $game_map.enemies << battler
-    $game_map.register_battle_unit(battler)
+    return if battler.team_id.nil? || battler.team_id >= Team_Number
+    $game_map.register_battler(battler)
   end
   #--------------------------------------------------------------------------
   # * Remove unit
   #--------------------------------------------------------------------------
   def self.resign_battle_unit(battler)
-    $game_map.enemies.delete(battler)
-    @action_battlers[battler.team_id].delete(battler)
     $game_map.resign_battle_unit(battler)
   end
   #--------------------------------------------------------------------------
   def self.all_battlers
-    re = []
-    @action_battlers.each do |key, team|
-      team.each {|battler| re << battler}
-    end
-    return re
+    return $game_map.all_battlers
   end
   #--------------------------------------------------------------------------
   def self.all_alive_battlers
-    re = []
-    @action_battlers.each do |key, battlers|
-      battlers.each {|battler| re << battler unless battler.dead?}
-    end
-    return re
+    return $game_map.all_alive_battlers
   end
   #--------------------------------------------------------------------------
   def self.dead_battlers
-    re = []
-    @action_battlers.each do |key, battlers|
-      battlers.each {|battler| re << battler if battler.dead?}
-    end
-    return re
+    return $game_map.dead_battlers
   end
   #--------------------------------------------------------------------------
   # * Return alive allied battlers
   #--------------------------------------------------------------------------
   def self.ally_battler(battler = $game_palyer)
-    return @action_battlers[battler.team_id].compact.select{|char| !char.dead?}
+    return $game_map.action_battlers[battler.team_id].compact.select{|char| !char.dead?}
   end
   #--------------------------------------------------------------------------
   # * Return dead allies
   #--------------------------------------------------------------------------
   def self.dead_allies(battler = $game_player)
-    return @action_battlers[battler.team_id].compact.select{|char| char.dead?}
+    return $game_map.action_battlers[battler.team_id].compact.select{|char| char.dead?}
   end
   #--------------------------------------------------------------------------
   # * Return alive hostile battlers
   #--------------------------------------------------------------------------
   def self.opponent_battler(battler = $game_player)
     opponents = []
-    @action_battlers.each do |key, members|
+    $game_map.action_battlers.each do |key, members|
       next if key == battler.team_id
       members.compact.each do |member|
         next if member.dead?
@@ -119,7 +87,7 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.dead_opponents(battler = $game_player)
     opponents = []
-    @action_battlers.each do |key, members|
+    $game_map.ction_battlers.each do |key, members|
       next if key == battler.team_id
       members.compact.each do |member|
         next unless member.dead?
@@ -194,16 +162,16 @@ module BattleManager
   #--------------------------------------------------------------------------
   # * Take median target as promary one
   #--------------------------------------------------------------------------
-  #tag: 1
   def self.determine_best_position(user, battlers, item)
     battlers.select!{|battler| battler.distance_to_character(user) < item.tool_distance}
-    so1 = battlers.sort!{|a,b| (a.x + a.y) <=> (b.x + b.y)}.at(battlers.size / 2)
+    n = battlers.size == 0 ? 1 : battlers.size
+    so1 = battlers.sort!{|a,b| (a.x + a.y) <=> (b.x + b.y)}.at(n / 2)
     so2 = POS.new(0, 0)
     battlers.each{|obj| so2.x += obj.x; so2.y += obj.y}
-    so2.x /= battlers.size; so2.y /= battlers.size
+    so2.x /= n; so2.y /= n
     n1  = determine_effected_targets(user, item, so1).size
     n2  = determine_effected_targets(user, item, so1).size
-    target = n1 > n2 ? so1 : so2
+    target = n1 >= n2 ? so1 : so2
     return target.nil? ? user : target
   end
   #--------------------------------------------------------------------------
@@ -229,6 +197,7 @@ module BattleManager
     else
       candidates = []
     end
+    return [] if target.nil?
     pos = [target.x, target.y]
     
     candidates.select!{|battler| battler.distance_to(*pos) <= item.tool_scope}
@@ -272,9 +241,17 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.valid_battler?(battler)
     return false if battler.nil?
-    return true  if battler.is_a?(Game_Event) && battler.enemy
-    return true  if (battler.is_a?(Game_Follower) || battler.is_a?(Game_Player)) && battler.actor
+    return true  if battler.is_a?(Game_Actor) && $game_party.members.include?(battler)
+    return true  if (battler.is_a?(Game_Follower) || battler.is_a?(Game_Player)) && battler.actor && $game_party.members.include?(battler.actor)
+    return valid_npc?(battler) if battler.is_a?(Game_Event)
     return false
+  end
+  #--------------------------------------------------------------------------
+  def self.valid_npc?(battler)
+    return false if !battler.enemy
+    return false if !$game_map.events.include?(battler.id)
+    return false if !$game_map.events.values.include?(battler)
+    return true
   end
   #--------------------------------------------------------------------------
   # * Invoke Action

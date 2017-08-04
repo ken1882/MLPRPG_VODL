@@ -49,6 +49,14 @@ class Game_Enemy < Game_Battler
     return enemy.team_id
   end
   #--------------------------------------------------------------------------
+  def face_name
+    return enemy.face_name
+  end
+  #--------------------------------------------------------------------------
+  def face_index
+    return enemy.face_index
+  end
+  #--------------------------------------------------------------------------
   # * Create Battle Action
   #--------------------------------------------------------------------------
   def get_learned_skills

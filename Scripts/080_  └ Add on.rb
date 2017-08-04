@@ -6,20 +6,34 @@
 #==============================================================================
 class Game_Map
   #--------------------------------------------------------------------------
+  # * Characters to be added to the end of enemy names
+  #--------------------------------------------------------------------------
+  LETTER_TABLE_HALF = [' A',' B',' C',' D',' E',' F',' G',' H',' I',' J',
+                       ' K',' L',' M',' N',' O',' P',' Q',' R',' S',' T',
+                       ' U',' V',' W',' X',' Y',' Z']
+  LETTER_TABLE_FULL = ['Ａ','Ｂ','Ｃ','Ｄ','Ｅ','Ｆ','Ｇ','Ｈ','Ｉ','Ｊ',
+                       'Ｋ','Ｌ','Ｍ','Ｎ','Ｏ','Ｐ','Ｑ','Ｒ','Ｓ','Ｔ',
+                       'Ｕ','Ｖ','Ｗ','Ｘ','Ｙ','Ｚ']
+  #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_reader   :map
   attr_reader   :max_width, :max_height
+  attr_reader   :enemy_names_count
+  attr_accessor :action_battlers, :unit_table
   attr_accessor :timer
   attr_accessor :projectiles, :enemies
+  attr_accessor :accurate_event_positions
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
   alias initialize_opt initialize
   def initialize
-    @projectiles = []
-    @enemies = []
-    @timer   = 0
+    @projectiles     = []
+    @timer           = 0
+    @accurate_event_positions = {}
+    @flag_after_load = false
+    init_battle_members
     initialize_opt
     set_max_edge
   end
@@ -29,13 +43,24 @@ class Game_Map
     @max_height = (Graphics.height / 32).truncate
   end
   #--------------------------------------------------------------------------
+  def init_battle_members
+    @action_battlers = {}
+    @unit_table      = {}
+    @enemy_names_count = {}
+    BattleManager::Team_Number.times {|key| @action_battlers[key] = Array.new()}
+  end
+  #--------------------------------------------------------------------------
+  def assign_party_battler
+    @action_battlers[0] = $game_party.battle_members
+  end
+  #--------------------------------------------------------------------------
   # * Setup
   # tag: loading
   #--------------------------------------------------------------------------
   def setup(map_id)
     SceneManager.dispose_temp_sprites if map_id != @map_id
     BattleManager.setup
-    @enemies.clear
+    
     debug_print "Setup map: #{map_id}"
     
     SceneManager.reserve_loading_screen(map_id)
@@ -64,7 +89,7 @@ class Game_Map
   end
   #--------------------------------------------------------------------------
   def setup_camera
-     @tileset_id = @map.tileset_id
+    @tileset_id = @map.tileset_id
     @display_x = 0
     @display_y = 0
   end
@@ -72,14 +97,13 @@ class Game_Map
   # * Setup battler
   #--------------------------------------------------------------------------
   def setup_battlers
-    debug_print "Setup Battlers"
     $game_party.battle_members[0].map_char = $game_player
-    
     $game_player.followers.each do |follower|
       SceneManager.update_loading # tag: loading
       next if !follower.actor
       follower.actor.map_char = follower
     end
+    assign_party_battler
   end
   #--------------------------------------------------------------------------
   # * Event Setup
@@ -161,19 +185,145 @@ class Game_Map
     @cached_events.delete(event)
   end
   #--------------------------------------------------------------------------
-  def register_battle_unit(battler)
-    if @spriteset
-      @spriteset.register_battle_unit(battler)
+  # * Push character into active battlers
+  #--------------------------------------------------------------------------
+  # tag: 1 (Game Map
+  def register_battler(battler)
+    if @unit_table[battler.hashid]
+      debug_print "Battler register failed: #{battler}"
+      return
     end
+    @enemies << battler
+    @action_battlers[battler.team_id] << battler
+    @unit_table[battler.hashid] = battler
+    SceneManager.scene.register_battle_unit(battler) if SceneManager.scene_is?(Scene_Map)
+    debug_print "Battler registered #{battler}"
   end
+  #--------------------------------------------------------------------------
+  # * Remove unit
   #--------------------------------------------------------------------------
   def resign_battle_unit(battler)
-    if @spriteset
-      @spriteset.resign_battle_unit(battler)
+    @enemies.delete(battler)
+    @action_battlers[battler.team_id].delete(battler)
+    @unit_table[battler.hashid] = nil
+    debug_print "Battler resigned #{battler}"
+    SceneManager.scene.resign_battle_unit(battler) if SceneManager.scene_is?(Scene_Map)
+  end
+  #--------------------------------------------------------------------------
+  def all_battlers
+    re = []
+    @action_battlers.each do |key, team|
+      team.each {|battler| re << battler}
+    end
+    return re
+  end
+  #--------------------------------------------------------------------------
+  def all_alive_battlers
+    re = []
+    @action_battlers.each do |key, battlers|
+      battlers.each {|battler| re << battler unless battler.dead?}
+    end
+    return re
+  end
+  #--------------------------------------------------------------------------
+  def dead_battlers
+    re = []
+    @action_battlers.each do |key, battlers|
+      battlers.each {|battler| re << battler if battler.dead?}
+    end
+    return re
+  end
+  #--------------------------------------------------------------------------
+  # * Return alive allied battlers
+  #--------------------------------------------------------------------------
+  def ally_battler(battler = $game_palyer)
+    return @action_battlers[battler.team_id].compact.select{|char| !char.dead?}
+  end
+  #--------------------------------------------------------------------------
+  # * Return dead allies
+  #--------------------------------------------------------------------------
+  def dead_allies(battler = $game_player)
+    return @action_battlers[battler.team_id].compact.select{|char| char.dead?}
+  end
+  #--------------------------------------------------------------------------
+  # * Return alive hostile battlers
+  #--------------------------------------------------------------------------
+  def opponent_battler(battler = $game_player)
+    opponents = []
+    @action_battlers.each do |key, members|
+      next if key == battler.team_id
+      members.compact.each do |member|
+        next if member.dead?
+        opponents.push(member)
+      end
+    end
+    return opponents
+  end
+  #--------------------------------------------------------------------------
+  # * Return dead hostile battlers
+  #--------------------------------------------------------------------------
+  def dead_opponents(battler = $game_player)
+    opponents = []
+    @action_battlers.each do |key, members|
+      next if key == battler.team_id
+      members.compact.each do |member|
+        next unless member.dead?
+        opponents.push(member)
+      end
+    end
+    return opponents
+  end
+  #--------------------------------------------------------------------------
+  # * Add letters (ABC, etc) to enemy characters with the same name
+  #--------------------------------------------------------------------------
+  def make_unique_names
+    @enemies.each do |enemy|
+      next unless enemy.alive?
+      next unless enemy.letter.empty?
+      n = @enemy_names_count[enemy.original_name] || 0
+      enemy.letter = letter_table[n % letter_table.size]
+      @enemy_names_count[enemy.original_name] = n + 1
+    end
+    @enemies.each do |enemy|
+      n = @enemy_names_count[enemy.original_name] || 0
+      enemy.plural = true if n >= 2
     end
   end
   #--------------------------------------------------------------------------
-  # * Update Vehicles
+  # * Get Text Table to Place Behind Enemy Name
+  #--------------------------------------------------------------------------
+  def letter_table
+    $game_system.japanese? ? LETTER_TABLE_FULL : LETTER_TABLE_HALF
+  end
+  #--------------------------------------------------------------------------
+  def on_game_save
+    @events.each do |key, event|
+      pos = [POS.new(event.real_x, event.real_y),POS.new(event.x, event.y), POS.new(event.px, event.py)]
+      @accurate_event_positions[key] = pos
+    end
+  end
+  #--------------------------------------------------------------------------
+  def after_game_load
+    @flag_after_load = true
+  end
+  #--------------------------------------------------------------------------
+  def on_after_load
+    @enemy_names_count = {}
+    @flag_after_load = false
+    relocate_events
+    all_battlers.each do |battler|
+      resign_battle_unit(battler) if !BattleManager.valid_battler?(battler)
+    end
+    debug_print "Action battler count: #{all_battlers.size}"
+    make_unique_names
+  end
+  #--------------------------------------------------------------------------
+  def relocate_events
+    @accurate_event_positions.each do |key, pos|
+      @events[key].load_position(*pos)
+    end
+    @accurate_event_positions.clear
+  end
   #--------------------------------------------------------------------------
   def update_vehicles
   end

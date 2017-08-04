@@ -48,6 +48,7 @@ module DataManager
     File.open(make_chainfilename(index), "wb") do |file|
       Marshal.dump(make_chain_content(index), file)
     end
+    $game_map.on_game_save
     save_game_without_rescue_chain(index)
     build_checksum_file(index)
   end
@@ -63,7 +64,9 @@ module DataManager
       BlockChain.load_chain_data( Marshal.load(file) )
     end
     return :bits_incorrect  unless PONY::CHAIN.verify_totalbalance
-    load_game_without_rescue_chain(index)
+    succed = load_game_without_rescue_chain(index)
+    $game_map.after_game_load
+    return succed
   end
   #--------------------------------------------------------------------------
   # * Build Check Sum verify for file

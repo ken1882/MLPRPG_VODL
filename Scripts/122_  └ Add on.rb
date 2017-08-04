@@ -70,7 +70,7 @@ class Spriteset_Map
     
     $game_player.followers.reverse_each do |follower|
       sprite = create_character_sprite(follower)
-      register_battle_unit(follower) if follower.actor
+      register_battle_unit(follower)
     end
     
     player_sprite = create_character_sprite($game_player)
@@ -141,6 +141,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   # tag: 1 ( Spriteset_Map
   def register_battle_unit(battler)
+    return if @unit_table[battler.hashid]
     sprite = Unit_Circle.new(@viewport1, battler)
     @unitcir_sprites << sprite
     @unit_table[battler.hashid] = @unitcir_sprites.size - 1
@@ -150,6 +151,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def resign_battle_unit(battler)
     loc = @unit_table[battler.hashid]
+    return if loc.nil?
     sprite = @unitcir_sprites.delete_at(loc)
     @unit_table.delete(battler.hashid)
     dispose_sprite(sprite)
@@ -180,7 +182,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def show_units
     @unitcir_sprites.each do |sprite|
-      sprite.show
+      sprite.show if BattleManager.valid_battler?(sprite.character)
     end
     @tactic_cursor.show if @tactic_cursor
   end
@@ -240,7 +242,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def dispose_sprite(sprite)
     return if sprite.nil?
-    sprite.character.dispose_sprites unless sprite.character.nil?
+    sprite.character.dispose_sprites if sprite.is_a?(Sprite_Character)
     sprite.dispose
   end
   #--------------------------------------------------------------------------

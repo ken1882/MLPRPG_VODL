@@ -5,6 +5,8 @@
 #============================================================================
 class Unit_Circle < Sprite_Base
   #----------------------------------------------------------------------------
+  attr_accessor :character
+  #----------------------------------------------------------------------------
   # *) Object initialization
   #----------------------------------------------------------------------------
   def initialize(viewport, character)
@@ -32,7 +34,7 @@ class Unit_Circle < Sprite_Base
   # * Position update
   #----------------------------------------------------------------------------
   def update_position
-    return hide if @character.nil? || @character.dead?
+    return hide if BattleManager.valid_battler?(@character)
     self.x = @character.screen_x
     self.y = @character.screen_y
   end

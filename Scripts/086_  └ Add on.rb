@@ -91,5 +91,14 @@ class Game_CharacterBase
     return false if collide_with_characters?(x + ox, y + oy)
     return true
   end
+  #--------------------------------------------------------------------------
+  def load_position(real_pos, normal_pos, pixel_pos)
+    @real_x = real_pos.x
+    @real_y = real_pos.y
+    @x      = normal_pos.x
+    @y      = normal_pos.y
+    @px     = pixel_pos.x
+    @py     = pixel_pos.y
+  end
   
 end

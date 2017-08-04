@@ -135,7 +135,8 @@ class Game_Skillbar
   # *) Process Input
   #--------------------------------------------------------------------------
   def process_input
-    if Mouse.click?(1) && !Mouse.hover_UI?
+    if Mouse.click?(1) && !Mouse.hover_UI? && SceneManager.scene_is?(Scene_Map) &&
+      !SceneManager.tactic_enabled?
       puts 'use primary tool'
       process_item_use(@primary_tool)
     else

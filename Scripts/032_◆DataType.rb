@@ -1,4 +1,22 @@
 #===============================================================================
+# * Basic Object
+#===============================================================================
+class Object
+  #------------------------------------------------------------------------
+  # * Set hashid
+  #------------------------------------------------------------------------
+  def hash_self
+    base = self.inspect + self.hash.to_s
+    @hashid = PONY.Sha256(base).to_i(16)
+  end
+  #------------------------------------------------------------------------
+  def hashid
+    hash_self if @hashid.nil?
+    return @hashid
+  end
+  
+end
+#===============================================================================
 # * True/Flase class
 #===============================================================================
 class TrueClass
@@ -179,6 +197,9 @@ class RPG::Enemy
   attr_reader   :death_switch_global  # Global switch trigger when dead
   attr_reader   :death_var_self       # Self var change when dead
   attr_reader   :death_var_global     # Self var change when dead
+  
+  attr_accessor :face_name  # Face filename show in map status window
+  attr_accessor :face_index # Face index
   #--------------------------------------------------------------------------
   # * Attributes setup
   #--------------------------------------------------------------------------
@@ -234,6 +255,8 @@ class RPG::Enemy
     @death_var_self       = DND::BattlerSetting::DeathVarSelf
     @death_var_global     = DND::BattlerSetting::DeathVarGlobal
     @death_animation      = DND::BattlerSetting::DeathAnimation
+    @face_name            = nil
+    @face_index           = 0
   end
   #------------------------------------
 end

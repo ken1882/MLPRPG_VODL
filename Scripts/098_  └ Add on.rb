@@ -29,6 +29,7 @@ class Game_Event < Game_Character
     @self_vars       = Array.new(4){|i| i = 0}
     @terminated      = false
     @static_object   = false
+    hash_self
     initialize_event_opt(map_id, event)
   end
   #--------------------------------------------------------------------------
@@ -176,8 +177,10 @@ class Game_Event < Game_Character
   # tag: 1 ( Game event
   def spawn_npc_battler(id)
     @enemy = Game_Enemy.new($game_map.enemies.size, id)
+    @enemy.plural = true if 
     @enemy.map_char = self
     BattleManager.register_battler(self)
+    $game_map.make_unique_names
   end
   #----------------------------------------------------------------------------
   # * Permanently delete the event
@@ -210,6 +213,11 @@ class Game_Event < Game_Character
   def dead?
     return true if @enemy.nil?
     return @enemy.dead?
+  end
+  #----------------------------------------------------------------------------
+  def name(original_event = false)
+    return @enemy.name if !original_event && @enemy
+    return event.name
   end
   #-------------------------------------------------------------------------------
   # * Params to method

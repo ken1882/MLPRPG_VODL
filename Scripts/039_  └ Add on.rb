@@ -58,4 +58,11 @@ class Game_System
   def cache_loading
   end
   #--------------------------------------------------------------------------
+  alias on_after_load_dnd on_after_load
+  def on_after_load
+    on_after_load_dnd
+    BattleManager.setup
+    $game_map.on_after_load
+  end
+  #--------------------------------------------------------------------------
 end

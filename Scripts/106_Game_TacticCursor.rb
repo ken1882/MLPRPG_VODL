@@ -70,10 +70,11 @@ class Game_TacticCursor
   end
   #--------------------------------------------------------------------------
   def collide_battler?
+    battlers = []
     BattleManager.all_battlers.each do |battler|
-      return battler if battler.adjacent?(@x, @y)
+      battlers << battler if battler.adjacent?(@x, @y)
     end
-    return false
+    return battlers.empty? ? nil : battlers.min_by{|b|b.distance_to(@x,@y)}
   end
   #--------------------------------------------------------------------------
   # * Get Screen X-Coordinates

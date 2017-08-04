@@ -18,6 +18,7 @@ class Game_Actor < Game_Battler
     @dualclass_id = 0
     @team_id = 0
     @assigned_hotkey = Array.new(HotKeys::HotKeys.size){nil}
+    hash_self
     init_muticlass(actor_id)
   end
   
