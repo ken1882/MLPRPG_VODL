@@ -78,6 +78,12 @@ class Spriteset_Map
     
     @map_id = $game_map.map_id
   end
+  #-----------------------------------------------------------------------------
+  # * Create layout for tactic cursor
+  #-----------------------------------------------------------------------------
+  def create_tactic_cursor(instance)
+    @tactic_cursor = Sprite_TacticCursor.new(@viewport1, instance)
+  end
   #--------------------------------------------------------------------------
   # * Frame Update
   #--------------------------------------------------------------------------
@@ -176,6 +182,7 @@ class Spriteset_Map
     @unitcir_sprites.each do |sprite|
       sprite.show
     end
+    @tactic_cursor.show if @tactic_cursor
   end
   #--------------------------------------------------------------------------
   # * Hide unit circles
@@ -184,6 +191,7 @@ class Spriteset_Map
     @unitcir_sprites.each do |sprite|
       sprite.hide
     end
+    @tactic_cursor.hide if @tactic_cursor
   end
   #--------------------------------------------------------------------------
   # * Dispose projectiles
@@ -231,7 +239,8 @@ class Spriteset_Map
   end
   #--------------------------------------------------------------------------
   def dispose_sprite(sprite)
-    sprite.character.dispose_sprites if sprite.character
+    return if sprite.nil?
+    sprite.character.dispose_sprites unless sprite.character.nil?
     sprite.dispose
   end
   #--------------------------------------------------------------------------
@@ -243,6 +252,7 @@ class Spriteset_Map
     dispose_units
     dispose_temp_sprites
     dispose_huds
+    dispose_sprite(@tactic_cursor)
   end
   #--------------------------------------------------------------------------
   def event_usable?(character)

@@ -31,9 +31,11 @@ class Spriteset_Map
     update_skillbar
     update_tactic_cursor
     update_units
+    update_viewports
   end
   #-----------------------------------------------------------------------------
   def update_tactic_cursor
+    @tactic_cursor.update
   end
   #-----------------------------------------------------------------------------
   def update_timestop

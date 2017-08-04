@@ -9,6 +9,7 @@ class Game_Map
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_reader   :map
+  attr_reader   :max_width, :max_height
   attr_accessor :timer
   attr_accessor :projectiles, :enemies
   #--------------------------------------------------------------------------
@@ -20,6 +21,12 @@ class Game_Map
     @enemies = []
     @timer   = 0
     initialize_opt
+    set_max_edge
+  end
+  #--------------------------------------------------------------------------
+  def set_max_edge
+    @max_width  = (Graphics.width / 32).truncate
+    @max_height = (Graphics.height / 32).truncate
   end
   #--------------------------------------------------------------------------
   # * Setup

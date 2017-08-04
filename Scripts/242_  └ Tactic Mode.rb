@@ -21,8 +21,7 @@ class Scene_Map < Scene_Base
   #--------------------------------------------------------------------------
   def update_tactic
     update_tactic_cursor
-    return update_scmap_tactic if Input.press?(:kALT)
-    @spriteset.update_tactic
+    @spriteset.update_timelapse
   end
   #--------------------------------------------------------------------------
   def start_tactic
@@ -36,7 +35,7 @@ class Scene_Map < Scene_Base
   end
   #--------------------------------------------------------------------------
   def update_tactic_cursor
-    
+    @tactic_cursor.update
   end
   
 end

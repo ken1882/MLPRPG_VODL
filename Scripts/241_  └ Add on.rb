@@ -13,6 +13,7 @@ class Scene_Map < Scene_Base
   def start
     @tactic_enabled = false
     start_opt
+    create_tactic_cursor
     @window_log = Window_InformationLog.new(SceneManager.resume_map_info)
   end
   #--------------------------------------------------------------------------
@@ -65,6 +66,11 @@ class Scene_Map < Scene_Base
     end
   end
   #----------------------------------------------------------------------------
+  def create_tactic_cursor
+    @tactic_cursor = Game_TacticCursor.new
+    @spriteset.create_tactic_cursor(@tactic_cursor)
+  end
+  #----------------------------------------------------------------------------
   # * Display info on window
   #----------------------------------------------------------------------------
   def display_info(text)
@@ -76,8 +82,6 @@ class Scene_Map < Scene_Base
   def clear_info
     @window_log.clear
   end
-  #--------------------------------------------------------------------------
-  # * Update Encounter
   #--------------------------------------------------------------------------
   def update_encounter
   end
