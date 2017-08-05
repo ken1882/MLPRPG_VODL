@@ -21,6 +21,13 @@ module BattleManager
   Scope_OneDead   = 9
   Scope_AllDead   = 10
   Scope_User      = 11
+  # ~~~ Direction Angles ~~~ #
+  Direction_Angles = {
+    7 => 135, 8 =>  90, 9 =>  45,
+    4 => 180, 5 => nil, 6 =>   0,
+    1 => 225, 2 => 270, 3 => 335
+  }
+  
   #--------------------------------------------------------------------------
   # * Setup 
   #--------------------------------------------------------------------------
@@ -110,7 +117,7 @@ module BattleManager
   def self.target_selection(user, item)
     return unless SceneManager.scene_is?(Scene_Map)
     SceneManager.scene.start_tactic
-    return SceneManager.scene.target_selection(user, item)
+    # tag: unfinished
   end
   #--------------------------------------------------------------------------
   # * Enter target selection
@@ -190,7 +197,7 @@ module BattleManager
   # * Determine effected targets
   #--------------------------------------------------------------------------
   def self.determine_effected_targets(user, item, target)
-    if item.for_opponent?
+    if item.for_opponent? || item.is_a?(RPG::Weapon)
       candidates = opponent_battler(user).sort {|a,b| a.distance_to_character(target) <=> b.distance_to_character(target)}
     elsif item.for_friend?
       candidates = ally_battler(user).sort {|a,b| a.distance_to_character(target) <=> b.distance_to_character(target)}
@@ -200,7 +207,7 @@ module BattleManager
     return [] if target.nil?
     pos = [target.x, target.y]
     
-    candidates.select!{|battler| battler.distance_to(*pos) <= item.tool_scope}
+    candidates.select!{|battler| in_attack_range?(user, item, battler, pos)}
     if item.for_one?
       candidates = target.is_a?(POS) ? [candidates.first] : [target]
     end
@@ -213,6 +220,21 @@ module BattleManager
     end
     debug_print "Action subjects: #{names}}"
     return candidates
+  end
+  #--------------------------------------------------------------------------
+  def self.in_attack_range?(user, item, target, pos)
+    return false if target.distance_to(*pos) > item.tool_scope
+    return true  if item.tool_scopedir == 5
+    dir = item.tool_scopedir == 0 ? user.direction : item.tool_scopedir
+    angle1 = (Direction_Angles[dir] + item.tool_scopeangle / 2 + 360) % 360
+    angle2 = (Direction_Angles[dir] - item.tool_scopeangle / 2 + 360) % 360
+    puts "Dir: #{dir} #{Direction_Angles[dir]}"
+    distance = item.tool_scope
+    
+    re = Math.in_arc?(target.x + 0.5, target.y + 0.5, user.x + 0.5, user.y + 0.5,
+                      angle1, angle2, item.tool_scope, dir)
+    puts "In arc: #{re}"
+    return re
   end
   #--------------------------------------------------------------------------
   # * Apply Skill

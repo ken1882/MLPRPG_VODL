@@ -1,10 +1,9 @@
 #==============================================================================
-# ** Scene_Skill
+# ** Scene_Item
 #------------------------------------------------------------------------------
-#  This class performs skill screen processing. Skills are handled as items for
-# the sake of process sharing.
+#  This class performs the item screen processing.
 #==============================================================================
-class Scene_Skill < Scene_ItemBase
+class Scene_Item < Scene_ItemBase
   include WALLPAPER_EX
   #--------------------------------------------------------------------------
   # * Constants

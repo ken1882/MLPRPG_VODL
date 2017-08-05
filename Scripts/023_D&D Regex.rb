@@ -113,6 +113,7 @@ module DND
   module REGEX::Equipment
     UserGraphic       = /(?:User Graphic =)[ ](.+)/i           # Sprite display on user
     ToolGraphic       = /(?:Tool Graphic =)[ ](.+)/i           # Tool sprite
+    WeaponEffect      = /(?:Weapon effect skill =)[ ](\d+)/i   # Skill effect apply on hit
     ToolIndex         = /(?:Tool Index =)[ ](\d+)/i            # Index of Graphic
     CoolDown          = /(?:Tool Cooldown =)[ ](\d+)/i         # CoolDownTime(CDT)
     ToolDistance      = /(?:Tool Distance =)[ ](\d+)/i         # Effective Range (for missiles)
@@ -123,9 +124,12 @@ module DND
     ToolCastAnimation = /(?:Tool Cast Animation =)[ ](\d+)/i   # Casting animation
     ToolBlowPower     = /(?:Tool Blow Power =)[ ](\d+)/i       # Knockback power
     ToolPiercing      = /(?:Tool Piercing =)[ ](\d+)/i         # Piercing number
+    ToolAnimation     = /(?:Tool Animation =)[ ](\d+)/i        # Animation display on tool/project on collide
     ToolAnimMoment    = /(?:Tool Animation Moment =)[ ](\d+)/i # Start moment of tool's animation
     ToolSpecial       = /(?:Tool Special =)[ ](\d+),[ ](\d*)/i # Tool Special, see the list below
     ToolScope         = /(?:Tool Scope =)[ ](\d+)/i            # Tool target scope, same as skill/item one
+    ToolScopeDir      = /(?:Tool Scope Dir =)[ ](\d+)/i        # see tag 4 details
+    ToolScopeAngle    = /(?:Tool Scope Angle =)[ ](\d+)/i      # c tag 4 details
     ToolInvokeSkill   = /(?:Tool Invoke Skill =)[ ](\d+)/i     # Skill id invoked upon the tool used
     ToolSE            = /(?:Tool SE =)[ ](.+)/i                # Sound Effect when tool is used
     ToolItemCost      = /(?:Tool Item Cost =)[ ](\d+)/i        # Item  id needed for using this tool
@@ -138,97 +142,6 @@ module DND
                                                                #   using this tool (default: in 20 frames)
   end
   
-  module COLOR
-    HPHeal            = Color.new( 15, 140,  10)
-    EPHeal            = Color.new(140, 230, 110)
-    HPDamage          = Color.new(250,  45,  45)
-    EPDamage          = Color.new(175,  55, 140)
-    
-    Black             = Color.new(  0,   0,   0)
-    White             = Color.new(255, 255, 255)
-    Red               = Color.new(255,   0,   0)
-    Blue              = Color.new(  0,   0, 255)
-    Green             = Color.new(  0, 255,   0)
-    Yellow            = Color.new(255, 255,   0)
-    Purple            = Color.new(128,   0, 255)
-    Orange            = Color.new(255, 128,   0)
-    Brown             = Color.new(128,  64,   0)
-    Pink              = Color.new(255, 128, 255)
-    Tan               = Color.new(200, 200, 110)
-    
-    HitPoint          = Green
-    EnergyPoint       = Color.new(100, 200, 255)
-  end
-  
-  module BattlerSetting
-    
-    RegenerateTime    = 30
-    
-    PhaseIdle         = 0
-    PhaseCombat       = 1
-    
-    DefaultWeapon     = 0
-    TeamID            = 1
-    DeathSwitchSelf   = nil
-    DeathSwitchGlobal = 0
-    DeathVarSelf      = nil
-    DeathVarGlobal    = [0, 0]
-    VisibleSight      = 8
-    BlindSight        = 0
-    DeathAnimation    = 114
-    Infravision       = false
-    MoveLimit         = 30
-    AggressiveLevel   = 4
-  end
-  
-end
-#===============================================================================
-# Module Math
-#===============================================================================
-module Math
-  
-  def self.rotation_matrix(x, y, angle, flip = false)
-    rx = x * Math.cos(angle.to_rad) - y * Math.sin(angle.to_rad)
-    ry = x * Math.sin(angle.to_rad) + y * Math.cos(angle.to_rad)
-    ry *= -1 if flip
-    return [rx.round(6), ry.round(6)]
-  end
-  
-  def self.slope(x1, y1, x2, y2)
-    return nil if x2 == x1
-    return (y2 - y1) / (x2 - x1)
-  end
-  
-  #-----------------------------------------------------------------------------
-  # *) in arc:
-  #
-  # x1, y1: target coord
-  # x2, y2: source coord
-  # angle1, angle2: left's and right's Generalized Angle
-  # distance: effective distance
-  #-----------------------------------------------------------------------------
-  def self.in_arc?(x1, y1, x2, y2, angle1, angle2, distance)
-    return false if self.hypot( x2 - x1, y2 - y1 ) > distance
-    move_x = $game_map.width / 2
-    move_y = $game_map.height / 2
-    
-    x1 = x1 - move_x
-    y1 = move_y - y1
-    x2 = x2 = move_x
-    y2 = move_y - y2
-    
-    left_x   = x2 + self.rotation_matrix(1,0, angle1).at(0)
-    left_y   = y2 + self.rotation_matrix(1,0, angle1).at(1)
-    right_x  = x2 + self.rotation_matrix(1,0, angle2).at(0)
-    right_y  = y2 + self.rotation_matrix(1,0, angle2).at(1)
-    
-    m1 = slope(x2, y2, left_x, left_y)
-    m2 = slope(x2, y2, right_x, right_y)
-    on_m1_right  = m1.nil? ? (angle1 == 90  ? x1 >= x2 : x1 <=x2) : (m1 > 0 ? m1 * x1 - y1 + (y2 - m1 * x2) <= 0 : m1 * x1 - y1 + (y2 - m1 * x2) >= 0)
-    on_m2_left   = m2.nil? ? (angle2 == 270 ? x1 >= x2 : x1 <=x2) : (m2 < 0 ? m2 * x1 - y1 + (y2 - m2 * x2) >= 0 : m2 * x1 - y1 + (y2 - m2 * x2) <= 0)
-    
-    return on_m1_right && on_m2_left
-  end
 end
 #===============================================================================
 =begin

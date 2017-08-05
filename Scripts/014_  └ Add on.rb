@@ -230,4 +230,9 @@ module SceneManager
     scene.retrieve_input(string)
   end
   #----------------------------------------------------------------------------
+  def self.setup_weapon_use(action)
+    return unless scene_is?(Scene_Map)
+    scene.setup_weapon_use(action)
+  end
+  #----------------------------------------------------------------------------
 end
