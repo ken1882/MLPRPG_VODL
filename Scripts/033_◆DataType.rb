@@ -142,19 +142,20 @@ end
 # Module Math
 #===============================================================================
 module Math
-  
+  #-----------------------------------------------------------------------------
+  # * Get rotated position
+  #-----------------------------------------------------------------------------
   def self.rotation_matrix(x, y, angle, flip = false)
     rx = x * Math.cos(angle.to_rad) - y * Math.sin(angle.to_rad)
     ry = x * Math.sin(angle.to_rad) + y * Math.cos(angle.to_rad)
     ry *= -1 if flip
     return [rx.round(6), ry.round(6)]
   end
-  
+  #-----------------------------------------------------------------------------
   def self.slope(x1, y1, x2, y2)
     return nil if x2 == x1
     return (y2 - y1).to_f / (x2 - x1)
   end
-  
   #-----------------------------------------------------------------------------
   # *) in arc:
   #
@@ -165,8 +166,8 @@ module Math
   #-----------------------------------------------------------------------------
   def self.in_arc?(x1, y1, x2, y2, angle1, angle2, distance, original_dir)
     return false if self.hypot( x2 - x1, y2 - y1 ) > distance
-    move_x = $game_map.width / 2.0
-    move_y = $game_map.height / 2.0
+    move_x = $game_map.width / 2
+    move_y = $game_map.height / 2
     
     x1 = x1 - move_x
     y1 = move_y - y1
@@ -268,12 +269,12 @@ class RPG::Enemy
   attr_accessor :move_limit           # Back to original position once distance out of this value
   attr_accessor :aggressive_level     # Aggressive Level:
     #--------------------------------------------------------------------------
-    # 0: Won't attack no matter what
-    # 1: Won't attack unless enemy attack first, if in combat, change to 4
-    # 2: Attack sighted enemy without chasing
-    # 3: Chase enemy in short range (7), until enemy out of last sighted spot
-    # 4: Chase enemy until target out of last sighted spot, won't corss areas
-    # 5: Chase enemy through local areas until target out of last sighted spot
+    # 0: Won't attack no matter what (No attack)
+    # 1: Won't attack unless enemy attack first, if in combat, change to 4 (Passive)
+    # 2: Attack sighted enemy without chasing (Stand Ground)
+    # 3: Chase enemy in short range (7), until enemy out of last sighted spot (Defensive)
+    # 4: Chase enemy until target out of last sighted spot, won't corss areas (Aggressive)
+    # 5: Chase enemy through local areas until target out of last sighted spot (Striking)
     #--------------------------------------------------------------------------
   attr_reader   :death_animation      # Animation display on death
   attr_reader   :death_switch_self    # Self switch trigger when dead

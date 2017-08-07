@@ -4,7 +4,6 @@
 #   Window display the selected battler's status on upper-right conrner in 
 # tactic mode.
 #==============================================================================
-#tag: 1
 class Window_TacticStatus < Window_Base
   #--------------------------------------------------------------------------
   # * Constants
@@ -66,6 +65,10 @@ class Window_TacticStatus < Window_Base
     refresh
   end
   #--------------------------------------------------------------------------
+  def spacing
+    return 8
+  end
+  #--------------------------------------------------------------------------
   # * Refresh contents
   #--------------------------------------------------------------------------
   def refresh
@@ -79,15 +82,13 @@ class Window_TacticStatus < Window_Base
     draw_battler_name
     draw_battler_hp
     draw_battler_mp
-    draw_battler_status
+    draw_battler_states
   end
   #--------------------------------------------------------------------------
   def create_layout
-    x = 4
-    y = line_height + 4
     @layout = Sprite.new
     @layout.bitmap = Cache.UI(BarLayout)
-    @layout.x, @layout.y = self.x + 8, self.y + line_height * 2 + 8
+    @layout.x, @layout.y = self.x + spacing, self.y + line_height * 2 + spacing
     @layout.z = self.z + 1
     @fill_sprite = Sprite.new
     @fill_sprite.bitmap = Bitmap.new(@layout.width, @layout.height)
@@ -146,8 +147,16 @@ class Window_TacticStatus < Window_Base
     @text_sprite.bitmap.draw_text(drect, info, 2)
   end
   #--------------------------------------------------------------------------
-  def draw_battler_status
-    
+  def draw_battler_states
+    dx = spacing
+    dy = contents_height - 32
+    icons = @battler.state_icons
+    reaction = PONY::StateID[:aggressive_level][@battler.aggressive_level]
+    icons.unshift($data_states[reaction].icon_index)
+    icons.each do |index|
+      draw_icon(index, dx, dy)
+      dx += 24
+    end
   end
   #--------------------------------------------------------------------------
   def update_hp_effect

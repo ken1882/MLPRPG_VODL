@@ -5,14 +5,21 @@
 #===============================================================================
 class Game_TacticCursor
   #--------------------------------------------------------------------------
+  PhaseIdle              = 0
+  PhaseBattlerSelection  = 1
+  PhaseTargetSelection   = 2
+  #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor :x, :y
+  attr_accessor :battler
+  attr_accessor :phase
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
   def initialize
     @x, @y = 0, 0
+    @phase = PhaseIdle
   end
   #--------------------------------------------------------------------------
   # * Frame Update
@@ -76,6 +83,28 @@ class Game_TacticCursor
     end
     return battlers.empty? ? nil : battlers.min_by{|b|b.distance_to(@x,@y)}
   end
+  #--------------------------------------------------------------------------
+  def set_battler(battler)
+    @battler = battler
+    @phase   = @battler.nil? ? PhaseIdle : PhaseBattlerSelection
+  end
+  #--------------------------------------------------------------------------
+  def select_target
+    @phase = PhaseTargetSelection
+  end
+  #--------------------------------------------------------------------------
+  def target_selected
+    @phase = PhaseBattlerSelection
+  end
+  #--------------------------------------------------------------------------
+  def phase_back
+    @phase = [@phase - 1, 0].max
+  end
+  #--------------------------------------------------------------------------
+  def phase?;             @phase; end
+  def idle?;              @phase == PhaseIdle; end
+  def battler_selection?; @phase == PhaseBattlerSelection; end
+  def target_selection?;  @phase == PhaseTargetSelection; end
   #--------------------------------------------------------------------------
   # * Get Screen X-Coordinates
   #--------------------------------------------------------------------------

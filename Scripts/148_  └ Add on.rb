@@ -41,7 +41,7 @@ class Window_Gold < Window_Base
   #--------------------------------------------------------------------------
   def draw_common_currency_value(value, x, y, width)
     change_color(normal_color)
-    draw_icon(PONY::ICON_ID[:bit],0,0)
+    draw_icon(PONY::IconID[:bit],0,0)
     draw_text(x, y, width - 2, line_height, value, 2)
     change_color(system_color)
   end
@@ -50,7 +50,7 @@ class Window_Gold < Window_Base
   #--------------------------------------------------------------------------
   def draw_special_currency_value(value, x, y, width)
     change_color(crisis_color)
-    draw_icon(PONY::ICON_ID[:chromastal],0,line_height)
+    draw_icon(PONY::IconID[:chromastal],0,line_height)
     draw_text(x, y, width - 2, line_height, value, 2)
     change_color(system_color)
   end
