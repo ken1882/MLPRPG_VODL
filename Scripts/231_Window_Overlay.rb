@@ -23,8 +23,6 @@ class Window_Overlay < Window_HorzCommand
     self.z = 1000
     refresh
     self_overlay if overlay_self
-    Cache.unchain_bitmap(contents)
-    Cache.unchain_bitmap(self.windowskin)
     deactivate
   end
   #--------------------------------------------------------------------------

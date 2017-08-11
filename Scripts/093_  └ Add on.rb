@@ -37,6 +37,11 @@ class Game_Follower < Game_Character
   def update_movement
     process_pathfinding_movement
   end
+  #--------------------------------------------------------------------------
+  def hashid
+    return actor.hashid if actor
+    return PONY.Sha256(self.inspect)
+  end
   #---------------------------------------------------------------------------
   # * Method Missing
   # ----------------------------------------------------------------------   

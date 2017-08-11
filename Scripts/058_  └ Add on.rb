@@ -20,6 +20,10 @@ class Game_BaseItem
     return is_a_obj?(cls) || object.is_a?(cls)
   end
   
+  def hashid
+    return object.hashid
+  end
+  
   #---------------------------------------------------------------------------
   # * Method Missing
   # ----------------------------------------------------------------------   

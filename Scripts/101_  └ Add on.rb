@@ -59,7 +59,10 @@ class Game_Interpreter
   # * Transfer Player
   #--------------------------------------------------------------------------
   def command_201
-    return if $game_party.in_combat?
+    if $game_party.in_combat?
+      SceneManager.display_info("You can't change location during the combat")
+      return
+    end
     Fiber.yield while $game_player.transfer? || $game_message.visible
     @params[5] = 2 if @params[5] == 0
     

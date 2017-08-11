@@ -3,6 +3,7 @@
 #------------------------------------------------------------------------------
 #  This defined the method for assist thread
 #==============================================================================
+#tag: 3( Thread Assist
 module Thread_Assist
   #----------------------------------------------------------------------------
   # * Constants
@@ -22,10 +23,12 @@ module Thread_Assist
   # * Assign work
   #----------------------------------------------------------------------------
   def assign_work(*args)
+    return unless @work == 0
     type = args[0]
     puts "[Thread]: Work assigned: #{type}"
     @work = WorkTable[type]
-    @work_args = args.shift rescue []
+    args.shift rescue []
+    @work_args = args
   end
   #----------------------------------------------------------------------------
   # * Main entry access
@@ -40,6 +43,14 @@ module Thread_Assist
     rescue Exception => e
       PONY::ERRNO.mutex_error e
     end
+  end
+  #----------------------------------------------------------------------------
+  # * Check wether need to pause
+  #----------------------------------------------------------------------------
+  def pause?
+    return true if Graphics.transitioning?
+    return true if BattleManager.in_battle?
+    return false
   end
   #----------------------------------------------------------------------------
   # * Main update process

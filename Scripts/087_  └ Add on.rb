@@ -56,12 +56,12 @@ class Game_CharacterBase
       @animation_queue.each{|sprite| sprite.update if sprite.animation?}
     end
     update_multi_animation
-  end
-  
+  end  
   #--------------------------------------------------------------------------
   # * Free
   #--------------------------------------------------------------------------
   def dispose_sprites
+    return if @animation_queue.nil?
     @animation_queue.each{|sprite| sprite.dispose}
     @animation_queue.clear
   end

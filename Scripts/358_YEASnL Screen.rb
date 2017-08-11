@@ -744,8 +744,7 @@ class Scene_File < Scene_MenuBase
     else
       Sound.play_buzzer
     end
-  end
-  
+  end  
   #--------------------------------------------------------------------------
   # overwrite method: on_save_success
   #--------------------------------------------------------------------------

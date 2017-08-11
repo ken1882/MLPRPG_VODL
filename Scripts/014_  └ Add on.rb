@@ -18,7 +18,7 @@ module SceneManager
   def self.run
     DataManager.unpack_data if $ENCRYPT
     @timer = 0
-    info = "To ensure your best gameplay experience, please close the app that will consume your system resource, such as Flash or other games."
+    info = "To ensure your best gameplay experience, please close the app that will consume your system resource, such as Flash, Youtube and other games."
     reserve_loading_screen(nil, subtitle: info)
     DataManager.init
     Audio.setup_midi if use_midi?

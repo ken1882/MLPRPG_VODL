@@ -111,7 +111,10 @@ module BlockChain
     while !winner
       no_record_cnt = 0
       @nodes.each do |node|
-        sleep(Thread_Assist::Uwait) if async
+        if async
+          t = Thread_Assist.pause? ? 1 : Thread_Assist::Uwait
+          sleep(t)
+        end
         SceneManager.update_loading
         result = node.mining
         no_record_cnt += 1                   if result == :no_record
@@ -120,11 +123,11 @@ module BlockChain
       end
       
       if no_record_cnt > @nodes.size / 2
-        puts "[BlockChain] No transaction to mine" 
+        puts "[BlockChain]: No transaction to mine" 
       elsif winner
         puts "[BlockChain]: #{winner.name} has mined the block"
       end
-      #winner = nil if winner && winner.name != Vocab::Player
+      
       return if no_record_cnt > @nodes.size / 2
     end
     puts "[BLockChain]: Block Mined"
@@ -167,6 +170,7 @@ module BlockChain
         candidates.push(acc.id)
       end
     end
+    $mutex.synchronize{
     @nodes.compact.each do |node|
       result = 0
       candidates.compact.each do |accid|
@@ -180,6 +184,7 @@ module BlockChain
       result_pool[result] = Array.new() unless result_pool[result].is_a?(Array)
       result_pool[result].push(node.clone)
     end
+    } # mutex
     self.determine_result(result_pool)
   end
   #--------------------------------------------------------------------------
@@ -188,11 +193,13 @@ module BlockChain
   def self.item_amount(accid, item, async = false)
     accid = PONY.MD5(accid).to_i(16) if accid.is_a?(String)
     result_pool = {}
+    $mutex.synchronize{
     @nodes.each do |node|
       result = node.item_amount(accid, item.hashid, async) + self.accounts(accid).item_amount(item.hashid)
       result_pool[result] = Array.new() unless result_pool[result].is_a?(Array)
       result_pool[result].push(node.clone)
     end
+    } # $mutex
     return determine_result(result_pool) || 0
   end
   #--------------------------------------------------------------------------
@@ -201,12 +208,15 @@ module BlockChain
   def self.all_items(accid, async = false)
     self.recover_nodes
     accid = PONY.MD5(accid).to_i(16) if accid.is_a?(String)
+    items = nil
+    $mutex.synchronize{
     items = @nodes[0].all_items(accid, async)
     [:item, :weapon, :armor].each do |type|
       items[type].each {|id, amount|
         items[type][id] += self.accounts(accid).item_amount(id)
       }
     end
+    } # mutex
     return items
   end
   #--------------------------------------------------------------------------
@@ -215,6 +225,7 @@ module BlockChain
   def self.all_data(accid, async = false)
     self.recover_nodes
     accid = PONY.MD5(accid).to_i(16) if accid.is_a?(String)
+    data  = nil
     data  = @nodes[0].all_data(accid, async)
     [:item, :weapon, :armor].each do |type|
       data[type].each {|id, amount|
@@ -251,7 +262,7 @@ module BlockChain
     re = err < (@nodes.size / 2)
     master_node.drop_block unless re
     self.recover_nodes     unless re
-    puts "[BlockChain] Nonce Legal: #{re}"
+    puts "[BlockChain]: Nonce Legal: #{re}"
     return re
   end
   #--------------------------------------------------------------------------
@@ -280,7 +291,7 @@ module BlockChain
   # * Archive all current working block and start a new one
   #--------------------------------------------------------------------------
   def self.settlement
-    puts '[BlockChain] Settle currnet blocks'
+    puts '[BlockChain]: Settle currnet blocks'
     @height += 1
     @nodes.each do |node|
       node.archive_lastblock
@@ -301,7 +312,7 @@ module BlockChain
     self.recover_nodes
     outdated = @nodes[0].maintain
     return if outdated.nil?
-    puts "[BlockChain] Merge outdated block: #{outdated.hashid}"
+    puts "[BlockChain]: Merge outdated block: #{outdated.hashid}"
     self.merge_block(outdated)
     self.sync_node(@nodes[0])
   end

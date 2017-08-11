@@ -44,8 +44,8 @@ class Game_Map
   end
   #--------------------------------------------------------------------------
   def init_battle_members
-    @action_battlers = {}
-    @unit_table      = {}
+    @action_battlers   = {}
+    @unit_table        = {}
     @enemy_names_count = {}
     BattleManager::Team_Number.times {|key| @action_battlers[key] = Array.new()}
   end
@@ -58,6 +58,7 @@ class Game_Map
   # tag: loading
   #--------------------------------------------------------------------------
   def setup(map_id)
+    clear_battlers
     SceneManager.dispose_temp_sprites if map_id != @map_id
     BattleManager.setup
     
@@ -111,6 +112,7 @@ class Game_Map
   def setup_events
     @events  = {}
     @enemies = []
+    
     @map.events.each do |i, event|
       SceneManager.update_loading # tag: loading
       eve = Game_Event.new(@map_id, event)
@@ -317,8 +319,16 @@ class Game_Map
     make_unique_names
   end
   #--------------------------------------------------------------------------
+  def clear_battlers
+    all_battlers.each do |battler|
+      resign_battle_unit(battler)
+    end
+    init_battle_members
+  end
+  #--------------------------------------------------------------------------
   def relocate_events
     @accurate_event_positions.each do |key, pos|
+      next if @events[key].nil?
       @events[key].load_position(*pos)
     end
     @accurate_event_positions.clear

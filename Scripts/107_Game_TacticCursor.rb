@@ -77,11 +77,20 @@ class Game_TacticCursor
   end
   #--------------------------------------------------------------------------
   def collide_battler?
-    battlers = []
+    target  = nil
+    min_dis = 0xffff
     BattleManager.all_battlers.each do |battler|
-      battlers << battler if battler.adjacent?(@x, @y)
-    end
-    return battlers.empty? ? nil : battlers.min_by{|b|b.distance_to(@x,@y)}
+      sx = battler.screen_x + 16; sy = battler.screen_y + 16;
+      mx,my = screen_x, screen_y
+      dx = (mx - sx).abs; dy = (my - sy).abs;
+      if dx < 16 && dy < 16
+        if dx + dy < min_dis
+          target = battler
+          min_dis = dx + dy
+        end # dx+dy
+      end # dx,dy < 16
+    end # all battlers
+    return target
   end
   #--------------------------------------------------------------------------
   def set_battler(battler)

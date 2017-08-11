@@ -107,7 +107,11 @@ class Game_Player < Game_Character
       #return if get_on_off_vehicle
       return if check_action_event
     end
-    #update_encounter if last_moving
+  end
+  #--------------------------------------------------------------------------
+  def hashid
+    return actor.hashid if actor
+    return 0
   end
   #--------------------------------------------------------------------------
   def update_vehicle

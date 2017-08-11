@@ -100,7 +100,7 @@ def debug_print(*args)
   args.each do |line|
     info += line.to_s + ' '
   end
-  puts "[Debug]: #{info}"
+  puts "{[#{Time.now}]}[Debug]: #{info}"
 end
 alias debug_printf debug_print
 #--------------------------------------------------------------------------

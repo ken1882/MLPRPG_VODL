@@ -137,7 +137,10 @@ module BlockChain
       sum = 0
       record.each do |trans|
         next unless trans.type == currency_id
-        sleep(Thread_Assist::Uwait) if async
+        if async
+          t = Thread_Assist.pause? ? 1 : Thread_Assist::Uwait
+          sleep(t)
+        end
         sum += trans.value if trans.recipient == accid
         sum -= trans.value if trans.source    == accid
       end
@@ -150,7 +153,10 @@ module BlockChain
       sum = 0
       record.each do |trans|
         next unless trans.goods && trans.goods.hashid == item_hashid
-        sleep(Thread_Assist::Uwait) if async
+        if async
+          t = Thread_Assist.pause? ? 1 : Thread_Assist::Uwait
+          sleep(t)
+        end
         # recipient is the one who receive the money, sell the good, so good
         # amount is decreased, and vice versa
         sum -= trans.good_amount if trans.recipient == accid
@@ -162,7 +168,10 @@ module BlockChain
     def all_items(items, accid, async)
       record.each do |trans|
         next unless trans.goods
-        sleep(Thread_Assist::Uwait) if async
+        if async
+          t = Thread_Assist.pause? ? 1 : Thread_Assist::Uwait
+          sleep(t)
+        end
         item     = trans.goods
         itemname = trans.goods.name rescue nil
         type = :item   if item.is_a?(RPG::Item)
@@ -172,6 +181,7 @@ module BlockChain
           info = "Invalid item transaction: #{itemname} for #{item.class}"
           PONY::ERRNO.raise(:datatype_error, :exit, nil, info)
         end
+        items[type][item.hashid] = 0 if !items[type][item.hashid]
         items[type][item.hashid] -= trans.good_amount if trans.recipient == accid
         items[type][item.hashid] += trans.good_amount if trans.source    == accid
       end
@@ -180,7 +190,10 @@ module BlockChain
     #--------------------------------------------------------------------------
     def all_data(data, accid, async)
       record.each do |trans|
-        sleep(Thread_Assist::Uwait) if async
+        if async
+          t = Thread_Assist.pause? ? 1 : Thread_Assist::Uwait
+          sleep(t)
+        end
         item     = trans.goods
         itemname = trans.goods.name rescue nil
         type = :item   if item.is_a?(RPG::Item)
@@ -190,8 +203,10 @@ module BlockChain
           info = "Invalid item transaction: #{itemname} for #{item.class}"
           PONY::ERRNO.raise(:datatype_error, :exit, nil, info)
         end
+        data[:gold] = 0 if !data[:gold]
         data[:gold] += trans.value if trans.recipient == accid
         data[:gold] -= trans.value if trans.source    == accid
+        data[type][item.hashid] = 0 if !data[type][item.hashid]
         data[type][item.hashid] -= trans.good_amount if trans.recipient == accid
         data[type][item.hashid] += trans.good_amount if trans.source    == accid
       end
@@ -396,7 +411,10 @@ module BlockChain
       cur_key = @last_block.hashid
       while @blocks[cur_key]
         @blocks[cur_key].verify_genesis
-        sleep(Thread_Assist::Uwait) if async
+        if async
+          t = Thread_Assist.pause? ? 1 : Thread_Assist::Uwait
+          sleep(t)
+        end
         sum    += @blocks[cur_key].item_amount(accid, item_hashid, async)
         cur_key = @blocks[cur_key].parent_hash
       end
@@ -411,11 +429,13 @@ module BlockChain
       cur_key = @last_block.hashid
       while @blocks[cur_key]
         @blocks[cur_key].verify_genesis
-        sleep(Thread_Assist::Uwait) if async
+        if async
+          t = Thread_Assist.pause? ? 1 : Thread_Assist::Uwait
+          sleep(t)
+        end
         items = @blocks[cur_key].all_items(items, accid, async)
         cur_key = @blocks[cur_key].parent_hash
       end
-      ensure_goods_legal(items)
       return items
     end
     #--------------------------------------------------------------------------
@@ -428,7 +448,10 @@ module BlockChain
       cur_key = @last_block.hashid
       while @blocks[cur_key]
         @blocks[cur_key].verify_genesis
-        sleep(Thread_Assist::Uwait) if async
+        if async
+          t = Thread_Assist.pause? ? 1 : Thread_Assist::Uwait
+          sleep(t)
+        end
         data = @blocks[cur_key].all_data(data, accid, async)
         cur_key = @blocks[cur_key].parent_hash
       end
@@ -442,7 +465,10 @@ module BlockChain
       cur_key = @last_block.hashid
       while @blocks[cur_key]
         @blocks[cur_key].verify_genesis
-        sleep(Thread_Assist::Uwait) if async
+        if async
+          t = Thread_Assist.pause? ? 1 : Thread_Assist::Uwait
+          sleep(t)
+        end
         sum    += @blocks[cur_key].account_balance(accid, currency_id, async)
         cur_key = @blocks[cur_key].parent_hash
       end

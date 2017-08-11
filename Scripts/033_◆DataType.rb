@@ -6,15 +6,12 @@ class Object
   # * Set hashid
   #------------------------------------------------------------------------
   def hash_self
-    base = self.inspect + self.hash.to_s
-    @hashid = PONY.Sha256(base).to_i(16)
   end
   #------------------------------------------------------------------------
   def hashid
     hash_self if @hashid.nil?
     return @hashid
   end
-  
 end
 #===============================================================================
 # * True/Flase class

@@ -25,7 +25,6 @@ class RPG::UsableItem
   # *) Check if state will be removed
   #-----------------------------------------------------------------------
   def remove_state?(id = 0)
-    
     if id == 0 # check if will add state
       @effects.each do |effect|
         return true if effect.code == 22
@@ -38,7 +37,6 @@ class RPG::UsableItem
     
     return false
   end
-  
   #--------------------
 end
 #=======================================================================
@@ -60,7 +58,6 @@ class RPG::BaseItem
     base += "Weapon" if self.is_a?(RPG::Weapon)
     base += "Armor"  if self.is_a?(RPG::Armor)
     base += "State"  if self.is_a?(RPG::State)
-    base += self.inspect
     @hashid = PONY.Sha256(base).to_i(16)
   end
   #-----------------------------------------------------------------------

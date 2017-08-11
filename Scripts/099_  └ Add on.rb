@@ -29,8 +29,8 @@ class Game_Event < Game_Character
     @self_vars       = Array.new(4){|i| i = 0}
     @terminated      = false
     @static_object   = false
-    hash_self
     initialize_event_opt(map_id, event)
+    hash_self
   end
   #--------------------------------------------------------------------------
   # * overwrite method: setup_page_settings
@@ -291,6 +291,13 @@ class Game_Event < Game_Character
     return @death_animation             if @death_animation
     return @enemy.enemy.death_animation if @enemey
     return DND::BattlerSetting::DeathAnimation
+  end
+  #--------------------------------------------------------------------------
+  def hash_self
+    base  = (@map_id * 1000 + @id)
+    base += @enemy.hashid if @enemy
+    base  = base.to_s + self.inspect
+    @hashid = PONY.Sha256(base).to_i(16)
   end
   #---------------------------------------------------------------------------
   # * Method Missing

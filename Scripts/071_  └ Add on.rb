@@ -11,7 +11,12 @@ class Game_Enemy < Game_Battler
   attr_accessor :level
   attr_accessor :rank
   attr_accessor :skills                   # learned skill
-  attr_reader   :event
+  #------------------------------------------------------------------------
+  # * Set hashid
+  #------------------------------------------------------------------------
+  def hash_self
+    @hashid  = enemy.hashid
+  end
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------

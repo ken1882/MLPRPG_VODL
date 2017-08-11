@@ -6,9 +6,15 @@ module Graphics
   class << self; alias transition_dnd transition; end
   def self.transition(duration = 10, filename = "", vague = 40)
     puts SPLIT_LINE
-    debug_print "Map Transition"
+    debug_print "Graphics Transition"
+    @transitioning = true
     transition_dnd(duration, filename, vague)
-    debug_print "Map Transition Successful"
+    @transitioning = false
+    debug_print "Transition Successful"
+  end
+  #-----------------------------------------------------------------------------
+  def self.transitioning?
+    return @transitioning
   end
   #-----------------------------------------------------------------------------
   def self.center_width(cx)

@@ -13,6 +13,7 @@ class Spriteset_Map
   attr_reader :projectiles
   attr_reader :popups
   attr_reader :character_sprites
+  attr_reader :unitcir_sprites
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -71,7 +72,7 @@ class Spriteset_Map
     $game_map.enemies.each {|battler| register_battle_unit(battler)}
     
     $game_player.followers.reverse_each do |follower|
-      sprite = create_character_sprite(follower)
+      create_character_sprite(follower)
       register_battle_unit(follower)
     end
     
@@ -150,7 +151,10 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   # tag: 1 ( Spriteset_Map
   def register_battle_unit(battler)
-    return if @unit_table[battler.hashid]
+    if @unit_table[battler.hashid]
+      debug_print "Battler register failed: #{battler}"
+      return
+    end
     sprite = Unit_Circle.new(@viewport1, battler)
     @weapon_sprites[battler.hashid] = Sprite_Weapon.new(@viewport1, battler)
     @unitcir_sprites << sprite
@@ -196,6 +200,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def show_units
     @unitcir_sprites.each do |sprite|
+      puts "Show unit: #{sprite.character} #{BattleManager.valid_battler?(sprite.character)}"
       sprite.show if BattleManager.valid_battler?(sprite.character)
     end
     @tactic_cursor.show if @tactic_cursor

@@ -10,6 +10,12 @@ class Game_Actor < Game_Battler
   #--------------------------------------------------------------------------
   attr_reader   :dualclass_id                 # Second class ID
   attr_accessor :assigned_hotkey
+  #------------------------------------------------------------------------
+  # * Set hashid
+  #------------------------------------------------------------------------
+  def hash_self
+    @hashid = actor.hashid
+  end
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -18,8 +24,8 @@ class Game_Actor < Game_Battler
     @dualclass_id = 0
     @team_id = 0
     @assigned_hotkey = Array.new(HotKeys::HotKeys.size){nil}
-    hash_self
     init_muticlass(actor_id)
+    hash_self
   end
   
   def dualclass

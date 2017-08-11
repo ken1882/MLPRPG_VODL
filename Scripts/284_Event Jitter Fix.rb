@@ -12,6 +12,7 @@
 ## http://forums.rpgmakerweb.com/index.php?/topic/17448-event-jitter-fix-display-rounding-error-fix
 ##------
 class Game_Map ## Rounds X and Y display values DOWN so the nearest 32 is found.
+  
   def display_x
     (@display_x * 32).floor.to_f / 32
   end
