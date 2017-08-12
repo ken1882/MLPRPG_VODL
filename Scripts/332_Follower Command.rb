@@ -19,9 +19,8 @@ class Game_Character
   def command_follow
     @movement_command = 1
     return if actor.nil?
-    self.pop_damage('Move') if @hint_cooldown == 0
+    popup_info('Move')
     self.actor.remove_state(4)
-    @hint_cooldown = 30
     $game_player.followers.move
   end
   
@@ -35,7 +34,7 @@ class Game_Character
     return if actor.nil?
     @movement_command = 3 
     clear_pathfinding_moves
-    self.pop_damage('Hold in Position')
+    popup_info('Hold in Position')
     self.actor.add_state(4)
     $game_player.followers.move
   end

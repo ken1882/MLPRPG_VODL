@@ -15,6 +15,7 @@ module PONY
   Enable_Loading          = true
   
   TimeCycle               = 60  # Frame
+  # tag: icon
   #----------------------------------
   IconID = {
     :bit        => 558,

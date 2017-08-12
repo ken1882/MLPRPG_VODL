@@ -766,7 +766,7 @@ class Scene_Map
   #------------------------------------------------------------------------------
   def check_mouse_movement
     $game_temp.mouse_character ||= $game_player
-    if Mouse.click?(2)
+    if Mouse.click?(2) && !SceneManager.tactic_enabled?
       tx, ty = *Mouse.true_grid_by_pos
       $game_player.move_to_position(tx, ty, tool_range: 0)
     end

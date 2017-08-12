@@ -41,7 +41,7 @@ $imported["YEA-CommandWindowIcons"] = true
 #==============================================================================
 module YEA
   module COMMAND_WINDOW_ICONS
-    
+    # tag: icon
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     # - Icon Hash -
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -104,34 +104,42 @@ module YEA
       "Key Items"     => 243,      # Item scene.
       "To Title"      => 224,      # Game End scene.
       "Cancel"        => 119,      # Game End scene.
-      "Spellbook"   => 4052 ,
-      "Vancian"     =>10044,
-      "Encyclopedia" => 3734,
-      "Codex" => 2399, 
-      "Bestiary" => 3343 ,
-      "Music Room" => 118,
-      "Talent Tree" => 117,
-      "Equip" => 3786,
-      "Add Point" => 6476,
+      "Spellbook"     => 4052,
+      "Vancian"       => 10044,
+      "Encyclopedia"  => 3734,
+      "Codex"         => 2399, 
+      "Bestiary"      => 3343,
+      "Music Room"    => 118,
+      "Talent Tree"   => 117,
+      "Equip"         => 3786,
+      "Add Point"     => 6476,
       "Special stuff" => 1646,
-      "Buy" => 555,
-      "Sell" => 554,
-      "Properties" => 2375,
-      "General" => 556,
-      "Healings" => 3958,
-      "Ingredient" => 200,
-      "All" => 1140,
+      "Buy"           => 555,
+      "Sell"          => 554,
+      "Properties"    => 2375,
+      "General"       => 556,
+      "Healings"      => 3958,
+      "Ingredient"    => 200,
+      "All"            => 1140,
       "Hidden Weapons" => 159,
-      "Music Sheet"=> 118,
-      "Book"=> 2384,
-      "Scroll"=> 3733,
-      "Save/Load"=> 2431,
-      "Dismantle"=> 8175,
-      "Gamejolt"=> 570,
-      "Life Skills"=> 8075,
-      "Equip Skill" => 117,
-      "Level Up" => 990,
-      
+      "Music Sheet"    => 118,
+      "Book"           => 2384,
+      "Scroll"         => 3733,
+      "Save/Load"      => 2431,
+      "Dismantle"      => 8175,
+      "Gamejolt"       => 570,
+      "Life Skills"    => 8075,
+      "Equip Skill"    => 117,
+      "Level Up"       => 990,
+      "Move to"        => 572,
+      "Follow"         => 1117,
+      "Patrol"         => 1114,
+      "Hold/Move"      => 9301,
+      ":No Attack"     => 1141,
+      ":Passive"       => 13,
+      ":Stand Ground"  => 7346,
+      ":Aggressive"    => 131,
+      ":Striking"      => 116,
     } # Do not remove this.
     
   end # COMMAND_WINDOW_ICONS

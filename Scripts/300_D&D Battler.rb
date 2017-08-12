@@ -24,5 +24,6 @@ class Game_Battler < Game_BattlerBase
     @result.mp_damage *= 10 if !$game_party.in_combat?
     self.mp -= @result.mp_damage
   end
+  
   #-----------------
 end

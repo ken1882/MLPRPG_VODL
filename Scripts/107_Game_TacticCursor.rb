@@ -5,21 +5,16 @@
 #===============================================================================
 class Game_TacticCursor
   #--------------------------------------------------------------------------
-  PhaseIdle              = 0
-  PhaseBattlerSelection  = 1
-  PhaseTargetSelection   = 2
-  #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor :x, :y
   attr_accessor :battler
-  attr_accessor :phase
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
   def initialize
     @x, @y = 0, 0
-    @phase = PhaseIdle
+    @battler = nil
   end
   #--------------------------------------------------------------------------
   # * Frame Update
@@ -93,27 +88,15 @@ class Game_TacticCursor
     return target
   end
   #--------------------------------------------------------------------------
+  def relocate(battler = @battler)
+    @battler = battler.nil? ? $game_player : battler
+    @x, @y   = @battler.x + 0.5, @battler.y + 0.5
+  end
+  #--------------------------------------------------------------------------
   def set_battler(battler)
     @battler = battler
-    @phase   = @battler.nil? ? PhaseIdle : PhaseBattlerSelection
+    relocate
   end
-  #--------------------------------------------------------------------------
-  def select_target
-    @phase = PhaseTargetSelection
-  end
-  #--------------------------------------------------------------------------
-  def target_selected
-    @phase = PhaseBattlerSelection
-  end
-  #--------------------------------------------------------------------------
-  def phase_back
-    @phase = [@phase - 1, 0].max
-  end
-  #--------------------------------------------------------------------------
-  def phase?;             @phase; end
-  def idle?;              @phase == PhaseIdle; end
-  def battler_selection?; @phase == PhaseBattlerSelection; end
-  def target_selection?;  @phase == PhaseTargetSelection; end
   #--------------------------------------------------------------------------
   # * Get Screen X-Coordinates
   #--------------------------------------------------------------------------

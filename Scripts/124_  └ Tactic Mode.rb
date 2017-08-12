@@ -32,6 +32,7 @@ class Spriteset_Map
     update_tactic_cursor
     update_units
     update_viewports
+    update_popups
   end
   #-----------------------------------------------------------------------------
   def update_tactic_cursor

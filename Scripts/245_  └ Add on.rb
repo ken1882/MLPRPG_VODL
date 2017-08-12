@@ -15,9 +15,7 @@ class Scene_Map < Scene_Base
     @tactic_enabled = false
     start_opt
     create_tactic_cursor
-    @window_log = Window_InformationLog.new(SceneManager.resume_map_info)
-    @status_window = Window_TacticStatus.new
-    #@command_window = Window_TacticCommand.new
+    create_windows
   end
   #--------------------------------------------------------------------------
   # * Post-Start Processing
@@ -25,6 +23,25 @@ class Scene_Map < Scene_Base
   def post_start
     super
     spriteset.restore_projectile
+  end
+  #--------------------------------------------------------------------------
+  def create_windows
+    @window_log     = Window_InformationLog.new(SceneManager.resume_map_info)
+    @status_window  = Window_TacticStatus.new
+    @command_window = Window_TacticCommand.new(0,@status_window.y + @status_window.height)
+    @window_help    = Window_Help.new(1)
+    @window_help.y  = Graphics.height - @window_help.height
+    @window_help.hide
+    @command_window_name  = "@command_window".to_sym
+    @status_window_name   = "@status_window".to_sym
+    set_handlers
+  end
+  #--------------------------------------------------------------------------
+  def set_handlers
+    #@command_window.set_handler(:ok,     method(:command_ok))
+    @command_window.set_handler(:move,   method(:command_move))
+    @command_window.set_handler(:hold,   method(:command_hold))
+    @command_window.set_handler(:cancel, method(:command_cancel))
   end
   #--------------------------------------------------------------------------
   # * Termination Processing
@@ -42,6 +59,16 @@ class Scene_Map < Scene_Base
     update_basic            rescue nil
     $game_map.update(false)
     @spriteset.update       rescue nil
+  end
+  #--------------------------------------------------------------------------
+  # * Update All Windows
+  #--------------------------------------------------------------------------
+  def update_all_windows
+    instance_variables.each do |varname|
+      next if varname == @command_window_name || varname == @status_window_name
+      ivar = instance_variable_get(varname)
+      ivar.update if ivar.is_a?(Window) && !ivar.disposed?
+    end
   end
   #--------------------------------------------------------------------------
   # * Create Message Window
