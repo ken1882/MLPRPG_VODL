@@ -23,13 +23,13 @@ class Game_Character
     self.actor.remove_state(4)
     $game_player.followers.move
   end
-  
+  #----------------------------------------------------------------------------
   def command_gather
     @movement_command = 2
     self.move_to_position($game_player.x, $game_player.y)
     $game_player.followers.move
   end
-    
+  #----------------------------------------------------------------------------  
   def command_hold
     return if actor.nil?
     @movement_command = 3 

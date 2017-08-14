@@ -20,6 +20,7 @@ class Sprite_Skillbar < Sprite
     create_text(viewport)
     create_icons(viewport)
     create_hover_bitmap(viewport)
+    create_cooldown_sprite(viewport)
     create_dragging_sprite(viewport)
     unselect
   end
@@ -35,9 +36,10 @@ class Sprite_Skillbar < Sprite
     self.x = @instance.x
     self.y = @instance.y
     self.z = @instance.z
-    @hover_overlay.z = self.z + 2
-    @icon_sprite.z  = self.z + 1
-    @text_sprite.z = self.z + 10
+    @icon_sprite.z      = self.z + 2
+    @cooldown_sprite.z  = self.z + 4
+    @hover_overlay.z    = self.z + 6
+    @text_sprite.z      = self.z + 8
     rect = Rect.new(0, 0, @icon_sprite.bitmap.width, @icon_sprite.bitmap.height)
     @icon_sprite.bitmap.clear_rect(rect)
     draw_icons
@@ -60,6 +62,12 @@ class Sprite_Skillbar < Sprite
     @text_sprite.x, @text_sprite.y = self.x, self.y
     @text_sprite.z = self.z + 10
     draw_info_text
+  end
+  #--------------------------------------------------------------------------
+  def create_cooldown_bitmap(viewport)
+    @cooldown_sprite = Sprite.new(Viewport)
+    @cooldown_sprite.x, @cooldown_sprite.y = self.x, self.y
+    @cooldown_sprite.z = @icon_sprite.z + 1
   end
   #--------------------------------------------------------------------------
   def create_dragging_sprite(viewport)
@@ -168,6 +176,7 @@ class Sprite_Skillbar < Sprite
     @hover_overlay.dispose
     @text_sprite.dispose
     @drag_sprite.dispose
+    @cooldown_sprite.dispose
     self.bitmap = nil
     super
   end
@@ -177,6 +186,7 @@ class Sprite_Skillbar < Sprite
     @hover_overlay.hide
     @text_sprite.hide
     @drag_sprite.hide
+    @cooldown_sprite.hide
     super
   end
   #--------------------------------------------------------------------------
@@ -185,6 +195,7 @@ class Sprite_Skillbar < Sprite
     @hover_overlay.show
     @text_sprite.show
     @drag_sprite.show
+    @cooldown_sprite.show
     unselect
     super
   end

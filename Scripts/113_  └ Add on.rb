@@ -20,6 +20,7 @@ class Sprite_Character < Sprite_Base
     init_spchar_opt(viewport, character)
     @old_pos = 0
     @old_pattern = 1
+    @deployed = false
   end
   #--------------------------------------------------------------------------
   # * Frame Update
@@ -27,8 +28,8 @@ class Sprite_Character < Sprite_Base
   alias update_spchar_opt update
   def update
     sync_characher_zoom
-    return update_position if @character.frozen?
-    update_spchar_opt if update_needed?
+    return update_object if @character.frozen?
+    update_spchar_opt    if update_needed?
   end
   #--------------------------------------------------------------------------
   # * Synchornize zooming with insatnace class
@@ -51,6 +52,15 @@ class Sprite_Character < Sprite_Base
     return true  if @character.pattern != @old_pattern
     return false if @old_pos == hash_pos
     return true
+  end
+  #--------------------------------------------------------------------------
+  def update_object
+    if !@deployed
+      @deployed = true
+      update_spchar_opt
+    else
+      update_position
+    end
   end
   #--------------------------------------------------------------------------
   # * Hash position

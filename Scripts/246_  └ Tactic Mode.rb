@@ -38,6 +38,7 @@ class Scene_Map < Scene_Base
   # * Update for tactic mode
   #--------------------------------------------------------------------------
   def update_tactic
+    return if @@overlayed
     update_tactic_cursor
     @spriteset.update_timelapse
     @command_window.update if @command_window.visible?
@@ -47,7 +48,7 @@ class Scene_Map < Scene_Base
   def start_tactic
     @tactic_enabled = true
     @spriteset.show_units
-  end # last work: tactic mode processing
+  end
   #--------------------------------------------------------------------------
   def end_tactic
     @tactic_enabled = false
@@ -123,10 +124,10 @@ class Scene_Map < Scene_Base
   end
   #--------------------------------------------------------------------------
   def command_hold
-    if @battler.command_holding?
-      @battler.command_follow
+    if @status_window.battler.command_holding?
+      @status_window.battler.command_follow
     else
-      @battler.command_hold
+      @status_window.battler.command_hold
     end
     show_command_window
   end
@@ -137,6 +138,12 @@ class Scene_Map < Scene_Base
     @window_help.show
     @command_window.hide
     @phase = Phase_TargetSelection
+  end
+  #--------------------------------------------------------------------------
+  def change_reaction
+    char = @status_window.battler
+    char.aggressive_level = (char.aggressive_level + 1) % 6
+    show_command_window
   end
   #--------------------------------------------------------------------------
   def command_cancel
@@ -152,6 +159,7 @@ class Scene_Map < Scene_Base
   end
   #--------------------------------------------------------------------------
   def do_move(target)
+    return command_fallback if @command_window.battler.nil?
     if target.is_a?(Game_Event) || target.is_a?(Game_Enemy)
       @command_window.battler.set_target(target)
       @command_window.battler.popup_info("Attack")

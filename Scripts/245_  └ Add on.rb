@@ -31,6 +31,7 @@ class Scene_Map < Scene_Base
     @command_window = Window_TacticCommand.new(0,@status_window.y + @status_window.height)
     @window_help    = Window_Help.new(1)
     @window_help.y  = Graphics.height - @window_help.height
+    @window_help.z  = 1200
     @window_help.hide
     @command_window_name  = "@command_window".to_sym
     @status_window_name   = "@status_window".to_sym
@@ -38,10 +39,10 @@ class Scene_Map < Scene_Base
   end
   #--------------------------------------------------------------------------
   def set_handlers
-    #@command_window.set_handler(:ok,     method(:command_ok))
-    @command_window.set_handler(:move,   method(:command_move))
-    @command_window.set_handler(:hold,   method(:command_hold))
-    @command_window.set_handler(:cancel, method(:command_cancel))
+    @command_window.set_handler(:move,      method(:command_move))
+    @command_window.set_handler(:hold,      method(:command_hold))
+    @command_window.set_handler(:reaction,  method(:change_reaction))
+    @command_window.set_handler(:cancel,    method(:command_cancel))
   end
   #--------------------------------------------------------------------------
   # * Termination Processing

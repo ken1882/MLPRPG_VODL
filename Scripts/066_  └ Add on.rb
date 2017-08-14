@@ -4,12 +4,14 @@
 #  A battler class with methods for sprites and actions added. This class 
 # is used as a super class of the Game_Actor class and Game_Enemy class.
 #==============================================================================
+#tag: battler
 class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_reader   :state_steps
   attr_accessor :map_char     # character on the map
+  attr_accessor :stiff        # Stiff time
   attr_accessor :skill_cooldown, :item_cooldown, :weapon_cooldown, :armor_cooldown
   attr_accessor :move_limit           # Back to original position once distance out of this value
   attr_accessor :aggressive_level     # 0~5, see tag: charparam for details
@@ -23,12 +25,14 @@ class Game_Battler < Game_BattlerBase
     @weapon_cooldown  = {}
     @armor_cooldown   = {}
     @map_char         = nil
+    @stiff            = 0
     @move_limit       = DND::BattlerSetting::MoveLimit
     @aggressive_level = DND::BattlerSetting::AggressiveLevel 
     init_battler_opt
   end
   #--------------------------------------------------------------------------
   def cooldown_ready?(item)
+    return false if @stiff > 0
     return @skill_cooldown[item.id] > 0  if @skill_cooldown[item.id]  && item.is_a?(RPG::Skill)
     return @item_cooldown[item.id] > 0   if @item_cooldown[item.id]   && item.is_a?(RPG::Item)
     return @weapon_cooldown[item.id] > 0 if @weapon_cooldown[item.id] && item.is_a?(RPG::Weapon)

@@ -47,6 +47,19 @@ class Game_CharacterBase
   # * Cool down reduce
   #----------------------------------------------------------------------------
   def update_cooldown
+    battler.stiff -= 1 if battler.stiff > 0
+    battler.skill_cooldown.values.each do |cdt|
+      cdt -= 1 if cdt > 0
+    end
+    battler.item_cooldown.values.each do |cdt|
+      cdt -= 1 if cdt > 0
+    end
+    battler.weapon_cooldown.values.each do |cdt|
+      cdt -= 1 if cdt > 0
+    end
+    battler.armor_cooldown.values.each do |cdt|
+      cdt -= 1 if cdt > 0
+    end
   end
   #----------------------------------------------------------------------------
   # * Update AI process
@@ -58,14 +71,14 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def actable?
     return false if $game_message.busy?
-    return false if !movable
     return true  if !@current_action.interruptible?
-    return false if battler.nil?
-    return false if battler.dead?
+    return false if !movable
     return true
   end
   #----------------------------------------------------------------------------
   def battler
+    return @enemy if self.is_a?(Game_Event) && @enemy
+    return actor  if (self.is_a?(Game_Player) || self.is_a?(Game_Follower)) && actor
     return self
   end
   #----------------------------------------------------------------------------
@@ -87,6 +100,7 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def process_tool_action(item)    
     return if item.nil?
+    return unless actable?
     if !usable_test_passed?(item)
       Audio.se_play("Audio/SE/Cursor1", 80, 100) if self.is_a?(Game_Player)
       return false
@@ -170,7 +184,7 @@ class Game_CharacterBase
   # * A short time that cannot do next action continually
   #----------------------------------------------------------------------------
   def action_stiff
-    return 30
+    return 20
   end # queued >> add stiff
   #----------------------------------------------------------------------------
   # * Determine cast time needed for item

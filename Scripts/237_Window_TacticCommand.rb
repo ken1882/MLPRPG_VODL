@@ -26,6 +26,7 @@ class Window_TacticCommand < Window_Command
     x = Graphics.width - window_width
     super(x,y)
     @battler = nil
+    @last_index = 0
     hide
   end
   #--------------------------------------------------------------------------
@@ -38,7 +39,7 @@ class Window_TacticCommand < Window_Command
   def make_command_list
     add_command(Command_Move, :move, tactic_command_enabled?)
     add_command(Command_Hold, :hold, tactic_command_enabled?)
-    add_command(get_reaction_name, :reaction, false)   # last work: toggle change
+    add_command(get_reaction_name, :reaction)
     add_command(Command_Follow, :follow, false)        # unfinished
     add_command(Command_Guard, :guard, false)          # unfinished
     add_command(Command_Patrol, :patrol, false)        # unfinished
@@ -66,14 +67,20 @@ class Window_TacticCommand < Window_Command
   end
   #--------------------------------------------------------------------------
   def fallback
-    @battler = nil
+    @battler     = nil
+    @@last_index = 0
     hide
     deactivate
   end
   #--------------------------------------------------------------------------
+  def call_handler(symbol)
+    @last_index = index
+    super(symbol)
+  end
+  #--------------------------------------------------------------------------
   def show
     super
-    select(0)
+    select(@last_index)
   end
   #--------------------------------------------------------------------------
   def hide
