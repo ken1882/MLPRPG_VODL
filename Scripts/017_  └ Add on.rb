@@ -104,6 +104,7 @@ module BattleManager
   end
   #--------------------------------------------------------------------------
   def self.is_friend?(a, b)
+    return false if a.nil? || b.nil?
     return a.team_id == b.team_id
   end
   #--------------------------------------------------------------------------

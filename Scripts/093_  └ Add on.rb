@@ -38,6 +38,10 @@ class Game_Follower < Game_Character
     process_pathfinding_movement
   end
   #--------------------------------------------------------------------------
+  def body_size
+    return 1 * @zoom_x
+  end
+  #--------------------------------------------------------------------------
   def hashid
     return actor.hashid if actor
     return PONY.Sha256(self.inspect)

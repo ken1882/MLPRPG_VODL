@@ -70,7 +70,7 @@ module DND
     Infravision       = false
     MoveLimit         = 30
     AggressiveLevel   = 4
-    
+    BodySize          = 1
   end
   #----------------------------------------------------------------------------
 end

@@ -29,6 +29,7 @@ class Game_Event < Game_Character
     @self_vars       = Array.new(4){|i| i = 0}
     @terminated      = false
     @static_object   = false
+    @sight_timer     = 0
     initialize_event_opt(map_id, event)
     hash_self
   end
@@ -130,12 +131,12 @@ class Game_Event < Game_Character
         freeze
       when DND::REGEX::NPCEvent::Enemy
         spawn_npc_battler($1.to_i)
-      when DND::REGEX::NPCEvent::Static
-        @static_object = true
       when DND::REGEX::NPCEvent::ConfigON
         npc_config = true
       when DND::REGEX::NPCEvent::ConfigOFF
         npc_config = false
+      when DND::REGEX::NPCEvent::StaticObject
+        @static_object = true
       end
       process_npc_event_config(line) if npc_config
     end # each comment line
@@ -164,7 +165,7 @@ class Game_Event < Game_Character
     when DND::REGEX::Character::Infravision
       @infravision   = $1.to_i.to_bool
     when DND::REGEX::Character::AggressiveLevel
-      @agressive_level = $1.to_i
+      @aggressive_level = $1.to_i
     when DND::REGEX::Character::MoveLimit
       @move_limit      = $1.to_i
     when DND::REGEX::Character::DeathAnimation
@@ -275,9 +276,9 @@ class Game_Event < Game_Character
     return DND::BattlerSetting::Infravision
   end
   #----------------------------------------------------------------------------
-  def agressive_level
-    return @agressive_level             if @agressive_level
-    return @enemy.enemy.agressive_level if @enemy
+  def aggressive_level
+    return @aggressive_level     if @aggressive_level
+    return @enemy.enemy.aggressive_level if @enemy
     return DND::BattlerSetting::AggressiveLevel
   end
   #----------------------------------------------------------------------------
@@ -287,10 +288,26 @@ class Game_Event < Game_Character
     return DND::BattlerSetting::MoveLimit
   end
   #----------------------------------------------------------------------------
+  def body_size
+    return @body_size * @zoom_x       if @body_size
+    return @enemy.body_size * @zoom_x if @enemy
+    return DND::BattlerSetting::BodySize
+  end
+  #----------------------------------------------------------------------------
   def death_animation
     return @death_animation             if @death_animation
     return @enemy.enemy.death_animation if @enemey
     return DND::BattlerSetting::DeathAnimation
+  end
+  #--------------------------------------------------------------------------
+  def face_name
+    return @enemy.face_name if @enemy
+    return nil
+  end
+  #--------------------------------------------------------------------------
+  def face_index
+    return @enemy.face_index if @enemy
+    return 0
   end
   #--------------------------------------------------------------------------
   def hash_self

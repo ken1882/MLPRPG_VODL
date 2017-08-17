@@ -298,7 +298,7 @@ class Game_Character < Game_CharacterBase
     depth          = args[:depth].nil?          ? 100   : args[:depth]
     tool_range     = args[:tool_range].nil?     ? 0     : args[:tool_range]
     draw_arrow     = args[:draw_arrow].nil?     ? false : true
-    through_player = self.is_a?(Game_Follower) || (args[:through_player].nil? ? false : true)
+    through_player = (!self.is_a?(Game_Follower) || args[:through_player].nil?) ? false : true
     through_event  = args[:through_event].nil?  ? false : true
     debug          = args[:debug].nil?          ? false : true
     
@@ -469,7 +469,7 @@ class Game_Character < Game_CharacterBase
     return unless @pathfinding_moves.size > 0 && @move_poll.empty?
     @move_poll << @pathfinding_moves.shift
     @followers.move if self.is_a?(Game_Player)
-    interpret_move(true)
+    interpret_move(self.is_a?(Game_Follower))
   end
   #-------------------------------------------------------------------------
   # * Execute queued movement

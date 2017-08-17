@@ -81,7 +81,7 @@ class Scene_Map < Scene_Base
   def process_ok
     case @phase
     when Phase_Idle
-      show_command_window
+      show_command_window if $game_player.is_friend?(@status_window.battler)
     when Phase_MoveSelection
       target = @battler.nil? ? POS.new(@tactic_cursor.x, @tactic_cursor.y) : @battler
       do_move(target)

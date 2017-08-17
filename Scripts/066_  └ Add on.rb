@@ -13,8 +13,8 @@ class Game_Battler < Game_BattlerBase
   attr_accessor :map_char     # character on the map
   attr_accessor :stiff        # Stiff time
   attr_accessor :skill_cooldown, :item_cooldown, :weapon_cooldown, :armor_cooldown
-  attr_accessor :move_limit           # Back to original position once distance out of this value
-  attr_accessor :aggressive_level     # 0~5, see tag: charparam for details
+  attr_accessor :move_limit
+  attr_accessor :aggressive_level
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -27,7 +27,7 @@ class Game_Battler < Game_BattlerBase
     @map_char         = nil
     @stiff            = 0
     @move_limit       = DND::BattlerSetting::MoveLimit
-    @aggressive_level = DND::BattlerSetting::AggressiveLevel 
+    @aggressive_level = DND::BattlerSetting::AggressiveLevel
     init_battler_opt
   end
   #--------------------------------------------------------------------------

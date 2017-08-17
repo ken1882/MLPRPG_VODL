@@ -71,10 +71,10 @@ module DND
   
   # tag: event config
   module REGEX::NPCEvent
-    Enemy     = /<(?:enemy):[ ](\d+)>/i
-    Static    = /<(?:static)>/i
-    ConfigON  = /(?:config)/i
-    ConfigOFF = /<(?:\/config)>/i
+    Enemy           = /<(?:enemy):[ ](\d+)>/i
+    StaticObject    = /<(?:static object)>/i
+    ConfigON        = /(?:config)/i
+    ConfigOFF       = /<(?:\/config)>/i
   end
   
   # See "tag: charparam" for details
@@ -101,6 +101,8 @@ module DND
     
     FaceName          = /(?:Face Name =)[ ](.+)/i   # Face file name
     FaceIndex         = /(?:Face Index=)[ ](\d+)/i  # Face index
+    
+    Body_Size         = /(?:Body Size =)[ ](\d+)/i  # Size of body to determine character sight visible 
   end
   
   #atag: event config

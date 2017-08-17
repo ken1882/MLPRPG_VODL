@@ -32,7 +32,7 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   alias update_charbase_opt update
   def update
-    update_realtime_action
+    update_realtime_action if valid_battler?
     update_charbase_opt
   end
   #----------------------------------------------------------------------------
@@ -171,10 +171,6 @@ class Game_CharacterBase
     
   end
   #----------------------------------------------------------------------------
-  def set_target(target)
-    @current_target = target
-  end
-  #----------------------------------------------------------------------------
   # * Pop-up text
   #----------------------------------------------------------------------------
   def popup_info(text, color = DND::COLOR::White)
@@ -193,6 +189,12 @@ class Game_CharacterBase
   def item_casting_time(item)
     timer = [item.tool_castime - ctr, 0].max
     timer
+  end
+  #----------------------------------------------------------------------------
+  def valid_battler?
+    return true if self.is_a?(Game_Event) && @enemy
+    return true if (self.is_a?(Game_Follower) || self.is_a?(Game_Player)) && actor
+    return false
   end
   #----------------------------------------------------------------------------
   # * Hash position address to single integer

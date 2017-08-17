@@ -45,7 +45,7 @@ class Game_Event < Game_Character
   #--------------------------------------------------------------------------
   # * Detect Collision with Character 
   #--------------------------------------------------------------------------
-  def collide_with_characters?(x, y, ingore_ally = false)
+  def collide_with_characters?(x, y)
     super || collide_with_player_characters?(x, y)
   end
   #--------------------------------------------------------------------------

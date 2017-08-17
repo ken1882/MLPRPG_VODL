@@ -27,11 +27,11 @@ class Game_Actor < Game_Battler
     init_muticlass(actor_id)
     hash_self
   end
-  
+  #--------------------------------------------------------------------------
   def dualclass
     $data_classes[@dualclass_id]
   end
-  
+  #--------------------------------------------------------------------------
   def setup_dualclass(class_id)
     @dualclass_id = class_id
   end

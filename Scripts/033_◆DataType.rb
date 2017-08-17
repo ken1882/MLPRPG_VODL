@@ -281,6 +281,7 @@ class RPG::Enemy
   
   attr_accessor :face_name  # Face filename show in map status window
   attr_accessor :face_index # Face index
+  attr_accessor :body_size
   #--------------------------------------------------------------------------
   # * Attributes setup
   #--------------------------------------------------------------------------
@@ -314,7 +315,7 @@ class RPG::Enemy
     when DND::REGEX::Character::Infravision
       @infravision   = $1.to_i.to_bool
     when DND::REGEX::Character::AggressiveLevel
-      @agressive_level = $1.to_i
+      @aggressive_level = $1.to_i
     when DND::REGEX::Character::MoveLimit
       @move_limit      = $1.to_i
     when DND::REGEX::Character::DeathAnimation
@@ -338,6 +339,7 @@ class RPG::Enemy
     @death_animation      = DND::BattlerSetting::DeathAnimation
     @face_name            = nil
     @face_index           = 0
+    @body_size            = DND::BattlerSetting::BodySize
   end
   #------------------------------------
 end

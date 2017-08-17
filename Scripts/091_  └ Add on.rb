@@ -109,6 +109,10 @@ class Game_Player < Game_Character
     end
   end
   #--------------------------------------------------------------------------
+  def body_size
+    return 1 * @zoom_x
+  end
+  #--------------------------------------------------------------------------
   def hashid
     return actor.hashid if actor
     return 0

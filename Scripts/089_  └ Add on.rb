@@ -59,32 +59,6 @@ class Game_Character < Game_CharacterBase
     @zooming = true
   end
   #----------------------------------------------------------------------------
-  # *) Determind sight angle
-  #----------------------------------------------------------------------------
-  def determind_sight_angles(angle)
-    case direction
-    when 2; value = [270 + angle, 270 - angle]
-    when 4; value = [180 + angle, 180 - angle]
-    when 6; value = [  0 + angle,   0 - angle]
-    when 8; value = [ 90 + angle,  90 - angle]
-    end
-    value[0] = (value[0] + 360) % 360
-    value[1] = (value[1] + 360) % 360
-    return value
-  end
-  #----------------------------------------------------------------------------
-  # *) sight
-  #----------------------------------------------------------------------------
-  def in_sight?(target, size)
-    return false if size.nil?
-    
-    angle = determind_sight_angles(60)
-    result = Math.in_arc?(target.x, target.y, @x, @y, angle[0], angle[1], size, @direction)
-    result &= path_clear?(@x, @y, target.x, target.y)
-    
-    return result
-  end
-  #----------------------------------------------------------------------------
   # *) check if straight line path is able to see
   #----------------------------------------------------------------------------
   def path_clear?(x1, y1, x2, y2)
