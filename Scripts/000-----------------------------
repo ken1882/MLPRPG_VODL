@@ -100,9 +100,15 @@ def debug_print(*args)
   args.each do |line|
     info += line.to_s + ' '
   end
-  puts "{[#{Time.now}]}[Debug]: #{info}"
+  puts "[Debug]: #{info}"
 end
 alias debug_printf debug_print
+#--------------------------------------------------------------------------
+alias puts_debug puts
+def puts(*args)
+  args[0] = "<#{Time.now}> " + args[0] if args[0] =~ /\[(.*)\]/i
+  puts_debug(*args)
+end
 #--------------------------------------------------------------------------
 # * Bullshits
 #--------------------------------------------------------------------------

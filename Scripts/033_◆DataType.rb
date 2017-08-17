@@ -296,7 +296,7 @@ class RPG::Enemy
     case line
     when DND::REGEX::Character::DefaultWeapon
       @default_weapon = $1.to_i
-      puts "[Enemy Weapon]: #{self.name}'s default weapon: #{$data_weapons[@default_weapon].name}" if @default_weapon != 1
+      puts "[System]: #{self.name}'s default weapon: #{$data_weapons[@default_weapon].name}" if @default_weapon != 1
     when DND::REGEX::Character::TeamID
       @team_id = $1.to_i
     when DND::REGEX::Character::DeathSwitchSelf

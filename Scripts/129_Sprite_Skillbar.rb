@@ -64,8 +64,8 @@ class Sprite_Skillbar < Sprite
     draw_info_text
   end
   #--------------------------------------------------------------------------
-  def create_cooldown_bitmap(viewport)
-    @cooldown_sprite = Sprite.new(Viewport)
+  def create_cooldown_sprite(viewport)
+    @cooldown_sprite = Sprite.new(viewport)
     @cooldown_sprite.x, @cooldown_sprite.y = self.x, self.y
     @cooldown_sprite.z = @icon_sprite.z + 1
   end
