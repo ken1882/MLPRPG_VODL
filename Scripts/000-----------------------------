@@ -9,7 +9,7 @@
 ╠─╣                                                                          ╠─╣
 ║ ╚══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╝ ║
 ╚════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════╝
-search tag:
+global search:
 Crtl + Shift + F
 Tags available:
 tag: queued       // work that may be done on later days

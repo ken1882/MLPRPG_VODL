@@ -68,7 +68,7 @@ class Sprite_Skillbar < Sprite
     @cooldown_sprite = Sprite.new(viewport)
     @cooldown_sprite.x, @cooldown_sprite.y = self.x, self.y
     @cooldown_sprite.z = @icon_sprite.z + 1
-  end
+  end # last work: skilbar cooldown sprite
   #--------------------------------------------------------------------------
   def create_dragging_sprite(viewport)
     @drag_sprite = Sprite.new(viewport)
@@ -205,9 +205,8 @@ class Sprite_Skillbar < Sprite
   def translucent_alpha
     return 160
   end
-  
+  #--------------------------------------------------------------------------
   def actor
     @instance.actor
   end
-  
 end

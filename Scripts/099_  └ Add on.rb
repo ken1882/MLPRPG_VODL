@@ -29,7 +29,7 @@ class Game_Event < Game_Character
     @self_vars       = Array.new(4){|i| i = 0}
     @terminated      = false
     @static_object   = false
-    @sight_timer     = 0
+    @sight_timer     = rand(20)
     initialize_event_opt(map_id, event)
     hash_self
   end

@@ -423,6 +423,7 @@ class RPG::BaseItem
                                      
   attr_reader   :scope               # Damage::Scope
   attr_reader   :information         # Linked to folder /History
+  attr_reader   :action_sequence
   #------------------------------------------------------------------------
   attr_accessor :saving_throw_adjust
   attr_accessor :difficulty_class_adjust
@@ -518,6 +519,7 @@ class RPG::BaseItem
     when DND::REGEX::Equipment::ToolType;          @tool_type          = $1.to_i; 
     when DND::REGEX::Equipment::ToolHitShake;      @tool_hitshake      = $1.to_i;
     when DND::REGEX::Equipment::ToolCombo;         @tool_combo         = $1.to_i;
+    when DND::REGEX::Equipment::ApplyAction;       @action_sequence    = $1.to_i;
     end
   end
   #---------------------------------------------------------------------------
@@ -532,6 +534,7 @@ class RPG::BaseItem
     @tool_scope        = 1     unless @tool_scope
     @tool_scopedir     = 5     unless @tool_scopedir
     @tool_scopeangle   = 0     unless @tool_scopeangle
+    @action_sequence   = 0     unless @action_sequence
     @tool_distance    += 0.5
     @tool_scope       += 0.5
   end

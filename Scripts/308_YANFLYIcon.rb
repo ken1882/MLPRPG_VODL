@@ -135,9 +135,12 @@ module YEA
       "Follow"         => 1117,
       "Patrol"         => 1114,
       "Hold/Move"      => 9301,
+      ":Hold"          => 9301,
+      ":Move"          => 2255,
       ":No Attack"     => 1141,
       ":Passive"       => 13,
       ":Stand Ground"  => 7346,
+      ":Defensive"     => 139,
       ":Aggressive"    => 131,
       ":Striking"      => 116,
     } # Do not remove this.

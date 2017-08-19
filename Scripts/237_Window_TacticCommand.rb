@@ -10,7 +10,6 @@ class Window_TacticCommand < Window_Command
   # * Constants
   #--------------------------------------------------------------------------
   Command_Move        = "Move to"
-  Command_Hold        = "Hold/Move"
   Command_Follow      = "Follow"
   Command_Guard       = "Guard"
   Command_Patrol      = "Patrol"
@@ -38,7 +37,7 @@ class Window_TacticCommand < Window_Command
   #--------------------------------------------------------------------------
   def make_command_list
     add_command(Command_Move, :move, tactic_command_enabled?)
-    add_command(Command_Hold, :hold, tactic_command_enabled?)
+    add_command(get_moving_name, :hold, tactic_command_enabled?)
     add_command(get_reaction_name, :reaction)
     add_command(Command_Follow, :follow, false)        # unfinished
     add_command(Command_Guard, :guard, false)          # unfinished
@@ -49,6 +48,12 @@ class Window_TacticCommand < Window_Command
     return false if battler.is_a?(Game_Player)
     return false if battler == $game_party.leader
     return true
+  end
+  #--------------------------------------------------------------------------
+  def get_moving_name
+    return "Hold/Move" if !@battler || !@battler.movement_command
+    return ":Hold"     if @battler.command_holding?
+    return ":Move"
   end
   #--------------------------------------------------------------------------
   # * Get current battler's aggressive level

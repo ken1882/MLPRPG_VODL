@@ -280,10 +280,14 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.invoke_action(action)
     item = action.item
+    return invoke_action_sequence(action) if item.action_sequence > 0
     action.subject.each do |target|
       next unless valid_battler?(target)
       target.item_apply(action.user, item)
     end
+  end
+  #--------------------------------------------------------------------------
+  def self.invoke_action_sequence(action)
   end
   #--------------------------------------------------------------------------
   # * Apply Substitute

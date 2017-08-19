@@ -142,6 +142,8 @@ module DND
     ToolType          = /(?:Tool Type =)[ ](\d+)/i             # Tool Type, 0 = missile, 1 = bomb
     ToolCombo         = /(?:Tool Combo =)[ ](\d+)/i            # Next Weapon Id use after player contiune to
                                                                #   using this tool (default: in 20 frames)
+    
+    ApplyAction       = /(?:Apply Action =)[ ](\d+)/i          # Apply given action sequence id when item is used
   end
   
 end
