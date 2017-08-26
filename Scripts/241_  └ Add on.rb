@@ -219,6 +219,9 @@ class Scene_Base
     @input_string = nil
   end
   #--------------------------------------------------------------------------
+  def update_focus
+  end
+  #--------------------------------------------------------------------------
   def retrieve_input(string)
     @input_string = string
   end

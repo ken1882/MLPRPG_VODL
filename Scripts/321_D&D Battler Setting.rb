@@ -48,17 +48,17 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def update_cooldown
     battler.stiff -= 1 if battler.stiff > 0
-    battler.skill_cooldown.values.each do |cdt|
-      cdt -= 1 if cdt > 0
+    battler.skill_cooldown.each do |id, cdt|
+      battler.skill_cooldown[id] -= 1 if cdt > 0
     end
-    battler.item_cooldown.values.each do |cdt|
-      cdt -= 1 if cdt > 0
+    battler.item_cooldown.each do |id, cdt|
+      battler.item_cooldown[id] -= 1 if cdt > 0
     end
-    battler.weapon_cooldown.values.each do |cdt|
-      cdt -= 1 if cdt > 0
+    battler.weapon_cooldown.each do |id, cdt|
+      battler.weapon_cooldown[id] -= 1 if cdt > 0
     end
-    battler.armor_cooldown.values.each do |cdt|
-      cdt -= 1 if cdt > 0
+    battler.armor_cooldown.each do |id, cdt|
+      battler.armor_cooldown[id] -= 1 if cdt > 0
     end
   end
   #----------------------------------------------------------------------------
@@ -70,9 +70,7 @@ class Game_CharacterBase
   # * Can perform action?
   #----------------------------------------------------------------------------
   def actable?
-    return false if $game_message.busy?
-    return true  if !@current_action.interruptible?
-    return false if !movable
+    return false if !movable?
     return true
   end
   #----------------------------------------------------------------------------
@@ -150,6 +148,11 @@ class Game_CharacterBase
     process_weapon_action if @action.item.is_a?(RPG::Weapon)
     process_armor_action  if @action.item.is_a?(RPG::Armor)
     @action = nil
+    apply_action_stiff
+  end
+  #----------------------------------------------------------------------------
+  def apply_action_stiff
+    battler.stiff = action_stiff
   end
   #----------------------------------------------------------------------------
   def process_skill_action
@@ -157,18 +160,21 @@ class Game_CharacterBase
     use_item(@action.item) if @action.item.tool_animmoment == 1 # Projectile
     proj = Game_Projectile.new(@action) if @action.item.tool_graphic
     SceneManager.setup_projectile(proj) if @action.item.tool_graphic
+    battler.skill_cooldown[@action.item.id] = @action.item.tool_cooldown
   end
   #----------------------------------------------------------------------------
   def process_item_action
     BattleManager.execute_action(@action)
+    battler.item_cooldown[@action.item.id] = @action.item.tool_cooldown
   end
   #----------------------------------------------------------------------------
   def process_weapon_action
     SceneManager.setup_weapon_use(@action)
+    battler.weapon_cooldown[@action.item.id] = @action.item.tool_cooldown
   end
   #----------------------------------------------------------------------------
   def process_armor_action
-    
+    battler.armor_cooldown[@action.item.id] = @action.item.tool_cooldown
   end
   #----------------------------------------------------------------------------
   # * Pop-up text
@@ -181,7 +187,7 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def action_stiff
     return 20
-  end # queued >> add stiff
+  end
   #----------------------------------------------------------------------------
   # * Determine cast time needed for item
   # tag: casting

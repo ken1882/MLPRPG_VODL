@@ -177,7 +177,7 @@ module BattleManager
     battlers.each{|obj| so2.x += obj.x; so2.y += obj.y}
     so2.x /= n; so2.y /= n
     n1  = determine_effected_targets(user, item, so1).size
-    n2  = determine_effected_targets(user, item, so1).size
+    n2  = determine_effected_targets(user, item, so2).size
     target = n1 >= n2 ? so1 : so2
     return target.nil? ? user : target
   end

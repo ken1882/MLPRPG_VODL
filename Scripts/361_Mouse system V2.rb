@@ -154,8 +154,6 @@ module Mouse
   GetWindowRect     = PONY::API::GetWindowRect
   ShowCursor        = Win32API.new('user32', 'ShowCursor', 'i', 'i')
   
-  ShowCursor.call(0)
-  
   @handle = PONY::API::Hwnd  
   
   Point = Struct.new(:x, :y)
@@ -671,8 +669,8 @@ class Game_Event
     @erased
   end
   
-  def movable?
-    return false if moving?
+  def movable?(for_action = false)
+    return false if moving? && !for_action
     return false if $game_message.busy? || $game_message.visible
     return super
   end

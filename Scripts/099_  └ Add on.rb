@@ -80,7 +80,9 @@ class Game_Event < Game_Character
     comments = ""
     for command in @list
       next unless command.code == 108
-      comments += command.parameters[0]
+      command.parameters[0].split(/[\r\n]+/).each do |text|
+        comments += text
+      end
     end
     return comments
   end
@@ -308,6 +310,26 @@ class Game_Event < Game_Character
   def face_index
     return @enemy.face_index if @enemy
     return 0
+  end
+  #--------------------------------------------------------------------------
+  def weapon_cooldown
+    return @enemy.weapon_cooldown if @enemy
+    return {}
+  end
+  #--------------------------------------------------------------------------
+  def armor_cooldown
+    return @enemy.armor_cooldown if @enemy
+    return {}
+  end
+  #--------------------------------------------------------------------------
+  def skill_cooldown
+    return @enemy.skill_cooldown if @enemy
+    return {}
+  end
+  #--------------------------------------------------------------------------
+  def item_cooldown
+    return @enemy.item_cooldown if @enemy
+    return {}
   end
   #--------------------------------------------------------------------------
   def hash_self

@@ -31,7 +31,7 @@ class Game_Follower < Game_Character
     moveto_comp(x, y)
   end
   #--------------------------------------------------------------------------
-  def movable?
+  def movable?(for_action = false)
     return false if actor && !actor.movable?
     #return false if @blowpower[0] > 0
     return true

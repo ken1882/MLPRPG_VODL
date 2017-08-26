@@ -48,7 +48,7 @@ class Game_Event < Game_Character
     candidates.each do |char|
       dis = distance_to_character(char)
       next if dis > range
-      next unless in_sight?(char, dis)
+      next unless in_sight?(char, range)
       rate = target_rate(char, dis)
       best_target = [char, rate] if rate < best_target[1]
     end
@@ -84,7 +84,7 @@ class Game_Event < Game_Character
     last_pos = POS.new(@current_target.x, @current_target.y)
     set_target(nil) if !in_sight?(@current_target, visible_sight)
     return if aggressive_level < 3
-    move_to_position(last_pos.x, last_pos.y, tool_range: 0)
+    #move_to_position(last_pos.x, last_pos.y, tool_range: 0)
   end
   
 end

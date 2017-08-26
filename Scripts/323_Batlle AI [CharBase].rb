@@ -46,7 +46,7 @@ class Game_Character < Game_CharacterBase
     @combat_timer = 20
     chase_target
     return process_tactic_commands unless @tactic_commands.empty?
-    detetmine_skill_usage
+    determine_skill_usage
     determine_item_usage
   end # last work: AI combat (it finally comes
   #----------------------------------------------------------------------------

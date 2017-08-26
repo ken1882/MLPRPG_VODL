@@ -22,6 +22,7 @@ module SceneManager
     reserve_loading_screen(nil, subtitle: info)
     DataManager.init
     Audio.setup_midi if use_midi?
+    Mouse.hide_global_cursor
     @scene = first_scene_class.new
     @scene.main while @scene
   end
@@ -211,7 +212,7 @@ module SceneManager
     # Tsuki uses this same part in his Test Edit script
     if !$imported["TH_TestEdit"]
       # Get game window text
-      console_w = Win32API.new('user32','GetForegroundWindow', 'V', 'L').call
+      console_w = PONY::API::GetForegroundWindow.call
       buf_len = Win32API.new('user32','GetWindowTextLength', 'L', 'I').call(console_w)
       str = ' ' * (buf_len + 1)
       Win32API.new('user32', 'GetWindowText', 'LPI', 'I').call(console_w , str, str.length)

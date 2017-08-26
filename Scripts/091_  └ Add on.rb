@@ -55,6 +55,18 @@ class Game_Player < Game_Character
   def transfer?
     return @transferring
   end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Determine if Movement is Possible
+  #--------------------------------------------------------------------------
+  def movable?(for_action = false)
+    return false if moving? && !for_action
+    return false if @move_route_forcing || @followers.gathering?
+    return false if @vehicle_getting_on || @vehicle_getting_off
+    return false if $game_message.busy? || $game_message.visible
+    return false if vehicle && !vehicle.movable?
+    return false if !actor.movable?
+    return true
+  end
   #---------------------------------------------------------------------------
   # * Method Missing
   # ----------------------------------------------------------------------   

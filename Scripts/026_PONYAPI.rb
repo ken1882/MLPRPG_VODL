@@ -20,6 +20,7 @@ module PONY::API
   GetClipboardData     = Win32API.new("user32","GetClipboardData", 'i', 'i')
   GetCursorPos         = Win32API.new('user32', 'GetCursorPos', 'p', 'i')
   GetFocus             = Win32API.new('user32', 'GetFocus', 'i', 'l')
+  GetForegroundWindow  = Win32API.new('user32','GetForegroundWindow', 'v', 'l')
   GetKeyState          = Win32API.new("user32","GetKeyState", 'i', 'i')
   GetMessage           = Win32API.new('user32', 'GetMessage', 'plll', 'l')
   GetModuleHandle      = Win32API.new('kernel32', 'GetModuleHandle', 'p', 'l')
