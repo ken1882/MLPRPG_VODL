@@ -5,7 +5,7 @@
 # condition determinants and running parallel process events. Used within the
 # Game_Map class.
 #==============================================================================
-# tag: battler
+# tag: AI
 class Game_Event < Game_Character
   #--------------------------------------------------------------------------
   # * Frame Update
@@ -74,17 +74,24 @@ class Game_Event < Game_Character
   def in_sight?(target, dis)
     offset  = target.body_size / 2
     tx, ty  = target.x + offset, target.y + offset
-    angle   = determind_sight_angles(60)
+    angle   = determind_sight_angles(75)
     result  = Math.in_arc?(tx, ty, @x, @y, angle[0], angle[1], dis - 1 + offset*3, @direction)
     result &= path_clear?(@x, @y, target.x, target.y)
     return result
   end
   #----------------------------------------------------------------------------
   def update_sighted
-    last_pos = POS.new(@current_target.x, @current_target.y)
-    set_target(nil) if !in_sight?(@current_target, visible_sight)
-    return if aggressive_level < 3
-    #move_to_position(last_pos.x, last_pos.y, tool_range: 0)
+    if !in_sight?(@current_target, visible_sight)
+      @sight_lost_timer -= 1 if @sight_lost_timer > 0
+      process_target_missing if @sight_lost_timer == 0
+    else
+      @sight_lost_timer = 180
+      last_pos = @current_target.pos
+    end
   end
-  
+  #----------------------------------------------------------------------------
+  def process_target_missing
+    move_to_position(last_pos.x, last_pos.y, tool_range: 0) if aggressive_level > 3
+  end
+  #----------------------------------------------------------------------------
 end

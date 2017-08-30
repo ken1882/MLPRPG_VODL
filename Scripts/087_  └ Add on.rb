@@ -100,5 +100,8 @@ class Game_CharacterBase
     @px     = pixel_pos.x
     @py     = pixel_pos.y
   end
-  
+  #--------------------------------------------------------------------------
+  def pos
+    return POS.new(@real_x, @real_y)
+  end
 end

@@ -5,6 +5,6 @@
 # the front character, displayed in the party. It is referenced within the
 # Game_Followers class.
 #==============================================================================
-# tag: battler
+# tag: AI
 class Game_Follower < Game_Character
 end

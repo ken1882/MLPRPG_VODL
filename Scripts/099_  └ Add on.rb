@@ -26,10 +26,12 @@ class Game_Event < Game_Character
   #--------------------------------------------------------------------------
   alias initialize_event_opt initialize
   def initialize(map_id, event)
-    @self_vars       = Array.new(4){|i| i = 0}
-    @terminated      = false
-    @static_object   = false
-    @sight_timer     = rand(20)
+    @self_vars        = Array.new(4){|i| i = 0}
+    @terminated       = false
+    @static_object    = false
+    @sight_timer      = rand(20)
+    @sight_lost_timer = 0
+    @stuck_timer      = 0
     initialize_event_opt(map_id, event)
     hash_self
   end

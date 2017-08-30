@@ -5,20 +5,24 @@
 # added. It is used as a super class of Game_Player, Game_Follower,
 # GameVehicle, and Game_Event.
 #==============================================================================
-# tag: battler
+# tag: AI
 class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor :combat_timer
   attr_accessor :tactic_commands
+  attr_accessor :visible
+  attr_reader   :semi_visible
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
   #--------------------------------------------------------------------------
   alias init_public_combatdnd init_public_members
   def init_public_members
-    @combat_timer = rand(20)
+    @combat_timer    = rand(20)
     @tactic_commands = []
+    @visible         = true
+    @semi_visible    = false
     init_public_combatdnd
   end
   #----------------------------------------------------------------------------
@@ -50,21 +54,29 @@ class Game_Character < Game_CharacterBase
     determine_item_usage
   end # last work: AI combat (it finally comes
   #----------------------------------------------------------------------------
-  def chase_target
-    
+  def chase_target    
   end
   #----------------------------------------------------------------------------
   def determine_skill_usage
-    
   end
   #----------------------------------------------------------------------------
   def determine_item_usage
-    
   end
   #----------------------------------------------------------------------------
   def process_tactic_commands
-    
   end
+  #----------------------------------------------------------------------------
+  def tactic_retreat
+  end
+  #----------------------------------------------------------------------------
+  def visible?
+    return @visible
+  end
+  #----------------------------------------------------------------------------
+  def change_visibility(status = !@visible)
+    @visible = status
+    @semi_visible = status if BattleManager.is_friend?(self, $game_player)
+  end # last work: translucent sprite
   #----------------------------------------------------------------------------
   # * Increase the target rate if target is meet to current tactic target
   #----------------------------------------------------------------------------
