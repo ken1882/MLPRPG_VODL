@@ -34,9 +34,9 @@ class Unit_Circle < Sprite_Base
   # * Position update
   #----------------------------------------------------------------------------
   def update_position
-    return hide if BattleManager.valid_battler?(@character)
-    self.x = @character.screen_x
-    self.y = @character.screen_y
+    return hide if !BattleManager.valid_battler?(@character)
+    self.x = @character.screen_x - 16
+    self.y = @character.screen_y - 28
   end
   #----------------------------------------------------------------------------
   # *) Dispose method
@@ -50,6 +50,7 @@ class Unit_Circle < Sprite_Base
   end
   #----------------------------------------------------------------------------
   def show
+    update_position
     self.visible = true
   end
   #----------------------------------------------------------------------------
@@ -62,8 +63,7 @@ class Unit_Circle < Sprite_Base
   def update
     return unless self.visible?
     self.hide if dead?
-    self.x = @character.screen_x - 16
-    self.y = @character.screen_y - 28
+    update_position
     super
   end
   #----------------------------------------------------------------------------

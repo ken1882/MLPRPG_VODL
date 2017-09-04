@@ -10,10 +10,11 @@ class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_accessor :combat_timer
-  attr_accessor :tactic_commands
+  attr_accessor :combat_timer       # lazy update timer
+  attr_accessor :tactic_commands    # tactic commadns, unfinished
   attr_accessor :visible
-  attr_reader   :semi_visible
+  attr_accessor :true_sight
+  attr_reader   :translucent
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
   #--------------------------------------------------------------------------
@@ -22,7 +23,8 @@ class Game_Character < Game_CharacterBase
     @combat_timer    = rand(20)
     @tactic_commands = []
     @visible         = true
-    @semi_visible    = false
+    @translucent     = false
+    @true_sight      = false
     init_public_combatdnd
   end
   #----------------------------------------------------------------------------
@@ -74,9 +76,20 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def change_visibility(status = !@visible)
-    @visible = status
-    @semi_visible = status if BattleManager.is_friend?(self, $game_player)
-  end # last work: translucent sprite
+    @visible     =  status
+    @translucent = !status if BattleManager.is_friend?(self, $game_player)
+    if !@visible && @translucent
+      @opacity = translucent_alpha
+    else
+      @opacity = 0xff
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Get Alpha Value of Translucent Drawing
+  #--------------------------------------------------------------------------
+  def translucent_alpha
+    return 160
+  end
   #----------------------------------------------------------------------------
   # * Increase the target rate if target is meet to current tactic target
   #----------------------------------------------------------------------------

@@ -20,12 +20,17 @@ class Game_Follower < Game_Character
     @through = false
   end
   #--------------------------------------------------------------------------
-  # * Frame Update
+  # * Overwrite: Frame Update
   #--------------------------------------------------------------------------
-  alias update_dnd update
   def update
-    update_dnd
+    @move_speed     = $game_player.real_move_speed
+    @transparent    = $game_player.transparent
+    @walk_anime     = $game_player.walk_anime
+    @step_anime     = $game_player.step_anime
+    @direction_fix  = $game_player.direction_fix
+    @blend_type     = $game_player.blend_type
     update_movement
+    super
   end
   #--------------------------------------------------------------------------
   # * Combat mode on
@@ -45,6 +50,12 @@ class Game_Follower < Game_Character
   def hashid
     return actor.hashid if actor
     return PONY.Sha256(self.inspect)
+  end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Determine Visibility
+  #--------------------------------------------------------------------------
+  def visible?
+    super && actor && $game_player.followers.visible
   end
   #---------------------------------------------------------------------------
   # * Method Missing

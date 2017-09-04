@@ -20,6 +20,7 @@ class Sprite_Character < Sprite_Base
     init_spchar_opt(viewport, character)
     @old_pos = 0
     @old_pattern = 1
+    @translucent = false
     @deployed = false
   end
   #--------------------------------------------------------------------------
@@ -28,6 +29,7 @@ class Sprite_Character < Sprite_Base
   alias update_spchar_opt update
   def update
     sync_characher_zoom
+    update_visibility    if @translucent != @character.translucent rescue nil
     return update_object if @character.frozen?
     update_spchar_opt    if update_needed?
   end
@@ -46,8 +48,9 @@ class Sprite_Character < Sprite_Base
   # * Check if sprite should update
   #--------------------------------------------------------------------------
   def update_needed?
-    return true  if @character.animation_id > 0    rescue nil
-    return true  if graphic_changed? || animation? rescue nil
+    return true  if @character.opacity != self.opacity rescue nil
+    return true  if @character.animation_id > 0        rescue nil
+    return true  if graphic_changed? || animation?     rescue nil
     return false if !@character
     return true  if @character.pattern != @old_pattern
     return false if @old_pos == hash_pos
@@ -82,12 +85,12 @@ class Sprite_Character < Sprite_Base
       @old_pattern = pattern
     end
   end
-  #-----------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   # * Overwrite update position.
   # To limit screen_x and screen_y to be called many times
   # 
   # moved from Thro anti-lag
-  #-----------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   def update_position
     move_animation(@sx - x, @sy - y)
     self.x = @sx
@@ -113,6 +116,5 @@ class Sprite_Character < Sprite_Base
       sprite.x += dx
       sprite.y += dy
     end
-  end
-  
+  end # def move_animation
 end

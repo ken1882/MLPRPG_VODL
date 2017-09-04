@@ -200,7 +200,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def show_units
     @unitcir_sprites.each do |sprite|
-      puts "Show unit: #{sprite.character} #{BattleManager.valid_battler?(sprite.character)}"
+      #puts "Show unit: #{sprite.character} #{BattleManager.valid_battler?(sprite.character)}"
       sprite.show if BattleManager.valid_battler?(sprite.character)
     end
     @tactic_cursor.show if @tactic_cursor

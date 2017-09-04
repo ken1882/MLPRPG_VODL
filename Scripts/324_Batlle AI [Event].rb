@@ -72,6 +72,7 @@ class Game_Event < Game_Character
   # *) sight
   #----------------------------------------------------------------------------
   def in_sight?(target, dis)
+    return false if @enemy.is_opponent?(target) && !target.visible? && !@true_sight
     offset  = target.body_size / 2
     tx, ty  = target.x + offset, target.y + offset
     angle   = determind_sight_angles(75)
@@ -86,12 +87,14 @@ class Game_Event < Game_Character
       process_target_missing if @sight_lost_timer == 0
     else
       @sight_lost_timer = 180
-      last_pos = @current_target.pos
+      @target_last_pos = @current_target.pos
     end
   end
   #----------------------------------------------------------------------------
   def process_target_missing
-    move_to_position(last_pos.x, last_pos.y, tool_range: 0) if aggressive_level > 3
+    return if !@target_last_pos
+    move_to_position(@target_last_pos.x, @target_last_pos.y, tool_range: 0) if aggressive_level > 3
+    @target_last_pos = nil
   end
   #----------------------------------------------------------------------------
 end
