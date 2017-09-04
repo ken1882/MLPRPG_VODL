@@ -10,8 +10,9 @@ class Game_Skillbar
   #--------------------------------------------------------------------------
   # * Constants
   #--------------------------------------------------------------------------
-  Phase_Map       = 0
-  Phase_Selection = 1
+  Phase_Map           = 0
+  Phase_Selection     = 1
+  Phase_CastSelection = 2
   #--------------------------------------------------------------------------
   # *) Instance Vars
   #--------------------------------------------------------------------------
@@ -171,7 +172,7 @@ class Game_Skillbar
   #--------------------------------------------------------------------------
   def process_skill_select
     return 0
-    #tag: queued
+    #tag: last work (finished this stuff
     @stack.push(AllSkill_Flag)
     
     return 2

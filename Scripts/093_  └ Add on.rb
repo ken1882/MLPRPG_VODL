@@ -23,6 +23,7 @@ class Game_Follower < Game_Character
   # * Overwrite: Frame Update
   #--------------------------------------------------------------------------
   def update
+    # opacity sync to $game_player is removed
     @move_speed     = $game_player.real_move_speed
     @transparent    = $game_player.transparent
     @walk_anime     = $game_player.walk_anime
@@ -36,6 +37,12 @@ class Game_Follower < Game_Character
   # * Combat mode on
   #--------------------------------------------------------------------------
   def process_combat_phase
+    
+  end
+  #--------------------------------------------------------------------------
+  # * Combat mode off
+  #--------------------------------------------------------------------------
+  def retreat_combat
     
   end
   #---------------------------------------------------------------------------

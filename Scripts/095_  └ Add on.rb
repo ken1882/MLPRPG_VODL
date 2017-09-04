@@ -21,5 +21,10 @@ class Game_Followers
   def into_fray
     each {|follower| follower.process_combat_phase}
   end
-  
+  #--------------------------------------------------------------------------
+  # * Combat mode off
+  #--------------------------------------------------------------------------
+  def retreat_fray
+    each {|follower| follower.retreat_combat}
+  end
 end

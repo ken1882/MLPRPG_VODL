@@ -72,7 +72,7 @@ class Game_Event < Game_Character
   # *) sight
   #----------------------------------------------------------------------------
   def in_sight?(target, dis)
-    return false if @enemy.is_opponent?(target) && !target.visible? && !@true_sight
+    return false if !target.visible? && !true_sight
     offset  = target.body_size / 2
     tx, ty  = target.x + offset, target.y + offset
     angle   = determind_sight_angles(75)

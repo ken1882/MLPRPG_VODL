@@ -151,4 +151,24 @@ class Game_Battler < Game_BattlerBase
     self.mp -= @result.mp_damage
   end
   #--------------------------------------------------------------------------
+  # * Overwrite: Add State
+  #--------------------------------------------------------------------------
+  def add_state(state_id, duration = nil)
+    if state_addable?(state_id)
+      add_new_state(state_id) unless state?(state_id)
+      reset_state_counts(state_id, duration)
+      @result.added_states.push(state_id).uniq!
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Alias: Reset State Counts (Turns and Steps)
+  #--------------------------------------------------------------------------
+  alias reset_state_counts_default reset_state_counts
+  def reset_state_counts(state_id, duration = nil)
+    state = $data_states[state_id]
+    return reset_state_counts_default(state_id) if duration.nil?
+    @state_turns[state_id] = duration
+    @state_steps[state_id] = state.steps_to_remove
+  end
+  #--------------------------------------------------------------------------
 end

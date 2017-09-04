@@ -13,7 +13,6 @@ class Game_Character < Game_CharacterBase
   attr_accessor :combat_timer       # lazy update timer
   attr_accessor :tactic_commands    # tactic commadns, unfinished
   attr_accessor :visible
-  attr_accessor :true_sight
   attr_reader   :translucent
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
@@ -24,7 +23,6 @@ class Game_Character < Game_CharacterBase
     @tactic_commands = []
     @visible         = true
     @translucent     = false
-    @true_sight      = false
     init_public_combatdnd
   end
   #----------------------------------------------------------------------------
@@ -83,6 +81,10 @@ class Game_Character < Game_CharacterBase
     else
       @opacity = 0xff
     end
+  end
+  #--------------------------------------------------------------------------
+  def true_sight
+    return battler.state?(PONY::StateID[:true_sight])
   end
   #--------------------------------------------------------------------------
   # * Get Alpha Value of Translucent Drawing
