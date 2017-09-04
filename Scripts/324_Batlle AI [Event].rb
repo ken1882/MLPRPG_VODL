@@ -82,8 +82,9 @@ class Game_Event < Game_Character
   end
   #----------------------------------------------------------------------------
   def update_sighted
+    #key = [$game_map.id]
     if !in_sight?(@current_target, visible_sight)
-      @sight_lost_timer -= 1 if @sight_lost_timer > 0
+      @sight_lost_timer -= 15 if @sight_lost_timer > 0
       process_target_missing if @sight_lost_timer == 0
     else
       @sight_lost_timer = 180
@@ -93,6 +94,7 @@ class Game_Event < Game_Character
   #----------------------------------------------------------------------------
   def process_target_missing
     return if !@target_last_pos
+    puts "#{name}: Target Missing"
     move_to_position(@target_last_pos.x, @target_last_pos.y, tool_range: 0) if aggressive_level > 3
     @target_last_pos = nil
   end

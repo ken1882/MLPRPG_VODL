@@ -12,6 +12,9 @@ class Game_Event < Game_Character
   attr_accessor :enemy
   attr_reader   :event
   attr_reader   :terminated
+  attr_reader   :sight_timer
+  attr_reader   :sight_lost_timer
+  attr_reader   :stuck_timer
   attr_accessor :static_object
   #--------------------------------------------------------------------------
   attr_accessor :default_weapon
@@ -196,6 +199,20 @@ class Game_Event < Game_Character
   #----------------------------------------------------------------------------
   def terminated?
     @terminated
+  end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Update During Autonomous Movement
+  #--------------------------------------------------------------------------
+  def update_self_movement
+    if !@pathfinding_moves.empty?
+      process_pathfinding_movement
+    elsif near_the_screen? && @stop_count > stop_count_threshold
+      case @move_type
+      when 1;  move_type_random
+      when 2;  move_type_toward_player
+      when 3;  move_type_custom
+      end
+    end
   end
   #----------------------------------------------------------------------------
   # * Freeze event from update

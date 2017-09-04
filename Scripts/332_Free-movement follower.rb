@@ -53,7 +53,7 @@ class Game_Follower < Game_Character
       @force_chase = false
       return
     end
-    #return process_pathfinding_movement if @pathfinding_moves.size > 0
+    return process_pathfinding_movement if !@pathfinding_moves.empty?
     return process_move_route if !@move_route.nil?
     return if moving? && !@force_chase
     @move_poll.clear if !@move_poll.empty? && distance_preceding_leader < 0.8

@@ -88,26 +88,3 @@ class Game_CharacterBase
   
   #-----------
 end
-#==============================================================================
-# ** Game_Event
-#------------------------------------------------------------------------------
-#  This class handles events. Functions include event page switching via
-# condition determinants and running parallel process events. Used within the
-# Game_Map class.
-#==============================================================================
-class Game_Event < Game_Character
-  #--------------------------------------------------------------------------
-  # * Update During Autonomous Movement
-  #--------------------------------------------------------------------------
-  def update_self_movement
-    if near_the_screen? && @stop_count > stop_count_threshold && @pathfinding_moves.empty?
-      case @move_type
-      when 1;  move_type_random
-      when 2;  move_type_toward_player
-      when 3;  move_type_custom
-      end
-    elsif !@pathfinding_moves.empty?
-      process_pathfinding_movement
-    end
-  end
-end
