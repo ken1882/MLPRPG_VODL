@@ -10,7 +10,6 @@ class Game_Enemy < Game_Battler
   #--------------------------------------------------------------------------
   attr_accessor :level
   attr_accessor :rank
-  attr_accessor :skills                   # learned skill
   #------------------------------------------------------------------------
   # * Set hashid
   #------------------------------------------------------------------------
@@ -24,30 +23,29 @@ class Game_Enemy < Game_Battler
   def initialize(index, enemy_id)
     @level = 1
     init_dndlevel(index, enemy_id)
-    @rank = enemy.note =~ /<Boss HP Meter>/ ? "Boss" : "Minon"
-    @rank = enemy.note =~ /<Elite>/ ? "Elite" : "Minon"
+    @rank = enemy.note =~ /<Boss HP Meter>/ ? :boss : :minon
+    @rank = enemy.note =~ /<Elite>/ ? :elite : :minon
     @level = enemy.note =~ /<Level = (\d+)>/i ? $1.to_i : 1.to_i unless enemy.nil?
-    @skills = []
     @event = nil
-    get_learned_skills
+    @skills = get_learned_skills
   end
   #-----------------------------------------------------------
   # *) is_boss?
   #-----------------------------------------------------------
   def is_boss?
-    return @rank == "Boss"
+    return @rank == :boss
   end
   #-----------------------------------------------------------
   # *) is_elite?
   #-----------------------------------------------------------
   def is_elite?
-    return @rank == "Elite"
+    return @rank == :elite
   end
   #-----------------------------------------------------------
   # *) is_minon?
   #-----------------------------------------------------------
   def is_minon?
-    return @rank == "Minon"
+    return @rank == :minon
   end
   #--------------------------------------------------------------------------   
   def team_id
@@ -61,14 +59,13 @@ class Game_Enemy < Game_Battler
   def face_index
     return enemy.face_index
   end
-  #--------------------------------------------------------------------------
-  # * Create Battle Action
-  #--------------------------------------------------------------------------
+  #---------------------------------------------------------------------------
   def get_learned_skills
-    #actions = Array.new(make_action_times) { Game_Action.new(self) }
-    #for action in enemy.actions
-    #  @skills.push(action.skill_id)
-    #end
+    enemy.actions.collect{|action| $data_skills[action.skill_id] }
+  end
+  #---------------------------------------------------------------------------
+  def skills
+    @skills
   end
   #---------------------------------------------------------------------------
   # * Method Missing

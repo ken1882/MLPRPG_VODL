@@ -48,11 +48,7 @@ class Game_BattlerBase
   # ● Easier method for check skilll learned
   #--------------------------------------------------------------------------   
   def skill_learned?(id)
-    if self.actor?
-      return self.skills.include?($data_skills[id])
-    else
-      return self.skills.include?(id)
-    end
+    return self.skills.include?($data_skills[id])
   end
   #--------------------------------------------------------------------------
   # ● Posioned?
