@@ -429,11 +429,11 @@ class Game_Actor < Game_Battler
     slot_id   = self.class.ammo_slot_id
     result    = false
     
-    if weapon.tool_itemcosttype && weapon.tool_itemcosttype > 0
+    if weapon.tool_itemcost_type && weapon.tool_itemcost_type > 0
       item = @equips[slot_id].object
       return false if item.nil?
       return false if $game_party.item_number(item) == 0 && @equips[slot_id].nil?
-      result = true if item.wtype_id == weapon.tool_itemcosttype
+      result = true if item.wtype_id == weapon.tool_itemcost_type
     else 
       result = true
     end

@@ -413,7 +413,7 @@ class RPG::BaseItem
   attr_accessor :tool_invoke         # Invoke other skill(id) on execute
   attr_accessor :tool_soundeffect    # Sound effect played on execuute
   attr_accessor :tool_itemcost       # Specified item(id) required
-  attr_accessor :tool_itemcosttype   # Item type(id) required
+  attr_accessor :tool_itemcost_type  # Item type(id) required
   attr_accessor :tool_through        # Projectile through map obstacles
   attr_accessor :tool_priority       # Graphic priority display, same as event's
   attr_accessor :tool_hitshake       # Screen shake level when hitted (uint)
@@ -513,7 +513,7 @@ class RPG::BaseItem
     when DND::REGEX::Equipment::ToolInvokeSkill;   @tool_invoke        = $1.to_i;
     when DND::REGEX::Equipment::ToolSE;            @tool_soundeffect   = $1;
     when DND::REGEX::Equipment::ToolItemCost;      @tool_itemcost      = $1.to_i;
-    when DND::REGEX::Equipment::ToolItemCostType;  @tool_itemcosttype  = $1.to_i;
+    when DND::REGEX::Equipment::ToolItemCostType;  @tool_itemcost_type = $1.to_i;
     when DND::REGEX::Equipment::ToolThrough;       @tool_through       = $1.to_i.to_bool;
     when DND::REGEX::Equipment::ToolPriority;      @tool_priority      = $1.to_i;
     when DND::REGEX::Equipment::ToolType;          @tool_type          = $1.to_i; 
@@ -525,18 +525,18 @@ class RPG::BaseItem
   #---------------------------------------------------------------------------
   def ensure_property_correct
     #@scope = @tool_scope ? 0 : @tool_scope unless @scope
-    @tool_animation    = 0     unless @tool_animation
-    @tool_distance     = 8     unless @tool_distance
-    @@tool_animmoment  = 0     unless @tool_animmoment
-    @tool_castime      = 0     unless @tool_castime
-    @tool_itemcost     = 0     unless @tool_itemcost
-    @tool_itemcosttype = 0     unless @tool_itemcosttype
-    @tool_scope        = 1     unless @tool_scope
-    @tool_scopedir     = 5     unless @tool_scopedir
-    @tool_scopeangle   = 0     unless @tool_scopeangle
-    @action_sequence   = 0     unless @action_sequence
-    @tool_distance    += 0.5
-    @tool_scope       += 0.5
+    @tool_animation     = 0     unless @tool_animation
+    @tool_distance      = 8     unless @tool_distance
+    @@tool_animmoment   = 0     unless @tool_animmoment
+    @tool_castime       = 0     unless @tool_castime
+    @tool_itemcost      = 0     unless @tool_itemcost
+    @tool_itemcost_type = 0     unless @tool_itemcost_type
+    @tool_scope         = 1     unless @tool_scope
+    @tool_scopedir      = 5     unless @tool_scopedir
+    @tool_scopeangle    = 0     unless @tool_scopeangle
+    @action_sequence    = 0     unless @action_sequence
+    @tool_distance     += 0.5
+    @tool_scope        += 0.5
   end
   #---------------------------------------------------------------------------
   # *) Load item infos for detailed inforamtion, located at "History/type/id"
@@ -559,7 +559,7 @@ class RPG::BaseItem
   # *) Item need consume items
   #------------------------------------------------------------------------  
   def item_required?
-    @tool_itemcost != 0 || !@tool_itemcosttype.nil?
+    @tool_itemcost != 0 || !@tool_itemcost_type.nil?
   end
   #------------------------------------------------------------------------
   # *) Item is an ammo?

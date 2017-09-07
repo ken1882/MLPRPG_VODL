@@ -70,7 +70,7 @@ class Game_CharacterBase
   # * Can perform action?
   #----------------------------------------------------------------------------
   def actable?
-    return false if !movable?
+    return false if !movable?(true)
     return true
   end
   #----------------------------------------------------------------------------

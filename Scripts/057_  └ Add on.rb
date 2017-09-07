@@ -30,6 +30,7 @@ class Game_BaseItem
   # DANGER ZONE: Redirect to Actor
   #---------------------------------------------------------------------------
   def method_missing(symbol, *args)
+    return nil if nil?
     return object.method(symbol).call(*args) if object.methods.include?(symbol)
     if object.instance_variables.include?(symbol)
       return object.instance_variable_get(symbol)

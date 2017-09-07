@@ -42,9 +42,9 @@ class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
   # * Determine Skill/Item Usability
   #--------------------------------------------------------------------------
-  def usable?(item)
+  def usable?(item, ignore_cdt = false)
     return false if !item
-    return false if !cooldown_ready?(item)
+    return false if !ignore_cdt && !cooldown_ready?(item)
     return skill_conditions_met?(item)  if item.is_a?(RPG::Skill)
     return item_conditions_met?(item)   if item.is_a?(RPG::Item)
     return weapon_conditions_met?(item) if item.is_a?(RPG::Weapon)
@@ -54,7 +54,7 @@ class Game_Battler < Game_BattlerBase
   # * Weapon Ammo Ready?
   #--------------------------------------------------------------------------
   def weapon_conditions_met?(item)
-    if item.tool_itemcost != nil || item.tool_itemcosttype != nil
+    if item.tool_itemcost != nil || item.tool_itemcost_type != nil
       return weapon_ammo_ready?(item)
     end
     return true
@@ -68,7 +68,7 @@ class Game_Battler < Game_BattlerBase
     if !item.tool_itemcost && item.tool_itemcost > 0
       item = $data_items[itemcost]
       re  &= $game_party.item_number(item)
-    elsif item.tool_itemcosttype > 0
+    elsif item.tool_itemcost_type > 0
       re  &= weapon_ammo_ready?(@equips[0])
     end
     return re
@@ -161,6 +161,14 @@ class Game_Battler < Game_BattlerBase
     end
   end
   #--------------------------------------------------------------------------
+  # * Alias: Determine if States Are Addable
+  #--------------------------------------------------------------------------
+  alias :magic_state_addable? :state_addable?
+  def state_addable?(state_id)
+    return false if anti_magic? && $data_states[state_id].is_magic?
+    return magic_state_addable?(state_id)
+  end
+  #--------------------------------------------------------------------------
   # * Alias: Reset State Counts (Turns and Steps)
   #--------------------------------------------------------------------------
   alias reset_state_counts_default reset_state_counts
@@ -171,4 +179,11 @@ class Game_Battler < Game_BattlerBase
     @state_steps[state_id] = state.steps_to_remove
   end
   #--------------------------------------------------------------------------
+  # * Alias: Use Skill/Item
+  #--------------------------------------------------------------------------
+  alias use_item_dnd use_item
+  def use_item(item)
+    use_item_dnd(item)
+    $game_party.skillbar.need_refresh = true
+  end
 end

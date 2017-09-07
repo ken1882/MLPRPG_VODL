@@ -129,7 +129,8 @@ class Game_Skillbar
   attr_accessor :phase
   attr_accessor :edit_enabled
   attr_accessor :index
-  #-----------------------------------t---------------------------------------
+  attr_accessor :need_refresh
+  #--------------------------------------------------------------------------
   # *) Object Initialization
   #--------------------------------------------------------------------------
   def initialize(phase = 0)
@@ -146,6 +147,7 @@ class Game_Skillbar
     @dragging_item  = nil
     @edit_enabled   = false
     @phase          = phase
+    @need_refersh   = true
     @x = @y = 0
     @z = 0
   end
@@ -156,6 +158,7 @@ class Game_Skillbar
     @phase  = SceneManager.scene_is?(Scene_Map) ? 0 : 1 unless phase
     @x, @y  = @sprite.x, @sprite.y
     debug_print "Create skillbar"
+    refresh
   end
   #--------------------------------------------------------------------------
   def dispose_layout
@@ -171,6 +174,7 @@ class Game_Skillbar
   def update
     current_actor = determine_actor
     refresh(current_actor) if refresh_needed?(current_actor)
+    refresh_page           if need_refresh
     process_input
     update_edit    if @edit_enabled
     @sprite.update if sprite_valid?
@@ -222,7 +226,7 @@ class Game_Skillbar
   # *) Refresh items
   #--------------------------------------------------------------------------
   def refresh_item
-    debug_print "Refresh hotkay bar items #{@stack.size}"
+    @current_page = 0
     hotkey_items  = @actor.get_hotkeys
     @primary_tool = hotkey_items.first
     case @stack.size
@@ -239,6 +243,7 @@ class Game_Skillbar
       @items.push(Follower_Flag)
       divide_pages(@actor.get_valid_skills)     if @stack.last == AllSkill_Flag
       divide_pages($game_party.get_valid_items) if @stack.last == AllItem_Flag
+      divide_pages(@actor.get_vancian_spells)   if @stack.last == Vancian_Flag
       refresh_page
     end
   end
@@ -247,6 +252,7 @@ class Game_Skillbar
   #--------------------------------------------------------------------------
   def refresh_page
     debug_print "Refresh hotkey bar page #{@current_page}"
+    @need_refresh = false
     @items.pop until @items.last == Follower_Flag
     @items.push(PrevPage_Flag)
     @pages[@current_page].each do |item|
@@ -317,6 +323,7 @@ class Game_Skillbar
   #--------------------------------------------------------------------------
   def divide_pages(all_data)
     @pages.clear
+    @pages[0] = Array.new(10) # prevent nothing can be used
     all_data.each_with_index do |item, index|
       @pages[index / 10] = Array.new(10) if !@pages[index / 10]
       @pages[index / 10][index % 10] = item
@@ -324,22 +331,18 @@ class Game_Skillbar
   end
   #--------------------------------------------------------------------------
   def process_skill_select
-    puts "[Skillbar]: Process skill select"
     @stack.push(AllSkill_Flag)
     refresh_item
-  end #last work ( finish this
+  end
   #--------------------------------------------------------------------------
   def process_item_select
-    return 0
     @stack.push(AllItem_Flag)
+    refresh_item
   end
   #--------------------------------------------------------------------------
   def process_vancian_select
-    # tag: under construction
-    return 0
     @stack.push(Vancian_Flag)
-    
-    return 3
+    refresh_item
   end
   #--------------------------------------------------------------------------
   def process_follower_action

@@ -66,10 +66,20 @@ class Game_Actor < Game_Battler
     perform_map_damage_effect if @result.hp_damage > 0
   end
   #--------------------------------------------------------------------------
-  # * Get valid skills for hotkey bar usage
+  # * Get general skills for hotkey bar usage
   #--------------------------------------------------------------------------
   def get_valid_skills
     skills.select{|skill| !skill.is_passive? && !skill.is_vancian?}
+  end
+  #--------------------------------------------------------------------------
+  # * Get valid skills for hotkey bar usage
+  #--------------------------------------------------------------------------
+  def get_vancian_spells
+    skills.select{|skill| skill.is_vancian?}
+  end
+  #--------------------------------------------------------------------------
+  def current_ammo
+    equips.at(self.class.ammo_slot_id)
   end
   #---------------------------------------------------------------------------
   # * Method Missing

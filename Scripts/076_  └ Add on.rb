@@ -70,6 +70,7 @@ class Game_Party < Game_Unit
   # * Overwrite: Get Number of Items Possessed
   #--------------------------------------------------------------------------
   def item_number(item)
+    return nil if item.nil?
     container = item_container(item.class)
     container ? container[item.id] || 0 : 0
   end
@@ -123,6 +124,7 @@ class Game_Party < Game_Unit
     info = sprintf("Party has %s an item(x%s)", amount < 0 ? 'lost': 'gained', amount.abs)
     SceneManager.display_info(info)
     #$game_map.need_refresh = true
+    $game_party.skillbar.need_refresh = true
     encrypt_data
   end
   #--------------------------------------------------------------------------
@@ -172,4 +174,16 @@ class Game_Party < Game_Unit
   def swap_order(index1, index2)
     swap_order_opt(index1, index2)
   end
+  #--------------------------------------------------------------------------
+  # * Return usable general items for hotkey usage
+  #--------------------------------------------------------------------------
+  def get_valid_items
+    list = []
+    @items.each do |id, number|
+      item = $data_items[id]
+      list << item if item.for_friend? || item.for_opponent?
+    end
+    return list
+  end
+    
 end

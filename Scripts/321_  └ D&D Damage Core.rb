@@ -302,31 +302,7 @@ class Game_Battler < Game_BattlerBase
       execute_damage(user)
     end
     start_item_animation(item)
-    if item.weapon_skill
-      item.effects.each {|effect| item_effect_apply(user, item, effect) }
-      apply_item_effects(user, item)
-    end
-  end
-  # ---------------------------------------------------------------------------
-  # *) Apply item effects
-  # ---------------------------------------------------------------------------
-  def apply_item_effects(user, item)
-    return if item.nil?
-    for effect in item.effects
-      return if self.state?(272)
-      
-      if effect.code == 21 # effect: add state code
-        
-        if self.anti_magic? && $current_damage_type == 2 && $data_states[effect.data_id].is_magic?
-          next
-        end
-        
-      end
-      
-      item_effect_apply(user, item, effect)
-    end
-    
-    item_user_effect(user, item)
+    item.effects.each {|effect| item_effect_apply(user, item, effect) }
   end
   #----------------------------------------------------------------------------
   # *) Apply item animation

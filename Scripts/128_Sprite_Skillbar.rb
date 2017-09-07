@@ -3,6 +3,7 @@
 #------------------------------------------------------------------------------
 #  Hotkey bar on the bottom of the screen.
 #==============================================================================
+#tag: skillbar
 class Sprite_Skillbar < Sprite
   include PONY::SkillBar
   #--------------------------------------------------------------------------
@@ -31,7 +32,7 @@ class Sprite_Skillbar < Sprite
     self.visible = !$game_switches[16] rescue true
     update_mouse_hover
     update_dragging
-    update_cooldown
+    update_info
   end
   #--------------------------------------------------------------------------
   def refresh
@@ -46,6 +47,7 @@ class Sprite_Skillbar < Sprite
     rect = Rect.new(0, 0, @icon_sprite.bitmap.width, @icon_sprite.bitmap.height)
     @icon_sprite.bitmap.clear_rect(rect)
     @cooldown_sprite.bitmap.clear
+    draw_item_numbers
     draw_icons
   end
   #--------------------------------------------------------------------------
@@ -143,14 +145,14 @@ class Sprite_Skillbar < Sprite
         enabled = @instance.prev_page_available? if item == PrevPage_Flag
         enabled = @instance.next_page_available? if item == NextPage_Flag
       else
-        enabled = actor.item_test(actor, item) && actor.usable?(item)
+        enabled = actor.item_test(actor, item) && actor.usable?(item, true)
       end
       icon_index = item.is_a?(Fixnum) ? item : item.icon_index
       item_hash  = item.is_a?(Fixnum) ? item : item.hashid
       bitmap = Cache.system("Iconset")
       rect = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
       @icon_sprite.bitmap.blt(cx, cy, bitmap, rect, enabled ? 0xff : translucent_alpha)
-      @cooldown_flag[index] = false
+      @cooldown_flag[index] = true
     end
   end
   #--------------------------------------------------------------------------
@@ -179,7 +181,7 @@ class Sprite_Skillbar < Sprite
     @drag_sprite.y = [@drag_sprite.y - 16, 0].max
   end
   #--------------------------------------------------------------------------
-  def update_cooldown
+  def update_info
     @instance.items.each_with_index do |item, index|
       cdt = actor.item_cooldown[item.id]    if item.is_a?(RPG::Item)
       cdt = actor.skill_cooldown[item.id]   if item.is_a?(RPG::Skill)
@@ -191,6 +193,19 @@ class Sprite_Skillbar < Sprite
       draw_cooldown_text(index, item, cdt)
       @cooldown_flag[index] = enabled
     end
+  end
+  #--------------------------------------------------------------------------
+  def draw_item_numbers
+    @instance.items.each_with_index do |item, index|
+      draw_item_number(index, consumable_item_count(item))
+    end
+  end
+  #--------------------------------------------------------------------------
+  def draw_item_number(index, number)
+    rect = Rect.new(6 + 32 * index, 12, 16, 16)
+    @text_sprite.bitmap.clear_rect(rect)
+    return if number.nil?
+    @text_sprite.bitmap.draw_text(rect, number.to_s)
   end
   #--------------------------------------------------------------------------
   def draw_cooldown_slot(index, enabled)
@@ -206,6 +221,21 @@ class Sprite_Skillbar < Sprite
     cdt = (cdt / 60.0)
     cdt = cdt < 1 ? cdt.round(1) : cdt.round(0)
     @text_sprite.bitmap.draw_text(rect, cdt.to_s)
+  end
+  #--------------------------------------------------------------------------
+  # * Return the value of the item need to be comsumed
+  #--------------------------------------------------------------------------
+  def consumable_item_count(item)
+    if item.is_a?(RPG::BaseItem)
+      if item.is_a?(RPG::Item)
+        return $game_party.item_number(item)
+      elsif item.is_a?(RPG::Weapon) && item.tool_itemcost_type > 0
+        return $game_party.item_number(actor.current_ammo)
+      elsif item.tool_itemcost || 0 > 0
+        return $game_party.item_number($data_items[item.tool_itemcost])
+      end
+    end
+    return nil
   end
   #--------------------------------------------------------------------------
   def unselect

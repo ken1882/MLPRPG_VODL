@@ -101,7 +101,7 @@ class Window_Input < Window_Base
   def create_cursor(cx, cy)
     @cursor = Sprite.new(@viewport2)
     @cursor.bitmap = Bitmap.new(4, item_width * 2)
-    @cursor.bitmap.fill_rect(0, 0, 1, item_width * 2, DND::COLOR::Purple)
+    @cursor.bitmap.fill_rect(0, 0, 1, item_width * 2, DND::COLOR::White)
     @cursor.x, @cursor.y = cx, cy + spacing * 3
   end
   #--------------------------------------------------------------------------
