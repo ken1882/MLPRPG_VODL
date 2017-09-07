@@ -4,7 +4,7 @@
 #  Define the conditions of tactic command
 #==============================================================================
 # tag: AI
-module Tactic_Condition
+module Tactic_Config
   #--------------------------------------------------------------------------
   # * This module contains the conditions when targeting a opponent
   #--------------------------------------------------------------------------
@@ -40,21 +40,7 @@ module Tactic_Condition
     module_function
     #--------------------------------------------------------------------------
     def start_check(candidates, symbols, priorities, args = {})
-      @args = args
-      candidates.select!{|enemy| enemy.alive}
-      target   = candidates.first
-      max_rate = 0
-      candidates.each_with_index do |enemy, i|
-        rate = 0
-        symbols.each_with_index do |symbol, j|
-          rates += method(symbol).call(enemy, priorities[j])
-        end
-        if rate > max_rate
-          max_rate = rate
-          target   = enemy
-        end
-      end
-      return target
+      
     end
     #--------------------------------------------------------------------------
     def pick_hp_lowest(enemy, priority)
@@ -70,7 +56,7 @@ module Tactic_Condition
     end
     #--------------------------------------------------------------------------
     def pick_nearest_visible(enemy, priority)
-      return (100 - enemy.distance_to_character(@args[:user])) * priority * 0.01
+      return [(20 - enemy.distance_to_character(@args[:user])), 0].max * priority * 0.01
     end
     #--------------------------------------------------------------------------
     def pick_attacking_ally(enemy, priority)
@@ -88,22 +74,22 @@ module Tactic_Condition
     end
   end
   #--------------------------------------------------------------------------
-  # * Handling the conditions and actions when fighting enemy
+  # * Handling the conditions when fighting enemy
   #--------------------------------------------------------------------------
   module Target
     #--------------------------------------------------------------------------
     Condition_Table = {
       :any              => :return_any,
       :clustered        => :determine_cluster_number,
-      :hp_lower         => :check_hp_lower,
-      :hp_higher        => :determine_hp_higher,
+      :hp_lower         => :hp_lower,
+      :hp_higher        => :hp_higher,
       :target_range     => :determine_target_range_scale,
       :target_atk_type  => :determine_target_attack_type,
     }
     #--------------------------------------------------------------------------
     Priority_Table = {
       :any              => 100,
-      :clustered        => 15,
+      :clustered        => 20,
       :hp_lower         => 60,
       :hp_higher        => 60,
       :target_range     => 40,
@@ -131,14 +117,15 @@ module Tactic_Condition
     #--------------------------------------------------------------------------
     def hp_lower(target, priority)
       percent = @args[:hp_low_percent] / 100.0
-      return (1 - target.hp.to_f / target.mhp / percent) * priority
+      return [(percent - (user.hp.to_f / user.mhp)) * priority, 0].max
     end
     #--------------------------------------------------------------------------
     def hp_higher(target, priority)
-      return (target.hp.to_f / target.mhp / percent) * priority
+      percent = @args[:hp_high_percent] / 100.0
+      return [((user.hp.to_f / user.mhp) - percent), 0].max * priority
     end
     #--------------------------------------------------------------------------
-    def target_range(target, priority)
+    def determine_target_range_scale(target, priority)
       dis = distance_to_character(@args[:user])
       case @args[:range]
       when :short && dis < 4;             return priority;
@@ -147,25 +134,125 @@ module Tactic_Condition
       end
     end
     #--------------------------------------------------------------------------
-    def target_atk_type(target, priority)
+    def determine_target_attack_type(target, priority)
       case @args[:atk_type]
       when :melee && target.default_weapon.melee?;    return priority;
-      when :magic && target.default_weapno.is_magic?;  return priority;
+      when :magic && target.default_weapon.is_magic?;  return priority;
       when :ranged && target.default_weapon.ranged?;   return priority;
       end
     end
     
   end # last work: tactic AI
-  
-  module Self
-    
-  end
-  
-  module Ally
-    
+  #--------------------------------------------------------------------------
+  # * Handling the conditions about player team
+  #--------------------------------------------------------------------------
+  module Players
+     #--------------------------------------------------------------------------
+    Condition_Table = {
+      :any                    => :return_any,
+      :has_state              => :state_included?,
+      :hp_lower               => :hp_lower,
+      :ep_lower               => :ep_lower,
+      :being_attacked_by_type => :last_attacked_type,
+      :enemies_alive          => :alive_enemy_number,
+      :allies_alive           => :alive_ally_number,
+      :allies_dead            => :dead_ally_number,
+      :using_attack_type      => :current_attack_type,
+      :surrounded_by_enemies  => :nearby_enemy_number
+    }
+    #--------------------------------------------------------------------------
+    Priority_Table = {
+      :any                    => 100,
+      :has_state              =>  60,
+      :hp_lower               => 120,
+      :ep_lower               =>  80,
+      :being_attacked_by_type =>  50,
+      :allies_alive           =>  30,
+      :allies_dead            =>  45,
+      :using_attack_type      =>  50,
+      :surrounded_by_enemies  =>  30,
+    }
+    #--------------------------------------------------------------------------
+    module_function
+    #--------------------------------------------------------------------------
+    def start_check(user, symbol, priority, args = {})
+      @args = args
+      return method(symbol).call(user, priority)
+    end
+    #--------------------------------------------------------------------------
+    def return_any(user, priority)
+      return priority
+    end
+    #--------------------------------------------------------------------------
+    def state_included?(user, priority)
+      return priority if user.state?(@args[:state_id])
+    end
+    #--------------------------------------------------------------------------
+    def hp_lower(user, priority)
+      percent = @args[:hp_low_percent] / 100.0
+      return [(percent - (user.hp.to_f / user.mhp)) * priority, 0].max
+    end
+    #--------------------------------------------------------------------------
+    def ep_lower(user, priority)
+      percent = @args[:ep_low_percent] / 100.0
+      return [(percent - (user.mp.to_f / user.mmp)) * priority, 0].max
+    end
+    #--------------------------------------------------------------------------
+    def last_attacked_type(user, priority)
+      return priority if @args[:last_attacked_type] == user.last_attacked_action.item.attack_type
+    end
+    #--------------------------------------------------------------------------
+    def alive_enemy_number(user, priority)
+      number = @args[:enemies].select{|b| b.alive}.size
+      return 0 if number < @args[:pass_number]
+      return number * priority
+    end
+    #--------------------------------------------------------------------------
+    def alive_ally_number(user, priority)
+      number = @args[:allies].select{|b| b.alive}.size
+      return 0 if number < @args[:pass_number]
+      return number * priority
+    end
+    #--------------------------------------------------------------------------
+    def dead_ally_number(user, priority)
+      number = BattleManager.dead_allies.size
+      return 0 if number < @args[:pass_number]
+      return number * priority
+    end
+    #--------------------------------------------------------------------------
+    def current_attack_type(user, priority)
+      return priority if user.equips.first.attack_type == @args[:current_atk_type]
+    end
+    #--------------------------------------------------------------------------
+    def nearby_enemy_number(user, priority)
+      number = @args[:enemies].select{|b| b.distance_to_character(user) < 3}.size
+      return 0 if number < @args[:pass_number]
+      return number * priority
+    end
   end
   
 end
+#==============================================================================
+# ** Tactic Condition
+#==============================================================================
+# tag: AI
+class Tactic_Condition
+  include Tactic_Config
+  #--------------------------------------------------------------------------
+  # * Public Instance Variables
+  #--------------------------------------------------------------------------
+  attr_accessor :symbol
+  attr_accessor :argument
+  attr_accessor :priority
+  #----------------------------------------------------------------------------
+  # *) Object initialization
+  #----------------------------------------------------------------------------
+  def initialize(symbol, priority, argumment = nil)
+    @symbol   = symbol
+    @priority = priority
+    @argument = argument
+  end
+end # last work
 #==============================================================================
 # ** Tactic Commands
 # -----------------------------------------------------------------------------
@@ -173,25 +260,54 @@ end
 #==============================================================================
 # tag: AI
 class Tactic_Command
+  include Tactic_Config
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor :action
   attr_accessor :conditions
+  attr_accessor :args
   attr_reader   :user
+  attr_reader   :require_motivate
   #----------------------------------------------------------------------------
   # *) Object initialization
   #----------------------------------------------------------------------------
-  def initialize(action)
-    @user       = action.user
-    @action     = action
-    @conditions = []
+  def initialize(user, require_motivate)
+    @user             = user
+    @require_motivate = 30
+    @conditions       = []
+    @args             = {}
   end
   #----------------------------------------------------------------------------
-  def update
+  def search_target
+    @args[:enemies] = BattleManager.opponent_battler(@user)
+    @args[:allies]  = BattleManager.ally_battler(@user)
+    @args[:user]    = @user
+    
+    candidates = @args[:enemies]
+    candidates.select!{|enemy| enemy.alive}
+    target   = candidates.first
+    max_rate = 0
+    
+    candidates.each_with_index do |enemy, i|
+      rate = 0
+      @conditions.each do |condition|
+        rates += method(condition.symbol).call(condition.priority, condition.argument)
+      end # each symbol
+      if rate > max_rate
+        max_rate = rate
+        target   = enemy
+      end
+    end # each candiate
+    return target
   end
   #----------------------------------------------------------------------------
   def check_condition
+    motivate = 0
+    conditions.each do |condition|
+      motivate += method(condition.symbol).call(condition.priority, condition.argument)
+    end
+    perform_action if motivate > @require_motivate
   end
   #----------------------------------------------------------------------------
   def perform_action

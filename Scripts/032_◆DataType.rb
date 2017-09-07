@@ -597,6 +597,12 @@ class RPG::BaseItem
     return true  if is_magic?
   end
   #------------------------------------------------------------------------
+  def attack_type
+    return :melee  if melee?
+    return :magic  if is_magic?
+    return :ranged
+  end
+  #------------------------------------------------------------------------
   def melee?
     return @tool_distance < 2.5
   end
