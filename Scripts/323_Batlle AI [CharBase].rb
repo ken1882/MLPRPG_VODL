@@ -31,7 +31,8 @@ class Game_Character < Game_CharacterBase
   alias update_gachdndai update
   def update
     @combat_timer -= 1 if @combat_timer > 0
-    update_combat if @current_target && @combat_timer > 0
+    chase_target  if @current_target
+    update_combat if @current_target && @combat_timer == 0
     update_gachdndai
   end
   #----------------------------------------------------------------------------
@@ -48,13 +49,29 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def update_combat
     @combat_timer = 20
-    chase_target
     return process_tactic_commands unless @tactic_commands.empty?
+    p 'update combat'
+    determine_attack
     determine_skill_usage
     determine_item_usage
   end
   #----------------------------------------------------------------------------
-  def chase_target    
+  def chase_target
+    touched = move_toward_character(@current_target)
+    if touched
+      BattleManager.opponent_battler.each do |battler|
+        next if !battler.primary_weapon
+        set_target(battler)
+      end
+    end
+  end
+  #----------------------------------------------------------------------------
+  def determine_attack
+    puts "primary_weapon: #{primary_weapon}"
+    return if !primary_weapon
+    puts "distance: #{distance_to_character(@current_target) <= primary_weapon.tool_distance}"
+    return if distance_to_character(@current_target) > primary_weapon.tool_distance
+    attack
   end
   #----------------------------------------------------------------------------
   def determine_skill_usage
@@ -64,6 +81,9 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def process_tactic_commands
+  end
+  #----------------------------------------------------------------------------
+  def attack
   end
   #----------------------------------------------------------------------------
   def tactic_retreat

@@ -59,6 +59,10 @@ class Game_Follower < Game_Character
     return PONY.Sha256(self.inspect)
   end
   #--------------------------------------------------------------------------
+  def primary_weapon
+    return actor.equips[0]
+  end
+  #--------------------------------------------------------------------------
   # * Overwrite: Determine Visibility
   #--------------------------------------------------------------------------
   def visible?

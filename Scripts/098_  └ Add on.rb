@@ -154,7 +154,7 @@ class Game_Event < Game_Character
   def process_npc_event_config(line)
     case line
     when DND::REGEX::Character::DefaultWeapon
-      @default_weapon = $1.to_i
+      @default_weapon = $data_weapons[$1.to_i]
     when DND::REGEX::Character::TeamID
       @team_id = $1.to_i
     when DND::REGEX::Character::DeathSwitchSelf
@@ -350,12 +350,17 @@ class Game_Event < Game_Character
     return @enemy.item_cooldown if @enemy
     return {}
   end
+  
   #--------------------------------------------------------------------------
   def hash_self
     base  = (@map_id * 1000 + @id)
     base += @enemy.hashid if @enemy
     base  = base.to_s + self.inspect
     @hashid = PONY.Sha256(base).to_i(16)
+  end
+  #--------------------------------------------------------------------------
+  def primary_weapon
+    return @enemy.default_weapon if @enemy
   end
   #---------------------------------------------------------------------------
   # * Method Missing

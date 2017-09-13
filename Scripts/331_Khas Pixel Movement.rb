@@ -252,6 +252,7 @@ class Game_CharacterBase
   # * New: move_pixel     # tag: movement
   #-------------------------------------------------------------------------------
   def move_pixel(d,t, through_character = false)
+    return if moving?
     @move_succeed = pixel_passable?(@px,@py,d,through_character)
     if @move_succeed
       set_direction(d)
@@ -272,6 +273,7 @@ class Game_CharacterBase
   # * New: move diagonal pixel
   #-------------------------------------------------------------------------------
   def move_dpixel(h,v, through_character = false)
+    return if moving?
     @move_succeed = false
     if pixel_passable?(@px,@py,v, through_character)
       @move_succeed = true
@@ -381,6 +383,7 @@ class Game_Character < Game_CharacterBase
   end
   #-------------------------------------------------------------------------------
   # * Overwrite: move toeard character
+  # return: touch any chatacter?
   #-------------------------------------------------------------------------------
   def move_toward_character(character)
     dx = @px - character.px

@@ -99,4 +99,8 @@ class Game_Event < Game_Character
     @target_last_pos = nil
   end
   #----------------------------------------------------------------------------
+  def attack
+    @enemy.process_tool_action(primary_weapon)
+  end
+  #----------------------------------------------------------------------------
 end

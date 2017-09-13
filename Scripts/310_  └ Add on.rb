@@ -41,7 +41,7 @@ class Window_StatusItem < Window_Base
   # * Draw current setting of tactic logic
   #--------------------------------------------------------------------------
   def draw_tactic_overview
-  end # last work
+  end # queued: tactics AI
   #--------------------------------------------------------------------------
   # * dispose window
   #--------------------------------------------------------------------------
@@ -102,7 +102,9 @@ class Scene_Status < Scene_MenuBase
   end
   #--------------------------------------------------------------------------
   def call_tactic_scene
-    SceneManager.call(Scene_Tactic) # last work
+    @command_window.activate
+    raise_overlay_window(:popinfo, "Not available yet!")
+    #SceneManager.call(Scene_Tactic) # queued, tactics AI
   end
   #--------------------------------------------------------------------------
   alias terminate_scstat terminate

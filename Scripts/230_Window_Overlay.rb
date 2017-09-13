@@ -110,11 +110,13 @@ class Window_Overlay < Window_HorzCommand
   def reactivate_last_window
     return if @last_window.nil?
     @last_window.activate if @last_window.is_a?(Window_Selectable)
+    @last_window = nil
   end
   #--------------------------------------------------------------------------
   # * Assign last window if self overlay
   #--------------------------------------------------------------------------
   def assign_last_window(window)
+    puts "Last window: #{window}"
     @last_window = window
   end
   #--------------------------------------------------------------------------

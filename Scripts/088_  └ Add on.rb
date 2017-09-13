@@ -118,8 +118,12 @@ class Game_Character < Game_CharacterBase
   # * Die when hitpoint drop to zero
   #----------------------------------------------------------------------------
   def kill
-    return process_event_death if self.is_a?(Game_Event)
-    return process_actor_death
+    if self.is_a?(Game_Event)
+      process_event_death
+    else
+      process_actor_death
+    end
+    $game_map.need_refresh = true
   end
   #----------------------------------------------------------------------------
   def process_event_death
@@ -142,7 +146,7 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def process_actor_death
-    
+    # last work: process actor death
   end
   #----------------------------------------------------------------------------
   def distance_to_character(charactor)
@@ -152,11 +156,6 @@ class Game_Character < Game_CharacterBase
   def id
     return actor.id if methods.include?(:actor)
     return @id
-  end
-  #----------------------------------------------------------------------------
-  def primary_weapon
-    return actor.equips[0] if self.is_a?(Game_Follower) || self.is_a?(Game_Player)
-    return nil
   end
   #----------------------------------------------------------------------------
 end

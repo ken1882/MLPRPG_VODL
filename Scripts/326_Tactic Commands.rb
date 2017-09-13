@@ -142,7 +142,7 @@ module Tactic_Config
       end
     end
     
-  end # last work: tactic AI
+  end # queued: tactic AI
   #--------------------------------------------------------------------------
   # * Handling the conditions about player team
   #--------------------------------------------------------------------------
@@ -252,7 +252,7 @@ class Tactic_Condition
     @priority = priority
     @argument = argument
   end
-end # last work
+end # queued: tactics AI
 #==============================================================================
 # ** Tactic Commands
 # -----------------------------------------------------------------------------

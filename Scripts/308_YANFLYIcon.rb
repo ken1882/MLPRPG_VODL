@@ -143,6 +143,8 @@ module YEA
       ":Defensive"     => 139,
       ":Aggressive"    => 131,
       ":Striking"      => 116,
+      "Tactics"        => 2103,
+      
     } # Do not remove this.
     
   end # COMMAND_WINDOW_ICONS

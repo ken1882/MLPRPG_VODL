@@ -78,7 +78,7 @@ module YEA
 	  [ :parameters, "Parameters"],
 	  [ :properties, "Properties"],
     #[ :dnd_properties, "Life Skills"],
-    [     :tactic,     "Tactic"],
+    [     :tactic,     "Tactics"],
     #[    :custom1,	 "Skills"],
 	 #[    :custom2,  "Equipment"],
 	 #[    :custom3,	  "Class"],
@@ -102,7 +102,7 @@ module YEA
 	  :custom1 => [		   0,		  0, :command_name1, :draw_custom1],
 	  :custom2 => [		   0,		  0, :command_name2, :draw_custom2],
 	  :custom3 => [		   0,		  0, :command_name3, :draw_custom3],
-    :custom3 => [		   0,		  0, :call_tactic_scene, :draw_tactic_overview],
+    :tactic  => [		   0,		  0, :call_tactic_scene, :draw_tactic_overview],
     } # Do not remove this.
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     # - General Window Settings -

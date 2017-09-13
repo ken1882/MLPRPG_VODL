@@ -218,5 +218,5 @@ class Window_TacticStatus < Window_Base
     @text_sprite.dispose
     super
   end
-  
+  #--------------------------------------------------------------------------
 end
