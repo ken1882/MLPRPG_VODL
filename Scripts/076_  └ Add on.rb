@@ -172,6 +172,11 @@ class Game_Party < Game_Unit
   #--------------------------------------------------------------------------
   alias swap_order_opt swap_order
   def swap_order(index1, index2)
+    pos1 = members[index1].map_char.pos
+    pos2 = members[index2].map_char.pos
+    members[index1].map_char.moveto(pos2.x, pos2.y)
+    members[index2].map_char.moveto(pos1.x, pos1.y)
+    $game_map.need_refresh = true
     swap_order_opt(index1, index2)
   end
   #--------------------------------------------------------------------------
@@ -185,5 +190,16 @@ class Game_Party < Game_Unit
     end
     return list
   end
-    
+  #--------------------------------------------------------------------------
+  # * Change current control character to next alive member
+  #--------------------------------------------------------------------------
+  def recurrence_leader
+    all_members.each do |member|
+      next if member.dead?
+      next if member == leader
+      swap(leader, member)
+      break
+    end
+  end
+  #--------------------------------------------------------------------------
 end

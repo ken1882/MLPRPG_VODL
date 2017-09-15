@@ -669,12 +669,6 @@ class Game_Event
     @erased
   end
   
-  def movable?(for_action = false)
-    return false if moving? && !for_action
-    return false if $game_message.busy? || $game_message.visible
-    return super
-  end
-  
   def check_mouse_change
     if mouse_cursor
       Mouse.set_cursor(@mouse_cursor)

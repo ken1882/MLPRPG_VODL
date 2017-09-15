@@ -120,6 +120,22 @@ class Game_Player < Game_Character
       return if check_action_event
     end
   end
+  #----------------------------------------------------------------------------
+  # * Can perform action?
+  #----------------------------------------------------------------------------
+  def actable?
+    return false if $game_message.busy?
+    return false if !movable?(true)
+    return true
+  end
+  #----------------------------------------------------------------------------
+  # * Die when hitpoint drop to zero
+  #----------------------------------------------------------------------------
+  def kill
+    process_actor_death
+    $game_party.recurrence_leader
+    super
+  end
   #--------------------------------------------------------------------------
   def primary_weapon
     return actor.equips[0]

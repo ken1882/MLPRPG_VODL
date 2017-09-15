@@ -31,12 +31,6 @@ class Game_Follower < Game_Character
     moveto_comp(x, y)
   end
   #--------------------------------------------------------------------------
-  def movable?(for_action = false)
-    return false if actor && !actor.movable?
-    #return false if @blowpower[0] > 0
-    return true
-  end
-  #--------------------------------------------------------------------------
   def normal_walk?
     return false if !@current_target.nil?
     return false if command_holding?

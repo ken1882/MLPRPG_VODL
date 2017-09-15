@@ -68,6 +68,20 @@ class Game_Follower < Game_Character
   def visible?
     super && actor && $game_player.followers.visible
   end
+  #----------------------------------------------------------------------------
+  # * Die when hitpoint drop to zero
+  #----------------------------------------------------------------------------
+  def kill
+    process_actor_death
+    super
+  end
+  #--------------------------------------------------------------------------
+  # * Determine if Movement is Possible
+  #--------------------------------------------------------------------------
+  def movable?
+    return false if actor && !actor.movable?
+    return super
+  end
   #---------------------------------------------------------------------------
   # * Method Missing
   # ----------------------------------------------------------------------   

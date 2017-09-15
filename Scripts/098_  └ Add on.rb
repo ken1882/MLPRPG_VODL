@@ -240,6 +240,13 @@ class Game_Event < Game_Character
     return @enemy.name if !original_event && @enemy
     return event.name
   end
+  #----------------------------------------------------------------------------
+  # * Die when hitpoint drop to zero
+  #----------------------------------------------------------------------------
+  def kill
+    process_event_death
+    super
+  end
   #-------------------------------------------------------------------------------
   # * Params to method
   #-------------------------------------------------------------------------------
@@ -247,6 +254,13 @@ class Game_Event < Game_Character
     return @default_weapon             if @default_weapon
     return @enemy.enemy.default_weapon if @enemy
     returnDND::BattlerSetting::DefaultWeapon
+  end
+  #--------------------------------------------------------------------------
+  # * Determine if Movement is Possible
+  #--------------------------------------------------------------------------
+  def movable?
+    return false if @enemy && !@enemy.movable?
+    return super
   end
   #----------------------------------------------------------------------------
   def team_id

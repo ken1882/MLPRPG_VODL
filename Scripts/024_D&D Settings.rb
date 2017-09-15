@@ -71,6 +71,10 @@ module DND
     MoveLimit         = 30
     AggressiveLevel   = 4
     BodySize          = 1
+    KOGraphic         = "$Coffin"
+    KOIndex           = 0
+    KOPattern         = 0
+    KODirection       = 8
   end
   #----------------------------------------------------------------------------
 end

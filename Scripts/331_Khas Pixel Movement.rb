@@ -270,6 +270,10 @@ class Game_CharacterBase
     $game_player.followers.move if self.is_a?(Game_Player)
   end
   #-------------------------------------------------------------------------------
+  def knockback(dir)
+    # last work: knockback
+  end
+  #-------------------------------------------------------------------------------
   # * New: move diagonal pixel
   #-------------------------------------------------------------------------------
   def move_dpixel(h,v, through_character = false)

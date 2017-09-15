@@ -28,14 +28,26 @@ module BattleManager
     1 => 225, 2 => 270, 3 => 335
   }
   #--------------------------------------------------------------------------
+  # * Caches
+  #--------------------------------------------------------------------------
+  @cache_opponents = []
+  #--------------------------------------------------------------------------
   # * Setup 
   #--------------------------------------------------------------------------
   # tag: 1 (BM
   def self.setup(can_escape = true, can_lose = false)
     @flags = {}
+    @cache_opponents.clear
     @can_escape = can_escape
     @can_lose = can_lose
     debug_print "Battle Manager setup"
+  end
+  #--------------------------------------------------------------------------
+  # * Refresh
+  #--------------------------------------------------------------------------
+  def self.refresh
+    @cache_opponents.clear
+    @flags.clear
   end
   #--------------------------------------------------------------------------
   # * Push character into active battlers
@@ -43,12 +55,14 @@ module BattleManager
   def self.register_battler(battler)
     return if battler.team_id.nil? || battler.team_id >= Team_Number
     $game_map.register_battler(battler)
+    @cache_opponents.clear
   end
   #--------------------------------------------------------------------------
   # * Remove unit
   #--------------------------------------------------------------------------
   def self.resign_battle_unit(battler)
     $game_map.resign_battle_unit(battler)
+    @cache_opponents.clear
   end
   #--------------------------------------------------------------------------
   def self.all_battlers
@@ -78,6 +92,7 @@ module BattleManager
   # * Return alive hostile battlers
   #--------------------------------------------------------------------------
   def self.opponent_battler(battler = $game_player)
+    return @cache_opponents[battler.team_id] if @cache_opponents[battler.team_id]
     opponents = []
     $game_map.action_battlers.each do |key, members|
       next if key == battler.team_id
@@ -86,6 +101,7 @@ module BattleManager
         opponents.push(member)
       end
     end
+    @cache_opponents[battler.team_id] = opponents
     return opponents
   end
   #--------------------------------------------------------------------------
@@ -357,6 +373,13 @@ module BattleManager
     return @flags[:in_battle] if @flags[:in_battle]
     @flags[:in_battle] = all_battlers.any?{ |battler| battler.current_target.is_a?(Game_Actor) }
     return @flags[:in_battle]
+  end
+  #--------------------------------------------------------------------------
+  # * Check if any battler is under process
+  #--------------------------------------------------------------------------
+  def self.detect_combat
+    @flags.delete(:in_battle)
+    self.in_battle?
   end
   #--------------------------------------------------------------------------
   def self.clear_flag(symbol = nil)

@@ -138,7 +138,7 @@ class Game_Skillbar
     @last_actor_id  = 0
     @stack          = []
     @items          = []
-    @pages          = []
+    @pages          = []; @pages[0] = Array.new(10)
     @current_page   = 0
     @index          = nil
     @col_max        = HotKeys::SkillBarSize
@@ -147,7 +147,7 @@ class Game_Skillbar
     @dragging_item  = nil
     @edit_enabled   = false
     @phase          = phase
-    @need_refersh   = true
+    @need_refresh   = true
     @x = @y = 0
     @z = 0
   end
@@ -219,7 +219,7 @@ class Game_Skillbar
     @actor = actor
     @last_actor_id = @actor.id
     @stack.clear
-    @stack[0] = @actor
+    @stack << @actor
     refresh_item
   end
   #--------------------------------------------------------------------------

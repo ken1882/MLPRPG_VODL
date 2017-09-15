@@ -65,7 +65,7 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def actable?
     return false if $game_message.busy?
-    return false if !movable?(true)
+    return false if !movable?
     return true
   end
   #----------------------------------------------------------------------------

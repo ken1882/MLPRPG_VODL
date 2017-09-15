@@ -186,4 +186,12 @@ class Game_Battler < Game_BattlerBase
     use_item_dnd(item)
     $game_party.skillbar.need_refresh = true
   end
+  #--------------------------------------------------------------------------
+  # * Alias: Revive from Knock Out
+  #--------------------------------------------------------------------------
+  alias revive_dnd revive
+  def revive
+    revive_dnd
+    @map_char.revive if @map_char
+  end
 end

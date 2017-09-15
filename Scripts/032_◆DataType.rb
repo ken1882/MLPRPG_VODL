@@ -140,13 +140,22 @@ end
 #===============================================================================
 module Math
   #-----------------------------------------------------------------------------
+  # * Module variables
+  #-----------------------------------------------------------------------------
+  @rotation_cache = {}
+  #-----------------------------------------------------------------------------
   # * Get rotated position
   #-----------------------------------------------------------------------------
   def self.rotation_matrix(x, y, angle, flip = false)
-    rx = x * Math.cos(angle.to_rad) - y * Math.sin(angle.to_rad)
-    ry = x * Math.sin(angle.to_rad) + y * Math.cos(angle.to_rad)
-    ry *= -1 if flip
-    return [rx.round(6), ry.round(6)]
+    key  = (x * 10000 + y * 360 + angle)
+    key *= flip ? -1 : 1
+    if !@rotation_cache[key]
+      rx = x * Math.cos(angle.to_rad) - y * Math.sin(angle.to_rad)
+      ry = x * Math.sin(angle.to_rad) + y * Math.cos(angle.to_rad)
+      ry *= -1 if flip
+      @rotation_cache[key] = [rx.round(6), ry.round(6)]
+    end
+    return @rotation_cache[key]
   end
   #-----------------------------------------------------------------------------
   def self.slope(x1, y1, x2, y2)
@@ -323,7 +332,6 @@ class RPG::Enemy
     end
   end
   #--------------------------------------------------------------------------
-  # tag: 2
   def ensure_dndattr_correct
     @defalut_weapon       = DND::BattlerSetting::DefaultWeapon
     @team_id              = DND::BattlerSetting::TeamID
@@ -359,6 +367,7 @@ class RPG::Actor < RPG::BaseItem
   # * Attributes setup
   #--------------------------------------------------------------------------
   def load_character_attributes
+    apply_default_attributes
     self.note.split(/[\r\n]+/).each do |line|
       case line
       when DND::REGEX::Character::KOGraphic;   @death_graphic   = $1
@@ -368,7 +377,14 @@ class RPG::Actor < RPG::BaseItem
       end
     end
   end
-  
+  #--------------------------------------------------------------------------
+  def apply_default_attributes
+    @death_graphic    = DND::BattlerSetting::KOGraphic
+    @death_index      = DND::BattlerSetting::KOIndex
+    @death_pattern    = DND::BattlerSetting::KOPattern
+    @death_direction  = DND::BattlerSetting::KODirection
+  end
+  #--------------------------------------------------------------------------
 end
 #==========================================================================
 # ■ RPG::BaseItem
@@ -442,8 +458,8 @@ class RPG::BaseItem
     @magical_damage_modify    = 0
     @block_by_event           = false
     @item_own_max             = 10
-    
     @property.push(0)
+    ensure_property_correct
     self.note.split(/[\r\n]+/).each { |line|
       case line
       when DND::REGEX::SAVING_THROW_ADJUST; @saving_throw_adjust[$1.to_i] = $2.to_i
@@ -463,8 +479,8 @@ class RPG::BaseItem
         load_item_property(line)
       end
     } # self.note.split
-    
-    ensure_property_correct
+    @tool_distance     += 0.4
+    @tool_scope        += 0.4
   end
   #---------------------------------------------------------------------------
   def load_item_property(line)
@@ -524,19 +540,17 @@ class RPG::BaseItem
   end
   #---------------------------------------------------------------------------
   def ensure_property_correct
-    #@scope = @tool_scope ? 0 : @tool_scope unless @scope
-    @tool_animation     = 0     unless @tool_animation
-    @tool_distance      = 8     unless @tool_distance
-    @@tool_animmoment   = 0     unless @tool_animmoment
-    @tool_castime       = 0     unless @tool_castime
-    @tool_itemcost      = 0     unless @tool_itemcost
-    @tool_itemcost_type = 0     unless @tool_itemcost_type
-    @tool_scope         = 1     unless @tool_scope
-    @tool_scopedir      = 5     unless @tool_scopedir
-    @tool_scopeangle    = 0     unless @tool_scopeangle
-    @action_sequence    = 0     unless @action_sequence
-    @tool_distance     += 0.5
-    @tool_scope        += 0.5
+    @tool_animation     = 0
+    @tool_distance      = 8
+    @tool_animmoment    = 0
+    @tool_castime       = 0
+    @tool_itemcost      = 0
+    @tool_itemcost_type = 0
+    @tool_scope         = 1
+    @tool_scopedir      = 5
+    @tool_scopeangle    = 0
+    @tool_blowpower     = 1
+    @action_sequence    = 0
   end
   #---------------------------------------------------------------------------
   # *) Load item infos for detailed inforamtion, located at "History/type/id"

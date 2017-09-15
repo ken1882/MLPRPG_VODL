@@ -11,6 +11,7 @@ class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   attr_reader :zoom_x
   attr_reader :zoom_y
+  attr_reader :knockbacks
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
   #--------------------------------------------------------------------------
@@ -18,6 +19,7 @@ class Game_Character < Game_CharacterBase
   def init_public_members
     @zoom_x = @zoom_y = 1.0
     @zoom_duration_x = @zoom_duration_y = 0
+    @knockbacks = []
     init_public_memdnd
   end
   #----------------------------------------------------------------------------
@@ -26,6 +28,7 @@ class Game_Character < Game_CharacterBase
   def update
     super
     update_zoom
+    update_knockback if !@knockbacks.empty?
     @pathfinding_timer -= 1 if @pathfinding_timer > 0
   end
   #----------------------------------------------------------------------------
@@ -57,6 +60,14 @@ class Game_Character < Game_CharacterBase
     @zoom_delta_x = (x - @zoom_x).to_f / dx
     @zoom_delta_y = (y - @zoom_y).to_f / dy
     @zooming = true
+  end
+  #----------------------------------------------------------------------------
+  # * Update knockbacks
+  #----------------------------------------------------------------------------
+  def update_knockback
+    blow = @knockbacks.shift
+    dir  = blow.first
+    #last work
   end
   #----------------------------------------------------------------------------
   # *) check if straight line path is able to see
@@ -114,19 +125,25 @@ class Game_Character < Game_CharacterBase
     end # for y
     return true
   end
+  #--------------------------------------------------------------------------
+  # * Determine if Movement is Possible
+  #--------------------------------------------------------------------------
+  def movable?
+    return false if @move_route_forcing
+    return false if $game_message.busy? || $game_message.visible
+    return true
+  end
   #----------------------------------------------------------------------------
   # * Die when hitpoint drop to zero
   #----------------------------------------------------------------------------
   def kill
-    if self.is_a?(Game_Event)
-      process_event_death
-    else
-      process_actor_death
-    end
     $game_map.need_refresh = true
   end
   #----------------------------------------------------------------------------
+  
+  #----------------------------------------------------------------------------
   def process_event_death
+    set_target(nil)
     apply_event_death_effect
     start_animation(@enemy.death_animation)
   end
@@ -146,7 +163,24 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def process_actor_death
-    # last work: process actor death
+    Sound.play(actor.death_sound) if actor.death_sound
+    @original_character_set = {
+      :character_name   => @character_name,
+      :character_index  => @character_index,
+      :pattern          => @pattern,
+      :tile_id          => @tile_id,
+    }
+    @character_name  = @death_graphic
+    @character_index = @death_index
+    @pattern         = @death_pattern
+    @direction       = @death_directon
+  end
+  #----------------------------------------------------------------------------
+  def revive
+    @character_name  = @original_character_set[:character_name]
+    @character_index = @original_character_set[:character_index]
+    @pattern         = @original_character_set[:pattern]
+    @direction       = @original_character_set[:tile_id]
   end
   #----------------------------------------------------------------------------
   def distance_to_character(charactor)

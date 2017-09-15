@@ -138,6 +138,7 @@ class Game_Map
   # > Moved from Theo Anti-Lag
   #-----------------------------------------------------------------------------
   def refresh
+    BattleManager.refresh
     return table_refresh if table_update? && Theo::AntiLag::PageCheck_Enchancer
     @events.each_value {|event| next if event.never_refresh; event.refresh }
     @common_events.each {|event| event.refresh }

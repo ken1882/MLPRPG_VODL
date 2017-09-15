@@ -121,12 +121,6 @@ class Game_BattlerBase
     false
   end
   #--------------------------------------------------------------------------
-  # * Overwrite: Determine if Action is Possible
-  #--------------------------------------------------------------------------
-  def movable?(arg_catcher = nil)
-    exist? && restriction < 4
-  end
-  #--------------------------------------------------------------------------
   # * Check When Skill/Item Can Be Used
   #--------------------------------------------------------------------------
   def occasion_ok?(item)
