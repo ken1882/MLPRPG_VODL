@@ -172,12 +172,11 @@ class Game_Party < Game_Unit
   #--------------------------------------------------------------------------
   alias swap_order_opt swap_order
   def swap_order(index1, index2)
-    pos1 = members[index1].map_char.pos
-    pos2 = members[index2].map_char.pos
-    members[index1].map_char.moveto(pos2.x, pos2.y)
-    members[index2].map_char.moveto(pos1.x, pos1.y)
+    members[index1].map_char.swap_member(members[index2].map_char)
+    members[index1].map_char, members[index2].map_char = members[index2].map_char, members[index1].map_char
     $game_map.need_refresh = true
     swap_order_opt(index1, index2)
+    members.each {|member| member.map_char.process_actor_death if member.dead?}
   end
   #--------------------------------------------------------------------------
   # * Return usable general items for hotkey usage
@@ -194,12 +193,13 @@ class Game_Party < Game_Unit
   # * Change current control character to next alive member
   #--------------------------------------------------------------------------
   def recurrence_leader
-    all_members.each do |member|
+    all_members.each_with_index do |member, index|
       next if member.dead?
       next if member == leader
-      swap(leader, member)
+      swap_order(0, index)
       break
     end
+    $game_player.recurrence_delay = nil
   end
   #--------------------------------------------------------------------------
 end

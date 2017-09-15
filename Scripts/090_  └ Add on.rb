@@ -11,12 +11,14 @@ class Game_Player < Game_Character
   #--------------------------------------------------------------------------
   attr_accessor :target_event   # Event auto trigger when touched
   attr_reader   :new_x, :new_y
+  attr_accessor :recurrence_delay
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
   alias initialize_gapc_opt initialize
   def initialize
-    @target_event = nil
+    @target_event     = nil
+    @recurrence_delay = nil
     initialize_gapc_opt
   end
   #--------------------------------------------------------------------------
@@ -90,6 +92,8 @@ class Game_Player < Game_Character
                                                last_real_y != @real_y
     #update_vehicle unless @followers.gathering?
     update_nonmoving(last_moving) unless moving?
+    @recurrence_delay -= 1 if !@recurrence_delay.nil? && @recurrence_delay > 0
+    $game_party.recurrence_leader if @recurrence_delay == 0
     @followers.update
   end
   #--------------------------------------------------------------------------
@@ -133,7 +137,7 @@ class Game_Player < Game_Character
   #----------------------------------------------------------------------------
   def kill
     process_actor_death
-    $game_party.recurrence_leader
+    $game_player.recurrence_delay = 60
     super
   end
   #--------------------------------------------------------------------------

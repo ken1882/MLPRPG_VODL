@@ -213,21 +213,23 @@ class Game_CharacterBase
     return false unless $game_map.pixel_valid?(nx,ny)
     return true if @through || debug_through?
     return false if $game_map.pixel_table[nx,ny,0] == 0
-    return false if !through_character && collision?(nx,ny)
+    return false if collision?(nx,ny, through_character)
     return true
   end
   #-------------------------------------------------------------------------------
   # * New: Collision?
   #-------------------------------------------------------------------------------
-  def collision?(px,py)
+  def collision?(px, py, through_character = false)
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through || event == self
+        next if through_character && !event.static_object
         return true if event.priority_type == 1
       end
     end
     if @priority_type == 1
-      return true if ($game_player.px - px).abs <= @cx && ($game_player.py - py).abs <= @cy
+      return false if through_character
+      return true  if ($game_player.px - px).abs <= @cx && ($game_player.py - py).abs <= @cy
     end
     return false
   end
@@ -268,10 +270,6 @@ class Game_CharacterBase
       front_pixel_touch?(@px + Tile_Range[d][0],@py + Tile_Range[d][1])
     end
     $game_player.followers.move if self.is_a?(Game_Player)
-  end
-  #-------------------------------------------------------------------------------
-  def knockback(dir)
-    # last work: knockback
   end
   #-------------------------------------------------------------------------------
   # * New: move diagonal pixel
@@ -529,7 +527,7 @@ class Game_Player < Game_Character
   #-------------------------------------------------------------------------------
   # * Collision check
   #-------------------------------------------------------------------------------
-  def collision?(px,py)
+  def collision?(px, py, through_character = false)
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through
@@ -582,10 +580,11 @@ class Game_Event < Game_Character
   #-------------------------------------------------------------------------------
   #
   #-------------------------------------------------------------------------------
-  def collision?(px,py)
+  def collision?(px, py, through_character = false)
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through || event == self
+        next if !event.static_object && through_character
         return true if event.priority_type == 1
       end
     end

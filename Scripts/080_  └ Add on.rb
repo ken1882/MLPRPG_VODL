@@ -67,7 +67,8 @@ class Game_Map
     SceneManager.reserve_loading_screen(map_id)
     Graphics.fadein(60)
     SceneManager.set_loading_phase("Mining Block Chain", -1)
-    $mutex.synchronize{BlockChain.mining}
+    #$mutex.synchronize{BlockChain.mining}
+    BlockChain.mining
     setup_battlers
     setup_loading(map_id)
     setup_camera

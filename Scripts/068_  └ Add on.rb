@@ -81,6 +81,12 @@ class Game_Actor < Game_Battler
   def current_ammo
     equips.at(self.class.ammo_slot_id)
   end
+  #--------------------------------------------------------------------------
+  def death_graphic;    return actor.death_graphic;   end
+  def death_index;      return actor.death_index;     end
+  def death_pattern;    return actor.death_pattern;   end
+  def death_direction;  return actor.death_direction;  end
+  def death_sound;      return actor.death_sound;     end
   #---------------------------------------------------------------------------
   # * Method Missing
   # ----------------------------------------------------------------------   

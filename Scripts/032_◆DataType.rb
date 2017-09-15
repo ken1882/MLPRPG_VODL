@@ -363,6 +363,7 @@ class RPG::Actor < RPG::BaseItem
   attr_reader :death_index          # Graphic index
   attr_reader :death_pattern        # Pattern
   attr_reader :death_direction      # Direction
+  attr_reader :death_sound
   #--------------------------------------------------------------------------
   # * Attributes setup
   #--------------------------------------------------------------------------
@@ -374,6 +375,7 @@ class RPG::Actor < RPG::BaseItem
       when DND::REGEX::Character::KOIndex;     @death_index     = $1.to_i
       when DND::REGEX::Character::KOPattern;   @death_pattern   = $1.to_i
       when DND::REGEX::Character::KODirection; @death_direction = $1.to_i
+      when DND::REGEX::Character::KODirection; @death_sound      = $1.to_i
       end
     end
   end
@@ -549,7 +551,7 @@ class RPG::BaseItem
     @tool_scope         = 1
     @tool_scopedir      = 5
     @tool_scopeangle    = 0
-    @tool_blowpower     = 1
+    @tool_blowpower     = 0
     @action_sequence    = 0
   end
   #---------------------------------------------------------------------------

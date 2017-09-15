@@ -12,6 +12,7 @@ class Game_Character < Game_CharacterBase
   attr_reader :zoom_x
   attr_reader :zoom_y
   attr_reader :knockbacks
+  attr_accessor :original_character_set
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
   #--------------------------------------------------------------------------
@@ -20,6 +21,7 @@ class Game_Character < Game_CharacterBase
     @zoom_x = @zoom_y = 1.0
     @zoom_duration_x = @zoom_duration_y = 0
     @knockbacks = []
+    @original_character_set = nil
     init_public_memdnd
   end
   #----------------------------------------------------------------------------
@@ -62,12 +64,24 @@ class Game_Character < Game_CharacterBase
     @zooming = true
   end
   #----------------------------------------------------------------------------
+  def apply_knockback(direction, power)
+    return if power < 1
+    @knockbacks.clear
+    power.times{@knockbacks << direction}
+  end
+  #----------------------------------------------------------------------------
   # * Update knockbacks
   #----------------------------------------------------------------------------
   def update_knockback
-    blow = @knockbacks.shift
-    dir  = blow.first
-    #last work
+    dir = @knockbacks.shift
+    if pixel_passable?(@px, @py, dir, true)
+      @px += Tile_Range[dir][0]
+      @py += Tile_Range[dir][1]
+      @real_x = @x
+      @real_y = @y
+      @x += Pixel_Range[dir][0]
+      @y += Pixel_Range[dir][1]
+    end
   end
   #----------------------------------------------------------------------------
   # *) check if straight line path is able to see
@@ -140,7 +154,12 @@ class Game_Character < Game_CharacterBase
     $game_map.need_refresh = true
   end
   #----------------------------------------------------------------------------
-  
+  def swap_member(char)
+    pos1 = pos
+    pos2 = char.pos
+    moveto(pos2.x, pos2.y)
+    char.moveto(pos1.x, pos1.y)
+  end
   #----------------------------------------------------------------------------
   def process_event_death
     set_target(nil)
@@ -162,18 +181,21 @@ class Game_Character < Game_CharacterBase
     $game_variables[vrgi] = vrgv  if vrgi > 0
   end
   #----------------------------------------------------------------------------
-  def process_actor_death
-    Sound.play(actor.death_sound) if actor.death_sound
-    @original_character_set = {
-      :character_name   => @character_name,
-      :character_index  => @character_index,
-      :pattern          => @pattern,
-      :tile_id          => @tile_id,
-    }
-    @character_name  = @death_graphic
-    @character_index = @death_index
-    @pattern         = @death_pattern
-    @direction       = @death_directon
+  def process_actor_death(se_play = true)
+    Sound.play(actor.death_sound) if actor.death_sound && se_play
+    if @original_character_set.nil?
+      @original_character_set = {
+        :character_name   => @character_name,
+        :character_index  => @character_index,
+        :pattern          => @pattern,
+        :tile_id          => @tile_id,
+      }
+    end
+    @character_name  = actor.death_graphic
+    @character_index = actor.death_index
+    @pattern         = actor.death_pattern
+    @direction       = actor.death_direction
+    debug_print "#{actor.name} is knocked out!"
   end
   #----------------------------------------------------------------------------
   def revive
@@ -181,6 +203,8 @@ class Game_Character < Game_CharacterBase
     @character_index = @original_character_set[:character_index]
     @pattern         = @original_character_set[:pattern]
     @direction       = @original_character_set[:tile_id]
+    @original_character_set = nil
+    # last work: revive chatacter graphic test
   end
   #----------------------------------------------------------------------------
   def distance_to_character(charactor)

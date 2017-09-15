@@ -229,8 +229,10 @@ class Game_Skillbar
     @current_page = 0
     hotkey_items  = @actor.get_hotkeys
     @primary_tool = hotkey_items.first
+    debug_print("Skillbar stack size: #{@stack.size}")
     case @stack.size
     when HotKeySelection
+      debug_print "Refresh hotkey selection"
       @first_scan_index = 0
       @items = hotkey_items
       @items.push(AllItem_Flag)
@@ -239,6 +241,7 @@ class Game_Skillbar
       @items.insert(2, Follower_Flag)
       @sprite.refresh if sprite_valid?
     when AllSelection
+      debug_print "Refresh hotkey bar page #{@current_page}"
       @items = @actor.get_hotkeys(true)
       @items.push(Follower_Flag)
       divide_pages(@actor.get_valid_skills)     if @stack.last == AllSkill_Flag
@@ -251,7 +254,6 @@ class Game_Skillbar
   # * Refresh current page items
   #--------------------------------------------------------------------------
   def refresh_page
-    debug_print "Refresh hotkey bar page #{@current_page}"
     @need_refresh = false
     @items.pop until @items.last == Follower_Flag
     @items.push(PrevPage_Flag)

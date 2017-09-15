@@ -98,6 +98,7 @@ module DND
     KOIndex           = /(?:Knockdown Index =)[ ](\d+)/i          # KO Graphic Index
     KOPattern         = /(?:Knockdown pattern =)[ ](\d+)/i        # KO Graphics Pattern
     KODirection       = /(?:Knockdown Direction =)[ ](\d+)/i      # KO Character Direction
+    KOSound           = /(?:Knockdown Sound =)[ ](.+)/i     # Sound when KO
     
     FaceName          = /(?:Face Name =)[ ](.+)/i   # Face file name
     FaceIndex         = /(?:Face Index=)[ ](\d+)/i  # Face index

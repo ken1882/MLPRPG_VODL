@@ -300,6 +300,7 @@ class Game_Battler < Game_BattlerBase
     unless item.is_a?(RPG::Skill) && item.damage.none?
       make_damage_value(user, item)
       execute_damage(user)
+      apply_knockback(determine_source_direction(user), item.tool_blowpower)
     end
     start_item_animation(item)
     if item.is_a?(RPG::Skill) || item.is_a?(RPG::Item)
@@ -313,6 +314,17 @@ class Game_Battler < Game_BattlerBase
     if item.animation_id
       puts "Start actoin animation"
       start_animation(item.animation_id)
+    end
+  end
+  #----------------------------------------------------------------------------
+  def determine_source_direction(user)
+    return 10 - @direction if !@map_char
+    dx = user.x - @map_char.x
+    dy = user.y - @map_char.y
+    if dx.abs > dy.abs
+      return dx > 0 ? 4 : 6
+    else
+      return dy > 0 ? 8 : 2
     end
   end
   
