@@ -12,7 +12,6 @@ class Game_Character < Game_CharacterBase
   attr_reader :zoom_x
   attr_reader :zoom_y
   attr_reader :knockbacks
-  attr_accessor :original_character_set
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
   #--------------------------------------------------------------------------
@@ -21,7 +20,6 @@ class Game_Character < Game_CharacterBase
     @zoom_x = @zoom_y = 1.0
     @zoom_duration_x = @zoom_duration_y = 0
     @knockbacks = []
-    @original_character_set = nil
     init_public_memdnd
   end
   #----------------------------------------------------------------------------
@@ -183,14 +181,6 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def process_actor_death(se_play = true)
     Sound.play(actor.death_sound) if actor.death_sound && se_play
-    if @original_character_set.nil?
-      @original_character_set = {
-        :character_name   => @character_name,
-        :character_index  => @character_index,
-        :pattern          => @pattern,
-        :tile_id          => @tile_id,
-      }
-    end
     @character_name  = actor.death_graphic
     @character_index = actor.death_index
     @pattern         = actor.death_pattern
@@ -198,13 +188,9 @@ class Game_Character < Game_CharacterBase
     debug_print "#{actor.name} is knocked out!"
   end
   #----------------------------------------------------------------------------
-  def revive
-    @character_name  = @original_character_set[:character_name]
-    @character_index = @original_character_set[:character_index]
-    @pattern         = @original_character_set[:pattern]
-    @direction       = @original_character_set[:tile_id]
-    @original_character_set = nil
-    # last work: revive chatacter graphic test
+  def revive_character
+    @character_name  = actor.character_name
+    @character_index = actor.character_index
   end
   #----------------------------------------------------------------------------
   def distance_to_character(charactor)

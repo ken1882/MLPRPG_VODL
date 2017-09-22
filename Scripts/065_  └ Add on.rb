@@ -192,6 +192,7 @@ class Game_Battler < Game_BattlerBase
   alias revive_dnd revive
   def revive
     revive_dnd
-    @map_char.revive if @map_char
+    erase_state(death_state_id) if state?(death_state_id)
+    @map_char.revive_character if @map_char
   end
 end
