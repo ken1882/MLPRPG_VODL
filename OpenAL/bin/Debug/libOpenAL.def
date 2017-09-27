@@ -1,0 +1,6 @@
+EXPORTS
+    DestroyDevice @1
+    DllMain@12 @2
+    InitContext @3
+    InitDevice @4
+    PlayAudio @5

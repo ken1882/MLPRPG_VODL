@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1506329916 source:f:\programming\coding\test\dlls\openal\main.cpp
+	"main.h"
+	<fstream>
+
+1506327888 f:\programming\coding\test\dlls\openal\main.h
+	<iostream>
+	<cstdio>
+	<thread>
+	<windows.h>
+	<AL/al.h>
+	<AL/alc.h>
+
+1506256079 source:f:\programming\coding\test\dlls\openal\openal.cpp
+	"main.h"
+
