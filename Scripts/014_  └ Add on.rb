@@ -167,6 +167,8 @@ module SceneManager
         info.image = $1.to_s
       when DND::REGEX::MapLoad_Name
         info.name  = $1.to_s
+      when DND::REGEX::MapBattleBGM
+        map.battle_bgm = RPG::BGM.new($1.to_s, 80, 100)
       end
     }
     return info

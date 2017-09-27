@@ -738,6 +738,8 @@ class Scene_File < Scene_MenuBase
   def on_action_save
     @action_window.activate
     #$mutex.synchronize{BlockChain.mining}
+    
+    #last work: fix blockchain screen freeze
     BlockChain.mining
     if DataManager.save_game(@file_window.index)
       on_save_success

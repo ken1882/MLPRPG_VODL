@@ -38,6 +38,10 @@ class Game_Map
     set_max_edge
   end
   #--------------------------------------------------------------------------
+  def map
+    @map
+  end
+  #--------------------------------------------------------------------------
   def set_max_edge
     @max_width  = (Graphics.width / 32).truncate
     @max_height = (Graphics.height / 32).truncate
@@ -201,6 +205,7 @@ class Game_Map
     @action_battlers[battler.team_id] << battler
     @unit_table[battler.hashid] = battler
     SceneManager.scene.register_battle_unit(battler) if SceneManager.scene_is?(Scene_Map)
+    # last work: battler registation is too slow
   end
   #--------------------------------------------------------------------------
   # * Remove unit

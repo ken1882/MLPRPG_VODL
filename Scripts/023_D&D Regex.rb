@@ -67,6 +67,10 @@ module DND
     MapLoad_Image = /<(?:LOAD_IMAGE|load image):[ ](.+?)>/
     MapLoad_Name  = /<(?:LOAD_NAME|load name):[ ](.+?)>/
     #-------------------------------------------------------------------------
+    # <load image: x>   <load name: x>
+    #-------------------------------------------------------------------------
+    MapBattleBGM = /<(?:BATTLE_BGM|battle bgm):[ ](.+?)>/i
+    #-------------------------------------------------------------------------
   end
   
   # tag: event config

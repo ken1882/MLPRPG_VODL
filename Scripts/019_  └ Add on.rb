@@ -4,5 +4,4 @@
 #  This module handles and plays sound effects.
 #==============================================================================
 module Audio
-  
 end

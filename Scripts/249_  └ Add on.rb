@@ -13,6 +13,7 @@ class Scene_Menu < Scene_MenuBase
     create_gold_window
     create_status_window
     create_foreground
+    puts "Assign blockchian mining work"
     Thread_Assist.assign_work(:BCmine) # tag: 3
     if $USE_SCENE_SKIN == TRUE                                                 
       @command_window.scene_swap($PAUSE_MENU_SKIN)                             
@@ -26,6 +27,7 @@ class Scene_Menu < Scene_MenuBase
   def terminate
     super
     dispose_foreground
+    puts "Assign blockchian mining work"
     Thread_Assist.assign_work(:BCmine) # tag: 3
   end
   #--------------------------------------------------------------------------

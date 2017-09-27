@@ -14,6 +14,7 @@ module BlockChain
   @height   = 0
   @capacity = 0
   @checksum = 0x0
+  @locked   = false
   #--------------------------------------------------------------------------
   # * Block Chain Initialize
   #--------------------------------------------------------------------------
@@ -103,39 +104,53 @@ module BlockChain
   # * Start process mining
   #--------------------------------------------------------------------------
   def self.mining(async = false)
-    puts "[BlockChain]: Start Mining"
-    return if node_empty?
-    winner = nil
-    Thread_Assist.yield if !async && Thread_Assist.work?(:BCmine)
-    while !winner
-      no_record_cnt = 0
-      @nodes.each do |node|
-        if async
-          t = Thread_Assist.pause? ? 1 : Thread_Assist::Uwait
-          sleep(t)
+    puts "[BlockChain]: Start Mining, lock: #{@locked}, caller: #{[caller[0], caller[1]]}"
+    return if node_empty? || @locked
+    begin
+      @locked = true unless async
+      winner  = nil
+      Thread_Assist.yield if !async && Thread_Assist.work?(:BCmine)
+      while !winner
+        no_record_cnt = 0
+        @nodes.each do |node|
+          if async
+            t = Thread_Assist.pause? ? 1 : Thread_Assist::Uwait
+            sleep(t)
+          end
+          SceneManager.update_loading
+          result = node.mining
+          no_record_cnt += 1                   if result == :no_record
+          PONY::ERRNO.raise(:nil_block, :exit) if result == :nil_block
+          winner = node.clone                  if result == true
         end
-        SceneManager.update_loading
-        result = node.mining
-        no_record_cnt += 1                   if result == :no_record
-        PONY::ERRNO.raise(:nil_block, :exit) if result == :nil_block
-        winner = node.clone                  if result == true
+        
+        if no_record_cnt > @nodes.size / 2
+          puts "[BlockChain]: No transaction to mine" 
+        elsif winner
+          puts "[BlockChain]: #{winner.name} has mined the block"
+        end
+        
+        return if no_record_cnt > @nodes.size / 2
       end
-      
-      if no_record_cnt > @nodes.size / 2
-        puts "[BlockChain]: No transaction to mine" 
-      elsif winner
-        puts "[BlockChain]: #{winner.name} has mined the block"
-      end
-      
-      return if no_record_cnt > @nodes.size / 2
+      puts "[BlockChain]: Block Mined"
+      self.settlement(winner) if self.nonce_legal?(winner)
+    ensure
+      @locked = false
     end
-    puts "[BLockChain]: Block Mined"
-    
-    if self.nonce_legal?(winner)
-      self.dispute_player_reward(winner) if winner.name == Vocab::Player
-      self.sync_node(winner)
-      self.settlement
+  end
+  #--------------------------------------------------------------------------
+  # * Archive all current working block and start a new one
+  #--------------------------------------------------------------------------
+  def self.settlement(winner)
+    puts '[BlockChain]: Settle currnet blocks'
+    self.dispute_player_reward(winner) if winner.name == Vocab::Player
+    self.sync_node(winner)
+    @height += 1
+    @nodes.each do |node|
+      node.archive_lastblock
     end
+    self.maintain
+    @capacity = 0
   end
   #--------------------------------------------------------------------------
   def self.dispute_player_reward(winner)
@@ -287,18 +302,6 @@ module BlockChain
     @nodes.each {|node| node.sync(master_node)}
   end
   #--------------------------------------------------------------------------
-  # * Archive all current working block and start a new one
-  #--------------------------------------------------------------------------
-  def self.settlement
-    puts '[BlockChain]: Settle currnet blocks'
-    @height += 1
-    @nodes.each do |node|
-      node.archive_lastblock
-    end
-    self.maintain
-    @capacity = 0
-  end
-  #--------------------------------------------------------------------------
   # * Show History
   def self.show_history
     self.recover_nodes
@@ -353,4 +356,5 @@ module BlockChain
   end
   # Nodes in Chain
   def self.chain_nodes; return @nodes; end
+  def self.locked?; return @locked; end
 end

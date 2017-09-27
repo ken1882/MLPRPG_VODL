@@ -13,12 +13,12 @@ module Thread_Assist
   @work_args = []
   # >> Work type definiation
   WorkTable = {
-    :BCmine   => 1,
-    :BCquery  => 2,
+    :BCmine    => 1,
+    :BCquery   => 2,
+    :SoundPlay => 3,
   }
   #----------------------------------------------------------------------------
   module_function
-  
   #----------------------------------------------------------------------------
   # * Assign work
   #----------------------------------------------------------------------------
@@ -58,9 +58,11 @@ module Thread_Assist
   def update_assist
     return if @work == 0
     case @work
-    when WorkTable[:BCmine]
+    when WorkTable[:BCmine] && !BlockChain.locked?
       puts "[Thread]: Assist mining"
       $mutex.synchronize{BlockChain.mining(true)}
+    when WorkTable[:SoundPlay]
+      $mutex.synchronize{PONY.PlayAudio('sound.wav',8,0,0,0,0,0)}
     end
     @work = 0
   end
@@ -74,7 +76,5 @@ module Thread_Assist
     File.open("test.txt", 'a'){|file| file.write("Kill Thread: #{$thassist}\n")}
     Thread.kill($thassist)
     puts "[Thread]: #{Time.now} #{$thassist.stop?}"
-    #sleep(1)
-    #$assist.eval
   end
 end

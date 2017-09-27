@@ -54,6 +54,7 @@ begin
       Graphics.frame_rate = 60
       Mouse.init
       Mouse.cursor.visible = false
+      PONY.InitOpenAL
       $assist.eval
       SceneManager.run
     end
@@ -62,5 +63,7 @@ rescue SystemExit
   exit
 rescue Exception => error
   flag_error error
+ensure
+  PONY.CloseOpenAL
 end # begin
 end # unless $ENCRYPT

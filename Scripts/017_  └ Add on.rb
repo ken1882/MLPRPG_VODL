@@ -27,6 +27,8 @@ module BattleManager
     4 => 180, 5 => nil, 6 =>   0,
     1 => 225, 2 => 270, 3 => 335
   }
+  # ~~~ Music ~~~ #
+  Default_Battle_BGM = "Baldur's Gate OST - Attacked by Assassins.mp3"
   #--------------------------------------------------------------------------
   # * Caches
   #--------------------------------------------------------------------------
@@ -378,8 +380,22 @@ module BattleManager
   # * Check if any battler is under process
   #--------------------------------------------------------------------------
   def self.detect_combat
+    result = @flags[:in_battle]
+    result = false if result.nil?
     @flags.delete(:in_battle)
-    self.in_battle?
+    result = self.in_battle?
+    if result != result
+      battle_start if result
+      battle_end   if !result
+    end
+  end
+  #--------------------------------------------------------------------------
+  def self.battle_start
+    
+  end
+  #--------------------------------------------------------------------------
+  def self.battle_end
+    
   end
   #--------------------------------------------------------------------------
   def self.clear_flag(symbol = nil)
