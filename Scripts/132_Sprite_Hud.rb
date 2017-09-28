@@ -3,7 +3,6 @@
 #------------------------------------------------------------------------------
 #  Sprite for displaying the stat of party members, including hp, ep and action
 #==============================================================================
-# tag: 1 ( Sprite Hud
 class Sprite_Hud < Sprite_Base
   include PONY::Hud
   #--------------------------------------------------------------------------

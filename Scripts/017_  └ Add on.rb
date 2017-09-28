@@ -36,7 +36,6 @@ module BattleManager
   #--------------------------------------------------------------------------
   # * Setup 
   #--------------------------------------------------------------------------
-  # tag: 1 (BM
   def self.setup(can_escape = true, can_lose = false)
     @flags = {}
     @cache_opponents.clear

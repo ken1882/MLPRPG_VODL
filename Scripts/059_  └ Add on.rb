@@ -21,7 +21,6 @@ class Game_Action
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  # tag: 1 (Game Action
   def initialize(user, target, item, forcing = false)
   	@user	   = user
     @target  = target

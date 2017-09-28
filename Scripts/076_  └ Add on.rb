@@ -177,6 +177,7 @@ class Game_Party < Game_Unit
     $game_map.need_refresh = true
     swap_order_opt(index1, index2)
     members.each {|member| member.map_char.process_actor_death if member.dead?}
+    Cache.release_spriteset
   end
   #--------------------------------------------------------------------------
   # * Return usable general items for hotkey usage

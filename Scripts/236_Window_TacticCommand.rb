@@ -4,7 +4,6 @@
 #   After a battler is selected in tactic mode, this window will display the 
 # commands for controlable battler.
 #==============================================================================
-#tag: 1 ( Window_TacticCommand
 class Window_TacticCommand < Window_Command
   #--------------------------------------------------------------------------
   # * Constants

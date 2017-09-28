@@ -195,7 +195,6 @@ class Game_Map
   #--------------------------------------------------------------------------
   # * Push character into active battlers
   #--------------------------------------------------------------------------
-  # tag: 1 (Game Map
   def register_battler(battler)
     if @unit_table[battler.hashid]
       debug_print "Battler register failed: #{battler}"
@@ -204,8 +203,7 @@ class Game_Map
     @enemies << battler
     @action_battlers[battler.team_id] << battler
     @unit_table[battler.hashid] = battler
-    SceneManager.scene.register_battle_unit(battler) if SceneManager.scene_is?(Scene_Map)
-    # last work: battler registation is too slow
+    #SceneManager.scene.register_battle_unit(battler) if SceneManager.scene_is?(Scene_Map)
   end
   #--------------------------------------------------------------------------
   # * Remove unit

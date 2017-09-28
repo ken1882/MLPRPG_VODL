@@ -182,10 +182,10 @@ class Game_Event < Game_Character
   #-------------------------------------------------------------------------------
   # * Spawn NPC battler
   #-------------------------------------------------------------------------------
-  # tag: 1 ( Game event
   def spawn_npc_battler(id)
     @enemy = Game_Enemy.new($game_map.enemies.size, id)
     @enemy.map_char = self
+    debug_print "Spawn enemy #{@enemy.name} at event #{@id}"
     BattleManager.register_battler(self)
     $game_map.make_unique_names
   end
