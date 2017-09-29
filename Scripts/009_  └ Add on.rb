@@ -13,6 +13,10 @@ module Cache
   @cache_sprite     = []    # Sprites cache
   @cache_projectile = []    # Map Projectiles cache
   #--------------------------------------------------------------------------
+  def self.init
+    @iconset = system("Iconset")
+  end
+  #--------------------------------------------------------------------------
   # * Get UI Graphic
   #--------------------------------------------------------------------------
   def self.UI(filename)
@@ -65,4 +69,14 @@ module Cache
     @cache_sprite.delete(bitmap)
   end
   #--------------------------------------------------------------------------
+  def self.iconset
+    @iconset
+  end
+  #--------------------------------------------------------------------------
+  # * Free all cached sprites
+  #--------------------------------------------------------------------------
+  def self.release
+    @iconset.dispose
+    @iconset = nil
+  end
 end

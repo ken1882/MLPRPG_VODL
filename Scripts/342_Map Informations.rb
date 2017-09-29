@@ -102,7 +102,7 @@ class Window_InformationLog < Window_Selectable
     @button_sprite.y      = y + window_height - 26
     @button_sprite.z      = z + 1
     @button_sprite.bitmap = Bitmap.new(24,24)
-    bitmap = Cache.system("Iconset")
+    bitmap = Cache.iconset
     rect = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
     @button_sprite.bitmap.blt(0, 0, bitmap, rect)
   end

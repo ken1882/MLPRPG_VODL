@@ -151,9 +151,9 @@ module SceneManager
   # *) Loading Screen process
   #--------------------------------------------------------------------------
   def self.reserve_loading_screen(map_id = nil, configs = {})
+    info = get_map_loading_info(map_id)
     return if $SkipLoading
     debug_print "Reserve load screen"
-    info = get_map_loading_info(map_id)
     @loading_screen = ForeGround_Loading.new(info, map_id.nil?, configs)
     self.fade_in(@loading_screen)
   end
@@ -171,7 +171,12 @@ module SceneManager
       when DND::REGEX::MapLoad_Name
         info.name  = $1.to_s
       when DND::REGEX::MapBattleBGM
-        map.battle_bgm = RPG::BGM.new($1.to_s, 80, 100)
+        audio = RPG::BGM.new
+        audio.name   = $1.to_s
+        audio.volume = 80
+        audio.pitch  = 100
+        map.battle_bgm = audio
+        debug_print "Map(#{info.name}, #{map.display_name}) battle BGM: #{audio.name}"
       end
     }
     return info
@@ -240,9 +245,4 @@ module SceneManager
     return unless scene_is?(Scene_Map)
     scene.setup_weapon_use(action)
   end
-  #----------------------------------------------------------------------------
-  def self.iconset
-    @iconset
-  end
-  
 end

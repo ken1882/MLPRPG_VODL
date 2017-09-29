@@ -173,8 +173,8 @@ class Game_Skillbar
   #--------------------------------------------------------------------------
   def update
     current_actor = determine_actor
+    refresh_page           if @need_refresh
     refresh(current_actor) if refresh_needed?(current_actor)
-    refresh_page           if need_refresh
     process_input
     update_edit    if @edit_enabled
     @sprite.update if sprite_valid?
@@ -226,6 +226,7 @@ class Game_Skillbar
   # *) Refresh items
   #--------------------------------------------------------------------------
   def refresh_item
+    @need_refresh = false
     @current_page = 0
     hotkey_items  = @actor.get_hotkeys
     @primary_tool = hotkey_items.first

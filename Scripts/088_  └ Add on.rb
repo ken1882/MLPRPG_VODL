@@ -72,7 +72,7 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def update_knockback
     dir = @knockbacks.shift
-    if pixel_passable?(@px, @py, dir, true)
+    if pixel_passable?(@px, @py, dir, false)
       @px += Tile_Range[dir][0]
       @py += Tile_Range[dir][1]
       @real_x = @x

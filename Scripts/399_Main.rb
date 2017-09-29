@@ -52,6 +52,7 @@ begin
   rgss_main do
     begin
       Graphics.frame_rate = 60
+      Cache.init
       Mouse.init
       Mouse.cursor.visible = false
       PONY.InitOpenAL

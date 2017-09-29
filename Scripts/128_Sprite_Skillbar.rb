@@ -149,7 +149,7 @@ class Sprite_Skillbar < Sprite
       end
       icon_index = item.is_a?(Fixnum) ? item : item.icon_index
       item_hash  = item.is_a?(Fixnum) ? item : item.hashid
-      bitmap = Cache.system("Iconset")
+      bitmap = Cache.iconset
       rect = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
       @icon_sprite.bitmap.blt(cx, cy, bitmap, rect, enabled ? 0xff : translucent_alpha)
       @cooldown_flag[index] = true
@@ -159,7 +159,7 @@ class Sprite_Skillbar < Sprite
   def drag_icon(index)
     item = @instance.items[index]
     icon_index = item.icon_index
-    bitmap = Cache.system("Iconset")
+    bitmap = Cache.iconset
     rect = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
     @drag_sprite.bitmap.blt(0, 0, bitmap, rect, 0xff)
     @drag_sprite.x, @drag_sprite.y = *Mouse.pos

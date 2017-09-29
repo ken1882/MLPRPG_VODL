@@ -39,11 +39,9 @@ class Sprite_Weapon < Sprite
   #--------------------------------------------------------------------------
   def refresh_weapon(index)
     return if !index
-    temp = SceneManager.iconset#Cache.system("Iconset")
+    temp = Cache.iconset
     self.bitmap.clear
     self.bitmap.blt(0,0,temp,Rect.new(index % 16 * 24, index / 16 * 24, 24, 24))
-    #temp.dispose
-    #temp = nil
     @index = index
   end
   #--------------------------------------------------------------------------

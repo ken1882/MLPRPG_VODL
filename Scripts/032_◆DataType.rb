@@ -754,5 +754,6 @@ end
 def exit(stat = true)
   $exited = true
   SceneManager.scene.fadeout_all rescue nil
+  Cache.release
   SceneManager.exit
 end

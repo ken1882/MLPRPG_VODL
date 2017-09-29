@@ -117,4 +117,12 @@ class Game_Character < Game_CharacterBase
     return value
   end
   #----------------------------------------------------------------------------
+  # * Change target to attacker when being attcked
+  #----------------------------------------------------------------------------
+  def apply_damaged_target_change(attacker, value)
+    return if @aggressive_level == 0
+    return unless is_opponent?(attacker)
+    set_target(attacker) if @current_target.nil?
+  end
+  #----------------------------------------------------------------------------
 end

@@ -189,7 +189,7 @@ class Sprite_Hud < Sprite_Base
   end
   #--------------------------------------------------------------------------
   def draw_icon(icon_index, x, y)
-    bitmap = Cache.system("Iconset")
+    bitmap = Cache.iconset
     rect = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
     @contents.bitmap.blt(x, y, bitmap, rect)
   end

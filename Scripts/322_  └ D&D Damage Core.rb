@@ -298,7 +298,7 @@ class Game_Battler < Game_BattlerBase
   def apply_hit(user, item)
     puts "Apply hit: #{item} #{item.name}"
     unless item.is_a?(RPG::Skill) && item.damage.none?
-      make_damage_value(user, item)
+      value = make_damage_value(user, item)
       execute_damage(user)
       apply_knockback(determine_source_direction(user), item.tool_blowpower)
     end
@@ -306,6 +306,7 @@ class Game_Battler < Game_BattlerBase
     if item.is_a?(RPG::Skill) || item.is_a?(RPG::Item)
       item.effects.each {|effect| item_effect_apply(user, item, effect) }
     end
+    apply_damaged_target_change(user, value)
   end
   #----------------------------------------------------------------------------
   # *) Apply item animation
