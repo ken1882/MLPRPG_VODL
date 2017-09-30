@@ -469,15 +469,15 @@ class Game_Character < Game_CharacterBase
     return unless @pathfinding_moves.size > 0 && @move_poll.empty?
     @move_poll << @pathfinding_moves.shift
     @followers.move if self.is_a?(Game_Player)
-    interpret_move(self.is_a?(Game_Follower))
+    interpret_move
   end
   #-------------------------------------------------------------------------
   # * Execute queued movement
   #-------------------------------------------------------------------------
-  def interpret_move(through_character = false)
+  def interpret_move
     return if @move_poll.empty?
     route = @move_poll.shift
-    move_pixel(route[0], route[1], through_character)
+    move_pixel(route[0], route[1])
   end
   #-------------------------------------------------------------------------
   def interpret_debug_moves

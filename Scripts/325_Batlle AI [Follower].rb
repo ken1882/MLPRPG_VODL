@@ -9,7 +9,7 @@
 class Game_Follower < Game_Character
   #----------------------------------------------------------------------------
   def attack
-    @actor.process_tool_action(primary_weapon)
+    actor.process_tool_action(primary_weapon)
   end
   #----------------------------------------------------------------------------
 end

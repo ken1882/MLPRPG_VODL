@@ -75,10 +75,10 @@ class Game_Follower < Game_Character
     if(sd > dist && sx.abs > mrgn && sy.abs > mrgn)
       dir = (sx > 0 ? -1 : 1) + (sy > 0 ? 8 : 2)
       case dir
-      when 1; move_dpixel(4,2, true);
-      when 3; move_dpixel(6,2, true);
-      when 7; move_dpixel(4,8, true);
-      when 9; move_dpixel(6,8, true);
+      when 1; move_dpixel(4,2);
+      when 3; move_dpixel(6,2);
+      when 7; move_dpixel(4,8);
+      when 9; move_dpixel(6,8);
       end
     elsif sx.abs > dist && sx.abs > sy.abs
       move_pixel(sx > 0 ? 4 : 6, true)

@@ -26,30 +26,45 @@ class Sprite_Weapon < Sprite
     @animation_sprite = Sprite_Animation.new(viewport)
     super(viewport)
     create_bitmap
-    self.ox    = 22
-    self.oy    = 22
   end
   #--------------------------------------------------------------------------
   def create_bitmap
     self.bitmap = Bitmap.new(24,24)
-    index = user.primary_weapon.icon_index rescue nil
-    refresh_weapon(index)
+    refresh_weapon(@user.primary_weapon)
     hide
   end
   #--------------------------------------------------------------------------
-  def refresh_weapon(index)
-    return if !index
-    temp = Cache.iconset
-    self.bitmap.clear
-    self.bitmap.blt(0,0,temp,Rect.new(index % 16 * 24, index / 16 * 24, 24, 24))
-    @index = index
+  def refresh_weapon(item)
+    return if !item
+    
+    if item.user_graphic.upcase.include?("ICON")
+      return if item.icon_index == @graphic
+      @type = 0
+      index = item.icon_index rescue nil
+      temp = Cache.iconset
+      self.bitmap.clear
+      self.bitmap.blt(0,0,temp,Rect.new(index % 16 * 24, index / 16 * 24, 24, 24))
+      self.src_rect.set(0,0,24,24)
+      self.ox    = 22
+      self.oy    = 22
+      @graphic = index
+    elsif item.user_graphic && item.user_graphic != @graphic
+      @type = 1
+      self.angle = 0
+      self.bitmap = Cache.Arms(item.user_graphic)
+      @cw = self.bitmap.width  / 3;
+      @ch = self.bitmap.height / 4;
+      self.src_rect.set(0, 0, @cw, @ch)
+      self.ox = @cw / 2
+      self.oy = @ch
+      @graphic = item.user_graphic
+    end
   end
   #--------------------------------------------------------------------------
   def setup_action(action)
     @action = action
     puts "[Warning]: Sprite Weapon has different owner: #{@user.name} #{action.user.name}" if @user != action.user
-    index = action.item.icon_index
-    refesh_weapon(index) if index != @index
+    refresh_weapon(action.item)
     @timer = 0
     @attacking = true
     show
@@ -68,28 +83,54 @@ class Sprite_Weapon < Sprite
   end
   #--------------------------------------------------------------------------
   def update_attacking
-    dir = @user.direction
-    self.x = @user.screen_x + Wield_Dir_Offest[dir][0]
-    self.y = @user.screen_y + Wield_Dir_Offest[dir][1]
+    @dir = @user.direction
+    update_icon_sprite  if @type == 0
+    update_image_sprite if @type == 1
+    @timer += 1
+  end
+  #--------------------------------------------------------------------------
+  def update_icon_sprite
+    self.x = @user.screen_x + Wield_Dir_Offest[@dir][0]
+    self.y = @user.screen_y + Wield_Dir_Offest[@dir][1]
     case @timer
     when 0
-      self.angle = Wield_Angles[dir][0]
-      self.z     = Wield_Depth_Correction[dir]
+      self.angle = Wield_Angles[@dir][0]
+      self.z     = Wield_Depth_Correction[@dir]
     when 3
-      self.angle = Wield_Angles[dir][1]
-      self.z     = Wield_Depth_Correction[dir]
+      self.angle = Wield_Angles[@dir][1]
+      self.z     = Wield_Depth_Correction[@dir]
     when 6
-      self.angle = Wield_Angles[dir][2]
-      self.z     = Wield_Depth_Correction[dir]
+      self.angle = Wield_Angles[@dir][2]
+      self.z     = Wield_Depth_Correction[@dir]
       BattleManager.execute_action(@action)
       setup_animation
     when 9
-      self.angle = Wield_Angles[dir][3]
-      self.z     = Wield_Depth_Correction[dir]
+      self.angle = Wield_Angles[@dir][3]
+      self.z     = Wield_Depth_Correction[@dir]
     when 12
       terminate_attack
     end
-    @timer += 1
+  end
+  #--------------------------------------------------------------------------
+  def update_image_sprite
+    self.x = @user.screen_x
+    self.y = @user.screen_y + 22
+    sy = (@dir - 2) / 2 * @ch
+    case @timer
+    when 0
+      sx = 0
+      self.src_rect.set(sx, sy, @cw, @ch)
+    when 4
+      sx = @cw
+      self.src_rect.set(sx, sy, @cw, @ch)
+      BattleManager.execute_action(@action)
+      setup_animation
+    when 8
+      sx = @cw * 2
+      self.src_rect.set(sx, sy, @cw, @ch)
+    when 12
+      terminate_attack
+    end
   end
   #--------------------------------------------------------------------------
   def terminate_attack

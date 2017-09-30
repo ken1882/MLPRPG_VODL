@@ -72,7 +72,7 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def update_knockback
     dir = @knockbacks.shift
-    if pixel_passable?(@px, @py, dir, false)
+    if pixel_passable?(@px, @py, dir)
       @px += Tile_Range[dir][0]
       @py += Tile_Range[dir][1]
       @real_x = @x
@@ -150,6 +150,7 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def kill
     $game_map.need_refresh = true
+    set_target(nil)
   end
   #----------------------------------------------------------------------------
   def swap_member(char)
@@ -160,6 +161,7 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def process_event_death
+    drop_loots if $game_player.is_opponent?(self)
     set_target(nil)
     apply_event_death_effect
     start_animation(@enemy.death_animation)
@@ -202,4 +204,20 @@ class Game_Character < Game_CharacterBase
     return @id
   end
   #----------------------------------------------------------------------------
+  def drop_loots
+    exp   = @enemy.exp / $game_party.members.size
+    gold  = @enemy.gold
+    loots = @enemy.make_drop_items
+    $game_party.members.each do |actor|
+      actor.gain_exp(exp)
+    end
+    #last work: register loot drops
+  end
+  #----------------------------------------------------------------------------
+  # * Allow character move freely between characters?
+  #----------------------------------------------------------------------------
+  def allow_loose_moving?
+    return false
+  end
+  
 end

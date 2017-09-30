@@ -207,28 +207,27 @@ class Game_CharacterBase
   #-------------------------------------------------------------------------------
   # * New: Pixel passable?
   #-------------------------------------------------------------------------------
-  def pixel_passable?(px,py,d, through_character = false)
+  def pixel_passable?(px,py,d)
     nx = px + Tile_Range[d][0]
     ny = py + Tile_Range[d][1]
     return false unless $game_map.pixel_valid?(nx,ny)
-    return true if @through || debug_through?
+    return true  if @through || debug_through?
     return false if $game_map.pixel_table[nx,ny,0] == 0
-    return false if collision?(nx,ny, through_character)
+    return false if collision?(nx,ny)
     return true
   end
   #-------------------------------------------------------------------------------
   # * New: Collision?
   #-------------------------------------------------------------------------------
-  def collision?(px, py, through_character = false)
+  def collision?(px, py)
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through || event == self
-        next if through_character && !event.static_object
         return true if event.priority_type == 1
       end
     end
+    
     if @priority_type == 1
-      return false if through_character
       return true  if ($game_player.px - px).abs <= @cx && ($game_player.py - py).abs <= @cy
     end
     return false
@@ -253,9 +252,10 @@ class Game_CharacterBase
   #-------------------------------------------------------------------------------
   # * New: move_pixel     # tag: movement
   #-------------------------------------------------------------------------------
-  def move_pixel(d,t, through_character = false)
+  def move_pixel(d,t = true)
     return if moving?
-    @move_succeed = pixel_passable?(@px,@py,d,through_character)
+    $game_player.followers.move if self.is_a?(Game_Player)
+    @move_succeed = pixel_passable?(@px, @py, d)
     if @move_succeed
       set_direction(d)
       @px += Tile_Range[d][0]
@@ -267,17 +267,18 @@ class Game_CharacterBase
       increase_steps
     elsif t
       set_direction(d)
-      front_pixel_touch?(@px + Tile_Range[d][0],@py + Tile_Range[d][1])
+      return front_pixel_touch?(@px + Tile_Range[d][0],@py + Tile_Range[d][1])
     end
-    $game_player.followers.move if self.is_a?(Game_Player)
   end
   #-------------------------------------------------------------------------------
   # * New: move diagonal pixel
   #-------------------------------------------------------------------------------
-  def move_dpixel(h,v, through_character = false)
+  def move_dpixel(h,v)
     return if moving?
     @move_succeed = false
-    if pixel_passable?(@px,@py,v, through_character)
+    touched = false
+    
+    if pixel_passable?(@px,@py,v)
       @move_succeed = true
       @real_x = @x
       @real_y = @y
@@ -289,9 +290,10 @@ class Game_CharacterBase
       increase_steps
     else
       set_direction(v)
-      front_pixel_touch?(@px + Tile_Range[v][0],@py + Tile_Range[v][1])
+      touched |= front_pixel_touch?(@px + Tile_Range[v][0],@py + Tile_Range[v][1])
     end
-    if pixel_passable?(@px,@py,h, through_character)
+    
+    if pixel_passable?(@px,@py,h)
       unless @move_succeed 
         @real_x = @x
         @real_y = @y
@@ -305,9 +307,10 @@ class Game_CharacterBase
       increase_steps
     else
       set_direction(h)
-      front_pixel_touch?(@px + Tile_Range[h][0],@py + Tile_Range[h][1])
+      touched |= front_pixel_touch?(@px + Tile_Range[h][0],@py + Tile_Range[h][1])
     end
     $game_player.followers.move if self.is_a?(Game_Player)
+    return touched
   end
   #-------------------------------------------------------------------------------
   # * Overwrite: on bush tile?
@@ -392,7 +395,7 @@ class Game_Character < Game_CharacterBase
     dy = @py - character.py
     if dx.abs < character.cx
       unless dy.abs < character.cy
-        move_pixel(dy < 0 ? 2 : 8,true) 
+        move_pixel(dy < 0 ? 2 : 8) 
         unless @move_succeed
           return if dx.abs - Chase_Axis[@direction][0] <= @cx && dy.abs - Chase_Axis[@direction][1] <= @cy
           move_dpixel(dx < 0 ? 6 : 4, dy < 0 ? 2 : 8)
@@ -400,7 +403,7 @@ class Game_Character < Game_CharacterBase
       end
     else
       if dy.abs < character.cy
-        move_pixel(dx < 0 ? 6 : 4,true)
+        move_pixel(dx < 0 ? 6 : 4)
         unless @move_succeed
           return if dx.abs - Chase_Axis[@direction][0] <= @cx && dy.abs - Chase_Axis[@direction][1] <= @cy
           move_dpixel(dx < 0 ? 6 : 4, dy < 0 ? 2 : 8)
@@ -493,13 +496,13 @@ class Game_Player < Game_Character
   #-------------------------------------------------------------------------------
   # * Pixel move passable?
   #-------------------------------------------------------------------------------
-  def pixel_passable?(px,py,d, through_character = false)
+  def pixel_passable?(px,py,d)
     nx = px + Tile_Range[d][0]
     ny = py + Tile_Range[d][1]
     return false unless $game_map.pixel_valid?(nx,ny)
     return true if @through || debug_through?
     return false if $game_map.pixel_table[nx,ny,0] == 0
-    return false if !through_character && collision?(nx,ny)
+    return false if collision?(nx,ny)
     return true
   end
   #-------------------------------------------------------------------------------
@@ -527,7 +530,7 @@ class Game_Player < Game_Character
   #-------------------------------------------------------------------------------
   # * Collision check
   #-------------------------------------------------------------------------------
-  def collision?(px, py, through_character = false)
+  def collision?(px, py)
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through
@@ -578,16 +581,19 @@ class Game_Event < Game_Character
     multiply_commands
   end
   #-------------------------------------------------------------------------------
-  #
-  #-------------------------------------------------------------------------------
-  def collision?(px, py, through_character = false)
+  def collision?(px, py)
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through || event == self
-        next if !event.static_object && through_character
         return true if event.priority_type == 1
       end
     end
+    
+    for follower in $game_player.followers
+      next unless follower.actor || follower.through
+      return true if (follower.px - px).abs <= follower.cx && (follower.py - py).abs <= follower.cy
+    end
+    
     if @priority_type == 1
       return true if ($game_player.px - px).abs <= @cx && ($game_player.py - py).abs <= @cy
     end
@@ -626,6 +632,29 @@ class Game_Event < Game_Character
       return# if jumping? || @recover > 0 || @enemy.nature == 2 || @enemy.object
       #attack if $game_map.sas_active && ($game_player.px - px).abs <= @cx && ($game_player.py - py).abs <= @cy
     end
+  end
+  
+end
+#==============================================================================
+# ** Game_Follower
+#------------------------------------------------------------------------------
+#  This class handles followers. A follower is an allied character, other than
+# the front character, displayed in the party. It is referenced within the
+# Game_Followers class.
+#==============================================================================
+class Game_Follower < Game_Character
+  #-------------------------------------------------------------------------------
+  # * Collision check
+  #-------------------------------------------------------------------------------
+  def collision?(px, py)
+    for event in $game_map.events.values
+      if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
+        next if event.through
+        return true if event.priority_type == 1
+      end
+    end
+    
+    return false
   end
   
 end

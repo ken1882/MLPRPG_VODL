@@ -90,6 +90,13 @@ class Game_Event < Game_Character
       @sight_lost_timer = 180
       @target_last_pos = @current_target.pos
     end
+    
+    BattleManager.opponent_battler(self).each do |battler|
+      next if !battler.primary_weapon
+      next if distance_to_character(battler) > visible_sight
+      next if !in_sight?(battler, visible_sight)
+      set_target(battler) if change_target?(battler)
+    end
   end
   #----------------------------------------------------------------------------
   def process_target_missing
@@ -103,4 +110,5 @@ class Game_Event < Game_Character
     @enemy.process_tool_action(primary_weapon)
   end
   #----------------------------------------------------------------------------
+  
 end

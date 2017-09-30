@@ -30,9 +30,12 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   alias update_gachdndai update
   def update
-    @combat_timer -= 1 if @combat_timer > 0
-    chase_target  if @current_target && !frozen?
-    update_combat if @current_target && @combat_timer == 0
+    if !dead?
+      @combat_timer -= 1 if @combat_timer > 0
+      chase_target  if @current_target && !frozen?
+      update_combat if @current_target && @combat_timer == 0
+    end
+    
     update_gachdndai
   end
   #----------------------------------------------------------------------------
@@ -45,6 +48,7 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def set_target(target)
     BattleManager.detect_combat
+    return if self.is_a?(Game_Player)
     @current_target = target
   end
   #----------------------------------------------------------------------------
@@ -57,18 +61,14 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def chase_target
-    touched = move_toward_character(@current_target)
-    if touched
-      BattleManager.opponent_battler.each do |battler|
-        next if !battler.primary_weapon
-        set_target(battler)
-      end
-    end
+    return set_target(nil) if @current_target.dead?
+    move_toward_character(@current_target)
   end
   #----------------------------------------------------------------------------
-  def determine_attack
+  def determine_attack(target = @current_target)
     return if !primary_weapon
-    return if distance_to_character(@current_target) > primary_weapon.tool_distance
+    return if distance_to_character(target) > primary_weapon.tool_distance
+    turn_toward_character(target)
     attack
   end
   #----------------------------------------------------------------------------
@@ -122,7 +122,15 @@ class Game_Character < Game_CharacterBase
   def apply_damaged_target_change(attacker, value)
     return if @aggressive_level == 0
     return unless is_opponent?(attacker)
-    set_target(attacker) if @current_target.nil?
+    set_target(attacker) if change_target?(@current_target)
+  end
+  #----------------------------------------------------------------------------
+  # * Determine whether change current target
+  #----------------------------------------------------------------------------
+  def change_target?(target)
+    return true if @current_taret.nil? || @current_taret.dead?
+    return true if distance_to_character(target) < distance_to_character(@current_target)
+    return false
   end
   #----------------------------------------------------------------------------
 end

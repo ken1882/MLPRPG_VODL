@@ -153,10 +153,20 @@ class Game_Player < Game_Character
     return actor.hashid if actor
     return 0
   end
+  #----------------------------------------------------------------------------
+  def dead?
+    return actor.dead?
+  end
   #--------------------------------------------------------------------------
   def update_vehicle
   end
   #--------------------------------------------------------------------------
   def update_encounter
+  end
+  #----------------------------------------------------------------------------
+  # * Allow character move freely between characters?
+  #----------------------------------------------------------------------------
+  def allow_loose_moving?
+    return false
   end
 end

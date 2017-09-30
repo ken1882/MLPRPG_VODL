@@ -60,6 +60,7 @@ class Game_Follower < Game_Character
   end
   #--------------------------------------------------------------------------
   def primary_weapon
+    return nil if !actor
     return actor.equips[0]
   end
   #--------------------------------------------------------------------------
@@ -74,6 +75,11 @@ class Game_Follower < Game_Character
   def kill
     process_actor_death
     super
+  end
+  #----------------------------------------------------------------------------
+  def dead?
+    return true if actor.nil?
+    return actor.dead?
   end
   #--------------------------------------------------------------------------
   # * Determine if Movement is Possible
@@ -91,5 +97,10 @@ class Game_Follower < Game_Character
     super(symbol, *args) if actor.nil?
     actor.method(symbol).call(*args)
   end
-  
+  #----------------------------------------------------------------------------
+  # * Allow character move freely between characters?
+  #----------------------------------------------------------------------------
+  def allow_loose_moving?
+    return false
+  end
 end
