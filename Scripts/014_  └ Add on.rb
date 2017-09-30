@@ -23,11 +23,8 @@ module SceneManager
     DataManager.init
     Audio.setup_midi if use_midi?
     Mouse.hide_global_cursor
-    @iconset = Cache.system("Iconset")
     @scene = first_scene_class.new
     @scene.main while @scene
-    @iconset.dispose
-    @iconset = nil
   end
   #--------------------------------------------------------------------------
   def self.update_loading
@@ -244,5 +241,17 @@ module SceneManager
   def self.setup_weapon_use(action)
     return unless scene_is?(Scene_Map)
     scene.setup_weapon_use(action)
+  end
+  #----------------------------------------------------------------------------
+  def self.item_help_window
+    scene.item_help_window
+  end
+  #----------------------------------------------------------------------------
+  def self.show_item_help_window(x = 0, y = 0, text = "")
+    scene.show_item_help_window(x, y, text)
+  end
+  #-------------------------------------------------------------------------
+  def self.hide_item_help_window
+    scene.hide_item_help_window
   end
 end

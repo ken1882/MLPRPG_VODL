@@ -10,21 +10,22 @@ class Scene_Base
   attr_accessor   :overlay_windows
   attr_reader     :overlayed
   attr_reader     :viewport
+  attr_reader     :item_help_window
   #--------------------------------------------------------------------------
   # * Main
   #--------------------------------------------------------------------------
   def main
-    @@overlay_windows = {}
-    @@button_cooldown = 0
-    @@overlayed       = false
-    $on_exit          = false
-    create_overlay_windows
+    @@overlay_windows   = {}
+    @@button_cooldown   = 0
+    @@overlayed         = false
+    $on_exit            = false
     #-------------------------------
     start
     post_start
-    
-    system_time = Time.now
-    
+    #-------------------------------
+    create_overlay_windows
+    create_item_help_window
+    #-------------------------------
     loop do
       break if scene_changing?
       update
@@ -40,6 +41,7 @@ class Scene_Base
     Graphics.update
     Input.update
     update_mutex
+    update_global_help_window
     update_all_windows unless @@overlayed
   end
   #--------------------------------------------------------------------------
@@ -59,12 +61,28 @@ class Scene_Base
     debug_print "Load Complete"
   end
   #--------------------------------------------------------------------------
+  # * Start Processing
+  #--------------------------------------------------------------------------
+  alias start_scbase start
+  def start
+    create_superviewport
+    start_scbase
+  end
+  #--------------------------------------------------------------------------
   # * Termination Processing
   #--------------------------------------------------------------------------
   alias terminate_chain terminate
   def terminate
+    dispose_item_help_window
     PONY::CHAIN.verify_totalbalance unless self.is_a?(Scene_Map)
     terminate_chain
+  end
+  #--------------------------------------------------------------------------
+  # * Create Super Viewport
+  #--------------------------------------------------------------------------
+  def create_superviewport
+    @superviewport = Viewport.new
+    @superviewport.z = 10000
   end
   #--------------------------------------------------------------------------
   # * Overlay Window
@@ -78,6 +96,34 @@ class Scene_Base
     @@overlay_windows[:exit_confirm] = $confirm_exit_win
     @@overlay_windows[:confirm] = $confirm_win
     @@overlay_windows[:popinfo] = $popup_win
+  end
+  #----------------------------------------------------------------------------
+  # * Item help window
+  #----------------------------------------------------------------------------
+  def create_item_help_window
+    @help_window_timer = 0
+    @item_help_window = Sprite.new(@superviewport)
+    @item_help_text   = Sprite.new(@superviewport)
+    bitmap = Cache.UI("item_help_scroll")
+    @item_help_window.bitmap = bitmap
+    @item_help_text.bitmap = Bitmap.new(bitmap.width, bitmap.height)
+    @item_help_window.hide
+    @item_help_text.hide
+  end
+  #----------------------------------------------------------------------------
+  def dispose_item_help_window
+    @item_help_window.dispose
+    @item_help_text.dispose
+    @item_help_window = nil
+    @item_help_text   = nil
+  end
+  #--------------------------------------------------------------------------
+  # * Free Viewport
+  #--------------------------------------------------------------------------
+  alias dispose_all_viewports dispose_main_viewport
+  def dispose_main_viewport
+    @superviewport.dispose
+    dispose_all_viewports
   end
   #--------------------------------------------------------------------------
   # * Frame Update
@@ -123,6 +169,14 @@ class Scene_Base
     end
   end
   #--------------------------------------------------------------------------
+  # * Update global help window
+  #--------------------------------------------------------------------------
+  def update_global_help_window
+    return if @help_window_timer == 0
+    @help_window_timer -= 1 if @help_window_timer > 0
+    hide_item_help_window if @help_window_timer == 0
+  end
+  #--------------------------------------------------------------------------
   # * Raise overlay window
   #--------------------------------------------------------------------------
   def raise_overlay_window(symbol, info = nil, method = nil, args = nil, forced = false)
@@ -146,7 +200,6 @@ class Scene_Base
     @@overlay_windows.each do |sym, window|
       @@overlay_windows[symbol].z = [window.z + 1, @@overlay_windows[symbol].z].max rescue nil
     end
-    
   end  
   #--------------------------------------------------------------------------
   # * Update overlay window
@@ -225,5 +278,34 @@ class Scene_Base
   def retrieve_input(string)
     @input_string = string
   end
-                                   
+  #----------------------------------------------------------------------------
+  def show_item_help_window(x, y, text = "")
+    return hide_item_help_window if text == @cur_item_help_text || text.nil? || text.empty?
+    hide_item_help_window
+    @cur_item_help_text = text
+    rect = Rect.new(2, 2, 120, 42)
+    @item_help_window.x, @item_help_window.y = x, y
+    @item_help_text.x, @item_help_text.y = x, y
+    
+    @item_help_text.bitmap.font.size = 20
+    
+    lines = FileManager.textwrap(text, 120)
+    
+    lines.each do |line|
+      @item_help_text.bitmap.draw_text(rect, line, 1)
+      rect.y += 12
+    end
+    
+    @item_help_window.show
+    @item_help_text.show
+    @help_window_timer = 150
+  end
+  #-------------------------------------------------------------------------
+  def hide_item_help_window
+    @cur_item_help_text = ""
+    @help_window_timer = 0
+    @item_help_text.bitmap.clear
+    @item_help_text.hide
+    @item_help_window.hide
+  end
 end

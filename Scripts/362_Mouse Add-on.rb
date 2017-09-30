@@ -118,6 +118,7 @@ module Mouse
       @outline.visible = SceneManager.tactic_enabled?
       update_tactic
     end
+    
   end
 end
 #==============================================================================

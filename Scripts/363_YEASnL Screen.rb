@@ -235,10 +235,13 @@ class Window_FileList < Window_Selectable
     case spec_loc
     when 51
       text = sprintf("Auto-Save 1")
+      super(index, "This slot is read-only")
     when 52
       text = sprintf("Auto-Save 2")
+      super(index, "This slot is read-only")
     when 53
       text = sprintf("Auto-Save 3")
+      super(index, "This slot is read-only")
     when 54
       text = sprintf("Quick-Save 1")
     when 55

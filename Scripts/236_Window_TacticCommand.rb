@@ -35,12 +35,15 @@ class Window_TacticCommand < Window_Command
   # * Create Command List
   #--------------------------------------------------------------------------
   def make_command_list
-    add_command(Command_Move, :move, tactic_command_enabled?)
-    add_command(get_moving_name, :hold, tactic_command_enabled?)
-    add_command(get_reaction_name, :reaction)
-    add_command(Command_Follow, :follow, false)        # unfinished
-    add_command(Command_Guard, :guard, false)          # unfinished
-    add_command(Command_Patrol, :patrol, false)        # unfinished
+    add_command(Command_Move, :move, tactic_command_enabled?, nil, "Move to a position or attack an enemy")
+    add_command(get_moving_name, :hold, tactic_command_enabled?, nil, "Press to toggle between hold/moving")
+    add_command(get_reaction_name, :reaction, tactic_command_enabled?, nil, "Toggle between combat reactions")
+    # unfinished
+    add_command(Command_Follow, :follow, false, nil, "Follow a character")
+    # unfinished
+    add_command(Command_Guard, :guard, false, nil, "Protect a character")
+    # unfinished
+    add_command(Command_Patrol, :patrol, false, nil, "Guard an area")
   end
   #--------------------------------------------------------------------------
   def tactic_command_enabled?

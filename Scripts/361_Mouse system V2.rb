@@ -510,21 +510,25 @@ class Window_Selectable
     rects = []
     add_x = self.x + 16 - self.ox
     add_y = self.y + 16 - self.oy
+    
     if !self.viewport.nil?
       add_x += self.viewport.rect.x - self.viewport.ox
       add_y += self.viewport.rect.y - self.viewport.oy
     end
+    
     self.item_max.times {|i|
       @index = i
       mouse_update_cursor
       rects << cursor_rect.dup
     }
+    
     @index = orig_index
     rects.each_with_index {|rect, i|
       if Mouse.area?(rect.x + add_x, rect.y + add_y, rect.width, rect.height)
         @index = i
       end
     }
+    
     update_cursor
     call_update_help
   end

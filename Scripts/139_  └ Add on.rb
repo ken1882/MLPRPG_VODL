@@ -20,6 +20,8 @@ class Window_Selectable < Window_Base
     @stacked_command = nil
     @stacked_args    = nil
     @scroll_enable   = false
+    @help_text       = []             # selection help text
+    
     initialize_overlay(x, y, width, height)
   end
   #--------------------------------------------------------------------------
@@ -143,6 +145,7 @@ class Window_Selectable < Window_Base
   def process_handling
     return unless open? && active
     return if (@overlayed && !self_overlay?)
+    call_item_help          if Input.trigger?(:kTAB)
     return unless button_cooled?
     return process_ok       if ok_enabled?        && Input.trigger?(:C)
     return process_cancel   if cancel_enabled?    && Input.trigger?(:B)
@@ -230,6 +233,12 @@ class Window_Selectable < Window_Base
     end
   end
   #--------------------------------------------------------------------------
+  # * Draw Item
+  #--------------------------------------------------------------------------
+  def draw_item(index, help = nil)
+    @help_text[index] = help
+  end
+  #--------------------------------------------------------------------------
   # * Check window if has previos entrance
   #--------------------------------------------------------------------------
   def has_parent?
@@ -245,6 +254,38 @@ class Window_Selectable < Window_Base
     return true if SceneManager.scene.is_a?(Scene_File)
     return false
   end
-  
+  #--------------------------------------------------------------------------
+  # * Display selection help window
+  #--------------------------------------------------------------------------
+  def call_item_help(index = @index)
+    pos = Mouse.pos
+    if pos
+      mx, my = *pos
+      mx = [Graphics.width - 120, mx].min
+      my = [Graphics.height - 68, my].min
+    else
+      rect = cursor_rect
+      mx, my = (rect.x + rect.width) / 2, (rect.y + rect.height) / 2
+      mx += self.x; my += self.y;
+    end
+    
+    if @help_text[index]
+      info = @help_text[index] 
+    elsif @list
+      info = @list[index][:name]
+    else
+      info = ""
+    end
+    SceneManager.show_item_help_window(mx, my, info)
+  end
+  #--------------------------------------------------------------------------
+  # * Call Handler
+  #--------------------------------------------------------------------------
+  alias call_handler_dnd call_handler
+  def call_handler(symbol)
+    SceneManager.hide_item_help_window
+    call_handler_dnd(symbol)
+  end
+  #--------------------------------------------------------------------------
   def overlayed?; @overlayed; end
 end

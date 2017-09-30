@@ -381,7 +381,8 @@ class Scene_Title < Scene_Base
     @commands = []
     @commands_shake_duration = 0
     index = 0
-    for com in 0...4
+  
+    for com in 0...@command_window.item_max
       sprite = Sprite.new
       case index
         when 0; com_name = "New_Game"

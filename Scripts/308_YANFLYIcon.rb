@@ -175,8 +175,10 @@ class Window_Command < Window_Selectable
   
   #--------------------------------------------------------------------------
   # overwrite method: draw_item
+  # tag: modified - ICON
   #--------------------------------------------------------------------------
   def draw_item(index)
+    super(index, @list[index][:help])
     enabled = command_enabled?(index)
     change_color(normal_color, enabled)
     rect = item_rect_for_text(index)

@@ -68,8 +68,8 @@ class Window_ImageCommand < Window_HorzCommand
   #     enabled : Activation state flag
   #     ext     : Arbitrary extended data
   #--------------------------------------------------------------------------
-  def add_command(name, image, symbol, enabled = true, ext = nil)
-    @list.push( {:name=>name, :symbol=>symbol, :image => image,:enabled=> enabled, :ext=>ext} )
+  def add_command(name, image, symbol, enabled = true, ext = nil, help = nil)
+    @list.push( {:name=>name, :symbol=>symbol, :image => image,:enabled=> enabled, :ext=>ext, :help=>help} )
   end
   #--------------------------------------------------------------------------
   # * Get Image file of Command
@@ -89,6 +89,8 @@ class Window_ImageCommand < Window_HorzCommand
   # * Draw Item
   #--------------------------------------------------------------------------
   def draw_item(index)
+    
+    @help_text[index] = @list[index][:help]
     enabled = command_enabled?(index)
     change_color(normal_color, enabled)
     rect = item_rect_for_text(index)
