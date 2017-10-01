@@ -47,9 +47,9 @@ class Window_TacticCommand < Window_Command
   end
   #--------------------------------------------------------------------------
   def tactic_command_enabled?
-    return false if battler.dead?
-    return false if battler.is_a?(Game_Player)
-    return false if battler == $game_party.leader
+    return false if @battler.nil? || @battler.dead?
+    return false if @battler.is_a?(Game_Player)
+    return false if @battler == $game_party.leader
     return true
   end
   #--------------------------------------------------------------------------

@@ -117,4 +117,5 @@ class Sprite_Character < Sprite_Base
       sprite.y += dy
     end
   end # def move_animation
+  
 end

@@ -82,7 +82,7 @@ class Game_Map
     setup_parallax
     setup_battleback
     @need_refresh = false
-    
+    @map.battle_bgm = $battle_bgm
     after_setup
   end
   #--------------------------------------------------------------------------

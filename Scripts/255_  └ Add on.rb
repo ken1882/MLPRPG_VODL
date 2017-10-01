@@ -125,7 +125,7 @@ class Scene_Skill < Scene_ItemBase
   #--------------------------------------------------------------------------
   def assign_hotkey(index)
     return unless index
-    $game_player.assigned_hotkey[HotKeys.assigned_hotkey_index(index)] = item
+    @actor.assigned_hotkey[HotKeys.assigned_hotkey_index(index)] = item
     @skillbar.refresh
     on_hotkey_ok(index)
   end

@@ -17,7 +17,8 @@ module BattleManager
   class << self
     alias_method  :vancecs_battle_start, :battle_start
     def battle_start
-      VancianCS.lock_in_all_spell_slots
+      #tag: modified
+      #VancianCS.lock_in_all_spell_slots
       vancecs_battle_start
     end
   end

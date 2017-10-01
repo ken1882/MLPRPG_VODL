@@ -105,8 +105,10 @@ class Game_Party < Game_Unit
   #     include_equip : Include equipped items
   #--------------------------------------------------------------------------
   alias gain_item_origin gain_item
-  def gain_item(item, amount, include_equip = false, opp = Vocab::Coinbase, info = '')
+  def gain_item(item, amount, include_equip = false, opp = Vocab::Coinbase, info = '', display_info = true)
     decrypt_data
+    opp  = Vocab::Coinbase if opp.nil?
+    info = '' if info.nil?
     container = item_container(item.class)
     return encrypt_data unless container
     last_number = item_number(item)
@@ -122,7 +124,7 @@ class Game_Party < Game_Unit
     container[item.id] = new_number
     container.delete(item.id) if container[item.id] == 0
     info = sprintf("Party has %s an item(x%s)", amount < 0 ? 'lost': 'gained', amount.abs)
-    SceneManager.display_info(info)
+    SceneManager.display_info(info) if display_info
     #$game_map.need_refresh = true
     $game_party.skillbar.need_refresh = true
     encrypt_data
@@ -203,4 +205,12 @@ class Game_Party < Game_Unit
     $game_player.recurrence_delay = nil
   end
   #--------------------------------------------------------------------------
+  def gain_exp(xp)
+    info = sprintf("Party has gained xp: %d", xp)
+    SceneManager.display_info(info)
+    members.each do |member|
+      member.gain_exp(xp)
+    end
+  end
+  
 end

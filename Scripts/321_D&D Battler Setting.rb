@@ -155,21 +155,21 @@ class Game_CharacterBase
     use_item(@action.item) if @action.item.tool_animmoment == 1 # Projectile
     proj = Game_Projectile.new(@action) if @action.item.tool_graphic
     SceneManager.setup_projectile(proj) if @action.item.tool_graphic
-    battler.skill_cooldown[@action.item.id] = @action.item.tool_cooldown
+    battler.skill_cooldown[@action.item.id] = @action.item.tool_cooldown || 0
   end
   #----------------------------------------------------------------------------
   def process_item_action
     BattleManager.execute_action(@action)
-    battler.item_cooldown[@action.item.id] = @action.item.tool_cooldown
+    battler.item_cooldown[@action.item.id] = @action.item.tool_cooldown || 0
   end
   #----------------------------------------------------------------------------
   def process_weapon_action
     SceneManager.setup_weapon_use(@action)
-    battler.weapon_cooldown[@action.item.id] = @action.item.tool_cooldown
+    battler.weapon_cooldown[@action.item.id] = @action.item.tool_cooldown || 0
   end
   #----------------------------------------------------------------------------
   def process_armor_action
-    battler.armor_cooldown[@action.item.id] = @action.item.tool_cooldown
+    battler.armor_cooldown[@action.item.id] = @action.item.tool_cooldown || 0
   end
   #----------------------------------------------------------------------------
   # * Pop-up text

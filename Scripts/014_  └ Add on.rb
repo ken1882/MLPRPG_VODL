@@ -37,13 +37,15 @@ module SceneManager
   # *)  Disply texts on info box
   #----------------------------------------------------------------------------
   def self.display_info(text = nil)
+    return unless scene.is_a?(Scene_Map)
+    return if text.nil?
     text.tr('\n','  ')
-    scene = self.scene
-    if scene.is_a?(Scene_Map) && !text.nil?
-      scene.display_info(text)
-    else
-      @saved_map_infos.push(text)
-    end
+    scene.display_info(text)
+    #if scene.is_a?(Scene_Map) && !text.nil?
+    #  scene.display_info(text)
+    #else
+    #  @saved_map_infos.push(text)
+    #end
   end
   #----------------------------------------------------------------------------
   # *) Scene Stack
@@ -159,6 +161,7 @@ module SceneManager
   #--------------------------------------------------------------------------
   def self.get_map_loading_info(map_id)
     return if map_id.nil?
+    $battle_bgm = nil
     map  = load_data(sprintf("Data/Map%03d.rvdata2", map_id))
     info = Struct.new(:image, :name).new(nil, map.display_name)
     map.note.split(/[\r\n]+/).each { |line|
@@ -172,7 +175,7 @@ module SceneManager
         audio.name   = $1.to_s
         audio.volume = 80
         audio.pitch  = 100
-        map.battle_bgm = audio
+        $battle_bgm  = audio
         debug_print "Map(#{info.name}, #{map.display_name}) battle BGM: #{audio.name}"
       end
     }

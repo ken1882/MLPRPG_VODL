@@ -252,6 +252,7 @@ class Game_Battler < Game_BattlerBase
         SceneManager.display_info("#{user.name} - critical attack")
       end
       popup_info(info, DND::COLOR::White)
+      apply_damaged_target_change(user, 0)
     end
   end
   #--------------------------------------------------------------------------

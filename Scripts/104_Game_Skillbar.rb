@@ -138,7 +138,7 @@ class Game_Skillbar
     @last_actor_id  = 0
     @stack          = []
     @items          = []
-    @pages          = []; @pages[0] = Array.new(10)
+    @pages          = []
     @current_page   = 0
     @index          = nil
     @col_max        = HotKeys::SkillBarSize
@@ -150,6 +150,7 @@ class Game_Skillbar
     @need_refresh   = true
     @x = @y = 0
     @z = 0
+    clear_page
   end
   #--------------------------------------------------------------------------
   def create_layout(viewport, phase = nil)
@@ -173,7 +174,7 @@ class Game_Skillbar
   #--------------------------------------------------------------------------
   def update
     current_actor = determine_actor
-    refresh_page           if @need_refresh
+    refresh_item           if @need_refresh
     refresh(current_actor) if refresh_needed?(current_actor)
     process_input
     update_edit    if @edit_enabled
@@ -230,6 +231,7 @@ class Game_Skillbar
     @current_page = 0
     hotkey_items  = @actor.get_hotkeys
     @primary_tool = hotkey_items.first
+    clear_page
     debug_print("Skillbar stack size: #{@stack.size}")
     case @stack.size
     when HotKeySelection
@@ -255,7 +257,6 @@ class Game_Skillbar
   # * Refresh current page items
   #--------------------------------------------------------------------------
   def refresh_page
-    @need_refresh = false
     @items.pop until @items.last == Follower_Flag
     @items.push(PrevPage_Flag)
     @pages[@current_page].each do |item|
@@ -264,6 +265,13 @@ class Game_Skillbar
     @items.push(NextPage_Flag)
     @items.push(Cancel_Flag)
     @sprite.refresh if sprite_valid?
+  end
+  #--------------------------------------------------------------------------
+  # * Clear page for all selection
+  #--------------------------------------------------------------------------
+  def clear_page
+    @pages.clear
+    @pages[0] = Array.new(10)
   end
   #--------------------------------------------------------------------------
   # * Determine skillbar display for which actor

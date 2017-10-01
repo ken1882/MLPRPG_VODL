@@ -27,8 +27,8 @@ module BattleManager
     4 => 180, 5 => nil, 6 =>   0,
     1 => 225, 2 => 270, 3 => 335
   }
-  # ~~~ Music ~~~ #
-  Default_Battle_BGM = "Baldur's Gate OST - Attacked by Assassins.mp3"
+  
+  BattleEndDelay  = 180
   #--------------------------------------------------------------------------
   # * Caches
   #--------------------------------------------------------------------------
@@ -37,10 +37,13 @@ module BattleManager
   # * Setup 
   #--------------------------------------------------------------------------
   def self.setup(can_escape = true, can_lose = false)
-    @flags = {}
+    clear_flag
     @cache_opponents.clear
-    @can_escape = can_escape
-    @can_lose = can_lose
+    @can_escape       = can_escape
+    @can_lose         = can_lose
+    @battle_end_delay = 0
+    @detect_delay     = 0
+    @last_inbattle_flag = false
     debug_print "Battle Manager setup"
   end
   #--------------------------------------------------------------------------
@@ -372,29 +375,55 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.in_battle?
     return @flags[:in_battle] if @flags[:in_battle]
-    @flags[:in_battle] = all_battlers.any?{ |battler| battler.current_target.is_a?(Game_Actor) }
+    if @battle_end_delay == 0
+      @flags[:in_battle] = all_battlers.any?{ |battler| battler.current_target.is_a?(Game_Actor) }
+      @battle_end_delay  = BattleEndDelay if @flags[:in_battle] == true
+    else
+      @flags[:in_battle] = true
+    end
     return @flags[:in_battle]
   end
   #--------------------------------------------------------------------------
   # * Check if any battler is under process
   #--------------------------------------------------------------------------
   def self.detect_combat
-    result = @flags[:in_battle]
-    result = false if result.nil?
-    @flags.delete(:in_battle)
+    @flags[:detect_combat] = true if @flags[:detect_combat].nil?
+    return unless @flags[:detect_combat]
+    @battle_end_delay -= 1 if @battle_end_delay > 0
+    @detect_delay     -= 1 if @detect_delay > 0
+    return if @detect_delay > 0
+    @detect_delay = 15
     result = self.in_battle?
-    if result != result
+    if result != @last_combat_detect_result
+      @last_combat_detect_result = result
       battle_start if result
       battle_end   if !result
     end
   end
   #--------------------------------------------------------------------------
+  def self.send_flag(args = {})
+    if args[:in_battle] == true
+      clear_flag(:in_battle)
+      @battle_end_delay = BattleEndDelay
+    elsif args[:in_battle] == false
+      clear_flag(:in_battle)
+    end
+    @flags[:detect_combat] = true
+  end
+  #--------------------------------------------------------------------------
   def self.battle_start
-    
+    puts "[System]: Battle Start"
+    save_bgm_and_bgs
+    RPG::BGM.fade(60) if @map_bgm
+    RPG::BGS.fade(60) if @map_bgs
+    play_battle_bgm
+    @flags[:detect_combat] = false
   end
   #--------------------------------------------------------------------------
   def self.battle_end
-    
+    puts "[System]: Battle End"
+    @flags[:detect_combat] = false
+    replay_bgm_and_bgs
   end
   #--------------------------------------------------------------------------
   def self.clear_flag(symbol = nil)
@@ -402,11 +431,32 @@ module BattleManager
       @flags.delete(symbol)
     else
       @flags = {}
+      @flags[:in_battle]     = false
+      @flags[:detect_combat] = true
     end
   end
   #--------------------------------------------------------------------------
   def self.set_flag(symbol, value)
     @flags[symbol] = value
+  end
+  #--------------------------------------------------------------------------
+  def self.play_battle_bgm
+    if $game_map.map.battle_bgm
+      @combat_bgm = $game_map.map.battle_bgm
+    else
+      @combat_bgm = $game_system.battle_bgm
+    end
+    #puts "#{RPG::BGM.last.name} #{@combat_bgm.name} #{RPG::BGM.last.name == @combat_bgm.name}"
+    @combat_bgm.play unless RPG::BGM.last.name == @combat_bgm.name
+    RPG::BGS.stop
+  end
+  #--------------------------------------------------------------------------
+  # * Resume BGM and BGS
+  #--------------------------------------------------------------------------
+  def self.replay_bgm_and_bgs
+    return if @map_bgm.nil?
+    @map_bgm.replay unless $BTEST
+    @map_bgs.replay unless $BTEST
   end
   #--------------------------------------------------------------------------
   def self.on_encounter
@@ -426,4 +476,5 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.next_subject
   end
+  
 end

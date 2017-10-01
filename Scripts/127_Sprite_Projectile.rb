@@ -66,6 +66,22 @@ class Sprite_Projectile < Sprite_Character
     end
   end
   #--------------------------------------------------------------------------
+  # * Set Character Bitmap
+  #--------------------------------------------------------------------------
+  def set_character_bitmap
+    self.bitmap = Cache.Arms(@character_name)
+    sign = @character_name[/^[\!\$]./]
+    if sign && sign.include?('$')
+      @cw = bitmap.width / 3
+      @ch = bitmap.height / 4
+    else
+      @cw = bitmap.width / 12
+      @ch = bitmap.height / 8
+    end
+    self.ox = @cw / 2
+    self.oy = @ch
+  end
+  #--------------------------------------------------------------------------
   # * Set New Effect
   #--------------------------------------------------------------------------
   def setup_new_effect

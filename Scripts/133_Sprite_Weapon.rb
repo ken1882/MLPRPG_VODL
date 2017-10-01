@@ -20,7 +20,7 @@ class Sprite_Weapon < Sprite
   #--------------------------------------------------------------------------
   def initialize(viewport, user)
     @attacking = false
-    @user      = user
+    @user      = user.battler ? user.battler : user
     @timer     = 0 
     @index     = 0
     @animation_sprite = Sprite_Animation.new(viewport)
@@ -83,15 +83,15 @@ class Sprite_Weapon < Sprite
   end
   #--------------------------------------------------------------------------
   def update_attacking
-    @dir = @user.direction
+    @dir = @user.map_char.direction
     update_icon_sprite  if @type == 0
     update_image_sprite if @type == 1
     @timer += 1
   end
   #--------------------------------------------------------------------------
   def update_icon_sprite
-    self.x = @user.screen_x + Wield_Dir_Offest[@dir][0]
-    self.y = @user.screen_y + Wield_Dir_Offest[@dir][1]
+    self.x = @user.map_char.screen_x + Wield_Dir_Offest[@dir][0]
+    self.y = @user.map_char.screen_y + Wield_Dir_Offest[@dir][1]
     case @timer
     when 0
       self.angle = Wield_Angles[@dir][0]
@@ -113,8 +113,8 @@ class Sprite_Weapon < Sprite
   end
   #--------------------------------------------------------------------------
   def update_image_sprite
-    self.x = @user.screen_x
-    self.y = @user.screen_y + 22
+    self.x = @user.map_char.screen_x
+    self.y = @user.map_char.screen_y + 22
     sy = (@dir - 2) / 2 * @ch
     case @timer
     when 0
@@ -141,8 +141,8 @@ class Sprite_Weapon < Sprite
   def setup_animation
     animation_id = @action.item.tool_animation
     return unless animation_id > 0
-    dir = @user.direction
-    pos = POS.new(@user.real_x + OffsetX[dir] / 32.0, @user.real_y + OffsetY[dir] / 32.0)
+    dir = @user.map_char.direction
+    pos = POS.new(@user.map_char.real_x + OffsetX[dir] / 32.0, @user.map_char.real_y + OffsetY[dir] / 32.0)
     @animation_sprite.character = pos 
     animation = $data_animations[animation_id]
     @animation_sprite.start_animation(animation)

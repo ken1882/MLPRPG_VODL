@@ -32,6 +32,7 @@ class Scene_Map < Scene_Base
       super
       return update_tactic
     end
+    BattleManager.detect_combat
     update_scmap_tactic
   end
   #--------------------------------------------------------------------------

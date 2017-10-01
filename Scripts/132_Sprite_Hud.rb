@@ -73,14 +73,22 @@ class Sprite_Hud < Sprite_Base
   #--------------------------------------------------------------------------
   def dectect_actor_change
     actor = $game_party.members[@party_index]
-    return if !@actor_changed && actor == @actor
-    return if actor.nil?
+    return unless need_refresh?(actor)
+    puts "Refresh hud"
     @actor = actor
     create_layout if !@face_sprite
     actor = $game_party.members[@party_index]
-    @mhp, @mmp = actor.mhp, actor.mmp
+    @mhp = actor.mhp rescue 1
+    @mmp = actor.mmp rescue 1
     @actor = actor
     @actor_changed = true
+  end
+  #--------------------------------------------------------------------------
+  def need_refresh?(actor)
+    return true  if $game_map.need_refresh
+    return false if !@actor_changed && actor == @actor
+    return false if actor.nil?
+    return true
   end
   #--------------------------------------------------------------------------
   def update_visibility
@@ -161,6 +169,7 @@ class Sprite_Hud < Sprite_Base
     rect.x += 26
     @contents.bitmap.draw_text(rect, @action.item.name)
     @flag_action  = true
+    # last work: immediately refresh when paused
   end
   #--------------------------------------------------------------------------
   def clear_action

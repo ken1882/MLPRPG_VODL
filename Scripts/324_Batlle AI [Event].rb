@@ -44,7 +44,7 @@ class Game_Event < Game_Character
     range = visible_sight
     return if range == 0
     candidates = BattleManager.opponent_battler(self)
-    best_target = [nil,0xffff]
+    best_target = [nil, 0xffff]
     candidates.each do |char|
       dis = distance_to_character(char)
       next if dis > range
@@ -52,7 +52,7 @@ class Game_Event < Game_Character
       rate = target_rate(char, dis)
       best_target = [char, rate] if rate < best_target[1]
     end
-    set_target(best_target.first)
+    set_target(best_target.first) if change_target?(best_target.first)
   end
   #----------------------------------------------------------------------------
   # *) Determind sight angle

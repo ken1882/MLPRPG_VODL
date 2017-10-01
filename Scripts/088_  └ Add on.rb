@@ -149,6 +149,7 @@ class Game_Character < Game_CharacterBase
   # * Die when hitpoint drop to zero
   #----------------------------------------------------------------------------
   def kill
+    SceneManager.display_info("#{self.name} - knocked out")
     $game_map.need_refresh = true
     set_target(nil)
   end
@@ -208,16 +209,12 @@ class Game_Character < Game_CharacterBase
     exp   = @enemy.exp / $game_party.members.size
     gold  = @enemy.gold
     loots = @enemy.make_drop_items
-    $game_party.members.each do |actor|
-      actor.gain_exp(exp)
-    end
+    $game_party.gain_exp(exp)
     #last work: register loot drops
   end
   #----------------------------------------------------------------------------
-  # * Allow character move freely between characters?
-  #----------------------------------------------------------------------------
-  def allow_loose_moving?
-    return false
+  def map_char
+    return self
   end
   
 end

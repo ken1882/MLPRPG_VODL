@@ -92,5 +92,6 @@ class Game_Projectile < Game_Character
   def character_name; return item.tool_graphic; end
   def animation_id; return item.animation_id; end
   def update_realtime_action; end
+  def dead?; return true; end
   #---------------------------------------------------------
 end
