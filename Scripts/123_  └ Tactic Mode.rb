@@ -28,11 +28,13 @@ class Spriteset_Map
   # * Update when tactic mode
   #-----------------------------------------------------------------------------
   def update_tactic
+    update_tilemap
     update_skillbar
     update_tactic_cursor
     update_units
     update_viewports
     update_popups
+    update_huds
   end
   #-----------------------------------------------------------------------------
   def update_tactic_cursor

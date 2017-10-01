@@ -50,4 +50,9 @@ class Sprite_Animation < Sprite_Base
     end_animation
     super
   end
+  #--------------------------------------------------------------------------
+  def relocate
+    return unless @character
+    update_position
+  end
 end

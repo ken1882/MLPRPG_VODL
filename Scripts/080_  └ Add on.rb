@@ -144,6 +144,7 @@ class Game_Map
   #-----------------------------------------------------------------------------
   def refresh
     BattleManager.refresh
+    SceneManager.spriteset.refresh rescue nil
     return table_refresh if table_update? && Theo::AntiLag::PageCheck_Enchancer
     @events.each_value {|event| next if event.never_refresh; event.refresh }
     @common_events.each {|event| event.refresh }

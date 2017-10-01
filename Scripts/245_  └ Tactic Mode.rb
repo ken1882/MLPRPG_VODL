@@ -41,6 +41,7 @@ class Scene_Map < Scene_Base
   def update_tactic
     return if @@overlayed
     update_tactic_cursor
+    $game_map.update
     @spriteset.update_timelapse
     @command_window.update if @command_window.visible?
     @status_window.update

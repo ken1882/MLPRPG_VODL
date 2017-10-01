@@ -147,6 +147,18 @@ class Spriteset_Map
     end
   end
   #--------------------------------------------------------------------------
+  def relocate_units
+    @character_sprites.each do |sprite|
+      sprite.relocate
+    end
+    @projectiles.each do |sprite|
+      sprite.relocate
+    end
+    @weapon_sprites.each do |key, sprite|
+      sprite.relocate
+    end
+  end
+  #--------------------------------------------------------------------------
   # * Attach sprite a unit circle
   #--------------------------------------------------------------------------
   # tag: 1 ( Spriteset_Map
@@ -293,6 +305,10 @@ class Spriteset_Map
   def event_usable?(character)
     return true unless character.is_a?(Game_Event)
     return character.character_name || character.terminated
+  end
+  #--------------------------------------------------------------------------
+  def refresh
+    @hud_sprite.each {|sprite| sprite.refresh(true)}
   end
   #--------------------------------------------------------------------------
   # * Update Aircraft Shadow Sprite

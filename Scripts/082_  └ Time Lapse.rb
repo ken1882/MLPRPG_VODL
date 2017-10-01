@@ -22,8 +22,6 @@ class Game_Map
     refresh if @need_refresh
     update_interpreter if main
     update_scroll
-    update_events
-    update_vehicles
     update_parallax
     @screen.update
   end

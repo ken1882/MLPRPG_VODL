@@ -74,18 +74,13 @@ class Sprite_Hud < Sprite_Base
   def dectect_actor_change
     actor = $game_party.members[@party_index]
     return unless need_refresh?(actor)
-    puts "Refresh hud"
     @actor = actor
     create_layout if !@face_sprite
-    actor = $game_party.members[@party_index]
-    @mhp = actor.mhp rescue 1
-    @mmp = actor.mmp rescue 1
-    @actor = actor
     @actor_changed = true
   end
   #--------------------------------------------------------------------------
   def need_refresh?(actor)
-    return true  if $game_map.need_refresh
+    return true  if @need_refresh
     return false if !@actor_changed && actor == @actor
     return false if actor.nil?
     return true
@@ -106,8 +101,9 @@ class Sprite_Hud < Sprite_Base
   end
   #--------------------------------------------------------------------------
   def update_timer
-    @face_timer   += 1 if @flag_temp_face
     @se_timer     += 1 if @flag_low_hp
+    return if SceneManager.tactic_enabled?
+    @face_timer   += 1 if @flag_temp_face
     @action_timer += 1 if @flag_action
     clear_action       if @action_timer >= 60
   end
@@ -122,10 +118,22 @@ class Sprite_Hud < Sprite_Base
     return value
   end
   #--------------------------------------------------------------------------
+  def on_actor_change
+    @actor  = $game_party.members[@party_index]
+    @action = @actor.action
+    @hp     = @actor.hp
+    @mp     = @actor.mp
+    @mhp    = @actor.mhp
+    @mmp    = @actor.mmp
+  end
+  #--------------------------------------------------------------------------
   # * Refresh
   #--------------------------------------------------------------------------
-  def refresh
+  def refresh(redetect = false)
+    dectect_actor_change if redetect
     return hide if @actor.nil?
+    @actor_changed = true if redetect
+    on_actor_change if @actor_changed
     show if !visible?
     draw_name
     draw_hp
@@ -159,8 +167,8 @@ class Sprite_Hud < Sprite_Base
   end
   #--------------------------------------------------------------------------
   def draw_action
-    return unless @action
     clear_action
+    return unless @action
     rect = StatRect.dup
     backcolor1 = Color.new(0, 0, 0, 192)
     backcolor2 = Color.new(0, 0, 0, 0)
@@ -169,7 +177,6 @@ class Sprite_Hud < Sprite_Base
     rect.x += 26
     @contents.bitmap.draw_text(rect, @action.item.name)
     @flag_action  = true
-    # last work: immediately refresh when paused
   end
   #--------------------------------------------------------------------------
   def clear_action

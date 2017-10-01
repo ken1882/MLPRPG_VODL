@@ -155,10 +155,13 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def swap_member(char)
+    dir1, dir2 = @direction, char.direction
     pos1 = pos
     pos2 = char.pos
     moveto(pos2.x, pos2.y)
     char.moveto(pos1.x, pos1.y)
+    @action, char.action = char.action, @action
+    set_direction(dir2); char.set_direction(dir1);
   end
   #----------------------------------------------------------------------------
   def process_event_death

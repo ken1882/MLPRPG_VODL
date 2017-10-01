@@ -63,7 +63,7 @@ class Sprite_Weapon < Sprite
   #--------------------------------------------------------------------------
   def setup_action(action)
     @action = action
-    puts "[Warning]: Sprite Weapon has different owner: #{@user.name} #{action.user.name}" if @user != action.user
+    puts "[Warning]: Sprite Weapon has different owner: #{@user.name} #{action.user.name}" if @user.map_char != action.user.map_char
     refresh_weapon(action.item)
     @timer = 0
     @attacking = true
@@ -151,6 +151,18 @@ class Sprite_Weapon < Sprite
   def dispose
     @animation_sprite.dispose
     super
+  end
+  #--------------------------------------------------------------------------
+  def relocate
+    @dir = @user.direction
+    if @type == 0
+      self.x = @user.map_char.screen_x + Wield_Dir_Offest[@dir][0]
+      self.y = @user.map_char.screen_y + Wield_Dir_Offest[@dir][1]
+    else
+      self.x = @user.map_char.screen_x
+      self.y = @user.map_char.screen_y + 22
+    end
+    @animation_sprite.relocate
   end
   #--------------------------------------------------------------------------
 end

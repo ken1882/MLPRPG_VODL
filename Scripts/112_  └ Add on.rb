@@ -117,5 +117,13 @@ class Sprite_Character < Sprite_Base
       sprite.y += dy
     end
   end # def move_animation
-  
+  #--------------------------------------------------------------------------
+  def relocate
+    @sx = @character.screen_x
+    @sy = @character.screen_y
+    update_bitmap
+    update_src_rect
+    update_position
+  end
+  #--------------------------------------------------------------------------
 end
