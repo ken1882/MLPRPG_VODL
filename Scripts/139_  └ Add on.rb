@@ -271,7 +271,7 @@ class Window_Selectable < Window_Base
     
     if @help_text[index]
       info = @help_text[index] 
-    elsif @list
+    elsif @list[index]
       info = @list[index][:name]
     else
       info = ""

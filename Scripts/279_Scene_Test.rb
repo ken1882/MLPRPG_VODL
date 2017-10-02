@@ -8,6 +8,13 @@ class Scene_Test < Scene_Base
     @se_timer = 0
   end
   
+  
+  def start
+    super
+    $sprite = Sprite.new(@viewport)
+    $sprite.z = 1000
+  end
+  
   def create_background
     @background = Sprite.new(@viewport)
     @background.bitmap = Bitmap.new(Graphics.width, Graphics.height)
@@ -62,6 +69,7 @@ class Scene_Test < Scene_Base
     super
     @layer.dispose
     @background.dispose
+    $sprite.dispose
   end
   
 end

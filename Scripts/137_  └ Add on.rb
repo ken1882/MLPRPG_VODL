@@ -37,8 +37,8 @@ class Window_Base < Window
   #--------------------------------------------------------------------------
   # * Start button cooldown
   #--------------------------------------------------------------------------
-  def heatup_button
-    SceneManager.scene.heatup_button rescue false
+  def heatup_button(multipler = 1)
+    SceneManager.scene.heatup_button(multipler) rescue false
   end
   #--------------------------------------------------------------------------
   # * Button cooldown finished

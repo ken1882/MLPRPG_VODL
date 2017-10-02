@@ -185,6 +185,14 @@ class Sprite
     self.visible
   end
   #-----------------------------------------------------------------------------
+  # * Change bitmap to an icon
+  #-----------------------------------------------------------------------------
+  def draw_icon(icon_index)
+    self.bitmap = Bitmap.new(24, 24)
+    rect = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
+    self.bitmap.blt(0, 0, Cache.iconset, rect)
+  end
+  #-----------------------------------------------------------------------------
 end
 #==============================================================================
 Object.send(:remove_const, :Plane)

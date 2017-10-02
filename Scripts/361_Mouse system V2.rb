@@ -516,19 +516,21 @@ class Window_Selectable
       add_y += self.viewport.rect.y - self.viewport.oy
     end
     
-    self.item_max.times {|i|
-      @index = i
-      mouse_update_cursor
-      rects << cursor_rect.dup
-    }
-    
-    @index = orig_index
-    rects.each_with_index {|rect, i|
-      if Mouse.area?(rect.x + add_x, rect.y + add_y, rect.width, rect.height)
+    unless self.is_a?(Window_PopInfo)
+      self.item_max.times {|i|
         @index = i
-      end
-    }
-    
+        mouse_update_cursor
+        rects << cursor_rect.dup
+      }
+      
+      @index = orig_index
+      
+      rects.each_with_index {|rect, i|
+        if Mouse.area?(rect.x + add_x, rect.y + add_y, rect.width, rect.height)
+          @index = i
+        end
+      }
+    end # skip selecting if window is a popup info
     update_cursor
     call_update_help
   end

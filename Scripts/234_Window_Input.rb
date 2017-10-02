@@ -333,6 +333,7 @@ class Window_Input < Window_Base
     debug_print "String received from win32 window: ", @lpstr
     @enter_cnt = 0
     SceneManager.send_input(@lpstr)
+    SceneManager.scene.heatup_button(5)
     return true
   end
 end

@@ -50,6 +50,30 @@ class Scene_Base
     flag_error(error) if error
   end
   #--------------------------------------------------------------------------
+  def update_verify
+    return unless $verify_countdown
+    $verify_countdown -= 1 
+    return if $verify_countdown > 0
+    result = PONY.DoVerifyCode if $giftcode_verify
+    err_info = "An error occurred while calling API:\n"
+    case result
+    when true
+      raise_overlay_window(:popinfo, "Sucess!")
+    when :json_failed
+      raise_overlay_window(:popinfo, err_info + "Config file cannot be built")
+    when :connection_failed
+      raise_overlay_window(:popinfo, err_info + "Internet connection failed")
+    when :invalid_code
+      raise_overlay_window(:popinfo, err_info + "Your code has been used or invalid")
+    when :close_failed
+      raise_overlay_window(:popinfo, err_info + "Gateway cannot be closed")
+    when :decrypt_failed
+      raise_overlay_window(:popinfo, err_info + "File decryption failed")
+    when false
+      raise_overlay_window(:popinfo, err_info + "I dunno, plz connect the dev!")
+    end
+  end
+  #--------------------------------------------------------------------------
   # * Post-Start Processing
   #--------------------------------------------------------------------------
   alias post_start_scbase post_start
@@ -135,6 +159,7 @@ class Scene_Base
     update_console if button_cooled?
     update_overlay
     update_scbase
+    update_verify
   end
   #--------------------------------------------------------------------------
   # * Update Alt + F4 exit
@@ -214,8 +239,8 @@ class Scene_Base
   #--------------------------------------------------------------------------
   # * Start button cooldown
   #--------------------------------------------------------------------------
-  def heatup_button
-    @@button_cooldown = Button_CoolDown
+  def heatup_button(multipler = 1)
+    @@button_cooldown = Button_CoolDown * multipler
   end
   #--------------------------------------------------------------------------
   # * Button cooldown finished

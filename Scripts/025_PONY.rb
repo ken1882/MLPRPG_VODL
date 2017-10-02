@@ -21,6 +21,7 @@ module PONY
     :bit            => 558,
     :chromastal     => 571,
     :mouse_casting  => 386,
+    :loot_drop      => 574,
   }
   #----------------------------------
   StateID = {
@@ -98,4 +99,40 @@ module PONY
     API::OpenALPlay.call(filename, sx, sy, sz, lx, ly, lz, svx, svy, svz, lvx, lvy, lvz)
   end
   #-----------------------------------------------------------------------------
+  def VerifyGiftCode(code)
+    path = "System\\"
+    if File.exist?(path + "DownloadManager")
+      info = "Gemfile missing: GDownloader"
+      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while verifing code:\n" + info);
+      return false
+    end
+    if File.exist?(path + "GateCloser")
+      info = "Gemfile missing: GDownloader"
+      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while verifing code:\n" + info);
+      return false
+    end
+    SceneManager.scene.raise_overlay_window(:popinfo, "Obtaining data from internet, your game may be no respond for about one miniute, please wait...");
+    # need some time to make overlay window displayed
+    $giftcode_verify  = code
+    $verify_countdown = 20
+  end
+  #-----------------------------------------------------------------------------
+  def DoVerifyCode
+    path = "System\\"
+    code = $giftcode_verify
+    result = API::VerifyGiftCode.call(path, code)
+    $giftcode_verify  = nil
+    $verify_countdown = nil
+    case result
+    when 0; return true;
+    when 1; return :json_failed;
+    when 2; return :connection_failed;
+    when 3; return :invalid_code;
+    when 4; return :close_failed;
+    when 5; return :decrypt_failed;
+    else
+      return false
+    end
+  end
+  
 end

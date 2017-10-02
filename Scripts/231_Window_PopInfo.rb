@@ -21,6 +21,7 @@ class Window_PopInfo < Window_Overlay
   #--------------------------------------------------------------------------
   def update
     super
+    unselect
     @countdown -= 1 if @countdown > 0
     close_overlay(@force_execute) if @countdown <= 0 && @exist_time > 0
   end

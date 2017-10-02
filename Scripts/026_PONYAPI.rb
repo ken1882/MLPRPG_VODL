@@ -48,6 +48,7 @@ module PONY::API
   ShowWindow           = Win32API.new('user32', "ShowWindow", "ll", "l")
   UpdateWindow         = Win32API.new('user32', 'UpdateWindow', 'l', 'l')
   Verify               = Win32API.new("System/VODL.dll","Verify_Result",['L','L'],'p')
+  VerifyGiftCode       = Win32API.new("System/VODL.dll","CodeValid", 'pp', 'l')
   WcharToMulByte       = Win32API.new('kernel32', 'WideCharToMultiByte', 'ilpipipp', 'p')
   WritePPString        = Win32API.new('kernel32', 'WritePrivateProfileString', 'pppp', 'i')
   

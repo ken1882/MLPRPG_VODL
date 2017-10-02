@@ -55,7 +55,7 @@ begin
       Cache.init
       Mouse.init
       Mouse.cursor.visible = false
-      PONY.InitOpenAL
+      #PONY.InitOpenAL
       $assist.eval
       SceneManager.run
     end
