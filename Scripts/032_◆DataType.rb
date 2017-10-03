@@ -442,6 +442,7 @@ class RPG::BaseItem
   attr_reader   :scope               # Damage::Scope
   attr_reader   :information         # Linked to folder /History
   attr_reader   :action_sequence
+  attr_reader   :dmg_saves           # Saving throw type when executed
   #------------------------------------------------------------------------
   attr_accessor :saving_throw_adjust
   attr_accessor :difficulty_class_adjust
@@ -529,7 +530,9 @@ class RPG::BaseItem
     when DND::REGEX::Equipment::ToolScopeDir;      @tool_scopedir      = $1.to_i;
     when DND::REGEX::Equipment::ToolScopeAngle;    @tool_scopeangle    = $1.to_i;
     when DND::REGEX::Equipment::ToolInvokeSkill;   @tool_invoke        = $1.to_i;
-    when DND::REGEX::Equipment::ToolSE;            @tool_soundeffect   = $1;
+    when DND::REGEX::Equipment::ToolSE
+      @tool_soundeffect[0] = $1 unless $1.strip.downcase == 'nil'
+      @tool_soundeffect[1] = $2.to_i if $2
     when DND::REGEX::Equipment::ToolItemCost;      @tool_itemcost      = $1.to_i;
     when DND::REGEX::Equipment::ToolItemCostType;  @tool_itemcost_type = $1.to_i;
     when DND::REGEX::Equipment::ToolThrough;       @tool_through       = $1.to_i.to_bool;
@@ -538,6 +541,8 @@ class RPG::BaseItem
     when DND::REGEX::Equipment::ToolHitShake;      @tool_hitshake      = $1.to_i;
     when DND::REGEX::Equipment::ToolCombo;         @tool_combo         = $1.to_i;
     when DND::REGEX::Equipment::ApplyAction;       @action_sequence    = $1.to_i;
+    when DND::REGEX::Equipment::DamageSavingThrow
+      @dmg_saves = [DND::SavingThrow::List[$1], $2]
     end
   end
   #---------------------------------------------------------------------------
@@ -553,6 +558,8 @@ class RPG::BaseItem
     @tool_scopeangle    = 0
     @tool_blowpower     = 0
     @action_sequence    = 0
+    @dmg_saves          = nil
+    @tool_soundeffect   = [nil, 80]
   end
   #---------------------------------------------------------------------------
   # *) Load item infos for detailed inforamtion, located at "History/type/id"
@@ -640,14 +647,14 @@ class RPG::BaseItem
   # new method: get param id
   #--------------------------------------------------------------------------
   def get_param_id(string)
-    string = string.upcase
+    string = string.downcase.to_sym
     _id = 0
-    if     string == "STR" then _id = 2
-    elsif  string == "CON" then _id = 3
-    elsif  string == "INT" then _id = 4
-    elsif  string == "WIS" then _id = 5
-    elsif  string == "DEX" then _id = 6
-    elsif  string == "CHA" then _id = 7
+    if     string == :str then _id = 2
+    elsif  string == :con then _id = 3
+    elsif  string == :int then _id = 4
+    elsif  string == :wis then _id = 5
+    elsif  string == :dex then _id = 6
+    elsif  string == :cha then _id = 7
     end
     return _id
   end

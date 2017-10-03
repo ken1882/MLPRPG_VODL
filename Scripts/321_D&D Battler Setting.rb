@@ -159,12 +159,14 @@ class Game_CharacterBase
     battler.stiff = action_stiff
   end
   #----------------------------------------------------------------------------
-  def process_skill_action
-    Audio.se_play('Audio/Se/' + @action.item.tool_soundeffect, 100, 100) if @action.item.tool_soundeffect
-    use_item(@action.item) if @action.item.tool_animmoment == 1 # Projectile
-    proj = Game_Projectile.new(@action) if @action.item.tool_graphic
-    SceneManager.setup_projectile(proj) if @action.item.tool_graphic
-    battler.skill_cooldown[@action.item.id] = @action.item.tool_cooldown || 0
+  def process_skill_action(action = @action)
+    tool_se = action.item.tool_soundeffect
+    volume  = tool_se.last * $game_system.volume(:sfx) * 0.01
+    Audio.se_play('Audio/Se/' + tool_se.first, volume, 100) if tool_se.first
+    use_item(action.item) if action.item.tool_animmoment == 1 # Projectile
+    proj = Game_Projectile.new(action) if action.item.tool_graphic
+    SceneManager.setup_projectile(proj) if action.item.tool_graphic
+    battler.skill_cooldown[action.item.id] = action.item.tool_cooldown || 0
   end
   #----------------------------------------------------------------------------
   def process_item_action

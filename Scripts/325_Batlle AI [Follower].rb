@@ -26,6 +26,7 @@ class Game_Follower < Game_Character
       next if distance_to_character(enemy) > 8
       best = [enemy, dis] if dis < best.last
     end
+    puts "New Target: #{best.first}"
     return best.first
   end
   #----------------------------------------------------------------------------

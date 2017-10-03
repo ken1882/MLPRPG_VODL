@@ -76,7 +76,13 @@ class Scene_Map < Scene_Base
   #--------------------------------------------------------------------------
   def process_command_handle
     return unless button_cooled?
-    return process_ok       if Input.trigger?(:C)
+    if Input.trigger?(:C)
+      if Mouse.click?(1)
+        return process_ok if !Mouse.hover_skillbar?
+      else
+        return process_ok
+      end
+    end
     return command_fallback if Input.trigger?(:B)
   end
   #--------------------------------------------------------------------------

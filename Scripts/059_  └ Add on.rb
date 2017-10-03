@@ -119,5 +119,10 @@ class Game_Action
   def resume
     @waiting = false
   end
-  
+  #---------------------------------------------------------------------------
+  def item=(subitem)
+    return if done?
+    @item = subitem
+    execute
+  end
 end

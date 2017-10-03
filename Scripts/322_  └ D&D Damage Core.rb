@@ -20,7 +20,7 @@ class Game_Battler < Game_BattlerBase
       cnt += 1
       final_value += value
     end
-    value = final_value
+    value = apply_saving_throw(user, item, final_value)
     if value == 0 && is_opponent?(user)
       #text = sprintf("%s - Weapon Ineffective",self.name)
       text = sprintf("%s - %s immune to my damage", user.name, self.name)
@@ -152,8 +152,19 @@ class Game_Battler < Game_BattlerBase
     
     return value
   end
-  
-    
+  #--------------------------------------------------------------------------
+  # * Damage change by saving throw
+  #--------------------------------------------------------------------------
+  def apply_saving_throw(user, item, value)
+    return value if item.dmg_saves.nil?
+    if item.dmg_saves.first == :halfdmg
+      hard = user.skillDC(item)
+      pid  = get_param_id(item.dmg_saves.last)
+      safe = 1 + rand(20) + param_modifier(pid)
+      value /= 2 if safe > hard
+    end
+    return value
+  end
   #--------------------------------------------------------------------------
   # * new method: attackDC
   #--------------------------------------------------------------------------
@@ -209,7 +220,7 @@ class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
   def skillDC(item, bonus = 0, user = self)
     #type = get_param_id(type) if type.is_a?(String)
-    value = 10 + bonus + proficiency + @level
+    value = 8 + bonus + proficiency + @level
     
     if actor?
       param_id = get_param_id(DND::CLASS_ACTIONDC[self.class_id][1])
@@ -279,7 +290,15 @@ class Game_Battler < Game_BattlerBase
     elsif value == 1
       @result.missed = true
     end # if value == 20
-    a = item.is_a?(RPG::Weapon) ? user.attackDC(item, value) : user.skillDC(item)
+    
+    if item.is_a?(RPG::Weapon) || item.physical?
+      a = user.attackDC(item, value)
+    else
+      a = user.skillDC(item)
+      @result.critical = false
+      @result.missed   = false
+    end
+    
     b = self.armor_class
     
     @result.hitted = (a >= b) || @result_critical
@@ -314,7 +333,6 @@ class Game_Battler < Game_BattlerBase
   #----------------------------------------------------------------------------
   def start_item_animation(item)
     if item.animation_id
-      puts "Start actoin animation"
       start_animation(item.animation_id)
     end
   end

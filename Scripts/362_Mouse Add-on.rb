@@ -36,10 +36,11 @@ module Mouse
   #-----------------------------------------------------------------------------
   # * Check if mouse pointer if over skillbar
   #-----------------------------------------------------------------------------
-  def hover_skillbar?(index)
-    return if $game_party.skillbar.sprite.nil? || $game_party.skillbar.sprite.disposed?
+  def hover_skillbar?(index = nil)
+    return false if $game_party.skillbar.sprite.nil? || $game_party.skillbar.sprite.disposed?
     sx = $game_party.skillbar.sprite.true_x
     sy = $game_party.skillbar.sprite.true_y
+    return area?(sx, sy, $game_party.skillbar.sprite.width, 32) if index.nil?
     return area?(sx + 32 * index, sy, 32, 32) rescue false
   end
   #------------------------------------------------------------------------------

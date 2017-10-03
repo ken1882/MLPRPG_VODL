@@ -23,36 +23,8 @@ class Game_Event < Game_Character
     return if @sight_timer > 0
     @sight_timer = 15
     return update_sighted if @current_target
-    update_blindsight
-    update_visiblesight
-  end
-  #----------------------------------------------------------------------------
-  def update_blindsight
-    range = blind_sight
-    return if range == 0
-    candidates = BattleManager.opponent_battler(self)
-    best_target = [nil,0xffff]
-    candidates.each do |char|
-      dis = distance_to_character(char)
-      next if dis > range
-      best_target = [char, rate] if target_rate(char, dis) < best_target[1]
-    end
-    set_target(best_target.first)
-  end
-  #----------------------------------------------------------------------------
-  def update_visiblesight
-    range = visible_sight
-    return if range == 0
-    candidates = BattleManager.opponent_battler(self)
-    best_target = [nil, 0xffff]
-    candidates.each do |char|
-      dis = distance_to_character(char)
-      next if dis > range
-      next unless in_sight?(char, range)
-      rate = target_rate(char, dis)
-      best_target = [char, rate] if rate < best_target[1]
-    end
-    set_target(best_target.first) if change_target?(best_target.first)
+    target = find_nearest_enemy
+    set_target(target) if change_target?(target)
   end
   #----------------------------------------------------------------------------
   # *) Determind sight angle
@@ -81,9 +53,17 @@ class Game_Event < Game_Character
     return result
   end
   #----------------------------------------------------------------------------
+  def battler_in_sight?(battler)
+    dis = distance_to_character(battler)
+    brange = blind_sight; vrange = visible_sight;
+    return false if dis > vrange
+    return true  if dis <= brange
+    return in_sight?(battler, vrange)
+  end
+  #----------------------------------------------------------------------------
   def update_sighted
     #key = [$game_map.id]
-    if !in_sight?(@current_target, visible_sight)
+    if !battler_in_sight?(@current_target)
       @sight_lost_timer -= 15 if @sight_lost_timer > 0
       process_target_missing if @sight_lost_timer == 0
     else
@@ -112,14 +92,21 @@ class Game_Event < Game_Character
   end
   #----------------------------------------------------------------------------
   def find_nearest_enemy
-    enemies = BattleManager.opponent_battler(self)
-    best = [nil, 0xffff]
-    enemies.each do |enemy|
-      dis = distance_to_character(enemy)
-      next unless in_sight?(enemy, visible_sight)
-      best = [enemy, dis] if dis < best.last
+    brange = blind_sight
+    vrange = visible_sight
+    candidates = BattleManager.opponent_battler(self)
+    best_target = [nil,0xffff]
+    
+    candidates.each do |char|
+      dis = distance_to_character(char)
+      next if dis > vrange && dis > brange
+      if dis <= brange || in_sight?(char, vrange)
+        rate = target_rate(char, dis)
+        best_target = [char, rate] if rate < best_target[1]
+      end
     end
-    return best.first
+    
+    return best_target.first
   end
   #----------------------------------------------------------------------------
 end

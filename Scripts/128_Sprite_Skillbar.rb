@@ -39,6 +39,7 @@ class Sprite_Skillbar < Sprite
     self.x = @instance.x
     self.y = @instance.y
     self.z = @instance.z
+    clear_texts
     @icon_sprite.z      = self.z + 2
     @cooldown_sprite.z  = self.z + 4
     @hover_overlay.z    = self.z + 6
@@ -205,6 +206,7 @@ class Sprite_Skillbar < Sprite
     rect = Rect.new(6 + 32 * index, 12, 16, 16)
     @text_sprite.bitmap.clear_rect(rect)
     return if number.nil?
+    @text_sprite.bitmap.font.color.set(DND::COLOR::Green)
     @text_sprite.bitmap.draw_text(rect, number.to_s)
   end
   #--------------------------------------------------------------------------
@@ -217,10 +219,22 @@ class Sprite_Skillbar < Sprite
   def draw_cooldown_text(index, item, cdt)
     rect = Rect.new(4 + 32 * index, 0, 32, 16)
     @text_sprite.bitmap.clear_rect(rect)
-    return if item.tool_cooldown < 60 || cdt == 0
+    return if item.tool_cooldown < 60 || (cdt | 0) == 0
     cdt = (cdt / 60.0)
     cdt = cdt < 1 ? cdt.round(1) : cdt.round(0)
+    @text_sprite.bitmap.font.color.set(DND::COLOR::Yellow)
     @text_sprite.bitmap.draw_text(rect, cdt.to_s)
+  end
+  #--------------------------------------------------------------------------
+  def clear_texts
+    HotKeys::SkillBarSize.times do |index|
+      # cooldown text
+      rect = Rect.new(4 + 32 * index, 0, 32, 16)
+      @text_sprite.bitmap.clear_rect(rect)
+      # item numver text
+      rect = Rect.new(6 + 32 * index, 12, 16, 16)
+      @text_sprite.bitmap.clear_rect(rect)
+    end
   end
   #--------------------------------------------------------------------------
   # * Return the value of the item need to be comsumed

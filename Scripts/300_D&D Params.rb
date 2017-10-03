@@ -112,7 +112,8 @@ module DND
     "Firearm",
     "Arrow",
     "Bolt",
-    "Bullet"
+    "Bullet",
+    "Mage Staff"
   ]
   
   ARMOR_TYPE_NAME = [

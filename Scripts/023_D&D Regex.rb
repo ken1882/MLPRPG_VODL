@@ -138,7 +138,7 @@ module DND
     ToolScopeDir      = /(?:Tool Scope Dir =)[ ](\d+)/i        # see tag 4 details
     ToolScopeAngle    = /(?:Tool Scope Angle =)[ ](\d+)/i      # c tag 4 details
     ToolInvokeSkill   = /(?:Tool Invoke Skill =)[ ](\d+)/i     # Skill id invoked upon the tool used
-    ToolSE            = /(?:Tool SE =)[ ](.+)/i                # Sound Effect when tool is used
+    ToolSE            = /(?:Tool SE =)[ ](.+),[ ](\d+)/i                # Sound Effect when tool is used
     ToolItemCost      = /(?:Tool Item Cost =)[ ](\d+)/i        # Item  id needed for using this tool
     ToolItemCostType  = /(?:Tool Wtype Cost =)[ ](\d+)/i       # Wtype id needed for using this tool
     ToolThrough       = /(?:Tool Through =)[ ](\d+)/i          # Tool go through obstacle?(0/1 = false/true)
@@ -148,7 +148,18 @@ module DND
     ToolCombo         = /(?:Tool Combo =)[ ](\d+)/i            # Next Weapon Id use after player contiune to
                                                                #   using this tool (default: in 20 frames)
     
+    DamageSavingThrow = /(?:Saving Throw =)[ ](.+),[ ](.+)/i   # Saving Throw when hitted
+    ToolRanged        = /<(?:ranged)>/i # last work: ranged weapon process
     ApplyAction       = /(?:Apply Action =)[ ](\d+)/i          # Apply given action sequence id when item is used
+  end
+  
+  module SavingThrow
+    List = {
+      "1/2"           => :halfdmg,
+      "Neg."          => :nullify,
+      "None"          => nil,
+      nil             => nil
+    }
   end
   
 end

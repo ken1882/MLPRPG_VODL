@@ -76,18 +76,23 @@ class Game_Character < Game_CharacterBase
         @chase_pathfinding_timer = 120 + rand(60)
         @chase_timer = 60
       else
-        if distance_to_character(@current_target) <= primary_weapon.tool_distance
+        # if weapon is ranged and enemy too close, move away from
+        if primary_weapon.tool_distance > 2 && distance_to_character(@current_target) < 2
+          move_away_from_character(@current_target)
+        # move random when enemy in moderate range
+        elsif distance_to_character(@current_target) <= primary_weapon.tool_distance
           unless @action && @action.acting?
             movable_dir = [2,4,6,8]
             movable_dir.delete(turn_toward_character(@current_target))
             move_straight(movable_dir[rand(3)], false)
             @chase_timer = 8 if @chase_pathfinding_timer == 0
           end
+        # when too fat, moev toward
         else
           move_toward_character(@current_target)
         end
       end
-    else
+    else # run way, run away!
       move_away_from_character(@current_target)
     end
   end
