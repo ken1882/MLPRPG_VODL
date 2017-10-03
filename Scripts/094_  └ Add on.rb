@@ -6,6 +6,15 @@
 #==============================================================================
 class Game_Followers
   #--------------------------------------------------------------------------
+  # * Object Initialization
+  #     leader:  Lead character
+  #--------------------------------------------------------------------------
+  alias init_dnd initialize
+  def initialize(leader)
+    @fighting = false
+    init_dnd(leader)
+  end
+  #--------------------------------------------------------------------------
   # * Frame Update
   #--------------------------------------------------------------------------
   def update
@@ -16,15 +25,21 @@ class Game_Followers
     each {|follower| follower.update unless follower.nil? || follower.actor.nil?}
   end
   #--------------------------------------------------------------------------
+  def toggle_combat
+    @fighting ? retreat_fray : into_fray
+  end
+  #--------------------------------------------------------------------------
   # * Combat mode on
   #--------------------------------------------------------------------------
   def into_fray
+    @fighting = true
     each {|follower| follower.process_combat_phase}
   end
   #--------------------------------------------------------------------------
   # * Combat mode off
   #--------------------------------------------------------------------------
   def retreat_fray
+    @fighting = false
     each {|follower| follower.retreat_combat}
   end
 end

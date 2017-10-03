@@ -4,6 +4,7 @@
 #  This class handles battle actions. This class is used within the
 # Game_Battler class.
 #==============================================================================
+# tag: action
 class Game_Action
   #--------------------------------------------------------------------------
   # * Public Instance Variables
@@ -32,6 +33,7 @@ class Game_Action
     @casting       = true
     @acting		     = false
     @done		       = false
+    @casted        = false
   end
   #---------------------------------------------------------------------------
   #  *) Return interrupt flag, if false, action will be executed anyway
@@ -66,8 +68,56 @@ class Game_Action
     end
   end
   #---------------------------------------------------------------------------
+  # * Update 
+  #---------------------------------------------------------------------------
+  def do_acting
+    @time -= 1 if !@waiting && @time > 0
+    terminate  if !@waiting && @time == 0
+  end
+  #---------------------------------------------------------------------------
+  # * Frame update
+  #---------------------------------------------------------------------------
+  def update
+    do_acting  if @acting
+    do_casting unless cast_done?
+  end
+  #---------------------------------------------------------------------------
+  # * Set execution flas
+  #---------------------------------------------------------------------------
+  def execute
+    @casting = false
+    @casted  = true
+    @acting  = true
+    @time    = get_item_acting_time
+  end
+  #---------------------------------------------------------------------------
+  def get_item_acting_time
+    return @user.action_stiff
+  end
+  #---------------------------------------------------------------------------
+  def terminate
+    @acting = false
+    @done   = true
+  end
+  #---------------------------------------------------------------------------
   def cast_done?
     return !@casting
+  end
+  #---------------------------------------------------------------------------
+  def casted?
+    return @casted
+  end
+  #---------------------------------------------------------------------------
+  def done?
+    return @done
+  end
+  #---------------------------------------------------------------------------
+  def wait
+    @waiting = true
+  end
+  #---------------------------------------------------------------------------
+  def resume
+    @waiting = false
   end
   
 end

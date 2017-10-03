@@ -14,6 +14,7 @@ class Spriteset_Map
   attr_reader :popups
   attr_reader :character_sprites
   attr_reader :unitcir_sprites
+  attr_reader :hud_sprite
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------

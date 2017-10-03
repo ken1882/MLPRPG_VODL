@@ -18,22 +18,8 @@ class Scene_Map < Scene_Base
   #--------------------------------------------------------------------------
   def update_input_buttons
     return unless button_cooled?
-    return heatup_button if Input.press?(:kCTRL) && process_control_button
     return heatup_button if Input.press?(:kTAB)  && process_switch_button
     return heatup_button if process_normal_button
-  end
-  #--------------------------------------------------------------------------
-  #  *) Actions when ctrl key is pressed
-  #--------------------------------------------------------------------------
-  def process_control_button
-  	#--------------------------------------------------------------------------
-    # > Console Debug
-    #--------------------------------------------------------------------------
-    if Input.press?(:kSPACE) && !Input.press?(:kALT)
-      $game_temp.reserve_common_event(23)
-      return true
-    #--------------------------------------------------------------------------
-    end
   end
   #--------------------------------------------------------------------------
   #  *) Actions when tab key is pressed
@@ -74,8 +60,7 @@ class Scene_Map < Scene_Base
     # > Tactic Mode
     # tag: tactic (trigger button)
     #--------------------------------------------------------------------------
-    if Input.trigger?(:kSPACE) && !Input.press?(:kALT)
-      #$game_map.events[38].use_tool($data_skills[9], $game_player)
+    if Input.trigger?(:kSPACE) && !Input.press?(:kALT) && !Input.press?(:kCTRL)
       SceneManager.process_tactic
       return true
     #--------------------------------------------------------------------------

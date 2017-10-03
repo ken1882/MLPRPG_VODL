@@ -180,7 +180,7 @@ class Game_Party < Game_Unit
     swap_order_opt(index1, index2)
     members.each {|member| member.map_char.process_actor_death if member.dead?}
     $game_player.current_target = nil
-    SceneManager.spriteset.relocate_units
+    SceneManager.immediate_refresh
   end
   #--------------------------------------------------------------------------
   # * Return usable general items for hotkey usage

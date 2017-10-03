@@ -86,6 +86,8 @@ class Scene_Map < Scene_Base
       show_command_window if $game_player.is_friend?(@status_window.battler)
     when Phase_MoveSelection
       target = @battler.nil? ? POS.new(@tactic_cursor.x, @tactic_cursor.y) : @battler
+      target.x = (@tactic_cursor.x * 4 + 0.5).to_i / 4
+      target.y = (@tactic_cursor.y * 4 + 0.5).to_i / 4
       do_move(target)
       command_fallback
     when Phase_TargetSelection

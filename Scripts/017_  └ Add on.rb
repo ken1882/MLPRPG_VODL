@@ -424,6 +424,7 @@ module BattleManager
     puts "[System]: Battle End"
     @flags[:detect_combat] = false
     replay_bgm_and_bgs
+    $game_party.members.each{|actor| actor.revive if actor.dead?}
   end
   #--------------------------------------------------------------------------
   def self.clear_flag(symbol = nil)

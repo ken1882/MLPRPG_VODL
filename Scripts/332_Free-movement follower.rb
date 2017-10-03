@@ -58,7 +58,7 @@ class Game_Follower < Game_Character
   #--------------------------------------------------------------------------
   def chase_preceding_pathfinding
     @force_chase = true
-    reachable = move_to_position($game_player.x, $game_player.y)
+    reachable = move_to_position($game_player.x, $game_player.y, goal:$game_player)
     moveto($game_player.x,$game_player.y) if !reachable
   end
   #--------------------------------------------------------------------------

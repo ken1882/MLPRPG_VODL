@@ -12,6 +12,7 @@ class Game_CharacterBase
   attr_accessor :weight, :velocity, :opacity, :x, :y, :move_speed
   attr_accessor :movment_formula  # delta y = f(x)
   attr_accessor :action
+  attr_accessor :next_action
   attr_accessor :current_target
   #----------------------------------------------------------------------------
   # *) Initialize Object
@@ -23,6 +24,7 @@ class Game_CharacterBase
     @velocity = @move_speed
     @opacity  = 0xff
     @movment_formula = nil
+    @next_action     = nil
     @action          = nil
     @current_target  = nil
     @hint_cooldown   = 0
@@ -40,7 +42,7 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def update_realtime_action
     update_cooldown
-    update_action if @action
+    update_action if @action || @next_action
   end
   #----------------------------------------------------------------------------
   # * Cool down reduce
@@ -124,25 +126,32 @@ class Game_CharacterBase
     target = BattleManager.autotarget(self, item) if target.nil?
     name = target.name rescue nil
     puts "[Debug]: Item final target: #{target}(#{name}) at #{[target.x,target.y]}"
-    @action = Game_Action.new(self, target, item)
+    @next_action = Game_Action.new(self, target, item)
   end
   #----------------------------------------------------------------------------
   # * Update current action
   #----------------------------------------------------------------------------
   def update_action
-    @action.do_casting
-    execute_action if @action.cast_done?
+    if @next_action && battler.stiff == 0
+      @action      = @next_action.dup
+      @next_action = nil
+    end
+    return if @action.nil?
+    @action.update
+    execute_action     if @action.cast_done? && !@action.casted?
+    @action = nil      if @action.done?
   end
   #----------------------------------------------------------------------------
   # * Execute action
   #----------------------------------------------------------------------------
   def execute_action
+    @action.execute
+    turn_toward_character(@action.target)
     debug_print("#{self.name} execute action: #{@action.item.name}")
     process_skill_action  if @action.item.is_a?(RPG::Skill)
     process_item_action   if @action.item.is_a?(RPG::Item)
     process_weapon_action if @action.item.is_a?(RPG::Weapon)
     process_armor_action  if @action.item.is_a?(RPG::Armor)
-    @action = nil
     apply_action_stiff
   end
   #----------------------------------------------------------------------------

@@ -37,13 +37,14 @@ class Game_Follower < Game_Character
   # * Combat mode on
   #--------------------------------------------------------------------------
   def process_combat_phase
-    
+    set_target(find_nearest_enemy)
   end
   #--------------------------------------------------------------------------
   # * Combat mode off
   #--------------------------------------------------------------------------
   def retreat_combat
-    
+    set_target(nil)
+    chase_preceding_character
   end
   #---------------------------------------------------------------------------
   def update_movement
@@ -102,5 +103,16 @@ class Game_Follower < Game_Character
   #----------------------------------------------------------------------------
   def allow_loose_moving?
     return false
+  end
+  #--------------------------------------------------------------------------
+  def team_id
+    0
+  end
+  #----------------------------------------------------------------------------
+  # * Use item
+  #----------------------------------------------------------------------------
+  def use_tool(item, target = nil)
+    super
+    SceneManager.spriteset.hud_sprite[actor.index].draw_action(@next_action)
   end
 end

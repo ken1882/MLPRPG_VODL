@@ -156,7 +156,7 @@ class Scene_Base
   def update
     @@button_cooldown -= 1 unless button_cooled?
     update_terminate if button_cooled?
-    update_console if button_cooled?
+    update_console if $debug_mode && button_cooled?
     update_overlay
     update_scbase
     update_verify

@@ -173,10 +173,10 @@ module SceneManager
       when DND::REGEX::MapBattleBGM
         audio = RPG::BGM.new
         audio.name   = $1.to_s
-        audio.volume = 80
-        audio.pitch  = 100
+        audio.volume = $2.to_i rescue 80
+        audio.pitch  = $3.to_i rescue 100
         $battle_bgm  = audio
-        debug_print "Map(#{info.name}, #{map.display_name}) battle BGM: #{audio.name}"
+        debug_print "Map(#{info.name}, #{map.display_name})\nbattle BGM: #{audio.name} V/P: #{audio.volume}/#{audio.pitch}"
       end
     }
     return info
@@ -257,4 +257,10 @@ module SceneManager
   def self.hide_item_help_window
     scene.hide_item_help_window
   end
+  #-------------------------------------------------------------------------
+  def self.immediate_refresh
+    spriteset.relocate_units
+    spriteset.update_huds
+  end
+  #-------------------------------------------------------------------------
 end

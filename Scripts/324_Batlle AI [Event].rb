@@ -107,8 +107,19 @@ class Game_Event < Game_Character
   end
   #----------------------------------------------------------------------------
   def attack
+    super
     @enemy.process_tool_action(primary_weapon)
   end
   #----------------------------------------------------------------------------
-  
+  def find_nearest_enemy
+    enemies = BattleManager.opponent_battler(self)
+    best = [nil, 0xffff]
+    enemies.each do |enemy|
+      dis = distance_to_character(enemy)
+      next unless in_sight?(enemy, visible_sight)
+      best = [enemy, dis] if dis < best.last
+    end
+    return best.first
+  end
+  #----------------------------------------------------------------------------
 end

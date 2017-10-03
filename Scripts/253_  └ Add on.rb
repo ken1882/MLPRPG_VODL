@@ -124,7 +124,7 @@ class Scene_Item < Scene_ItemBase
   #--------------------------------------------------------------------------
   def assign_hotkey(index)
     return unless index
-    $game_player.assigned_hotkey[HotKeys.assigned_hotkey_index(index)] = item
+    @actor.assigned_hotkey[HotKeys.assigned_hotkey_index(index)] = item
     @skillbar.refresh
     on_hotkey_ok(index)
   end
@@ -142,6 +142,27 @@ class Scene_Item < Scene_ItemBase
     @skillbar.hide
     @foreground.hide
     on_action_cancel
+  end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Create Item Window
+  #--------------------------------------------------------------------------
+  def create_item_window
+    wy = @category_window.y + @category_window.height
+    wh = Graphics.height - wy
+    @item_window = Window_ItemList.new(0, wy, Graphics.width, wh)
+    @item_window.viewport = @viewport
+    @item_window.help_window = @help_window
+    @item_window.set_handler(:ok,       method(:on_item_ok))
+    @item_window.set_handler(:cancel,   method(:on_item_cancel))
+    @item_window.set_handler(:next_actor_v, method(:next_actor))
+    @item_window.set_handler(:prev_actor_c, method(:prev_actor))
+    @category_window.item_window = @item_window
+  end
+  #--------------------------------------------------------------------------
+  def on_actor_change
+    p 'actor chagne'
+    @item_window.actor = @actor
+    @skillbar.refresh(@actor)
   end
   #--------------------------------------------------------------------------
   alias terminate_scitemaction terminate

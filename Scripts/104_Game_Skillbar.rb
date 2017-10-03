@@ -284,6 +284,7 @@ class Game_Skillbar
   # *) Process Input
   #--------------------------------------------------------------------------
   def process_input
+    return unless button_cooled?
     if Mouse.click?(1) && !Mouse.hover_UI? && SceneManager.scene_is?(Scene_Map) &&
       !SceneManager.tactic_enabled?
       puts 'use primary tool'
@@ -302,6 +303,7 @@ class Game_Skillbar
   def select(index)
     debug_print("Hotkey Bar selected: #{index} (#{@items[index]})")
     select_hotkey(index)
+    heatup_button
   end
   #--------------------------------------------------------------------------
   # *) Select item in hotkey phase
@@ -318,7 +320,7 @@ class Game_Skillbar
       when Cancel_Flag;     return fallback;
       end
     end
-    @monitor = index if @phase == Phase_Selection
+    @monitor = index if @phase == Phase_Selection && !@items[index].is_a?(Fixnum)
     return process_item_use(@items[index]) if @phase == Phase_Map
   end
   #--------------------------------------------------------------------------
@@ -357,7 +359,7 @@ class Game_Skillbar
   end
   #--------------------------------------------------------------------------
   def process_follower_action
-    $game_player.followers.into_fray
+    $game_player.followers.toggle_combat
   end
   #--------------------------------------------------------------------------
   def process_item_use(item)
@@ -461,5 +463,16 @@ class Game_Skillbar
   def sprite_valid?
     return @sprite && !@sprite.disposed?
   end
-  
+  #--------------------------------------------------------------------------
+  # * Start button cooldown
+  #--------------------------------------------------------------------------
+  def heatup_button(multipler = 1)
+    SceneManager.scene.heatup_button(multipler) rescue false
+  end
+  #--------------------------------------------------------------------------
+  # * Button cooldown finished
+  #--------------------------------------------------------------------------
+  def button_cooled?
+    SceneManager.scene.button_cooled? rescue false
+  end
 end

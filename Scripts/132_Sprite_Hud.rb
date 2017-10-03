@@ -66,7 +66,7 @@ class Sprite_Hud < Sprite_Base
     super
     dectect_actor_change
     update_visibility
-    return if actor.nil?
+    return if @actor.nil?
     update_values
     update_timer
   end
@@ -94,9 +94,12 @@ class Sprite_Hud < Sprite_Base
   # * Update value and bars
   #--------------------------------------------------------------------------
   def update_values
+    on_actor_change if @actor_changed
     @hp     = @actor.hp
     @mp     = @actor.mp
-    @action = @actor.action
+    @mhp    = @actor.mhp
+    @mmp    = @actor.mmp
+    @action = @actor.next_action.nil? ? @actor.action : @actor.next_action
     refresh if @actor_changed || @last_hash != hash_value
   end
   #--------------------------------------------------------------------------
@@ -105,7 +108,7 @@ class Sprite_Hud < Sprite_Base
     return if SceneManager.tactic_enabled?
     @face_timer   += 1 if @flag_temp_face
     @action_timer += 1 if @flag_action
-    clear_action       if @action_timer >= 60
+    clear_action       if @action_timer >= 90
   end
   #--------------------------------------------------------------------------
   # * Hash value
@@ -113,14 +116,14 @@ class Sprite_Hud < Sprite_Base
   def hash_value
     actor = $game_party.members[@party_index]
     return -1 if actor.nil?
-    value  = actor.mp * 100 + actor.hp * 10 + actor.hashid
+    value  = actor.mp * 100 + actor.hp * 10 + actor.hashid + @party_index
     value += actor.action.nil? ? 0 : actor.action.item.hashid
     return value
   end
   #--------------------------------------------------------------------------
   def on_actor_change
     @actor  = $game_party.members[@party_index]
-    @action = @actor.action
+    @action = nil
     @hp     = @actor.hp
     @mp     = @actor.mp
     @mhp    = @actor.mhp
@@ -132,8 +135,6 @@ class Sprite_Hud < Sprite_Base
   def refresh(redetect = false)
     dectect_actor_change if redetect
     return hide if @actor.nil?
-    @actor_changed = true if redetect
-    on_actor_change if @actor_changed
     show if !visible?
     draw_name
     draw_hp
@@ -166,8 +167,9 @@ class Sprite_Hud < Sprite_Base
     @contents.bitmap.fill_rect(rect, DND::COLOR::EnergyPoint)
   end
   #--------------------------------------------------------------------------
-  def draw_action
+  def draw_action(action = nil)
     clear_action
+    @action = action.dup if action
     return unless @action
     rect = StatRect.dup
     backcolor1 = Color.new(0, 0, 0, 192)

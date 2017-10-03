@@ -161,6 +161,7 @@ class Game_Character < Game_CharacterBase
     moveto(pos2.x, pos2.y)
     char.moveto(pos1.x, pos1.y)
     @action, char.action = char.action, @action
+    @next_action, char.next_action = char.next_action, @next_action
     set_direction(dir2); char.set_direction(dir1);
   end
   #----------------------------------------------------------------------------
@@ -219,5 +220,19 @@ class Game_Character < Game_CharacterBase
   def map_char
     return self
   end
-  
+  #--------------------------------------------------------------------------
+  # * Turn Toward Character
+  #--------------------------------------------------------------------------
+  def turn_toward_character(character)
+    sx = distance_x_from(character.x)
+    sy = distance_y_from(character.y)
+    if sx.abs > sy.abs
+      re = sx > 0 ? 4 : 6
+      set_direction(re)
+    elsif sy != 0
+      re = sy > 0 ? 8 : 2
+      set_direction(re)
+    end
+    return re
+  end
 end

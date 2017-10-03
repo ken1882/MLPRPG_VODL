@@ -85,13 +85,14 @@ class PathFinding_Queue
   # * Dehash address
   #--------------------------------------------------------------------------
   def dehash_address(value)
-    return [(value/1000).to_i , value % 1000]
+    x = (value / 4000.0).round(2)
+    return [x , value % 4000]
   end
   #--------------------------------------------------------------------------
   # * Hash address
   #--------------------------------------------------------------------------
   def hash_address(x,y)
-    return x * 1000 + y
+    return x * 4000 + y
   end
   #--------------------------------------------------------------------------
   # *  Heuristic algorithm 
@@ -271,6 +272,7 @@ class Game_Character < Game_CharacterBase
   def clear_pathfinding_moves
     @pathfinding_moves.clear
     @move_poll.clear
+    @pathfinding_goal = nil
   end
   #--------------------------------------------------------------------------
   # * next step is blocked by events?
@@ -295,12 +297,12 @@ class Game_Character < Game_CharacterBase
     clear_pathfinding_moves
     
     ti = Time.now
-    depth          = args[:depth].nil?          ? 100   : args[:depth]
-    tool_range     = args[:tool_range].nil?     ? 0     : args[:tool_range]
-    draw_arrow     = args[:draw_arrow].nil?     ? false : true
-    through_player = (!self.is_a?(Game_Follower) || args[:through_player].nil?) ? false : true
-    through_event  = args[:through_event].nil?  ? false : true
-    debug          = args[:debug].nil?          ? false : true
+    depth             = args[:depth].nil?          ? 100   : args[:depth]
+    tool_range        = args[:tool_range].nil?     ? 0     : args[:tool_range]
+    draw_arrow        = args[:draw_arrow].nil?     ? false : true
+    through_event     = args[:through_event].nil?  ? false : true
+    debug             = args[:debug].nil?          ? false : true
+    @pathfinding_goal = args[:goal].nil?           ? nil   : args[:goal]
     
     puts SPLIT_LINE if debug
     puts "Current Address: #{@x} #{@y}" if debug
@@ -314,8 +316,7 @@ class Game_Character < Game_CharacterBase
     fixed_address = fix_address(goalx,goaly)
     ori_goalx = goalx
     ori_goaly = goaly
-    goalx = fixed_address[0]
-    goaly = fixed_address[1]
+    goalx, goaly = *fix_address(goalx, goaly)
     
     tox   = [0,-1,1,0]
     toy   = [1,0,0,-1]
@@ -327,6 +328,7 @@ class Game_Character < Game_CharacterBase
     bestx, besty = fx, fy
     puts "Current pos fixed: #{fx} #{fy}" if debug
     puts "Goal Fixed: #{goalx} #{goaly}"  if debug
+    
     while !path_found && !path_queue.empty? && cnt <= depth
       
       cnt += 1
@@ -334,7 +336,7 @@ class Game_Character < Game_CharacterBase
       cury = path_queue.top[1]
       
       path_queue.distance = [path_queue.distance, Math.hypot(goalx - curx, goaly - cury)].min
-      if curx == goalx && cury == goaly
+      if (curx - goalx).abs < 0.25 && (cury - goaly < 0.25)
         path_found = true
         puts "Path found: #{curx} #{cury}" if debug
         break
@@ -348,19 +350,13 @@ class Game_Character < Game_CharacterBase
       
       for i in 0...4
         break if path_found
-        next_x = (curx + tox[i]).to_i
-        next_y = (cury + toy[i]).to_i
         
-        # check next path if passable
-        if ( $game_map.passable?(next_x,next_y,dir[i]) || adjacent?(next_x, next_y, goalx, goaly) ) && 
-          !path_queue.visited?(next_x,next_y) && !$game_map.over_edge?(next_x,next_y)
-          
-          next if !passable?(curx, cury, dir[i])
-          next if !through_event && path_blocked_by_event?(next_x,next_y) && !adjacent?(next_x, next_y, goalx, goaly)
-          
-          if (!through_player && path_blocked_by_player?(next_x,next_y) && !@through)
-            next unless adjacent?(goalx,goaly,$game_player.x,$game_player.y)
-          end
+        next_x = curx + tox[i]
+        next_y = cury + toy[i]
+        npx, npy = next_x * 4, next_y * 4
+        
+        if ( pixel_passable?(npx, npy, dir[i]) || adjacent?(next_x, next_y, goalx, goaly) ) && 
+          !path_queue.visited?(next_x,next_y) && !$game_map.over_edge?(next_x, next_y)
           
           if adjacent?(next_x, next_y, goalx, goaly)
             path_found = true
@@ -382,7 +378,7 @@ class Game_Character < Game_CharacterBase
         path_queue.mark_visited(next_x,next_y)
         
       end # for i in 0...4
-    end # while
+    end # while !path_found
     
     best_path = path_queue if path_found
     
@@ -392,7 +388,7 @@ class Game_Character < Game_CharacterBase
     end # if !path found
     
     debug_print "Pathfinding time takes: #{Time.now.to_f - ti.to_f}" if debug
-    @pathfinding_moves = best_path.get_walk_path(goalx,goaly)
+    @pathfinding_moves = best_path.get_walk_path(goalx, goaly)
     finalize_offset(fx, fy)
     push_movement_offset(ori_goalx, ori_goaly, goalx, goaly)
     debug_print "Pathfinding moves: #{@pathfinding_moves.size}" if debug
@@ -415,7 +411,7 @@ class Game_Character < Game_CharacterBase
     end
     delta_x = next_pos.x - @x; delta_y = next_pos.y - @y
     puts "Next pos: #{next_pos.x} #{next_pos.y}" if $pathfinding_debug
-    puts "Offset delta: #{delta_x} #{delta_y}" if $pathfinding_debug
+    puts "Offset delta: #{delta_x} #{delta_y}"   if $pathfinding_debug
     (delta_x * Pixel_Core::Pixel).abs.to_i.times do 
       corrections << [delta_x > 0 ? 6 : 4 , next_step[1]]
     end
@@ -428,13 +424,13 @@ class Game_Character < Game_CharacterBase
   def push_movement_offset(fx, fy, tx, ty)
     offset_x, offset_y = fx - tx, fy - ty
     if offset_x != 0
-      t = (offset_x / 0.25).abs.to_i
+      t = (offset_x * 4).abs.to_i
       dir = offset_x < 0 ? 4 : 6
       puts "Offset dir X: #{dir}, times: #{t}" if $pathfinding_debug
       t.times { @pathfinding_moves << [dir ,true] }
     end
     if offset_y != 0
-      t = (offset_y / 0.25).abs.to_i
+      t = (offset_y * 4).abs.to_i
       dir = offset_y < 0 ? 8 : 2
       puts "Offset dir Y: #{dir}, times: #{t}" if $pathfinding_debug
       t.times { @pathfinding_moves << [dir ,true] }
@@ -465,6 +461,7 @@ class Game_Character < Game_CharacterBase
   # tag: movement
   def process_pathfinding_movement
     return clear_pathfinding_moves if trigger_movement_key?
+    return clear_pathfinding_moves if @pathfinding_goal && adjacent?(@pathfinding_goal.x, @pathfinding_goal.y)
     return if moving?
     return unless @pathfinding_moves.size > 0 && @move_poll.empty?
     @move_poll << @pathfinding_moves.shift

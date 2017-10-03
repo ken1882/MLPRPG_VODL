@@ -70,7 +70,7 @@ class Sprite_Character < Sprite_Base
   #--------------------------------------------------------------------------
   def hash_pos
     return 0 unless @character
-    return @character.screen_x * 1000 + @character.screen_y + @character.screen_z
+    return @character.screen_x * 4000 + @character.screen_y + @character.screen_z
   end
   #--------------------------------------------------------------------------
   # * Update Transfer Origin Rectangle

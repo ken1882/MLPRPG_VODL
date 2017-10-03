@@ -86,6 +86,7 @@ class Sprite_Weapon < Sprite
     @dir = @user.map_char.direction
     update_icon_sprite  if @type == 0
     update_image_sprite if @type == 1
+    @action.time = 3
     @timer += 1
   end
   #--------------------------------------------------------------------------
@@ -135,6 +136,7 @@ class Sprite_Weapon < Sprite
   #--------------------------------------------------------------------------
   def terminate_attack
     @attacking = false
+    @action.resume
     hide
   end
   #--------------------------------------------------------------------------

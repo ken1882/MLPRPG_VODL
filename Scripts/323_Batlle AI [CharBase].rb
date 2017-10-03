@@ -23,6 +23,8 @@ class Game_Character < Game_CharacterBase
     @tactic_commands = []
     @visible         = true
     @translucent     = false
+    @chase_timer     = 0
+    @chase_pathfinding_timer = 0
     init_public_combatdnd
   end
   #----------------------------------------------------------------------------
@@ -32,6 +34,8 @@ class Game_Character < Game_CharacterBase
   def update
     if !dead?
       @combat_timer -= 1 if @combat_timer > 0
+      @chase_timer  -= 1 if @chase_timer > 0
+      @chase_pathfinding_timer -= 1 if @chase_pathfinding_timer > 0
       chase_target  if @current_target && !frozen?
       update_combat if @current_target && @combat_timer == 0
     end
@@ -61,14 +65,36 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def chase_target
-    return set_target(nil) if @current_target.dead?
-    move_toward_character(@current_target)
+    return process_target_dead if @current_target.dead?
+    return if @chase_timer > 0
+    
+    if primary_weapon
+      tx, ty = @current_target.x, @current_target.y
+      if @chase_pathfinding_timer == 0 && !path_clear?(@x, @y, tx, ty)
+        move_to_position(tx, ty, goal: @current_target, 
+                           tool_range: primary_weapon.tool_distance)
+        @chase_pathfinding_timer = 120 + rand(60)
+        @chase_timer = 60
+      else
+        if distance_to_character(@current_target) <= primary_weapon.tool_distance
+          unless @action && @action.acting?
+            movable_dir = [2,4,6,8]
+            movable_dir.delete(turn_toward_character(@current_target))
+            move_straight(movable_dir[rand(3)], false)
+            @chase_timer = 8 if @chase_pathfinding_timer == 0
+          end
+        else
+          move_toward_character(@current_target)
+        end
+      end
+    else
+      move_away_from_character(@current_target)
+    end
   end
   #----------------------------------------------------------------------------
   def determine_attack(target = @current_target)
     return if !primary_weapon
     return if distance_to_character(target) > primary_weapon.tool_distance
-    turn_toward_character(target)
     attack
   end
   #----------------------------------------------------------------------------
@@ -82,6 +108,8 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def attack
+    move_toward_character(@current_target)
+    turn_toward_character(@current_target)
   end
   #----------------------------------------------------------------------------
   def tactic_retreat
@@ -132,6 +160,14 @@ class Game_Character < Game_CharacterBase
     return true  if @current_taret.nil? || @current_taret.dead?
     return true  if distance_to_character(target) < distance_to_character(@current_target)
     return false
+  end
+  #----------------------------------------------------------------------------
+  def process_target_dead
+    set_target(find_nearest_enemy)
+  end
+  #----------------------------------------------------------------------------
+  def find_nearest_enemy
+    
   end
   #----------------------------------------------------------------------------
 end
