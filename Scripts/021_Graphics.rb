@@ -188,8 +188,10 @@ class Sprite
   # * Change bitmap to an icon
   #-----------------------------------------------------------------------------
   def draw_icon(icon_index)
-    self.bitmap = Bitmap.new(24, 24)
-    rect = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
+    self.bitmap = Bitmap.new(24, 24) if !self.bitmap
+    crect = Rect.new(0,0,24,24)
+    bitmap.clear_rect(crect)
+    rect  = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
     self.bitmap.blt(0, 0, Cache.iconset, rect)
   end
   #-----------------------------------------------------------------------------

@@ -214,7 +214,7 @@ class Game_Character < Game_CharacterBase
     gold  = @enemy.gold
     loots = @enemy.make_drop_items
     $game_party.gain_exp(exp)
-    #last work: register loot drops
+    $game_map.register_item_drop(@x, @y, gold, loots)
   end
   #----------------------------------------------------------------------------
   def map_char

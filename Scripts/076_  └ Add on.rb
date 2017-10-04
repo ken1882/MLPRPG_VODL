@@ -16,14 +16,14 @@ class Game_Party < Game_Unit
   #--------------------------------------------------------------------------
   alias init_chromastal initialize
   def initialize
-    @gold = PONY.EncryptInt(0)
+    @gold = 0
     init_chromastal
     @chromastal = 0.0
     @skillbar = Game_Skillbar.new
     @skillbar.hide
     @encrypted = true
-    @gold = PONY.EncryptInt(0)
   end
+  # last work: add tab item help
   #--------------------------------------------------------------------------
   # * Gold & Max gold
   #--------------------------------------------------------------------------
@@ -57,6 +57,7 @@ class Game_Party < Game_Unit
     receiver = amount > 0 ? Vocab::Player : opp
     BlockChain.bits_transaction(amount.abs, source, receiver, info)
     @gold += amount
+    $game_player.popup_info(amount.to_s, nil, PONY::IconID[:bit]) if SceneManager.scene_is?(Scene_Map) && amount > 0
     info = sprintf("Party has %s βits: %s%s", amount < 0 ? 'lost': 'gained', amount.abs, overflow ? "(maxium reached)" : "")
     SceneManager.display_info(info)
   end
@@ -127,6 +128,7 @@ class Game_Party < Game_Unit
     SceneManager.display_info(info) if display_info
     #$game_map.need_refresh = true
     $game_party.skillbar.need_refresh = true
+    $game_player.popup_info(item.name, nil, item.icon_index) if SceneManager.scene_is?(Scene_Map) && amount > 0
     encrypt_data
   end
   #--------------------------------------------------------------------------

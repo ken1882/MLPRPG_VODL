@@ -24,6 +24,7 @@ class Game_Map
   attr_accessor :timer
   attr_accessor :projectiles, :enemies
   attr_accessor :accurate_event_positions
+  attr_reader   :item_drops
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -31,6 +32,7 @@ class Game_Map
   def initialize
     @projectiles     = []
     @timer           = 0
+    @item_drops      = []
     @accurate_event_positions = {}
     @flag_after_load = false
     init_battle_members
@@ -134,6 +136,7 @@ class Game_Map
   # * Processes after setups
   #--------------------------------------------------------------------------
   def after_setup
+    deploy_map_item_drops
     $game_player.center($game_player.new_x, $game_player.new_y) if SceneManager.scene_is?(Scene_Map)
     SceneManager.update_loading while SceneManager.loading?
     SceneManager.destroy_loading_screen unless $game_temp.loading_destroy_delay
@@ -168,6 +171,7 @@ class Game_Map
   alias update_gmap_timer update
   def update(main = false)
     update_timer
+    update_drops
     update_gmap_timer(main)
   end
   #--------------------------------------------------------------------------
@@ -341,6 +345,32 @@ class Game_Map
   end
   #--------------------------------------------------------------------------
   def update_vehicles
+  end
+  #--------------------------------------------------------------------------
+  def update_drops
+    @item_drops[@map_id].each do |drops|
+      @item_drops[@map_id].delete(drops) if drops.picked?
+      drops.update
+    end
+  end
+  #--------------------------------------------------------------------------
+  def deploy_map_item_drops
+    @item_drops[@map_id] = Array.new if @item_drops[@map_id].nil?
+    @item_drops[@map_id].each do |drops|
+      deploy_item_drop(drops)
+    end
+  end
+  #--------------------------------------------------------------------------
+  def register_item_drop(x, y, gold, loots)
+    loots.unshift(gold)
+    drops = Game_DroppedItem.new(@map_id, x, y, loots)
+    @item_drops[@map_id] << drops
+    deploy_item_drop(drops)
+  end
+  #--------------------------------------------------------------------------
+  def deploy_item_drop(drops)
+    return if drops.map_id != @map_id
+    drops.deploy_sprite
   end
   
 end

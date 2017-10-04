@@ -108,9 +108,9 @@ module SceneManager
     spriteset.setup_projectile(proj)
   end
   #--------------------------------------------------------------------------
-  def self.setup_popinfo(text, position, color)
+  def self.setup_popinfo(text, position, color, icon_id = 0)
     return unless scene_is?(Scene_Map)
-    spriteset.setup_popinfo(text, position, color)
+    spriteset.setup_popinfo(text, position, color, icon_id)
   end
   #--------------------------------------------------------------------------
   def self.dispose_temp_sprites
@@ -263,4 +263,9 @@ module SceneManager
     spriteset.update_huds
   end
   #-------------------------------------------------------------------------
+  def self.register_item_drop(x, y)
+    return unless spriteset
+    spriteset.register_item_drop(x,y)
+  end
+  
 end

@@ -1,10 +1,9 @@
 #==============================================================================
-# ** Scene_Skill
+# ** Scene_Item
 #------------------------------------------------------------------------------
-#  This class performs skill screen processing. Skills are handled as items for
-# the sake of process sharing.
+#  This class performs the item screen processing.
 #==============================================================================
-class Scene_Skill < Scene_ItemBase
+class Scene_Item < Scene_ItemBase
   include WALLPAPER_EX
   #--------------------------------------------------------------------------
   # * Constants
@@ -143,6 +142,27 @@ class Scene_Skill < Scene_ItemBase
     @skillbar.hide
     @foreground.hide
     on_action_cancel
+  end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Create Item Window
+  #--------------------------------------------------------------------------
+  def create_item_window
+    wy = @category_window.y + @category_window.height
+    wh = Graphics.height - wy
+    @item_window = Window_ItemList.new(0, wy, Graphics.width, wh)
+    @item_window.viewport = @viewport
+    @item_window.help_window = @help_window
+    @item_window.set_handler(:ok,       method(:on_item_ok))
+    @item_window.set_handler(:cancel,   method(:on_item_cancel))
+    @item_window.set_handler(:next_actor_v, method(:next_actor))
+    @item_window.set_handler(:prev_actor_c, method(:prev_actor))
+    @category_window.item_window = @item_window
+  end
+  #--------------------------------------------------------------------------
+  def on_actor_change
+    p 'actor chagne'
+    @item_window.actor = @actor
+    @skillbar.refresh(@actor)
   end
   #--------------------------------------------------------------------------
   alias terminate_scitemaction terminate

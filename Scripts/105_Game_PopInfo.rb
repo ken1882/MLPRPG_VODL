@@ -13,11 +13,12 @@ class Game_PopInfo
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  def initialize(text, pos, color, time = 60)
+  def initialize(text, pos, color, icon_id)
     @x, @y = pos.x, [pos.y - 32, 0].max
-    @info = text
+    @info  = text
+    @icon_id = icon_id
     @sprite = Sprite_Base.new(SceneManager.viewport2)
-    @time = 30
+    @time = 60
     @color = color
     create_bitmap
   end
@@ -30,11 +31,16 @@ class Game_PopInfo
   #--------------------------------------------------------------------------
   def create_bitmap
     @sprite.x, @sprite.y = @x - text_width + 4, @y
-    sw = Font.default_size * @info.size / 2
+    sw  = Font.default_size * @info.size / 2
+    sw += 25 if @icon_id > 0
     line_height = 24
     @sprite.bitmap = Bitmap.new(sw, line_height)
+    if @icon_id > 0
+      rect = Rect.new(@icon_id % 16 * 24, @icon_id / 16 * 24, 24, 24)
+      @sprite.bitmap.blt(0, 0, Cache.iconset, rect)
+    end
     @sprite.bitmap.font.color.set(@color)
-    @sprite.bitmap.draw_text(0 , 0, sw, line_height, @info)
+    @sprite.bitmap.draw_text(@icon_id > 0 ? 25 : 0, 0, sw, line_height, @info)
   end
   #--------------------------------------------------------------------------
   # * Frame Update
