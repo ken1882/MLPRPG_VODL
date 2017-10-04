@@ -206,12 +206,49 @@ class Game_Party < Game_Unit
     $game_player.recurrence_delay = nil
   end
   #--------------------------------------------------------------------------
+  # * Make all party member's exp as closer as possible
+  #--------------------------------------------------------------------------
   def gain_exp(xp)
     info = sprintf("Party has gained xp: %d", xp)
     SceneManager.display_info(info)
+    # Number of pones
+    msize  = members.size
+    # xp that disputed
+    disputed = 0
+    # average xp of the party
+    xp_avg = 0 
+    # average xp for everypony
+    xp_gained_avg = (xp / msize).to_i 
+    # calculate average xp of the party
+    members.each{|member| xp_avg += member.exp}
+    xp_avg = (xp_avg / msize).to_i
+    # Calculate tandard Deviation of party's xp
+    standard_deviation = 0
     members.each do |member|
-      member.gain_exp(xp)
+      standard_deviation += (member.exp - xp_avg) ** 2
     end
+    standard_deviation = (Math.sqrt(standard_deviation / msize)).to_f
+    # Dispute weighted xp gain
+    member_by_min = members.sort{|a, b| a.exp <=> b.exp}
+    member_by_min.each do |member|
+      standardized  = member.exp - xp_avg
+      standardized /= standard_deviation if standard_deviation > 0
+      xp_gained     = (xp_gained_avg - standardized * standard_deviation).to_i
+      xp_gained = 0 if xp_gained < 0
+      xp_gained = (xp - disputed) / 2 if xp_gained > (xp - disputed)
+      puts "#{member.name} gained xp: #{xp_gained}"
+      disputed += xp_gained
+      member.gain_exp(xp_gained)
+    end
+    # Dispute lefover averagely
+    leftover = xp - disputed
+    members.each do |member|
+      gained = (leftover / msize).to_i
+      disputed += gained
+      member.gain_exp(gained)
+    end
+    # Dispute final very very few lefover to leader
+    leader.gain_exp(xp - disputed)
   end
-  
+  #--------------------------------------------------------------------------
 end

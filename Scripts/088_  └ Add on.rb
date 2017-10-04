@@ -210,7 +210,7 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def drop_loots
-    exp   = @enemy.exp / $game_party.members.size
+    exp   = @enemy.exp
     gold  = @enemy.gold
     loots = @enemy.make_drop_items
     $game_party.gain_exp(exp)

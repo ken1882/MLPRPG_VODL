@@ -27,6 +27,7 @@ class Game_Followers
   #--------------------------------------------------------------------------
   def toggle_combat
     @fighting ? retreat_fray : into_fray
+    $game_party.skillbar.sprite.refresh
   end
   #--------------------------------------------------------------------------
   # * Combat mode on
@@ -42,4 +43,9 @@ class Game_Followers
     @fighting = false
     each {|follower| follower.retreat_combat}
   end
+  #--------------------------------------------------------------------------
+  def combat_mode?
+    @fighting
+  end
+  
 end

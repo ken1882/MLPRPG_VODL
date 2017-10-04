@@ -24,6 +24,7 @@ module DND
     
   }
   
+  # last work: apply actor params
   ACTOR_PARAMS  = {
   # cnt       0,   1,   2,   3,   4,   5,   6,   7
   # id      dhp, dmp, str, con, int, wis, dex, cha
@@ -44,6 +45,7 @@ module DND
    14   => [   8,  5,  10,  10,  10,  10,  10,  10],
    15   => [   8,  5,  10,  10,  10,  10,  10,  10],
   }
+  
   EXP_FOR_LEVEL = {
   # lv    require xp(/1000)
     1  =>  0,

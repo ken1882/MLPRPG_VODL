@@ -52,23 +52,21 @@ class Game_BattlerBase
     return 0 if param_id.nil? || param_id == 0
     return (( param(param_id) - 9.5) / 2 ).to_i
   end
-  
   #--------------------------------------------------------------------------
-  # * Get score ability id
+  # new method: get param id
   #--------------------------------------------------------------------------
   def get_param_id(string)
-    string = string.upcase
+    string = string.downcase.to_sym
     _id = 0
-    if     string == "STR" then _id = 2
-    elsif  string == "CON" then _id = 3
-    elsif  string == "INT" then _id = 4
-    elsif  string == "WIS" then _id = 5
-    elsif  string == "DEX" then _id = 6
-    elsif  string == "CHA" then _id = 7
+    if     string == :str then _id = 2
+    elsif  string == :con then _id = 3
+    elsif  string == :int then _id = 4
+    elsif  string == :wis then _id = 5
+    elsif  string == :dex then _id = 6
+    elsif  string == :cha then _id = 7
     end
     return _id
   end
-  
   #--------------------------------------------------------------------------
   # * new method: rolld20
   #--------------------------------------------------------------------------

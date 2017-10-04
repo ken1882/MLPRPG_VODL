@@ -10,7 +10,8 @@ module PONY::SkillBar
   LayoutImage = "Skillbar"
   
   # Follower attack command icon index
-  FollowerIcon = 11
+  FollowerIcon      = 11
+  FollowerFightIcon = 116
   
   AllSkillIcon = 143
   VancianIcon  = 141
@@ -24,7 +25,7 @@ module PONY::SkillBar
   AllSelection    = 2
   CastSelection   = 3
   
-  Follower_Flag = FollowerIcon
+  Follower_Flag = "$game_player.followers.combat_mode? ? FollowerFightIcon : FollowerIcon"
   AllItem_Flag  = AllItemIcon
   AllSkill_Flag = AllSkillIcon
   Vancian_Flag  = VancianIcon
@@ -44,6 +45,9 @@ module PONY::SkillBar
   def self.hidden?
     !$game_system.skillbar_enable.nil?
   end
+  
+  Follower_Flag.trust
+  Follower_Flag.untaint
 end
 #===============================================================================
 # * HotKeys
@@ -314,13 +318,13 @@ class Game_Skillbar
       when AllSkill_Flag;   return process_skill_select;
       when AllItem_Flag;    return process_item_select;
       when Vancian_Flag;    return process_vancian_select;
-      when Follower_Flag;   return process_follower_action;
       when PrevPage_Flag;   return page_previous;
       when NextPage_Flag;   return page_next;
       when Cancel_Flag;     return fallback;
       end
+      return process_follower_action if Follower_Flag == @items[index]
     end
-    @monitor = index if @phase == Phase_Selection && !@items[index].is_a?(Fixnum)
+    @monitor = index if @phase == Phase_Selection && !@items[index].is_a?(Fixnum) && !@items[index].is_a?(String)
     return process_item_use(@items[index]) if @phase == Phase_Map
   end
   #--------------------------------------------------------------------------

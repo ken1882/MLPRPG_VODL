@@ -12,7 +12,7 @@ class Game_Event < Game_Character
   #--------------------------------------------------------------------------
   alias update_gaevdndai update
   def update
-    update_sight if @enemy && !@static_object
+    update_sight if @enemy && aggressive_level > 1 && !@static_object
     update_gaevdndai
   end
   #----------------------------------------------------------------------------

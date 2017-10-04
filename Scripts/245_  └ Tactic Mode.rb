@@ -176,6 +176,7 @@ class Scene_Map < Scene_Base
     else
       @command_window.battler.move_to_position(target.x, target.y, depth: 300, tool_range: 0)
       @command_window.battler.popup_info("Move")
+      @command_window.battler.set_target(nil)
     end
   end
   #--------------------------------------------------------------------------

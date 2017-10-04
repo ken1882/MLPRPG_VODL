@@ -51,12 +51,14 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def set_target(target)
     return if self.is_a?(Game_Player)
+    
     @current_target = target
     signal = target.nil? ? false : true
     BattleManager.send_flag(in_battle: signal)
   end
   #----------------------------------------------------------------------------
   def update_combat
+    return set_target(nil) if aggressive_level == 0
     @combat_timer = 20
     return process_tactic_commands unless @tactic_commands.empty?
     determine_attack
@@ -66,7 +68,7 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def chase_target
     return process_target_dead if @current_target.dead?
-    return if @chase_timer > 0
+    return if aggressive_level < 3 || @chase_timer > 0
     
     if primary_weapon
       tx, ty = @current_target.x, @current_target.y
@@ -113,7 +115,7 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def attack
-    move_toward_character(@current_target)
+    move_toward_character(@current_target) if aggressive_level > 2
     turn_toward_character(@current_target)
   end
   #----------------------------------------------------------------------------
@@ -153,7 +155,7 @@ class Game_Character < Game_CharacterBase
   # * Change target to attacker when being attcked
   #----------------------------------------------------------------------------
   def apply_damaged_target_change(attacker, value)
-    return if @aggressive_level == 0
+    return if aggressive_level == 0
     return unless is_opponent?(attacker)
     set_target(attacker) if change_target?(attacker)
   end
@@ -172,7 +174,6 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def find_nearest_enemy
-    
   end
   #----------------------------------------------------------------------------
 end

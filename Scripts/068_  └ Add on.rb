@@ -82,6 +82,27 @@ class Game_Actor < Game_Battler
     equips.at(self.class.ammo_slot_id)
   end
   #--------------------------------------------------------------------------
+  # * Overwrite: Get Base Value of Parameter
+  #--------------------------------------------------------------------------
+  def param_base(param_id)
+    return DND::ACTOR_PARAMS[@actor_id].at(param_id) rescue 8
+  end
+  #--------------------------------------------------------------------------
+  # * Level Up
+  #--------------------------------------------------------------------------
+  def level_up
+    @level += 1
+    self.class.level_up
+    self.class.learnings.each do |learning|
+      learn_skill(learning.skill_id) if learning.level == @level
+    end
+    $game_map.need_refresh = true
+  end
+  #--------------------------------------------------------------------------
+  def aggressive_level
+    return @aggressive_level
+  end
+  #--------------------------------------------------------------------------
   def death_graphic;    return actor.death_graphic;   end
   def death_index;      return actor.death_index;     end
   def death_pattern;    return actor.death_pattern;   end

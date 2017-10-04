@@ -755,7 +755,7 @@ class Scene_Map
     $game_map.events_xy(*Mouse.true_grid_by_pos).each {|event|
       changed_mouse = changed_mouse || event.check_mouse_change
       @mouse_hovered = event if event.trigger == 0
-      $game_player.target_event = event if Mouse.click?(1)
+      $game_player.target_event = event if Mouse.click?(2)
     }
     Mouse.revert_cursor unless changed_mouse
   end

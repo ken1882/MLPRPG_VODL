@@ -17,6 +17,7 @@ class Game_Follower < Game_Character
   def initialize(member_index, preceding_character)
     @phase = DND::BattlerSetting::PhaseIdle
     init_gafo_opt(member_index, preceding_character)
+    @combat_mode_timer = 0
     @through = false
   end
   #--------------------------------------------------------------------------
@@ -31,13 +32,15 @@ class Game_Follower < Game_Character
     @direction_fix  = $game_player.direction_fix
     @blend_type     = $game_player.blend_type
     update_movement
+    @combat_mode_timer -= 1 if @combat_mode_timer > 0
+    update_combat_mode if $game_player.followers.combat_mode?
     super
   end
   #--------------------------------------------------------------------------
   # * Combat mode on
   #--------------------------------------------------------------------------
   def process_combat_phase
-    set_target(find_nearest_enemy)
+    set_target(find_nearest_enemy) unless aggressive_level < 2
   end
   #--------------------------------------------------------------------------
   # * Combat mode off
@@ -83,6 +86,11 @@ class Game_Follower < Game_Character
     return actor.dead?
   end
   #--------------------------------------------------------------------------
+  def aggressive_level
+    return 0 if actor.nil?
+    return actor.aggressive_level
+  end
+  #--------------------------------------------------------------------------
   # * Determine if Movement is Possible
   #--------------------------------------------------------------------------
   def movable?
@@ -106,7 +114,13 @@ class Game_Follower < Game_Character
   end
   #--------------------------------------------------------------------------
   def team_id
-    0
+    return 0
+  end
+  #--------------------------------------------------------------------------
+  def update_combat_mode
+    return if aggressive_level < 2 || @combat_mode_timer > 0
+    @combat_mode_timer = 30
+    process_combat_phase if @current_target.nil?
   end
   #----------------------------------------------------------------------------
   # * Use item

@@ -255,7 +255,7 @@ module BattleManager
   end
   #--------------------------------------------------------------------------
   def self.in_attack_range?(user, item, target, pos)
-    return false if item.tool_scopeangle < 1
+    return false if item.tool_scopeangle < 1 && item.is_a?(RPG::Weapon)
     return false if target.distance_to(*pos) > item.tool_scope
     return true  if item.tool_scopedir == 5
     dir = item.tool_scopedir == 0 ? user.direction : item.tool_scopedir

@@ -26,6 +26,8 @@ class Game_Projectile < Game_Character
     @executed      = false
     @action        = action
     @move_formula  = move_formula
+    @substitute    = nil
+    @enemies       = BattleManager.opponent_battler(@action.user)
     moveto([@user.x, 0].max, [@user.y, 0].max)
     @sprite = Sprite_Projectile.new(SceneManager.viewport1, self)
   end
@@ -47,7 +49,7 @@ class Game_Projectile < Game_Character
   #--------------------------------------------------------------------------
   def process_projectile_move
     return false if @executed
-    return false if $game_map.over_edge?(@x, @y)
+    return wall_rammed if obstacle_touched?
     return process_move_formula if @move_formula
     
     pixelstep = Pixel_Core::Pixel
@@ -87,6 +89,33 @@ class Game_Projectile < Game_Character
     return unless @sprite
     @sprite.dispose unless @sprite.disposed?
     @sprite = nil
+  end
+  #--------------------------------------------------------------------------
+  def obstacle_touched?
+    dir = @direction
+    nx = @x * 4 + Pixel_Core::Tile_Range[dir][0]
+    ny = @y * 4 + Pixel_Core::Tile_Range[dir][1]
+    return true  if !$game_map.pixel_valid?(nx,ny) || $game_map.over_edge?(@x, @y)
+    return false if @through
+    return true  if $game_map.pixel_table[nx,ny,0] == 0
+    return true  if check_substitute 
+    return false
+  end
+  #--------------------------------------------------------------------------
+  def check_substitute
+    @enemies.each do |enemy|
+      if adjacent?(enemy.x, enemy.y)
+        @substitute = enemy
+        return true
+      end
+    end
+    return false
+  end
+  #--------------------------------------------------------------------------
+  def wall_rammed
+    @action.target = @substitute ? @substitute : POS.new(@x, @y)
+    @sprite.execute_collide
+    execute_action
   end
   #--------------------------------------------------------------------------
   def character_name; return item.tool_graphic; end

@@ -364,7 +364,6 @@ class Game_Event < Game_Character
     return @enemy.item_cooldown if @enemy
     return {}
   end
-  
   #--------------------------------------------------------------------------
   def hash_self
     base  = (@map_id * 1000 + @id)

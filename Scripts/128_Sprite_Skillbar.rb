@@ -142,14 +142,22 @@ class Sprite_Skillbar < Sprite
       cx += 32
       next if item.nil?
       enabled = true
-      if item.is_a?(Numeric)
+      if item.is_a?(Numeric) || item.is_a?(String)
         enabled = @instance.prev_page_available? if item == PrevPage_Flag
         enabled = @instance.next_page_available? if item == NextPage_Flag
       else
         enabled = actor.item_test(actor, item) && actor.usable?(item, true)
       end
-      icon_index = item.is_a?(Fixnum) ? item : item.icon_index
-      item_hash  = item.is_a?(Fixnum) ? item : item.hashid
+      
+      if item.is_a?(String)
+        icon_index = item_hash = eval(item)
+      elsif item.is_a?(Fixnum)
+        icon_index = item_hash = item
+      else
+        icon_index = item.icon_index
+        item_hash  = item.hashid
+      end
+      
       bitmap = Cache.iconset
       rect = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
       @icon_sprite.bitmap.blt(cx, cy, bitmap, rect, enabled ? 0xff : translucent_alpha)
@@ -295,4 +303,5 @@ class Sprite_Skillbar < Sprite
   def actor
     @instance.actor
   end
+  
 end

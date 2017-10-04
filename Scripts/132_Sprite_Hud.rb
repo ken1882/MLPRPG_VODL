@@ -68,6 +68,7 @@ class Sprite_Hud < Sprite_Base
     update_visibility
     return if @actor.nil?
     update_values
+    refresh if @actor_changed || @last_hash != hash_value
     update_timer
   end
   #--------------------------------------------------------------------------
@@ -100,7 +101,6 @@ class Sprite_Hud < Sprite_Base
     @mhp    = @actor.mhp
     @mmp    = @actor.mmp
     @action = @actor.next_action.nil? ? @actor.action : @actor.next_action
-    refresh if @actor_changed || @last_hash != hash_value
   end
   #--------------------------------------------------------------------------
   def update_timer
@@ -135,6 +135,7 @@ class Sprite_Hud < Sprite_Base
   def refresh(redetect = false)
     dectect_actor_change if redetect
     return hide if @actor.nil?
+    update_values if redetect || @actor_changed
     show if !visible?
     draw_name
     draw_hp
