@@ -193,7 +193,7 @@ module BlockChain
       end
       if result < 0
         info = "Negative account balance for #{accounts(accid).name}"
-        PONY::ERRNO.raise(:illegel_value, :exit, nil, info) if sum < 0
+        PONY::ERRNO.raise(:illegel_value, :exit, nil, info)
       end
       result_pool[result] = Array.new() unless result_pool[result].is_a?(Array)
       result_pool[result].push(node.clone)
@@ -210,6 +210,10 @@ module BlockChain
     $mutex.synchronize{
     @nodes.each do |node|
       result = node.item_amount(accid, item.hashid, async) + self.accounts(accid).item_amount(item.hashid)
+      if result < 0
+        info = "Negative item amount for #{item.name}(#{accounts(accid).name})"
+        PONY::ERRNO.raise(:illegel_value, :exit, nil, info)
+      end
       result_pool[result] = Array.new() unless result_pool[result].is_a?(Array)
       result_pool[result].push(node.clone)
     end
@@ -241,9 +245,15 @@ module BlockChain
     accid = PONY.MD5(accid).to_i(16) if accid.is_a?(String)
     data  = nil
     data  = @nodes[0].all_data(accid, async)
+    data[:gold] += self.accounts(accid).balance
     [:item, :weapon, :armor].each do |type|
       data[type].each {|id, amount|
         data[type][id] += self.accounts(accid).item_amount(id)
+        item = PONY.hashid_table[id]
+        if data[type][id] < 0
+          info = "Negative item amount for #{item.name}(#{accounts(accid).name})"
+          PONY::ERRNO.raise(:illegel_value, :exit, nil, info)
+        end
       }
     end
     return data

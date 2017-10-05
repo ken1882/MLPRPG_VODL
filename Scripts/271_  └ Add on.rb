@@ -49,7 +49,7 @@ class Scene_Shop < Scene_MenuBase
     @number_window.set(@item, max_buy, buying_price, currency_unit)
     @number_window.show.activate
   end
-   #--------------------------------------------------------------------------
+  #--------------------------------------------------------------------------
   # * Sell [OK]
   #--------------------------------------------------------------------------
   def on_sell_ok

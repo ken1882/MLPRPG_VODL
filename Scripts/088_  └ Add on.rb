@@ -101,16 +101,20 @@ class Game_Character < Game_CharacterBase
     x = x1
     while x <= x2
       result = false
+      px = (x + 0.5).to_i * 4
+      py = (y + 0.5).to_i * 4
       (1..4).each do |i|
-        result |= pixel_passable?((x + 0.5).to_i, (y + 0.5).to_i, i*2 );
+        result |= pixel_passable?(px, py, i*2 );
       end
       return false if !result
       
       error += (delta / 4)
       while error >= 0.5
+        px = (x + 0.5).to_i * 4
+        py = (y + 0.5).to_i * 4
         result = false
         (1..4).each do |i|
-          result |= pixel_passable?((x + 0.5).to_i, (y + 0.5).to_i, i*2 );
+          result |= pixel_passable?(px, py, i*2 );
         end
         return false if !result        
         y = y + sgny;

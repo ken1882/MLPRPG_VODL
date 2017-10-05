@@ -15,6 +15,7 @@ class Game_Actor < Game_Battler
   #------------------------------------------------------------------------
   def hash_self
     @hashid = actor.hashid
+    super
   end
   #--------------------------------------------------------------------------
   # * Object Initialization

@@ -23,7 +23,14 @@ class Game_Party < Game_Unit
     @skillbar.hide
     @encrypted = true
   end
-  # last work: add tab item help
+  #--------------------------------------------------------------------------
+  # * Consume Items
+  #    If the specified object is a consumable item, the number in investory
+  #    will be reduced by 1.
+  #--------------------------------------------------------------------------
+  def consume_item(item)
+    lose_item(item, 1, false, nil, nil, false) if item.is_a?(RPG::Item) && item.consumable
+  end
   #--------------------------------------------------------------------------
   # * Gold & Max gold
   #--------------------------------------------------------------------------
@@ -79,6 +86,7 @@ class Game_Party < Game_Unit
   # * Synchronize data with Block Chain
   #--------------------------------------------------------------------------
   def sync_blockchain(item = nil)
+    puts "[BlockChain]: Synchronize party container"
     pc = Vocab::Player
     if item.nil?
       data = BlockChain.all_data(pc)
@@ -135,9 +143,9 @@ class Game_Party < Game_Unit
   # * Lose Items
   #     include_equip : Include equipped items
   #--------------------------------------------------------------------------
-  def lose_item(item, amount, include_equip = false, opp = Vocab::Coinbase, info = '')
-    gain_item(item, -amount, true, opp, info)  if include_equip
-    gain_item(item, -amount, false, opp, info) if !include_equip
+  def lose_item(item, amount, include_equip = false, opp = Vocab::Coinbase, info = '', display = true)
+    gain_item(item, -amount, true, opp, info, display)  if include_equip
+    gain_item(item, -amount, false, opp, info, display) if !include_equip
   end
   #--------------------------------------------------------------------------
   def encrypt_data

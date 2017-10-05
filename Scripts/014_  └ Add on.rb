@@ -86,6 +86,7 @@ module SceneManager
   #--------------------------------------------------------------------------
   class << self; alias goto_proj goto; end
   def self.goto(scene_class)
+    return if $on_exit
     Cache.clear_projectiles if !store_projectile(scene_class)
     goto_proj(scene_class)
   end
@@ -94,6 +95,7 @@ module SceneManager
   #--------------------------------------------------------------------------
   class << self; alias call_proj call; end
   def self.call(scene_class)
+    return if $on_exit
     Cache.clear_projectiles if !store_projectile(scene_class)
     call_proj(scene_class)
   end
@@ -263,9 +265,9 @@ module SceneManager
     spriteset.update_huds
   end
   #-------------------------------------------------------------------------
-  def self.register_item_drop(x, y)
+  def self.register_item_drop(instance, x, y)
     return unless spriteset
-    spriteset.register_item_drop(x,y)
+    spriteset.register_item_drop(instance, x, y)
   end
   
 end

@@ -35,7 +35,11 @@ class Game_DroppedItem
   end
   #--------------------------------------------------------------------------
   def deploy_sprite
-    @sprite = SceneManager.register_item_drop(@x, @y)
+    @sprite = SceneManager.register_item_drop(self, @x, @y)
+  end
+  #--------------------------------------------------------------------------
+  def unlink_sprite
+    @sprite = nil
   end
   #--------------------------------------------------------------------------
   def picked?

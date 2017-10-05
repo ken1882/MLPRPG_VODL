@@ -370,6 +370,7 @@ class Game_Event < Game_Character
     base += @enemy.hashid if @enemy
     base  = base.to_s + self.inspect
     @hashid = PONY.Sha256(base).to_i(16)
+    super
   end
   #--------------------------------------------------------------------------
   def primary_weapon

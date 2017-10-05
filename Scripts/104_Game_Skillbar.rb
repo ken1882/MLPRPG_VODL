@@ -152,6 +152,7 @@ class Game_Skillbar
     @edit_enabled   = false
     @phase          = phase
     @need_refresh   = true
+    @displayed_help = nil
     @x = @y = 0
     @z = 0
     clear_page
@@ -297,7 +298,8 @@ class Game_Skillbar
       fallback
     else
       for i in @first_scan_index...HotKeys::SkillBarSize
-        select(i) if Input.trigger?(HotKeys::SkillBar[i]) || Mouse.trigger_skillbar?(i)
+        select(i)    if Input.trigger?(HotKeys::SkillBar[i]) || Mouse.trigger_skillbar?(i)
+        show_item_help(i) if Mouse.hover_skillbar?(i) && Input.trigger?(:kTAB)
       end
     end
   end
@@ -466,6 +468,33 @@ class Game_Skillbar
   #--------------------------------------------------------------------------
   def sprite_valid?
     return @sprite && !@sprite.disposed?
+  end
+  #--------------------------------------------------------------------------
+  def show_item_help(index)
+    pos = Mouse.pos
+    mx, my = *pos
+    mx = [Graphics.width - 120, mx].min
+    my = [Graphics.height - 68, my].min
+    info = get_help_text(index)
+    SceneManager.show_item_help_window(mx, my, info)
+  end
+  #--------------------------------------------------------------------------
+  def get_help_text(index)
+    if @items[index].is_a?(Fixnum)
+      case @items[index]
+      when AllSkill_Flag;   return "All sklls";
+      when Vancian_Flag;    return "Vancian spells";
+      when AllItem_Flag;    return "All items";
+      when PrevPage_Flag;   return "Previous page";
+      when NextPage_Flag;   return "Next page";
+      when Cancel_Flag;     return "Cancel";
+      end
+    elsif @items[index].is_a?(String) && @items[index] == Follower_Flag
+      return "Toggle party combat mode"
+    elsif @items[index].is_a?(RPG::BaseItem)
+      return @items[index].name
+    end
+    return "~Nothing is here~"
   end
   #--------------------------------------------------------------------------
   # * Start button cooldown

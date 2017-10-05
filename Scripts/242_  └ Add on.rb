@@ -41,6 +41,7 @@ class Scene_Base
     Graphics.update
     Input.update
     update_mutex
+    update_errno
     update_global_help_window
     update_all_windows unless @@overlayed
   end
@@ -48,6 +49,10 @@ class Scene_Base
   def update_mutex
     error = PONY::ERRNO.error_occurred?
     flag_error(error) if error
+  end
+  #--------------------------------------------------------------------------
+  def update_errno
+    PONY::ERRNO.raise_errno if PONY::ERRNO.errno_occurred?
   end
   #--------------------------------------------------------------------------
   def update_verify
@@ -115,7 +120,7 @@ class Scene_Base
     if self.is_a?(SceneManager.first_scene_class)
       $confirm_exit_win = Window_Confirm.new(160, 180, "  Do you really want to leave? Ponies will miss you...", true)
       $confirm_win = Window_Confirm.new(160, 180, '', true)
-      $popup_win = Window_PopInfo.new(160, 180, "", 180, true)
+      $popup_win = Window_PopInfo.new(160, 180, "", 300, true)
     end
     @@overlay_windows[:exit_confirm] = $confirm_exit_win
     @@overlay_windows[:confirm] = $confirm_win
@@ -206,6 +211,7 @@ class Scene_Base
   #--------------------------------------------------------------------------
   def raise_overlay_window(symbol, info = nil, method = nil, args = nil, forced = false)
     deactivate_all_windows(symbol)
+    $on_exit = true if method == :exit
     @@overlay_windows[symbol].raise_overlay(info, method, args, forced)
     $focus_window = @@overlay_windows[symbol]
   end
@@ -213,12 +219,18 @@ class Scene_Base
   # * Deactivate All Windows
   #--------------------------------------------------------------------------
   def deactivate_all_windows(symbol)
+    
     instance_variables.each do |varname|
       ivar = instance_variable_get(varname)
       if ivar.is_a?(Window_Selectable) && ivar.active?
-        @@overlay_windows[symbol].z = [ivar.z + 1, @@overlay_windows[symbol].z].max rescue nil
-        @@overlay_windows[symbol].assign_last_window(ivar)
-        ivar.deactivate
+        begin
+          @@overlay_windows[symbol].z = [ivar.z + 1, @@overlay_windows[symbol].z].max
+        rescue Exception => e
+          puts "#{e}"
+        ensure
+          @@overlay_windows[symbol].assign_last_window(ivar)
+          ivar.deactivate
+        end
       end
     end
     

@@ -73,8 +73,8 @@ class Game_Map
     SceneManager.reserve_loading_screen(map_id)
     Graphics.fadein(60)
     SceneManager.set_loading_phase("Mining Block Chain", -1)
-    #$mutex.synchronize{BlockChain.mining}
     BlockChain.mining
+    $game_party.sync_blockchain
     setup_battlers
     setup_loading(map_id)
     setup_camera
@@ -136,7 +136,6 @@ class Game_Map
   # * Processes after setups
   #--------------------------------------------------------------------------
   def after_setup
-    deploy_map_item_drops
     $game_player.center($game_player.new_x, $game_player.new_y) if SceneManager.scene_is?(Scene_Map)
     SceneManager.update_loading while SceneManager.loading?
     SceneManager.destroy_loading_screen unless $game_temp.loading_destroy_delay

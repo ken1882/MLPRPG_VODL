@@ -15,6 +15,8 @@ module PONY
   Enable_Loading          = true
   
   TimeCycle               = 60  # Frame
+  @hashid_table           = {}
+  
   # tag: icon
   #----------------------------------
   IconID = {
@@ -133,6 +135,10 @@ module PONY
     else
       return false
     end
+  end
+  #-----------------------------------------------------------------------------
+  def hashid_table
+    return @hashid_table
   end
   
 end

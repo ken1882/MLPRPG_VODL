@@ -6,6 +6,8 @@ class Object
   # * Set hashid
   #------------------------------------------------------------------------
   def hash_self
+    PONY.hashid_table[@hashid] = self
+    return @hashid
   end
   #------------------------------------------------------------------------
   def hashid

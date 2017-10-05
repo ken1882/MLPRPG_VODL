@@ -15,6 +15,7 @@ class Scene_Menu < Scene_MenuBase
     create_foreground
     puts "Assign blockchian mining work"
     Thread_Assist.assign_work(:BCmine) # tag: 3
+    $game_party.sync_blockchain
     if $USE_SCENE_SKIN == TRUE                                                 
       @command_window.scene_swap($PAUSE_MENU_SKIN)                             
       @gold_window.scene_swap($PAUSE_MENU_SKIN)                                
@@ -29,6 +30,7 @@ class Scene_Menu < Scene_MenuBase
     dispose_foreground
     puts "Assign blockchian mining work"
     Thread_Assist.assign_work(:BCmine) # tag: 3
+    $game_party.sync_blockchain
   end
   #--------------------------------------------------------------------------
   # * Create Status Window

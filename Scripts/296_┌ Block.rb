@@ -194,8 +194,13 @@ module BlockChain
           t = Thread_Assist.pause? ? 1 : Thread_Assist::Uwait
           sleep(t)
         end
+        data[:gold] = 0 if !data[:gold]
+        data[:gold] += trans.value if trans.recipient == accid
+        data[:gold] -= trans.value if trans.source    == accid
+        
         item     = trans.goods
         itemname = trans.goods.name rescue nil
+        next if item.nil?
         type = :item   if item.is_a?(RPG::Item)
         type = :weapon if item.is_a?(RPG::Weapon)
         type = :armor  if item.is_a?(RPG::Armor)
@@ -203,9 +208,6 @@ module BlockChain
           info = "Invalid item transaction: #{itemname} for #{item.class}"
           PONY::ERRNO.raise(:datatype_error, :exit, nil, info)
         end
-        data[:gold] = 0 if !data[:gold]
-        data[:gold] += trans.value if trans.recipient == accid
-        data[:gold] -= trans.value if trans.source    == accid
         data[type][item.hashid] = 0 if !data[type][item.hashid]
         data[type][item.hashid] -= trans.good_amount if trans.recipient == accid
         data[type][item.hashid] += trans.good_amount if trans.source    == accid
@@ -285,7 +287,7 @@ module BlockChain
       return obj == @id   unless obj.is_a?(String)
     end
     #--------------------------------------------------------------------------
-    # * Redefine equal
+    # * Merge outdated block to saved data
     #--------------------------------------------------------------------------
     def merge_block(block)
       block.record.each do |trans|

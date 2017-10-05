@@ -75,6 +75,7 @@ class Window_Selectable < Window_Base
     call_stacked_command if continue
     @stacked_command, @stacked_args = nil, nil
     @overlayed = false
+    PONY::ERRNO.close_errno_window
   end
   #--------------------------------------------------------------------------
   # * Call stacked method

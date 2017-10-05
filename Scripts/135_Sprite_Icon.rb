@@ -9,9 +9,10 @@ class Sprite_Icon < Sprite
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  def initialize(viewport, icon_id, game_x = 0, game_y = 0)
+  def initialize(instance, viewport, icon_id, game_x = 0, game_y = 0)
     @icon_id = icon_id
     super(viewport)
+    @instance   = instance
     @instance_x = game_x
     @instance_y = game_y
     create_bitmap
@@ -43,5 +44,11 @@ class Sprite_Icon < Sprite
   #--------------------------------------------------------------------------
   def screen_y
     $game_map.adjust_y(@instance_y) * 32 + 32
+  end
+  #--------------------------------------------------------------------------
+  def dispose
+    super
+    @instance.unlink_sprite
+    @instance = nil
   end
 end

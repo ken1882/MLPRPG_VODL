@@ -22,6 +22,7 @@ class Scene_Map < Scene_Base
   def post_start
     super
     spriteset.restore_projectile
+    $game_map.deploy_map_item_drops
   end
   #--------------------------------------------------------------------------
   def create_windows

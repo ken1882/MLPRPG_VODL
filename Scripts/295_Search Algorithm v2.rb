@@ -85,6 +85,7 @@ class PathFinding_Queue
   # * Dehash address
   #--------------------------------------------------------------------------
   def dehash_address(value)
+    return if value.nil?
     x = (value / 4000.0).round(2)
     return [x , value % 4000]
   end
@@ -92,7 +93,7 @@ class PathFinding_Queue
   # * Hash address
   #--------------------------------------------------------------------------
   def hash_address(x,y)
-    return x * 4000 + y
+    return (x * 4000 + y).to_i
   end
   #--------------------------------------------------------------------------
   # *  Heuristic algorithm 
@@ -110,7 +111,7 @@ class PathFinding_Queue
   #--------------------------------------------------------------------------
   # *  Push new scanned address
   #--------------------------------------------------------------------------
-  def push(source_loc, current_loc,next_loc, dir, goal_loc, depth)
+  def push(source_loc, current_loc, next_loc, dir, goal_loc, depth)
     
     extra_cost = depth * 5
     node_cost = predict_movement_cost(source_loc,current_loc,goal_loc) + extra_cost
@@ -120,9 +121,8 @@ class PathFinding_Queue
     
     # save source direction
     @move_dir[ hash_address(next_loc.x,next_loc.y) ] = dir
-    
     # save source address
-    @nodes_parent_id[ hash_address(next_loc.x,next_loc.y) ] = hash_address(current_loc.x,current_loc.y)
+    @nodes_parent_id[ hash_address(next_loc.x, next_loc.y) ] = hash_address(current_loc.x,current_loc.y)
   end
   #--------------------------------------------------------------------------
   # *  Address visied?
@@ -195,7 +195,7 @@ class PathFinding_Queue
   #--------------------------------------------------------------------------
   # *  Return the path address and direction
   #--------------------------------------------------------------------------
-  def get_walk_path(goalx,goaly)
+  def get_walk_path(goalx, goaly)
     current_track_address = hash_address(goalx,goaly)
     path = []
     path_address = []
@@ -203,7 +203,6 @@ class PathFinding_Queue
     path.push(current_track_address)
     
     while @nodes_parent_id[current_track_address]
-      
       path.unshift( @nodes_parent_id[current_track_address] )
       go_dir.unshift( @move_dir[current_track_address] )
       
@@ -336,7 +335,7 @@ class Game_Character < Game_CharacterBase
       cury = path_queue.top[1]
       
       path_queue.distance = [path_queue.distance, Math.hypot(goalx - curx, goaly - cury)].min
-      if (curx - goalx).abs < 0.25 && (cury - goaly < 0.25)
+      if (curx - goalx).abs < 0.25 && (cury - goaly).abs < 0.25
         path_found = true
         puts "Path found: #{curx} #{cury}" if debug
         break

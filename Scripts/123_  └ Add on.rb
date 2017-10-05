@@ -348,8 +348,8 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   # * Deploy item drop sprite
   #--------------------------------------------------------------------------
-  def register_item_drop(x, y)
-    sprite = Sprite_Icon.new(@viewport1, PONY::IconID[:loot_drop], x, y)
+  def register_item_drop(instance, x, y)
+    sprite = Sprite_Icon.new(instance, @viewport1, PONY::IconID[:loot_drop], x, y)
     @drop_sprites << sprite
     return sprite
   end

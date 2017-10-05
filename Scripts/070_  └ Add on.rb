@@ -15,6 +15,7 @@ class Game_Enemy < Game_Battler
   #------------------------------------------------------------------------
   def hash_self
     @hashid  = enemy.hashid
+    super
   end
   #--------------------------------------------------------------------------
   # * Object Initialization

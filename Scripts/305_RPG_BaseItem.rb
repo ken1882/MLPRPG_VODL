@@ -59,6 +59,7 @@ class RPG::BaseItem
     base += "Armor"  if self.is_a?(RPG::Armor)
     base += "State"  if self.is_a?(RPG::State)
     @hashid = PONY.Sha256(base).to_i(16)
+    super
   end
   #-----------------------------------------------------------------------
   # *) Get Attack Element
