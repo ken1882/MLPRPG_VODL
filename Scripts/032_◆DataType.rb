@@ -249,10 +249,6 @@ class RPG::BaseItem
       cnt += 1
     end
     dict = ''
-    dict = "Items/"   if self.is_a?(RPG::Item)
-    dict = "Weapons/" if self.is_a?(RPG::Weapon)
-    dict = "Armors/"  if self.is_a?(RPG::Armor)
-    dict = "Skills/"  if self.is_a?(RPG::Skill)
     return sprintf("%s%s%s",dict, '0' * (3 - cnt), @id)
   end
 end
@@ -486,6 +482,7 @@ class RPG::BaseItem
     } # self.note.split
     @tool_distance     += 0.4
     @tool_scope        += 0.4
+    @information = load_help_information
   end
   #---------------------------------------------------------------------------
   def load_item_property(line)
@@ -567,18 +564,6 @@ class RPG::BaseItem
   # *) Load item infos for detailed inforamtion, located at "History/type/id"
   #---------------------------------------------------------------------------  
   def load_help_information
-    path = "History/"
-    DataManager.ensure_file_exist(path)
-    filename = path + self.id_for_filename
-    filename = Dir.glob(filename + '*').at(0)
-    info = ""
-    return self.description unless (filename && File.exist?(filename))
-    File.open(filename, 'r') do |file|
-      while(line = file.gets)
-        info += line
-      end
-    end
-    return info.size >= description.size ? info : description
   end
   #------------------------------------------------------------------------
   # *) Item need consume items
@@ -756,6 +741,94 @@ class POS
     return 100
   end
   #------------------------------------------------------------------------
+end
+#==============================================================================
+# ** RPG::Weapon
+#==============================================================================
+class RPG::Weapon < RPG::EquipItem
+  #---------------------------------------------------------------------------
+  # *) Load item infos for detailed inforamtion, located at "History/type/id"
+  #---------------------------------------------------------------------------  
+  def load_help_information
+    path = "History/Weapons/"
+    DataManager.ensure_file_exist(path)
+    filename = path + self.id_for_filename
+    filename = Dir.glob(filename + '*').at(0)
+    info = ""
+    return self.description unless (filename && File.exist?(filename))
+    File.open(filename, 'r') do |file|
+      while(line = file.gets)
+        info += line
+      end
+    end
+    return info.size >= description.size ? info : description
+  end
+end
+#==============================================================================
+# ** RPG::Armor
+#==============================================================================
+class RPG::Armor < RPG::EquipItem
+  #---------------------------------------------------------------------------
+  # *) Load item infos for detailed inforamtion, located at "History/type/id"
+  #---------------------------------------------------------------------------  
+  def load_help_information
+    path = "History/Armors/"
+    DataManager.ensure_file_exist(path)
+    filename = path + self.id_for_filename
+    filename = Dir.glob(filename + '*').at(0)
+    info = ""
+    return self.description unless (filename && File.exist?(filename))
+    File.open(filename, 'r') do |file|
+      while(line = file.gets)
+        info += line
+      end
+    end
+    return info.size >= description.size ? info : description
+  end
+end
+#==============================================================================
+# ** RPG::Item
+#==============================================================================
+class RPG::Item < RPG::UsableItem
+  #---------------------------------------------------------------------------
+  # *) Load item infos for detailed inforamtion, located at "History/type/id"
+  #---------------------------------------------------------------------------  
+  def load_help_information
+    path = "History/Items/"
+    DataManager.ensure_file_exist(path)
+    filename = path + self.id_for_filename
+    filename = Dir.glob(filename + '*').at(0)
+    info = ""
+    return self.description unless (filename && File.exist?(filename))
+    File.open(filename, 'r') do |file|
+      while(line = file.gets)
+        info += line
+      end
+    end
+    return info.size >= description.size ? info : description
+  end
+end
+#==============================================================================
+# ** RPG::Skill
+#==============================================================================
+class RPG::Skill < RPG::UsableItem
+  #---------------------------------------------------------------------------
+  # *) Load item infos for detailed inforamtion, located at "History/type/id"
+  #---------------------------------------------------------------------------  
+  def load_help_information
+    path = "History/Skills"
+    DataManager.ensure_file_exist(path)
+    filename = path + self.id_for_filename
+    filename = Dir.glob(filename + '*').at(0)
+    info = ""
+    return self.description unless (filename && File.exist?(filename))
+    File.open(filename, 'r') do |file|
+      while(line = file.gets)
+        info += line
+      end
+    end
+    return info.size >= description.size ? info : description
+  end
 end
 #===============================================================================
 # * Overwrite the exit method to program-friendly

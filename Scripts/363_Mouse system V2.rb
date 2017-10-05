@@ -484,9 +484,10 @@ class Window_Selectable
   
   def update_scroll
     return if !scrollable?
+    
     f = Mouse.scroll
     if !f.nil?
-      @flag_scroll = f[2]
+      Mouse.flag_scroll = f[2]
       if f[2] < 0
         if contents.height > self.height && self.oy - contents.height < -self.height + 32
           self.top_row = self.top_row + 1
@@ -496,7 +497,7 @@ class Window_Selectable
       end
       @scrolled = true
     else
-      @flag_scroll = nil
+      Mouse.flag_scroll = nil
     end
   end
   

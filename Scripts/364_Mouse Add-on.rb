@@ -29,6 +29,10 @@ module Mouse
     return !@flag_scroll.nil? && @flag_scroll < 0
   end
   #-----------------------------------------------------------------------------
+  def flag_scroll=(stat)
+    @flag_scroll = stat
+  end
+  #-----------------------------------------------------------------------------
   def collide_sprite?(sprite)
     return false if !sprite.is_a?(Rect) && sprite.disposed?
     return area?(sprite.x, sprite.y, sprite.width, sprite.height) rescue false

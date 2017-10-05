@@ -28,7 +28,7 @@ class Window_Selectable < Window_Base
   #--------------------------------------------------------------------------
   alias update_moreinfo update
   def update
-    #@info_window.update if @info_window.visible?
+    @info_window.update if @info_window.visible?
     update_moreinfo
   end
   #--------------------------------------------------------------------------
@@ -36,7 +36,7 @@ class Window_Selectable < Window_Base
   #--------------------------------------------------------------------------
   def process_overlay_handling
     if moreinfo_enabled?
-      if Input.trigger?(:X)
+      if Input.trigger?(:X) || Mouse.click?(3)
         process_moreinfo(:X)
       elsif Input.trigger?(:B)
         process_moreinfo(:B)
@@ -64,7 +64,7 @@ class Window_Selectable < Window_Base
       @overlayed = false
     elsif key == :X
       @info_window.show
-      Audio.se_play("Audio/SE/BG_Select",100,100)
+      Audio.se_play("Audio/SE/BG_Select", 90, 100)
       heatup_button
       @overlayed = true
     end
@@ -102,7 +102,6 @@ class Window_Moreinfo < Window_Base
     @pages            = []
     @index = -1
     @handler = {}
-    
     create_background
     self.windowskin = Cache.system(WindowSkin::MapInfo) if WindowSkin::Enable
     self.opacity = 255
@@ -116,7 +115,6 @@ class Window_Moreinfo < Window_Base
   def refresh(index = 0)
     return if @item.nil?
     contents.clear
-    
     if    @item.is_a?(RPG::Item);   draw_item_info(index)
     elsif @item.is_a?(RPG::Weapon); draw_weapon_info(index)
     elsif @item.is_a?(RPG::Armor);  draw_armor_info(index)
@@ -130,14 +128,40 @@ class Window_Moreinfo < Window_Base
   def update
     super
     process_cursor_move
+    @scrolled ||= false
+    update_scroll if self.active && self.visible
+    update_mouse  if self.active && self.visible && (Mouse.moved? or @scrolled)
   end 
+  #--------------------------------------------------------------------------
+  # * Update mouse scroll
+  #--------------------------------------------------------------------------
+  def update_scroll
+    f = Mouse.scroll
+    if !f.nil?
+      Mouse.flag_scroll = f[2]
+      if f[2] < 0
+        if contents.height > self.height && self.oy - contents.height < -self.height + 32
+          self.top_row = self.top_row + 1
+        end
+      else
+        self.top_row = self.top_row - 1 if contents.height > self.height
+      end
+      @scrolled = true
+    else
+      Mouse.flag_scroll = nil
+    end
+  end
+  #--------------------------------------------------------------------------
+  def update_mouse
+    @scrolled = false
+    
+  end
   #--------------------------------------------------------------------------
   # * Create Background
   #--------------------------------------------------------------------------
   def create_background
     @background_sprite = Sprite.new
-    @background_sprite.bitmap = SceneManager.background_bitmap
-    @background_sprite.color.set(0, 0, 0, 255)
+    @background_sprite.bitmap = Cache.background("scroll")
     @background_sprite.z = self.z - 10
   end
   #--------------------------------------------------------------------------

@@ -21,7 +21,6 @@ class Window_Selectable < Window_Base
     @stacked_args    = nil
     @scroll_enable   = false
     @help_text       = []             # selection help text
-    
     initialize_overlay(x, y, width, height)
   end
   #--------------------------------------------------------------------------

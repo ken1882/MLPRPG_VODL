@@ -294,7 +294,6 @@ class Game_Character < Game_CharacterBase
     return true unless @pathfinding_timer == 0 || args[:forced]
     @pathfinding_timer = 60
     clear_pathfinding_moves
-    
     ti = Time.now
     depth             = args[:depth].nil?          ? 100   : args[:depth]
     tool_range        = args[:tool_range].nil?     ? 0     : args[:tool_range]

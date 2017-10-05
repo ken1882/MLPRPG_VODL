@@ -38,15 +38,16 @@ class Scene_Menu < Scene_MenuBase
   def create_status_window
     @status_window = Window_ImageMenuStatus.new(0 ,@command_window.height)
   end
-  
-  # Foreground
+  #--------------------------------------------------------------------------
+  # * Create Foreground
+  #--------------------------------------------------------------------------
   def create_foreground
     @foreground_sprite = Sprite.new
     @foreground_sprite.bitmap = Cache.UI("Menu_SplitLine")
     @foreground_sprite.y = @command_window.height - 4
     @foreground_sprite.z = 100
   end
-  
+  #--------------------------------------------------------------------------
   def dispose_foreground
     return if @foreground_sprite.nil?
     @foreground_sprite.dispose
@@ -59,4 +60,17 @@ class Scene_Menu < Scene_MenuBase
     @gold_window.x = Graphics.width - @gold_window.width
     @gold_window.y = (@command_window.height - @gold_window.height) / 2
   end
+  #--------------------------------------------------------------------------
+  # * Create Command Window
+  #--------------------------------------------------------------------------
+  alias create_cmd_window_dnd create_command_window
+  def create_command_window
+    create_cmd_window_dnd
+    @command_window.set_handler(:quest,    method(:call_quest_scene))
+  end
+  #--------------------------------------------------------------------------
+  def call_quest_scene  
+    SceneManager.call(Scene_Quest)
+  end
+  
 end

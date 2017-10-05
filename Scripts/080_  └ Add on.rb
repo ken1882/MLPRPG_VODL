@@ -78,6 +78,7 @@ class Game_Map
     setup_battlers
     setup_loading(map_id)
     setup_camera
+    @item_drops[@map_id] = Array.new if @item_drops[@map_id].nil?
     referesh_vehicles
     setup_events
     setup_scroll

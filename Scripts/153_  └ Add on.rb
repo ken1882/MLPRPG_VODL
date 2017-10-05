@@ -24,6 +24,8 @@ class Window_MenuCommand < Window_ImageCommand
     add_command(Vocab::skill,  "Menu_Skill", :skill,  main_commands_enabled, nil, "Skill")
     add_command(Vocab::equip,  "Menu_Gears", :equip,  main_commands_enabled, nil, "Equip")
     add_command(Vocab::status, "Menu_Status", :status, main_commands_enabled, nil, "Status")
+    
+    add_command("Quest",  "Menu_Quest", :quest, main_commands_enabled, nil, "Quest")
   end
   #--------------------------------------------------------------------------
   # * Add Formation to Command List
