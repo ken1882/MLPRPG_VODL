@@ -28,7 +28,7 @@ class Window_InformationLog < Window_Selectable
   # * Frame update
   #--------------------------------------------------------------------------
   def update
-    hide_sprite = $game_switches[16] rescue false
+    hide_sprite = $game_system.hide_huds?
     if hide_sprite && visible?
       hide
     elsif !hide_sprite && !visible?
@@ -60,18 +60,6 @@ class Window_InformationLog < Window_Selectable
     dispose_back_bitmap
     dispose_back_sprite
     dispose_button
-  end
-  #--------------------------------------------------------------------------
-  def hide
-    @back_sprite.hide
-    @button_sprite.hide
-    super
-  end
-  #--------------------------------------------------------------------------
-  def show
-    @back_sprite.show
-    @button_sprite.show
-    super
   end
   #--------------------------------------------------------------------------
   # * Calculate Height of Window Suited to Specified Number of Lines
@@ -313,12 +301,20 @@ class Window_InformationLog < Window_Selectable
     return ( ((3 - px) < 0 && px <= 17) && (10.5 - py) < 0 ) ? true : false
   end
   #--------------------------------------------------------------------------
-  # show
+  # * Show the window
   #--------------------------------------------------------------------------
   def show
     super
+    @back_sprite.show
+    @button_sprite.show
     activate
     select([item_max - 1, 0].max)
+  end
+  #--------------------------------------------------------------------------
+  def hide
+    @back_sprite.hide
+    @button_sprite.hide
+    super
   end
   #--------------------------------------------------------------------------
   # *) data

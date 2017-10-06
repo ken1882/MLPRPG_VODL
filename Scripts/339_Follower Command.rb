@@ -18,26 +18,26 @@ class Game_Character
   #----------------------------------------------------------------------------
   def command_follow
     @movement_command = 1
-    return if actor.nil?
+    return if battler.nil? || battler == self
     popup_info('Move')
-    actor.remove_state(4)
-    actor.result.removed_states.delete(4)
-    $game_player.followers.move
+    battler.remove_state(4)
+    battler.result.removed_states.delete(4)
+    $game_player.followers.move if self.is_a?(Game_Follower)
   end
   #----------------------------------------------------------------------------
   def command_gather
     @movement_command = 2
     self.move_to_position($game_player.x, $game_player.y, goal:$game_player)
-    $game_player.followers.move
+    $game_player.followers.move if self.is_a?(Game_Follower)
   end
   #----------------------------------------------------------------------------  
   def command_hold
-    return if actor.nil?
+    return if battler.nil? || battler == self
     @movement_command = 3 
     clear_pathfinding_moves
     popup_info('Hold in Position')
-    actor.add_state(4)
-    $game_player.followers.move
+    battler.add_state(4)
+    $game_player.followers.move if self.is_a?(Game_Follower)
   end
   #----------------------------------------------------------------------------
   def command_following?;   return  @movement_command == 1; end

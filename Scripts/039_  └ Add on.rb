@@ -32,7 +32,13 @@ class Game_System
   # * hide huds?
   #--------------------------------------------------------------------------
   def hide_huds?
-    return $game_switches[16]
+    re = $game_switches.nil? ? true : $game_switches[16]
+    return re || story_mode?
+  end
+  #--------------------------------------------------------------------------
+  def story_mode?
+    re = $game_switches.nil? ? true : $game_switches[12]
+    return re || $game_message.busy?
   end
   #--------------------------------------------------------------------------
   def hide_huds; $game_switches[16] = true; end

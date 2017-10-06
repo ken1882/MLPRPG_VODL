@@ -353,7 +353,7 @@ class Game_Map
         event.delete_sprite
       end
     end
-    events.each do |event| 
+    events.each do |event|
       event.update unless event.frozen? # tag: modified
       terminate_event(event) if event.terminated
     end
@@ -582,6 +582,8 @@ class Sprite_Character
   # * New method : Determine if on screen
   #-----------------------------------------------------------------------------
   def need_update?
+    cur_hash = hash_value
+    return true if cur_hash != @old_hash
     return true if graphic_changed?
     return true if @character.animation_id > 0
     return true if @balloon_sprite
@@ -590,7 +592,12 @@ class Sprite_Character
     h = Graphics.height
     cw = @cw || 32
     ch = @ch || 32
+    @old_hash = cur_hash
     @sx.between?(-cw,w+cw) && @sy.between?(0,h+ch)
+  end
+  #-----------------------------------------------------------------------------
+  def hash_value
+    return @character.x * 4000 + @character.y * 10 + @character.direction / 2
   end
   #-----------------------------------------------------------------------------
   # * Overwrite animation origin

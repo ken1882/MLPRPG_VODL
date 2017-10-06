@@ -325,9 +325,9 @@ class Window_Base < Window
   def convert_escape_characters(text)
     result = window_base_convert_escape_characters_ams(text)
     result = convert_ace_message_system_new_escape_characters(result)
+    result = FileManager.convert_eval_string(result)
     return result
   end
-  
   #--------------------------------------------------------------------------
   # new method: convert_ace_message_system_new_escape_characters
   #--------------------------------------------------------------------------

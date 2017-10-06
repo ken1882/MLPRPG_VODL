@@ -88,8 +88,8 @@ class Sprite_Hud < Sprite_Base
   end
   #--------------------------------------------------------------------------
   def update_visibility
-    return hide if @actor.nil? || ($game_switches[16] && visible?)
-    return show if !$game_switches[16] && !visible?
+    return hide if @actor.nil? || ($game_system.hide_huds? && visible?)
+    return show if !$game_system.hide_huds? && !visible?
   end
   #--------------------------------------------------------------------------
   # * Update value and bars

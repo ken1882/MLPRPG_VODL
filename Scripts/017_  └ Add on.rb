@@ -205,7 +205,7 @@ module BattleManager
   # * Execute Action
   #--------------------------------------------------------------------------
   def self.execute_action(action)
-    return if $game_switches[12] rescue false
+    return if $game_system.story_mode?
     puts "[Debug]: Action executed"
     execute_subaction(action) if action.item.tool_invoke
     action.subject = determine_effected_targets(action.user, action.item, action.target)

@@ -53,7 +53,6 @@ class Sprite_Character < Sprite_Base
     return true  if graphic_changed? || animation?     rescue nil
     return false if !@character
     return true  if @character.pattern != @old_pattern
-    return false if @old_pos == hash_pos
     return true
   end
   #--------------------------------------------------------------------------
@@ -102,7 +101,6 @@ class Sprite_Character < Sprite_Base
   #--------------------------------------------------------------------------
   alias update_spchar_position update_position
   def update_position
-    @old_pos = hash_pos
     update_spchar_position
   end
   #--------------------------------------------------------------------------

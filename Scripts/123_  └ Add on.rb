@@ -167,7 +167,7 @@ class Spriteset_Map
   # tag: 1 ( Spriteset_Map
   def register_battle_unit(battler)
     if @unit_table[battler.hashid]
-      debug_print "Battler register failed: #{battler}"
+      debug_print "Battler has already registered: #{battler}"
       return
     end
     sprite = Unit_Circle.new(@viewport1, battler)

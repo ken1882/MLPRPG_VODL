@@ -23,6 +23,7 @@ class Game_Event < Game_Character
   attr_accessor :recover
   attr_accessor :target_switch
   attr_accessor :self_vars
+  attr_accessor :aggressive_level
   #--------------------------------------------------------------------------
   # * Object Initialization
   #     event:  RPG::Event
@@ -204,7 +205,7 @@ class Game_Event < Game_Character
   # * Overwrite: Update During Autonomous Movement
   #--------------------------------------------------------------------------
   def update_self_movement
-    return if $game_switches[12]
+    return if $game_system.story_mode?
     if !@pathfinding_moves.empty?
       process_pathfinding_movement
     elsif near_the_screen? && @stop_count > stop_count_threshold
@@ -314,7 +315,7 @@ class Game_Event < Game_Character
   #----------------------------------------------------------------------------
   def aggressive_level
     return @aggressive_level     if @aggressive_level
-    return @enemy.enemy.aggressive_level if @enemy
+    return @aggressive_level = @enemy.enemy.aggressive_level if @enemy
     return DND::BattlerSetting::AggressiveLevel
   end
   #----------------------------------------------------------------------------

@@ -68,4 +68,36 @@ module FileManager
   def self.write_ini(group, target, goal)
     PONY::API::WritePPString.call(group, target, goal, ".//Game.ini")
   end # def change ini
+  #--------------------------------------------------------------------------
+  # * Replace
+  #--------------------------------------------------------------------------
+  def self.convert_eval_string(str)
+    return if str.nil?
+    cache = ""
+    detect_flag = false
+    true_str = ""
+    
+    for i in 0...str.length
+      if str[i] == '%' && str[i+1] == '{'
+        detect_flag = true
+        next
+      end
+      
+      if detect_flag
+        if str[i] == '}'
+          cache[0] = ''
+          puts "#{cache}"
+          true_str += eval(cache).to_s rescue "%{CONVERSION ERROR}"
+          cache = ""; detect_flag = false;
+        elsif str[i]
+          cache += str[i]
+        end
+      else # if not detecting eval code
+        true_str += str[i]
+      end # if detect flag on
+    end # for i in str
+    
+    return true_str
+  end # def convert
+  
 end

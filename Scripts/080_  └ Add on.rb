@@ -59,6 +59,9 @@ class Game_Map
   #--------------------------------------------------------------------------
   def assign_party_battler
     @action_battlers[0] = $game_party.battle_members
+    @enemies.each do |battler|
+      @action_battlers[0] << battler if battler.team_id == 0
+    end
   end
   #--------------------------------------------------------------------------
   # * Setup
@@ -74,7 +77,7 @@ class Game_Map
     SceneManager.reserve_loading_screen(map_id)
     Graphics.fadein(60)
     SceneManager.set_loading_phase("Mining Block Chain", -1)
-    $game_switches[6] = false
+    
     BlockChain.mining
     $game_party.sync_blockchain
     setup_battlers
@@ -211,7 +214,7 @@ class Game_Map
     @enemies << battler
     @action_battlers[battler.team_id] << battler
     @unit_table[battler.hashid] = battler
-    #SceneManager.scene.register_battle_unit(battler) if SceneManager.scene_is?(Scene_Map)
+    SceneManager.scene.register_battle_unit(battler) if SceneManager.scene_is?(Scene_Map)
   end
   #--------------------------------------------------------------------------
   # * Remove unit

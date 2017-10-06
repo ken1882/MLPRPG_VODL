@@ -29,7 +29,7 @@ class Sprite_Skillbar < Sprite
   #--------------------------------------------------------------------------
   def update
     super
-    hide_sprite = $game_switches[16] rescue false
+    hide_sprite = $game_system.hide_huds? rescue false
     if hide_sprite && visible?
       hide
     elsif !hide_sprite && !visible?
