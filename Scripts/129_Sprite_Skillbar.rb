@@ -29,7 +29,12 @@ class Sprite_Skillbar < Sprite
   #--------------------------------------------------------------------------
   def update
     super
-    self.visible = !$game_switches[16] rescue true
+    hide_sprite = $game_switches[16] rescue false
+    if hide_sprite && visible?
+      hide
+    elsif !hide_sprite && !visible?
+      show
+    end
     update_mouse_hover
     update_dragging
     update_info

@@ -764,6 +764,7 @@ class Scene_Map
   # tag: modified
   #------------------------------------------------------------------------------
   def check_mouse_movement
+    return if $game_switches[12]
     $game_temp.mouse_character ||= $game_player
     if Mouse.click?(2) && !SceneManager.tactic_enabled?
       tx, ty = *Mouse.true_grid_by_pos

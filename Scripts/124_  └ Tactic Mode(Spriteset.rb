@@ -14,6 +14,7 @@ class Spriteset_Map
     refresh_characters if @map_id != $game_map.map_id
     @character_sprites.each do |sprite|
       sprite.update
+      sprite.visible = $game_switches[6]
       if sprite.character && !event_usable?(sprite.character)
         @character_sprites.delete(sprite)
       end

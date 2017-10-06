@@ -46,7 +46,9 @@ Quick Tag for temp:
 ╠─╣                                                                          ╠─╣
 ║ ╚══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╝ ║
 ╚════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════╝
-moving? -> @process_moving (Fix free movement can't detect moving while dash)
+$game_switches[6]  => Initial map events setup done flag
+$game_switches[12] => Story mode on, everyone cannot move unless assigned
+$game_switches[16] => Hide all UI, if on, all huds will be hidden, and vice versa
 $event => quick access to the event called Game_Interpreter's command 335(script)
 =end
 #--------------------------------------------------------------------------

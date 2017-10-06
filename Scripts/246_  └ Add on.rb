@@ -93,6 +93,7 @@ class Scene_Map < Scene_Base
       @menu_calling = false
     else
       @menu_calling ||= Input.trigger?(:kESC) || Mouse.click?(3)
+      @menu_calling = false if $game_switches[12]
       call_menu if @menu_calling && !$game_player.moving?
     end
   end

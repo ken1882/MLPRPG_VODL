@@ -10,7 +10,7 @@ class Scene_Map < Scene_Base
   #--------------------------------------------------------------------------
   alias update_scmap_inputs update
   def update
-    update_input_buttons
+    update_input_buttons unless $game_switches[12]
     update_scmap_inputs
   end
   #--------------------------------------------------------------------------

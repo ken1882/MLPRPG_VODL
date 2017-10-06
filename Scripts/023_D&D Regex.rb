@@ -113,7 +113,7 @@ module DND
   #atag: event config
   module REGEX::Event
     Terminated        = /<(?:terminated)>/i                    # Finalize event
-    Frozen            = /<(?:no update)>/i
+    Frozen            = /<(?:frozen)>/i
   end
   
   # See "tag: equiparam" for details

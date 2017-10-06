@@ -32,7 +32,7 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   alias update_gachdndai update
   def update
-    if !dead?
+    if !dead? && !$game_switches[12]
       @combat_timer -= 1 if @combat_timer > 0
       @chase_timer  -= 1 if @chase_timer > 0
       @chase_pathfinding_timer -= 1 if @chase_pathfinding_timer > 0

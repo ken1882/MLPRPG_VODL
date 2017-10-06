@@ -28,7 +28,12 @@ class Window_InformationLog < Window_Selectable
   # * Frame update
   #--------------------------------------------------------------------------
   def update
-    self.visible = !$game_switches[16] rescue true
+    hide_sprite = $game_switches[16] rescue false
+    if hide_sprite && visible?
+      hide
+    elsif !hide_sprite && !visible?
+      show
+    end
     update_active_icon
     super if active?
   end
@@ -55,6 +60,18 @@ class Window_InformationLog < Window_Selectable
     dispose_back_bitmap
     dispose_back_sprite
     dispose_button
+  end
+  #--------------------------------------------------------------------------
+  def hide
+    @back_sprite.hide
+    @button_sprite.hide
+    super
+  end
+  #--------------------------------------------------------------------------
+  def show
+    @back_sprite.show
+    @button_sprite.show
+    super
   end
   #--------------------------------------------------------------------------
   # * Calculate Height of Window Suited to Specified Number of Lines

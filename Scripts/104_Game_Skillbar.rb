@@ -181,7 +181,7 @@ class Game_Skillbar
     current_actor = determine_actor
     refresh_item           if @need_refresh
     refresh(current_actor) if refresh_needed?(current_actor)
-    process_input
+    process_input  unless $game_switches[12]
     update_edit    if @edit_enabled
     @sprite.update if sprite_valid?
   end

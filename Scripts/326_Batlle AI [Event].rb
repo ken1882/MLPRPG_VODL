@@ -21,7 +21,7 @@ class Game_Event < Game_Character
   def update_sight
     @sight_timer -= 1 if @sight_timer > 0
     return if @sight_timer > 0
-    @sight_timer = 15
+    @sight_timer = 20
     return update_sighted if @current_target
     target = find_nearest_enemy
     set_target(target) if change_target?(target)

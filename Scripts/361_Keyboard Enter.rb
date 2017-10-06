@@ -288,6 +288,44 @@ end
   end
   
 end
+module Input
+  
+  class << self; alias :trigger_wasd? :trigger?; end
+  def self.trigger?(sym)
+    case sym
+    when :UP;     return trigger_wasd?(sym) || trigger_wasd?(:kW);
+    when :LEFT;   return trigger_wasd?(sym) || trigger_wasd?(:kA);
+    when :DOWN;   return trigger_wasd?(sym) || trigger_wasd?(:kS);
+    when :RIGHT;  return trigger_wasd?(sym) || trigger_wasd?(:kD);
+    when :R;      return trigger_wasd?(sym) || trigger_wasd?(:kE);
+    else;         return trigger_wasd?(sym);
+    end
+  end
+  
+  class << self; alias :press_wasd? :press?; end
+  def self.press?(sym)
+    case sym
+    when :UP;     return press_wasd?(sym) || press_wasd?(:kW);
+    when :LEFT;   return press_wasd?(sym) || press_wasd?(:kA);
+    when :DOWN;   return press_wasd?(sym) || press_wasd?(:kS);
+    when :RIGHT;  return press_wasd?(sym) || press_wasd?(:kD);
+    when :R;      return press_wasd?(sym) || press_wasd?(:kE);
+    else;         return press_wasd?(sym);
+    end
+  end
+  
+  class << self; alias :repeat_wasd? :repeat?; end
+  def self.repeat?(sym)
+    case sym
+    when :UP;     return repeat_wasd?(sym) || repeat_wasd?(:kW);
+    when :LEFT;   return repeat_wasd?(sym) || repeat_wasd?(:kA);
+    when :DOWN;   return repeat_wasd?(sym) || repeat_wasd?(:kS);
+    when :RIGHT;  return repeat_wasd?(sym) || repeat_wasd?(:kD);
+    when :R;      return repeat_wasd?(sym) || repeat_wasd?(:kE);
+    else;         return repeat_wasd?(sym);
+    end
+  end
+end
 ###--------------------------------------------------------------------------###
 #  End of script.                                                              #
 ###--------------------------------------------------------------------------###

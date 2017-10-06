@@ -201,21 +201,20 @@ module QuestData
       q[:name]              = "Tutorial"
       q[:level]             = 1
       q[:icon_index]        = 230
-      q[:description]       = "012345679012345679012345679012345679012345679012345679012345679012345679012345679012345679"
-      q[:objectives][0]     = "012345679012345679012345679012345679012345679012345679012345679012345679012345679012345679"
-      q[:objectives][1]     = "012345679012345679012345679012345679012345679012345679012345679012345679012345679012345679"
-      q[:objectives][2]     = "012345679012345679012345679012345679012345679012345679012345679012345679012345679012345679"
-      q[:objectives][3]     = "012345679012345679012345679012345679012345679012345679012345679012345679012345679012345679"
-      q[:objectives][4]     = "012345679012345679012345679012345679012345679012345679012345679012345679012345679012345679"
+      q[:description]       = "Learn the game mechanics and how to play."
+      q[:objectives][0]     = "Enable the tactic mode"
+      q[:objectives][1]     = "Enable the tactic mode, command your teammate move to the flag"
+      q[:objectives][2]     = "Enable the tactic mode, command yout teammate to attack the enemy"
+      
       q[:prime_objectives]  = [1]
       q[:custom_categories] = []
       q[:banner]            = ""
       q[:banner_hue]        = 0
-      q[:client]            = "012345679012345679012345679012345679012345679012345679012345679012345679012345679012345679"
-      q[:location]          = "012345679012345679012345679012345679012345679012345679012345679012345679012345679012345679"
+      q[:client]            = "GM"
+      q[:location]          = "Celestia Plane"
       q[:common_event_id]   = 0
       q[:rewards]           = [
-        [:gold, 100],
+        [:item, 1, 3],
       ]
       q[:layout]            = false
     #||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

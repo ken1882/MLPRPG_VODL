@@ -104,6 +104,16 @@ class Game_Actor < Game_Battler
     return @aggressive_level
   end
   #--------------------------------------------------------------------------
+  def next_action
+    return nil if @map_char.nil?
+    @map_char.next_action
+  end
+  #--------------------------------------------------------------------------
+  def action
+    return nil if @map_char.nil?
+    @map_char.action
+  end
+  #--------------------------------------------------------------------------
   def death_graphic;    return actor.death_graphic;   end
   def death_index;      return actor.death_index;     end
   def death_pattern;    return actor.death_pattern;   end

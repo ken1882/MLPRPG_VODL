@@ -118,6 +118,7 @@ class Game_Follower < Game_Character
   end
   #--------------------------------------------------------------------------
   def update_combat_mode
+    return if $game_switches[12]
     return if aggressive_level < 2 || @combat_mode_timer > 0
     @combat_mode_timer = 30
     process_combat_phase if @current_target.nil?

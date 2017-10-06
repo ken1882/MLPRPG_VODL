@@ -340,7 +340,7 @@ module QuestData
     objectives:       "Objectives",
     # objective_bullet: The bullet which shows up to the left of every
     #  objective. If %d is included, it shows the objective's ID.
-    objective_bullet: "♦",
+    objective_bullet: ">",#"♦",
     # rewards: The heading to identify the rewards.
     rewards:          "Rewards",
     # reward_amount: For item rewards, this is the text to show the amount. 
@@ -436,7 +436,7 @@ module QuestData
   BG_BLEND_TYPE = 0 
   #  DESCRIPTION_IN_BOX - This is a graphical option, and it allows you to 
   # choose whether the description should be shown in a box.
-  DESCRIPTION_IN_BOX = true
+  DESCRIPTION_IN_BOX = true#false
   #  LEVEL_ICON - This sets how levels are shown. If set to an integer, then it
   # will draw the same icon numerous times up to the level of the quest. Ie. If
   # the level's quest is 1, then the icon will only be drawn once, but if the 
@@ -1781,10 +1781,10 @@ class Window_QuestData < Window_Selectable
     when :description
       buff = description_x*2
       paragraph = mapf_format_paragraph(@quest.description, contents_width - buff)
-      line_num = paragraph.scan(/\n/).size + 1
+      line_num = FileManager.textwrap(paragraph, contents_width - buff).size
       line_num += (QuestData::DESCRIPTION_IN_BOX ? 2 : 
         !QuestData::VOCAB[:description].empty? ? 1 : 0)
-      line_num*line_height
+      line_num * line_height
     when :objectives
       objectives = @quest.revealed_objectives.collect { |obj_id| 
         @quest.objectives[obj_id] } 
@@ -1792,7 +1792,8 @@ class Window_QuestData < Window_Selectable
       buff = (objective_x*2) + text_size(QuestData::VOCAB[:objective_bullet]).width
       objectives.each { |obj|
         paragraph = mapf_format_paragraph(obj, contents_width - buff)
-        line_num += paragraph.scan(/\n/).size + 1 }
+        lines = FileManager.textwrap(paragraph, contents_width - buff)
+        line_num += lines.size + 1}
       line_num*line_height
     when :rewards
       line_num = QuestData::VOCAB[:rewards].empty? ? 0 : 1
@@ -1943,27 +1944,32 @@ class Window_QuestData < Window_Selectable
   # * Draw Description
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def draw_description
-    buff = description_x*2
+    buff = description_x * 2
     paragraph = mapf_format_paragraph(@quest.description, contents_width - buff)
     y = @draw_y
+    paragraph = FileManager.textwrap(paragraph, contents_width - buff)
     # Draw Rect
-    draw_box(paragraph.scan(/\n/).size + 1) if QuestData::DESCRIPTION_IN_BOX
+    draw_box(paragraph.size) if QuestData::DESCRIPTION_IN_BOX
     # Draw Description Label
     draw_heading(:description, y) unless QuestData::VOCAB[:description].empty?
     # Draw Description
     y += line_height if !QuestData::VOCAB[:description].empty? || QuestData::DESCRIPTION_IN_BOX
-    draw_text_ex(description_x, y, paragraph)
+    paragraph.each do |line|
+      draw_text_ex(description_x, y, line)
+      y += line_height
+    end
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Draw Objectives
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def draw_objectives
-    y = @draw_y
+    y = @desc_bot_y
     unless QuestData::VOCAB[:objectives].empty?
       draw_heading(:objectives, y)
       y += line_height
     end
     @quest.revealed_objectives.each { |obj_id| y = draw_objective(obj_id, y) }
+    @objective_bot_y = y + line_height / 2
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Draw Objective
@@ -1973,20 +1979,23 @@ class Window_QuestData < Window_Selectable
     bullet_tw = text_size(bullet).width + 2
     buff = (objective_x*2) + bullet_tw
     paragraph = mapf_format_paragraph(@quest.objectives[obj_id], contents_width - buff)
-    line_num = 1 + paragraph.scan(/\n/).size
     # Since draw_text_ex resets the font, set colour here
     @maqj_objective_color = quest_objective_colour(@quest, obj_id)
     change_color(text_color(QuestData::COLOURS[:objective_bullet]))
-    draw_text(objective_x, y, bullet_tw, line_height, sprintf(bullet, obj_id + 1))
-    draw_text_ex(objective_x + bullet_tw, y, paragraph)
+    draw_text(objective_x, y, bullet_tw, line_height, sprintf(bullet, obj_id + 1))    
+    paragraph = FileManager.textwrap(paragraph, contents_width - buff - bullet_tw)
+    paragraph.each do |line|
+      draw_text_ex(objective_x + bullet_tw, y, line)
+      y += line_height
+    end
     @maqj_objective_color = false
-    y += (line_num*line_height)
+    return y + line_height
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Draw Rewards
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def draw_rewards
-    y = @draw_y
+    y = @objective_bot_y
     unless QuestData::VOCAB[:rewards].empty?
       draw_heading(:rewards, y)
       y += line_height
@@ -2092,6 +2101,7 @@ class Window_QuestData < Window_Selectable
     y = @draw_y + (line_height / 2) - 1
     w = contents_width - 2*x
     h = (1 + line_num)*line_height
+    @desc_bot_y = y + h
     draw_rect_outline_with_shadow(x, y, w, h) 
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2123,8 +2133,10 @@ class Window_QuestData < Window_Selectable
   def update(*args, &block)
     super(*args, &block)
     if open? && active && @dest_scroll_oy == self.oy
-      scroll_down if Input.press?(:DOWN)
-      scroll_up if Input.press?(:UP)
+      scroll_down     if Input.press?(:DOWN)
+      scroll_up       if Input.press?(:UP)
+      scroll_pagedown if Input.trigger?(:R) || Input.repeat?(:R)
+      scroll_pageup   if Input.trigger?(:L) || Input.repeat?(:L)
     end
     if self.oy != @dest_scroll_oy
       mod = (@dest_scroll_oy <=> self.oy)
@@ -2147,6 +2159,24 @@ class Window_QuestData < Window_Selectable
     dest = ((@dest_scroll_oy / line_height) - 1)*line_height
     @dest_scroll_oy = [dest, 0].max 
   end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # * Page Down
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def scroll_pagedown(*args, &block)
+    Audio.se_play("Audio/SE/Book2", 80, 100)
+    max_oy = contents_height - maqj_visible_height
+    dest = ((@dest_scroll_oy / line_height) + 20) * line_height 
+    self.oy = @dest_scroll_oy = [dest, max_oy].min
+  end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # * Scroll Up
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def scroll_pageup(*args, &block)
+    Audio.se_play("Audio/SE/Book2", 80, 100)
+    dest = ((@dest_scroll_oy / line_height) - 20) * line_height
+    self.oy = @dest_scroll_oy = [dest, 0].max 
+  end
+  
 end
 #==============================================================================
 # ** Scene_Quest

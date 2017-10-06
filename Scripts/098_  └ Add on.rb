@@ -204,6 +204,7 @@ class Game_Event < Game_Character
   # * Overwrite: Update During Autonomous Movement
   #--------------------------------------------------------------------------
   def update_self_movement
+    return if $game_switches[12]
     if !@pathfinding_moves.empty?
       process_pathfinding_movement
     elsif near_the_screen? && @stop_count > stop_count_threshold

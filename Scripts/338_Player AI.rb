@@ -12,6 +12,7 @@ class Game_Player < Game_Character
   alias move_by_input_dnd move_by_input
   def move_by_input
     return if $tactic_enabled || $game_party.leader.state?(2)
+    return if $game_switches[12]
     move_by_input_dnd
   end
   #--------------------------------------------------------------------------

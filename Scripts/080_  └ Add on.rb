@@ -32,6 +32,7 @@ class Game_Map
   def initialize
     @projectiles     = []
     @timer           = 0
+    @drop_timer      = 0
     @item_drops      = []
     @accurate_event_positions = {}
     @flag_after_load = false
@@ -73,6 +74,7 @@ class Game_Map
     SceneManager.reserve_loading_screen(map_id)
     Graphics.fadein(60)
     SceneManager.set_loading_phase("Mining Block Chain", -1)
+    $game_switches[6] = false
     BlockChain.mining
     $game_party.sync_blockchain
     setup_battlers
@@ -171,7 +173,7 @@ class Game_Map
   alias update_gmap_timer update
   def update(main = false)
     update_timer
-    update_drops
+    update_drops if @drop_timer > 0
     update_gmap_timer(main)
   end
   #--------------------------------------------------------------------------
@@ -179,6 +181,7 @@ class Game_Map
   #--------------------------------------------------------------------------
   def update_timer
     @timer += 1
+    @drop_timer -= 1
     process_battler_regenerate if @timer % DND::BattlerSetting::RegenerateTime == 0
     process_timecycle_end      if @timer >= PONY::TimeCycle
   end
@@ -195,7 +198,7 @@ class Game_Map
   #--------------------------------------------------------------------------
   def terminate_event(event)
     @events.delete(event.id)
-    @cached_events.delete(event)
+    @cached_events.delete(event) if @cached_events
   end
   #--------------------------------------------------------------------------
   # * Push character into active battlers
@@ -348,6 +351,7 @@ class Game_Map
   end
   #--------------------------------------------------------------------------
   def update_drops
+    @drop_timer = 20 + rand(10)
     @item_drops[@map_id].each do |drops|
       @item_drops[@map_id].delete(drops) if drops.picked?
       drops.update

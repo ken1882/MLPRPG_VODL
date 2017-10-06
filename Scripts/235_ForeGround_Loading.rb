@@ -13,8 +13,8 @@ class ForeGround_Loading
     @image    = info ? info.image : nil
     @title    = info ? info.name  : nil
     @subtitle = configs[:subtitle]
-    create_background
     create_viewport
+    create_background
     create_loading_sprite
     create_text_sprite
     create_title_sprite
@@ -69,8 +69,7 @@ class ForeGround_Loading
     if @image
       @background.bitmap = Cache.background(@image)
     else
-      @background.bitmap = SceneManager.background_bitmap
-      @background.color.set( 0, 0, 0, 255)
+      @background.bitmap = Cache.background("blank_black")
     end
     @background.z = 10 ** 8
   end
