@@ -9,6 +9,7 @@ class Game_Interpreter
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor :eval_passed
+  attr_accessor :params
   #--------------------------------------------------------------------------
   # * Object Initialization
   #     depth : nest depth
@@ -16,7 +17,16 @@ class Game_Interpreter
   alias initialize_comp initialize
   def initialize(depth = 0)
     initialize_comp(depth)
+    @params      = []
     @eval_passed = true
+  end
+  #--------------------------------------------------------------------------
+  # * Event Setup
+  #--------------------------------------------------------------------------
+  alias setup_gmitopt setup
+  def setup(list, event_id = 0)
+    $event = $game_map.events[event_id]
+    setup_gmitopt(list, event_id)
   end
   #--------------------------------------------------------------------------
   # * Script
@@ -24,6 +34,7 @@ class Game_Interpreter
   def command_355
     script = @list[@index].parameters[0] + "\n"
     $event = $game_map.events[@event_id]
+    
     while next_event_code == 655
       @index += 1
       script += @list[@index].parameters[0] + "\n"
@@ -33,9 +44,15 @@ class Game_Interpreter
     begin
       eval(script)
     rescue Exception => e
-      e = e.to_s
-      SceneManager.display_info("Error: " + e)
-      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while eval in Interpreter!\n")
+      errfilename = "InterpreterErr.txt"
+      SceneManager.display_info("Error: " + e.to_s)
+      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while eval in Interpreter!\nPlease submit #{errfilename} to developer")
+      info = sprintf("%s\n%s\n%s\n", SPLIT_LINE, Time.now.to_s, e)
+      e.backtrace.each{|line| info += line + 10.chr}
+      puts "#{info}"
+      File.open(errfilename, 'a') do |file|
+        file.write(info)
+      end
     end
     
     @eval_passed = true
@@ -58,12 +75,13 @@ class Game_Interpreter
   #--------------------------------------------------------------------------
   # * Transfer Player
   #--------------------------------------------------------------------------
-  def command_201
+  def command_201(params = nil)
     if $game_party.in_combat?
       SceneManager.display_info("You can't change location during the combat")
       return
     end
     Fiber.yield while $game_player.transfer? || $game_message.visible
+    @params = params unless params.nil?
     @params[5] = 2 if @params[5] == 0
     
     if @params[0] == 0                      # Direct designation

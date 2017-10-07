@@ -816,7 +816,7 @@ class RPG::Skill < RPG::UsableItem
   # *) Load item infos for detailed inforamtion, located at "History/type/id"
   #---------------------------------------------------------------------------  
   def load_help_information
-    path = "History/Skills"
+    path = "History/Skills/"
     DataManager.ensure_file_exist(path)
     filename = path + self.id_for_filename
     filename = Dir.glob(filename + '*').at(0)
@@ -829,6 +829,17 @@ class RPG::Skill < RPG::UsableItem
     end
     return info.size >= description.size ? info : description
   end
+end
+#==============================================================================
+# ** RPG::Event::Page::Condition
+#==============================================================================
+class RPG::Event::Page::Condition
+  
+  def code_condition
+    @code_condition = [] if @code_condition.nil?
+    return @code_condition
+  end
+  
 end
 #===============================================================================
 # * Overwrite the exit method to program-friendly

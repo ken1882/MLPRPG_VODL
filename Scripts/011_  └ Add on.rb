@@ -37,7 +37,7 @@ module DataManager
   # * Execute Load
   #--------------------------------------------------------------------------
   def self.load_game(index)
-    result = load_game_without_rescue(index) rescue false
+    result = load_game_without_rescue(index)# rescue false
     return result
   end
   #--------------------------------------------------------------------------

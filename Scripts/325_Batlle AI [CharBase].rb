@@ -68,7 +68,7 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def chase_target
     return process_target_dead if @current_target.dead?
-    return if aggressive_level < 3 || @chase_timer > 0
+    return if aggressive_level < 3 || @chase_timer > 0 || command_holding?
     
     if primary_weapon
       tx, ty = @current_target.x, @current_target.y

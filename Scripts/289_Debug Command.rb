@@ -92,7 +92,7 @@ class Game_Console
     group = "Option"
     $show_roll_result = FileManager.load_ini(group, 'ShowRollResult').to_i.to_bool
     $debug_mode       = FileManager.load_ini(group, 'DebugMode').to_i.to_bool
-    $light_effect     = FileManager.load_ini(group, 'LightEffects').to_i.to_bool
+    $light_effects    = FileManager.load_ini(group, 'LightEffects').to_i.to_bool
     $SkipLoading      = FileManager.load_ini(group, 'SkipLoading').to_i.to_bool
     load_volume
   end
@@ -170,7 +170,8 @@ class Game_Console
   end
   #----------------------------------------------------------------------------
   def Teleport(map_id = 27 ,x = 4,y = 3)
-    $game_player.reserve_transfer(map_id, x, y,)
+    params = [0, map_id, x, y, 2, 2]
+    $game_map.interpreter.command_201(params)
   end
   #----------------------------------------------------------------------------
   def ShowBallon(id = 1)

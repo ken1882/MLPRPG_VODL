@@ -262,6 +262,7 @@ class Game_Battler < Game_BattlerBase
       elsif results[:critical]
         SceneManager.display_info("#{user.name} - critical attack")
       end
+      puts "Readt popup for #{self} #{info}"
       popup_info(info, DND::COLOR::White)
       apply_damaged_target_change(user, 0)
     end
@@ -297,11 +298,12 @@ class Game_Battler < Game_BattlerBase
       a = user.skillDC(item)
       @result.critical = false
       @result.missed   = false
+      @result.hitted   = true
     end
     
     b = self.armor_class
     
-    @result.hitted = (a >= b) || @result_critical
+    @result.hitted = (a >= b) || @result_critical || @result.hitted
   end
   
   # ---------------------------------------------------------------------------
@@ -326,6 +328,9 @@ class Game_Battler < Game_BattlerBase
     if item.is_a?(RPG::Skill) || item.is_a?(RPG::Item)
       item.effects.each {|effect| item_effect_apply(user, item, effect) }
     end
+    
+    item.damage.eval(user, self, $game_variables) unless item.damage.none?
+    
     apply_damaged_target_change(user, value)
   end
   #----------------------------------------------------------------------------

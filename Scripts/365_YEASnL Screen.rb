@@ -566,12 +566,14 @@ class Window_FileAction < Window_HorzCommand
   
   #--------------------------------------------------------------------------
   # save_enabled?
+  # tag: modified
   #--------------------------------------------------------------------------
   def save_enabled?
     return false if @header.nil? && SceneManager.scene_is?(Scene_Load)
     return false if SceneManager.scene_is?(Scene_Load)
     return false if $game_system.save_disabled
     return false if at_special_slot?
+    return false if BattleManager.in_battle?
     return true
   end
   
@@ -724,7 +726,6 @@ class Scene_File < Scene_MenuBase
         @@overlay_windows[:popinfo].raise_overlay(info)
       end
     end
-    
   end
   #--------------------------------------------------------------------------
   # overwrite method: on_load_success

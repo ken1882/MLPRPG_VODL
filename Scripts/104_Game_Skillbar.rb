@@ -154,7 +154,7 @@ class Game_Skillbar
     @need_refresh   = true
     @displayed_help = nil
     @x = @y = 0
-    @z = 0
+    @z = 500
     clear_page
   end
   #--------------------------------------------------------------------------

@@ -24,9 +24,22 @@ class Game_Event < Game_Character
   attr_accessor :target_switch
   attr_accessor :self_vars
   attr_accessor :aggressive_level
+  attr_accessor :condition_flag
+  #--------------------------------------------------------------------------
+  # * Overwrite: Object Initialization
+  #     event:  RPG::Event
+  #--------------------------------------------------------------------------
+  def initialize(map_id, event)
+    super()
+    @map_id = map_id
+    @event = event
+    @id = @event.id
+    moveto(@event.x, @event.y)
+    collect_code_conditions
+    refresh
+  end
   #--------------------------------------------------------------------------
   # * Object Initialization
-  #     event:  RPG::Event
   #--------------------------------------------------------------------------
   alias initialize_event_opt initialize
   def initialize(map_id, event)
@@ -36,8 +49,44 @@ class Game_Event < Game_Character
     @sight_timer      = rand(20)
     @sight_lost_timer = 0
     @stuck_timer      = 0
+    @code_conditions  = []
     initialize_event_opt(map_id, event)
     hash_self
+  end
+  #--------------------------------------------------------------------------
+  def collect_code_conditions
+    @event.pages.each do |page|
+      for command in page.list
+        condition_push_flag = false
+        if command.code == 108
+          command.parameters[0].split(/[\r\n]+/).each do |line|
+            if line =~ DND::REGEX::Event::Condition
+              puts "#{event.name} code condition: #{$1}"
+              page.condition.code_condition << $1 
+            end
+          end # each line in comment
+        end # if the command is comment
+      end # each command in page list
+    end # each page in event
+  end
+  #--------------------------------------------------------------------------
+  # * Determine if Event Page Conditions Are Met
+  #--------------------------------------------------------------------------
+  alias :code_condition_met? :conditions_met?
+  def conditions_met?(page)
+    re = code_condition_met?(page)
+    return re if !re
+    c = page.condition
+    if !c.code_condition.empty?
+      @condition_flag = true
+      re = false
+      $event = self
+      c.code_condition.each do |code|
+        re ||= eval(code) rescue false
+      end
+      return re
+    end
+    return true
   end
   #--------------------------------------------------------------------------
   # * overwrite method: setup_page_settings
@@ -184,8 +233,14 @@ class Game_Event < Game_Character
   # * Spawn NPC battler
   #-------------------------------------------------------------------------------
   def spawn_npc_battler(id)
-    @enemy = Game_Enemy.new($game_map.enemies.size, id)
-    @enemy.map_char = self
+    if $game_map.event_battler_instance[@id]
+      @enemy = $game_map.event_battler_instance[@id]
+      @enemy.map_char = self
+    else
+      @enemy = Game_Enemy.new($game_map.enemies.size, id)
+      @enemy.map_char = self
+    end
+    
     debug_print "Spawn enemy #{@enemy.name} at event #{@id}"
     BattleManager.register_battler(self)
     $game_map.make_unique_names
@@ -266,8 +321,7 @@ class Game_Event < Game_Character
   end
   #----------------------------------------------------------------------------
   def team_id
-    return @team_id       if @team_id
-    return @enemy.enemy.team_id if @enemy
+    return @team_id = @enemy.team_id if @enemy
     return DND::BattlerSetting::TeamID
   end
   #----------------------------------------------------------------------------

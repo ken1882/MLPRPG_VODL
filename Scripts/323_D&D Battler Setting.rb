@@ -189,6 +189,7 @@ class Game_CharacterBase
   # * Pop-up text
   #----------------------------------------------------------------------------
   def popup_info(text, color = DND::COLOR::White, icon_id = 0)
+    puts "Popup info queued: #{self} #{text}"
     color = DND::COLOR::White if color.nil?
     @queued_popups << [text, color, icon_id]
   end
@@ -202,6 +203,7 @@ class Game_CharacterBase
     @popup_timer = 15
     info = @queued_popups.shift
     text = info[0]; color = info[1]; icon_id = info[2];
+    puts "Execute popup: #{self} #{text}"
     SceneManager.setup_popinfo(text, POS.new(screen_x, screen_y), color, icon_id)
   end
   #----------------------------------------------------------------------------

@@ -15,6 +15,7 @@ class Game_Battler < Game_BattlerBase
   attr_accessor :skill_cooldown, :item_cooldown, :weapon_cooldown, :armor_cooldown
   attr_accessor :move_limit
   attr_accessor :aggressive_level
+  attr_accessor :team_id
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -87,7 +88,7 @@ class Game_Battler < Game_BattlerBase
   end
   #--------------------------------------------------------------------------   
   def team_id
-    return @team_id.nil? ? 0 : @team_id
+    return @team_id | 0
   end
   #--------------------------------------------------------------------------   
   def is_opponent?(charactor)
@@ -146,7 +147,7 @@ class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
   def regenerate_mp
     @result.mp_damage = -(100 * mrg).to_i
-    @result.mp_damage *= 10 if !$game_party.in_combat?
+    @result.mp_damage *= 10 if !$game_party.in_combat? && (100 * mrg) > 0
     self.mp -= @result.mp_damage
   end
   #--------------------------------------------------------------------------
@@ -156,7 +157,23 @@ class Game_Battler < Game_BattlerBase
     if state_addable?(state_id)
       add_new_state(state_id) unless state?(state_id)
       reset_state_counts(state_id, duration)
+      if @map_char && self.is_a?(Game_Actor) && PONY::LightStateID.keys.include?(state_id)
+        light_id = PONY::LightStateID[state_id]
+        @map_char.setup_light(light_id)
+      end
       @result.added_states.push(state_id).uniq!
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Remove State
+  #--------------------------------------------------------------------------
+  def remove_state(state_id)
+    if state?(state_id)
+      revive if state_id == death_state_id
+      erase_state(state_id)
+      @map_char.dispose_light if @map_char && self.is_a?(Game_Actor) && PONY::LightStateID.keys.include?(state_id)
+      refresh
+      @result.removed_states.push(state_id).uniq!
     end
   end
   #--------------------------------------------------------------------------

@@ -9,9 +9,10 @@ class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_reader :zoom_x
-  attr_reader :zoom_y
-  attr_reader :knockbacks
+  attr_reader     :zoom_x
+  attr_reader     :zoom_y
+  attr_reader     :knockbacks
+  attr_accessor   :through                  # pass-through
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
   #--------------------------------------------------------------------------
@@ -213,6 +214,13 @@ class Game_Character < Game_CharacterBase
     return @id
   end
   #----------------------------------------------------------------------------
+  def change_team(new_id)
+    return unless BattleManager.valid_battler?(self)
+    battler.team_id = new_id
+    $game_map.resign_battle_unit(self)
+    $game_map.register_battler(self)
+  end
+  #----------------------------------------------------------------------------
   def drop_loots
     exp   = @enemy.exp
     gold  = @enemy.gold
@@ -239,4 +247,5 @@ class Game_Character < Game_CharacterBase
     end
     return re
   end
+  
 end

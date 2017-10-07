@@ -171,7 +171,7 @@ class Game_Player < Game_Character
   end
   #--------------------------------------------------------------------------
   def team_id
-    0
+    return @team_id.nil? ? @team_id = 0 : @team_id
   end
   #----------------------------------------------------------------------------
   # * Use item
@@ -179,5 +179,18 @@ class Game_Player < Game_Character
   def use_tool(item, target = nil)
     super
     SceneManager.spriteset.hud_sprite[actor.index].draw_action(@next_action)
+  end
+  #----------------------------------------------------------------------------
+  def setup_light(light_id)
+    p 'setup lantern'
+    $game_map.lantern = $game_map.lantern
+    $game_map.lantern.change_owner($game_player)
+    $game_map.lantern.set_graphic(Light_Core::Effects[light_id].first)
+    $game_map.lantern.set_opacity(180,30)
+    $game_map.lantern.show
+  end
+  #----------------------------------------------------------------------------
+  def dispose_light
+    $game_map.lantern.hide
   end
 end

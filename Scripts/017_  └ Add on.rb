@@ -230,6 +230,7 @@ module BattleManager
   # * Determine effected targets
   #--------------------------------------------------------------------------
   def self.determine_effected_targets(user, item, target)
+    return [user] if item.for_user?
     if item.for_opponent? || item.is_a?(RPG::Weapon)
       candidates = opponent_battler(user).sort {|a,b| a.distance_to_character(target) <=> b.distance_to_character(target)}
     elsif item.for_friend?
@@ -383,6 +384,7 @@ module BattleManager
     all_battlers.each do |battler|
       battler.on_turn_end
     end
+    $game_map.refresh_condition_events
   end
   #--------------------------------------------------------------------------
   # * In battle?

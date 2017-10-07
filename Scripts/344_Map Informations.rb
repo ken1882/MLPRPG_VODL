@@ -307,8 +307,9 @@ class Window_InformationLog < Window_Selectable
     super
     @back_sprite.show
     @button_sprite.show
-    activate
-    select([item_max - 1, 0].max)
+    #activate
+    #select([item_max - 1, 0].max)
+    unselect
   end
   #--------------------------------------------------------------------------
   def hide

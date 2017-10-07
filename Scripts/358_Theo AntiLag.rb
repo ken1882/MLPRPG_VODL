@@ -500,8 +500,9 @@ class Game_Event
   def setup_page_settings
     theo_antilag_setup_page_settings
     if @event.pages.size == 1 && no_condition?(@event.pages[0].condition)
+      puts "#{@event.name} never refresh"
       @never_refresh = true
-    end
+    end # tag: last work: fix page bug
     if @trigger == 3 || @interpreter
       $game_map.keep_update_events << self
       $game_map.keep_update_events.uniq!
@@ -511,9 +512,11 @@ class Game_Event
   end
   #-----------------------------------------------------------------------------
   # * Check if the events has no page condition
+  # tag: modified
   #-----------------------------------------------------------------------------
   def no_condition?(page)
-    !page.switch1_valid && !page.switch2_valid && !page.variable_valid &&
+    return false if !page.code_condition.empty?
+    return !page.switch1_valid && !page.switch2_valid && !page.variable_valid &&
       !page.self_switch_valid && !page.item_valid && !page.actor_valid
   end
   #-----------------------------------------------------------------------------

@@ -50,7 +50,8 @@ class Game_Enemy < Game_Battler
   end
   #--------------------------------------------------------------------------   
   def team_id
-    return enemy.team_id
+    @team_id = enemy.team_id if @team_id.nil?
+    return @team_id
   end
   #--------------------------------------------------------------------------
   def face_name

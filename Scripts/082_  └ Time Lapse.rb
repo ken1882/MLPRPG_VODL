@@ -18,7 +18,7 @@ class Game_Map
   # * Frame Update
   # tag: tactic(game_map update)
   #--------------------------------------------------------------------------
-  def update_tactic(main)
+  def update_tactic(main = false)
     refresh if @need_refresh
     update_interpreter if main
     update_scroll

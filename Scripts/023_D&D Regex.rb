@@ -110,11 +110,17 @@ module DND
     Body_Size         = /(?:Body Size =)[ ](\d+)/i  # Size of body to determine character sight visible 
   end
   
-  #atag: event config
+  #tag: event config
   module REGEX::Event
     Terminated        = /<(?:terminated)>/i                    # Finalize event
     Frozen            = /<(?:frozen)>/i
+    Condition         = /<(?:condition:)[ ](.+)>/i
   end
+  
+  module REGEX::Map
+    LightEffect       = /<(?:Fog Opacity:)[ ](\d+)>/i
+  end
+  
   
   # See "tag: equiparam" for details
   module REGEX::Equipment

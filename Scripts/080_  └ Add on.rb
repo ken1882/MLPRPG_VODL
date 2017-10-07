@@ -24,7 +24,9 @@ class Game_Map
   attr_accessor :timer
   attr_accessor :projectiles, :enemies
   attr_accessor :accurate_event_positions
+  attr_accessor :event_battler_instance
   attr_reader   :item_drops
+  attr_accessor :fog_enabled                      # Light effect fog
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -35,7 +37,10 @@ class Game_Map
     @drop_timer      = 0
     @item_drops      = []
     @accurate_event_positions = {}
+    @event_battler_instance   = {}
+    @enemies         = []
     @flag_after_load = false
+    @fog_enabled     = false
     init_battle_members
     initialize_opt
     set_max_edge
@@ -73,7 +78,6 @@ class Game_Map
     BattleManager.setup
     
     debug_print "Setup map: #{map_id}"
-    
     SceneManager.reserve_loading_screen(map_id)
     Graphics.fadein(60)
     SceneManager.set_loading_phase("Mining Block Chain", -1)
@@ -83,6 +87,7 @@ class Game_Map
     setup_battlers
     setup_loading(map_id)
     setup_camera
+    load_map_settings
     @item_drops[@map_id] = Array.new if @item_drops[@map_id].nil?
     referesh_vehicles
     setup_events
@@ -108,6 +113,24 @@ class Game_Map
     @display_y = 0
   end
   #--------------------------------------------------------------------------
+  def load_map_settings
+    @fog_enabled = false
+    @map.note.split(/[\r\n]+/).each do |line|
+      case line
+      when DND::REGEX::Map::LightEffect
+        @fog_enabled = $1.to_i
+      end
+    end
+    
+    if $game_map.fog_enabled
+      puts "Fog enabled: #{@fog_enabled}"
+      $game_map.effect_surface.change_color(60,0,0,0,@fog_enabled)
+    else
+      puts "Fog disbled"
+      $game_map.effect_surface.change_color(60,255,255,0,0)
+    end
+  end
+  #--------------------------------------------------------------------------
   # * Setup battler
   #--------------------------------------------------------------------------
   def setup_battlers
@@ -124,7 +147,6 @@ class Game_Map
   #--------------------------------------------------------------------------
   def setup_events
     @events  = {}
-    @enemies = []
     
     @map.events.each do |i, event|
       SceneManager.update_loading # tag: loading
@@ -317,6 +339,7 @@ class Game_Map
     @events.each do |key, event|
       pos = [POS.new(event.real_x, event.real_y),POS.new(event.x, event.y), POS.new(event.px, event.py)]
       @accurate_event_positions[key] = pos
+      @event_battler_instance[key]   = event.enemy if BattleManager.valid_battler?(event)
     end
   end
   #--------------------------------------------------------------------------
@@ -347,7 +370,9 @@ class Game_Map
       next if @events[key].nil?
       @events[key].load_position(*pos)
     end
+    
     @accurate_event_positions.clear
+    @event_battler_instance.clear
   end
   #--------------------------------------------------------------------------
   def update_vehicles
@@ -378,6 +403,12 @@ class Game_Map
   def deploy_item_drop(drops)
     return if drops.map_id != @map_id
     drops.deploy_sprite
+  end
+  #--------------------------------------------------------------------------
+  def refresh_condition_events
+    @events.each_value do |eve|
+      eve.refresh if eve.condition_flag
+    end
   end
   
 end
