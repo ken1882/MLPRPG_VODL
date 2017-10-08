@@ -36,8 +36,8 @@ class Game_Character < Game_CharacterBase
       @combat_timer -= 1 if @combat_timer > 0
       @chase_timer  -= 1 if @chase_timer > 0
       @chase_pathfinding_timer -= 1 if @chase_pathfinding_timer > 0
-      chase_target  if @current_target && !frozen? && !casting?
-      update_combat if @current_target && @combat_timer == 0 && !casting?
+      chase_target  if @current_target && !frozen? && !casting? && !@casting_flag
+      update_combat if @current_target && @combat_timer == 0 && !casting? && !@casting_flag
     end
     update_gachdndai
   end
@@ -60,13 +60,13 @@ class Game_Character < Game_CharacterBase
     return set_target(nil) if aggressive_level == 0
     @combat_timer = 20
     return process_tactic_commands unless @tactic_commands.empty?
-    determine_attack
-    determine_skill_usage
     determine_item_usage
+    determine_skill_usage
+    determine_attack
   end
   #----------------------------------------------------------------------------
   def chase_target
-    return if casting? || @next_action
+    return if casting? || @casting_flag
     return process_target_dead if @current_target.dead?
     return if aggressive_level < 3 || @chase_timer > 0 || command_holding?
     if primary_weapon
@@ -100,6 +100,7 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def determine_attack
     return if !primary_weapon
+    return if @casting_flag || casting?
     BattleManager.opponent_battler(self).each do |enemy|
       next if distance_to_character(enemy) > primary_weapon.tool_distance
       attack(enemy)
@@ -164,6 +165,7 @@ class Game_Character < Game_CharacterBase
   # * Determine whether change current target
   #----------------------------------------------------------------------------
   def change_target?(target)
+    return false if casting?
     return false if target == @current_target
     return true  if @current_taret.nil? || @current_taret.dead?
     return true  if distance_to_character(target) < distance_to_character(@current_target)

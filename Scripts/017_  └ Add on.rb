@@ -181,6 +181,7 @@ module BattleManager
       next if enemy.static_object?
       range = user.distance_to_character(enemy)
       next if range > sensor
+      target_distance *= 1.8 if !user.path_clear?(user.x, user.y, enemy.x, enemy.y)
       if target_distance > range
         target = enemy
         target_distance = range

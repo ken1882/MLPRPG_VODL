@@ -141,6 +141,7 @@ class Game_CharacterBase
       @action.start
       @next_action = nil
       @step_anime = true unless static_object?
+      @chase_timer = 20 unless @action.item.tool_castime < 10
     end
     return if @action.nil?
     @action.update
@@ -156,6 +157,9 @@ class Game_CharacterBase
       info = sprintf("%s: %s", @action.user.name, @action.item.name)
       SceneManager.display_info(info)
     end
+    @casting_flag = false
+    @aggressive_level = @ori_agresilv
+    @aggressive_level = 4 if @aggressive_level.nil?
     @step_anime = @ori_step_anime; @ori_step_anime = nil;
     @action.execute
     turn_toward_character(@action.target)
@@ -254,12 +258,15 @@ class Game_CharacterBase
   def action; @action end
   #----------------------------------------------------------------------------
   def casting_interrupted?
-    return true if moving?
+    return true if moving? && saving_throw(:wis) <= 15
     return false
   end
   #----------------------------------------------------------------------------
   def interrupt_casting
-    id = @action.item.id; time = (@action.item.tool_castime / 5).to_i;
+    @aggressive_level = @ori_agresilv
+    @aggressive_level = 4 if @aggressive_level.nil?
+    @casting_flag = false
+    id = @action.item.id; time = (@action.item.tool_cooldown / 5).to_i;
     type = :item    if @action.item.is_a?(RPG::Item)
     type = :weapon  if @action.item.is_a?(RPG::Weapon)
     type = :armor   if @action.item.is_a?(RPG::Armor)

@@ -94,6 +94,7 @@ class Game_Enemy < Game_Battler
     list = action_list.sort{|a, b| b.rating <=> a.rating}
     list.select!{|a| item_test(self, $data_skills[a.skill_id]) && usable?($data_skills[a.skill_id])}
     skill = $data_skills[list.first.skill_id] rescue nil
+    
     return skill
   end
   

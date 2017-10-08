@@ -26,6 +26,7 @@ class Game_Character
   end
   #----------------------------------------------------------------------------
   def command_gather
+    return ; # tag: queued
     @movement_command = 2
     self.move_to_position($game_player.x, $game_player.y, goal:$game_player)
     $game_player.followers.move if self.is_a?(Game_Follower)

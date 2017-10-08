@@ -12,7 +12,7 @@ class Game_Event < Game_Character
   #--------------------------------------------------------------------------
   alias update_gaevdndai update
   def update
-    update_sight if @enemy && aggressive_level > 1 && !static_object?
+    update_sight if @enemy && aggressive_level > 1 && !static_object? && !@casting_flag
     update_gaevdndai
   end
   #----------------------------------------------------------------------------
@@ -113,6 +113,12 @@ class Game_Event < Game_Character
   def determine_skill_usage
     skill = @enemy.determine_skill_usage
     unless skill.nil?
+      if (skill.tool_castime || 0) > 10
+        @casting_flag = true
+        @ori_agresilv = @aggressive_level
+        @aggressive_level = 0
+        @chase_timer = 30
+      end
       target = BattleManager.autotarget(self, skill)
       @next_action = Game_Action.new(self, target, skill) 
       clear_pathfinding_moves

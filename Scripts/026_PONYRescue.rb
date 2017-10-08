@@ -17,7 +17,8 @@ module PONY::Rescue
     rpeve.name = "Princess Luna"
     rpeve.id = 2000
     eve = Game_Event.new($game_map.map_id, rpeve)
-    eve.move_speed = 5
+    eve.move_speed = 4
+    eve.through_character = true
     eve.set_graphic("Princess_Luna%(6)", 0)
     eve.spawn_npc_battler(9)
     $game_map.register_event(eve)

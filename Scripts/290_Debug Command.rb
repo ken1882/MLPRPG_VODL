@@ -105,6 +105,7 @@ class Game_Console
       volume = [100, 100, 100]
     end
     $sound_volume = []
+    volume = [100, 100, 100] if !volume
     (volume.size).times do |i| $sound_volume[i] = volume[i] end    
     debug_print("Volume:", $sound_volume)
   end

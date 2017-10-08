@@ -13,6 +13,7 @@ class Game_Character < Game_CharacterBase
   attr_reader     :zoom_y
   attr_reader     :knockbacks
   attr_accessor   :through                  # pass-through
+  attr_accessor   :through_character
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
   #--------------------------------------------------------------------------
@@ -21,6 +22,7 @@ class Game_Character < Game_CharacterBase
     @zoom_x = @zoom_y = 1.0
     @zoom_duration_x = @zoom_duration_y = 0
     @knockbacks = []
+    @through_character = false
     init_public_memdnd
   end
   #----------------------------------------------------------------------------
@@ -162,7 +164,7 @@ class Game_Character < Game_CharacterBase
     SceneManager.display_info("#{self.name} - knocked out")
     $game_map.need_refresh = true
     @ori_through = @through
-    @through     = true
+    #@through     = true
     set_target(nil)
   end
   #----------------------------------------------------------------------------

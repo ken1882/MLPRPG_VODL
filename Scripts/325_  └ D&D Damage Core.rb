@@ -201,19 +201,16 @@ class Game_Battler < Game_BattlerBase
   # * new method: saving_throw
   #--------------------------------------------------------------------------
   def saving_throw(type, bonus = 0, user = nil, item = nil)
-    type = get_param_id(type) if type.is_a?(String)
+    type = get_param_id(type) unless type.is_a?(Fixnum)
     
-    value = roll(1,20)
-    return true  if value == 20
-    return false if value == 1
-    
+    value = roll(1,20)    
     str = 'save'
     value += param_modifier(type)
     #value  = process_states_effect(value, type, str, item)
     #value  = process_equip_effect(value, type, str, item)
     #value  = process_item_effect(value, type, str, item)
     
-    return (value + bonus) > dc
+    return value + bonus
   end
   #--------------------------------------------------------------------------
   # * new method: skillDC

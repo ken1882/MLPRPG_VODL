@@ -220,6 +220,7 @@ class Game_CharacterBase
   # * New: Collision?
   #-------------------------------------------------------------------------------
   def collision?(px, py)
+    return false if @through_character
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through || event == self
@@ -531,6 +532,7 @@ class Game_Player < Game_Character
   # * Collision check
   #-------------------------------------------------------------------------------
   def collision?(px, py)
+    return false if @through_character
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through
@@ -582,6 +584,7 @@ class Game_Event < Game_Character
   end
   #-------------------------------------------------------------------------------
   def collision?(px, py)
+    return false if @through_character
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through || event == self
@@ -647,6 +650,7 @@ class Game_Follower < Game_Character
   # * Collision check
   #-------------------------------------------------------------------------------
   def collision?(px, py)
+    return false if @through_character
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through
