@@ -75,6 +75,7 @@ module DND
     KOIndex           = 0
     KOPattern         = 0
     KODirection       = 8
+    CastingAnimation  = 162
   end
   #----------------------------------------------------------------------------
 end

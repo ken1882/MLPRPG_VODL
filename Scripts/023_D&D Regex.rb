@@ -76,7 +76,7 @@ module DND
   # tag: event config
   module REGEX::NPCEvent
     Enemy           = /<(?:enemy):[ ](\d+)>/i
-    StaticObject    = /<(?:static object)>/i
+    StaticObject    = /<static object>/i
     ConfigON        = /(?:config)/i
     ConfigOFF       = /<(?:\/config)>/i
   end
@@ -102,7 +102,13 @@ module DND
     KOIndex           = /(?:Knockdown Index =)[ ](\d+)/i          # KO Graphic Index
     KOPattern         = /(?:Knockdown pattern =)[ ](\d+)/i        # KO Graphics Pattern
     KODirection       = /(?:Knockdown Direction =)[ ](\d+)/i      # KO Character Direction
-    KOSound           = /(?:Knockdown Sound =)[ ](.+)/i     # Sound when KO
+    KOSound           = /(?:Knockdown Sound =)[ ](.+)/i           # Sound when KO
+    CastGraphic       = /(?:Casting Graphic =)[ ](.+)/i
+    CastIndex         = /(?:Casting Index =)[ ](\d+)/i
+    CastPattern       = /(?:Casting pattern =)[ ](\d+)/i
+    
+    WeaponLvProtect   = /(?:Weapon Level Prof =)[ ](\d+)/i  # Immune weapon attacks bwlown N level
+    CastingAnimation  = /(?:Casting Animation =)[ ](\d+)/i
     
     FaceName          = /(?:Face Name =)[ ](.+)/i   # Face file name
     FaceIndex         = /(?:Face Index=)[ ](\d+)/i  # Face index

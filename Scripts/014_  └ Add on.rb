@@ -133,17 +133,17 @@ module SceneManager
   def self.viewport
     return scene.viewport
   end
-  
+  #--------------------------------------------------------------------------
   def self.viewport1
     return nil unless scene_is?(Scene_Map)
     return scene.spriteset.viewport1
   end
-  
+  #--------------------------------------------------------------------------
   def self.viewport2
     return nil unless scene_is?(Scene_Map)
     return scene.spriteset.viewport2
   end
-  
+  #--------------------------------------------------------------------------
   def self.viewport3
     return nil unless scene_is?(Scene_Map)
     return scene.spriteset.viewport3
@@ -267,7 +267,24 @@ module SceneManager
   #-------------------------------------------------------------------------
   def self.register_item_drop(instance, x, y)
     return unless spriteset
-    spriteset.register_item_drop(instance, x, y)
+    return spriteset.register_item_drop(instance, x, y)
+  end
+  #-------------------------------------------------------------------------
+  def self.create_override_sprite(battler)
+    return unless spriteset || battler.nil?
+    spriteset.create_override_sprite(battler)
+  end
+  #-------------------------------------------------------------------------
+  def self.dispose_override_sprite(battler)
+    return unless spriteset || battler.nil?
+    spriteset.dispose_override_sprite(battler)
+  end
+  #-------------------------------------------------------------------------
+  def self.register_all_dead_rescue(proc)
+  end
+  #-------------------------------------------------------------------------
+  def self.call_all_dead_rescue
+    PONY::Rescue.CallPrincessLuna
   end
   
 end

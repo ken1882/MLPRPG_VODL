@@ -143,9 +143,10 @@ module BattleManager
   # * Enter target selection
   #--------------------------------------------------------------------------
   def self.autotarget(user, item, sensor = item.tool_distance)
-    return user.current_target if user.current_target
-    return user if item.for_none? || item.for_user?
+    return user if item.for_user?
     return one_random_ally(user, item, sensor) if item.for_friend?
+    return user if item.for_none?
+    return user.current_target if user.current_target
     return one_random_enemy(user, item, sensor)
   end
   #--------------------------------------------------------------------------
@@ -177,6 +178,7 @@ module BattleManager
     target = nil
     target_distance = 0xffffff
     enemies.each do |enemy|
+      next if enemy.static_object?
       range = user.distance_to_character(enemy)
       next if range > sensor
       if target_distance > range
@@ -184,7 +186,7 @@ module BattleManager
         target_distance = range
       end
     end
-    return target ? target : POS.new(user.x, user.y)
+    return target ? target : user.target_front_position(sensor - 0.5)
   end
   #--------------------------------------------------------------------------
   # * Take median target as promary one
@@ -206,7 +208,14 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.execute_action(action)
     return if $game_system.story_mode?
-    puts "[Debug]: Action executed"
+    if action.effect_delay < 20
+      apply_action_effect(action)
+    else
+      $game_map.queued_actions << action.dup
+    end
+  end
+  #--------------------------------------------------------------------------
+  def self.apply_action_effect(action)
     execute_subaction(action) if action.item.tool_invoke
     action.subject = determine_effected_targets(action.user, action.item, action.target)
     action.user.use_item(action.item) if action.item.tool_animmoment == 0 # Directly use
@@ -390,6 +399,7 @@ module BattleManager
   # * In battle?
   #--------------------------------------------------------------------------
   def self.in_battle?
+    return true if $game_switches[9]
     return @flags[:in_battle] if @flags[:in_battle]
     if @battle_end_delay == 0
       @flags[:in_battle] = all_battlers.any?{ |battler| battler.current_target.is_a?(Game_Actor) }
@@ -429,17 +439,19 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.battle_start
     puts "[System]: Battle Start"
-    save_bgm_and_bgs
-    RPG::BGM.fade(60) if @map_bgm
-    RPG::BGS.fade(60) if @map_bgs
-    play_battle_bgm
-    @flags[:detect_combat] = false
+    if !$game_switches[5]
+      save_bgm_and_bgs
+      RPG::BGM.fade(60) if @map_bgm
+      RPG::BGS.fade(60) if @map_bgs
+      play_battle_bgm
+    end
+    @flags[:detect_combat] = false if all_battlers.any?{ |battler| battler.current_target.is_a?(Game_Actor) }
   end
   #--------------------------------------------------------------------------
   def self.battle_end
     puts "[System]: Battle End"
     @flags[:detect_combat] = false
-    replay_bgm_and_bgs
+    replay_bgm_and_bgs if !$game_switches[5]
     $game_party.members.each{|actor| actor.revive if actor.dead?}
   end
   #--------------------------------------------------------------------------

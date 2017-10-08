@@ -28,19 +28,6 @@ module Graphics
 end
 #==============================================================================
 class Bitmap
-  
-  #-----------------------------------------------------------------------------
-  alias init_dnd initialize
-  def initialize(*args)
-    init_dnd(*args)
-    #Cache.link_bitmap(self)
-  end
-  #-----------------------------------------------------------------------------
-  alias dispose_cachelink dispose
-  def dispose
-    dispose_cachelink
-    #Cache.destroy_bitmap(self)
-  end
   #-----------------------------------------------------------------------------
   # Implementation of Bresenham's algorithm with dirty hacks
   def draw_line(x1,y1,x2,y2,col)
@@ -152,18 +139,6 @@ class Bitmap
 end
 #==============================================================================
 class Sprite
-  #-----------------------------------------------------------------------------
-  alias init_spcache initialize
-  def initialize(*args)
-    init_spcache(*args)
-    #Cache.link_bitmap(self)
-  end
-  #-----------------------------------------------------------------------------
-  alias dispose_spcachelink dispose
-  def dispose
-    dispose_spcachelink
-    #Cache.destroy_bitmap(self)
-  end
   #--------------------------------------------------------------------------
   # * Show
   #--------------------------------------------------------------------------

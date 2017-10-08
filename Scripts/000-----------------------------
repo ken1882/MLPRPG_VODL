@@ -46,7 +46,10 @@ Quick Tag for temp:
 ╠─╣                                                                          ╠─╣
 ║ ╚══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╝ ║
 ╚════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════╝
+$game_switches[3]  => Allow game-over flag # last work: allow game over flag
+$game_switches[5]  => Disable auto play battle BGM
 $game_switches[6]  => Initial map events setup done flag
+$game_switches[9]  => Boss Battling Flag
 $game_switches[12] => Story mode on, everyone cannot move unless assigned
 $game_switches[16] => Hide all UI, if on, all huds will be hidden, and vice versa
 $event => quick access to the event called Game_Interpreter's command 335(script)
