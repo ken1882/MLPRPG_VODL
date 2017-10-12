@@ -14,6 +14,7 @@ class Game_Character < Game_CharacterBase
   attr_reader     :knockbacks
   attr_accessor   :through                  # pass-through
   attr_accessor   :through_character
+  attr_accessor   :step_anime               # stepping animation
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
   #--------------------------------------------------------------------------
@@ -89,6 +90,27 @@ class Game_Character < Game_CharacterBase
       @y += Pixel_Range[dir][1]
     end
   end
+  #--------------------------------------------------------------------------
+  def obstacle_touched?(px, py, dir)
+    px += Pixel_Core::Tile_Range[dir][0]
+    py += Pixel_Core::Tile_Range[dir][1]
+    return true  if !$game_map.pixel_valid?(px,py) || $game_map.over_edge?(px/4, py/4)
+    return false if @through
+    return true  if $game_map.pixel_table[px,py,0] == 0
+    return true  if collide_event_objects?(px, py)
+    return false
+  end
+  #----------------------------------------------------------------------------
+  def collide_event_objects?(px, py)
+    for event in $game_map.events.values
+      if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
+        next if event.through || event == self || event.enemy
+        return true if event.static_object?
+        return true if event.priority_type == 1
+      end
+    end
+    return false
+  end
   #----------------------------------------------------------------------------
   # *) check if straight line path is able to see
   #----------------------------------------------------------------------------
@@ -112,7 +134,7 @@ class Game_Character < Game_CharacterBase
       px = (x + 0.5).to_i * 4
       py = (y + 0.5).to_i * 4
       (1..4).each do |i|
-        result |= pixel_passable?(px, py, i*2 );
+        result |= (!obstacle_touched?(px, py, i*2));
       end
       return false if !result
       
@@ -122,7 +144,7 @@ class Game_Character < Game_CharacterBase
         py = (y + 0.5).to_i * 4
         result = false
         (1..4).each do |i|
-          result |= pixel_passable?(px, py, i*2 );
+          result |= (!obstacle_touched?(px, py, i*2));
         end
         return false if !result        
         y = y + sgny;
@@ -161,10 +183,9 @@ class Game_Character < Game_CharacterBase
   # * Die when hitpoint drop to zero
   #----------------------------------------------------------------------------
   def kill
-    SceneManager.display_info("#{self.name} - knocked out")
+    #SceneManager.display_info("#{self.name} - knocked out")
     $game_map.need_refresh = true
     @ori_through = @through
-    #@through     = true
     set_target(nil)
   end
   #----------------------------------------------------------------------------
@@ -176,12 +197,13 @@ class Game_Character < Game_CharacterBase
     char.moveto(pos1.x, pos1.y)
     @action, char.action = char.action, @action
     @next_action, char.next_action = char.next_action, @next_action
+    @casting_flag, char.casting_flag = char.casting_flag, @casting_flag
+    @step_anime, char.step_anime = char.step_anime, @step_anime
     set_direction(dir2); char.set_direction(dir1);
   end
   #----------------------------------------------------------------------------
   def process_event_death
     drop_loots if $game_player.is_opponent?(self)
-    set_target(nil)
     apply_event_death_effect
     start_animation(@enemy.death_animation)
   end
@@ -191,6 +213,7 @@ class Game_Character < Game_CharacterBase
     swg = @enemy.death_switch_global
     vrsi, vrsv = *@enemy.death_var_self if @enemy.death_var_self
     vrgi, vrgv = *@enemy.death_var_global
+    return if sws.nil? && swg + vrsi + vrgi == 0
     if sws
       key = [@map_id, @event.id, sws]
       $game_self_switches[key] = true
@@ -235,7 +258,7 @@ class Game_Character < Game_CharacterBase
     exp   = @enemy.exp
     gold  = @enemy.gold
     loots = @enemy.make_drop_items
-    $game_party.gain_exp(exp)
+    BattleManager.add_party_exp(exp)
     loots = [] if loots.nil?
     $game_map.register_item_drop(@x, @y, gold, loots)
   end
@@ -291,5 +314,4 @@ class Game_Character < Game_CharacterBase
   def casting_index
     @character_index
   end
-  #--------------------------------------------------------------------------
 end

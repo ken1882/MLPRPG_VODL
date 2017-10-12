@@ -29,7 +29,7 @@ class Game_Action
     @forcing = forcing
     @item 	 = item
     @time    = user.item_casting_time(item)
-    
+    @time_needed = @time
     @effect_delay  = item.tool_effectdelay rescue 0
     @interruptible = true
     @casting       = true
@@ -46,6 +46,11 @@ class Game_Action
       anim_id += 1 if anim_id == DND::BattlerSetting::CastingAnimation && @time > 120
       user.map_char.start_animation(anim_id) rescue nil
     end
+  end
+  #--------------------------------------------------------------------------
+  def initial_casting?
+    return false if cast_done?
+    return @time < @time_needed - 10
   end
   #---------------------------------------------------------------------------
   #  *) Return interrupt flag, if false, action will be executed anyway

@@ -173,6 +173,8 @@ class Game_Console
   def Teleport(map_id = 27 ,x = 4,y = 3)
     params = [0, map_id, x, y, 2, 2]
     $game_map.interpreter.command_201(params)
+    $game_temp.loading_destroy_delay = false
+    SceneManager.destroy_loading_screen
   end
   #----------------------------------------------------------------------------
   def ShowBallon(id = 1)

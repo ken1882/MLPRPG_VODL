@@ -20,7 +20,8 @@ class Scene_Menu < Scene_MenuBase
       @command_window.scene_swap($PAUSE_MENU_SKIN)                             
       @gold_window.scene_swap($PAUSE_MENU_SKIN)                                
       @status_window.scene_swap($PAUSE_MENU_SKIN)                              
-    end                                                                        
+    end
+    $game_map.cache_crash_backup
   end
   #--------------------------------------------------------------------------
   # * Termination Processing

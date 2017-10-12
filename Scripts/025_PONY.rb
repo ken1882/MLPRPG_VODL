@@ -88,7 +88,7 @@ module PONY
   class << self; alias DecryptInt DecInt; end
   #-----------------------------------------------------------------------------
   def InitOpenAL
-    # bugged
+    # tag: error >> bugged
     #$audio_device = Object.new
     #API::OpenALInitDevice.call(memprof($audio_device))
     #File.open('openal2.txt', 'wb'){|file| file << $audio_device}
@@ -101,7 +101,7 @@ module PONY
   #-----------------------------------------------------------------------------
   def PlayAudio(filename, sx, sy, sz, lx, ly, lz, 
                 svx = 0, svy = 0, svz = 0, lvx = 0, lvy = 0, lvz = 0)
-    API::OpenALPlay.call(filename, sx, sy, sz, lx, ly, lz, svx, svy, svz, lvx, lvy, lvz)
+    #API::OpenALPlay.call(filename, sx, sy, sz, lx, ly, lz, svx, svy, svz, lvx, lvy, lvz)
   end
   #-----------------------------------------------------------------------------
   def VerifyGiftCode(code)

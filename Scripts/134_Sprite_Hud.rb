@@ -87,8 +87,8 @@ class Sprite_Hud < Sprite_Base
     return true
   end
   #--------------------------------------------------------------------------
-  def update_visibility
-    return hide if @actor.nil? || ($game_system.hide_huds? && visible?)
+  def update_visibility(forced = false)
+    return hide if @actor.nil? || ($game_system.hide_huds? && visible?) || forced
     return show if !$game_system.hide_huds? && !visible?
   end
   #--------------------------------------------------------------------------
@@ -136,7 +136,6 @@ class Sprite_Hud < Sprite_Base
     dectect_actor_change if redetect
     return hide if @actor.nil?
     update_values if redetect || @actor_changed
-    show if !$game_system.hide_huds? && !visible?
     draw_name
     draw_hp
     draw_mp
@@ -144,6 +143,7 @@ class Sprite_Hud < Sprite_Base
     draw_face
     @last_hash = hash_value
     @actor_changed = false
+    update_visibility(true) if $game_system.hide_huds?
   end
   #--------------------------------------------------------------------------
   def draw_name

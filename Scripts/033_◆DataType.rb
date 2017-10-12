@@ -305,8 +305,9 @@ class RPG::Enemy
   def do_load_enemy_params(line)
     case line
     when DND::REGEX::Character::DefaultWeapon
-      @default_weapon = $data_weapons[$1.to_i]
-      puts "[System]: #{self.name}'s default weapon: #{@default_weapon.name}" if @default_weapon != 1
+      id = $1.to_i
+      @default_weapon = $data_weapons[id] if id > 1
+      puts "[System]: #{self.name}'s default weapon: #{@default_weapon.name}" if id > 1
     when DND::REGEX::Character::TeamID
       @team_id = $1.to_i
     when DND::REGEX::Character::DeathSwitchSelf
@@ -573,7 +574,9 @@ class RPG::BaseItem
     @tool_scopedir      = 5
     @tool_scopeangle    = 0
     @tool_blowpower     = 0
+    @tool_combo         = 0
     @action_sequence    = 0
+    @tool_effectdelay   = 0
     @dmg_saves          = nil
     @tool_soundeffect   = [nil, 80]
   end

@@ -355,7 +355,7 @@ class Game_Map
     end
     events.each do |event|
       event.update unless event.frozen? # tag: modified
-      terminate_event(event) if event.terminated
+      terminate_event(event) if event.terminated?
     end
     @common_events.each {|event| event.update}
   end
@@ -365,6 +365,7 @@ class Game_Map
   def select_on_screen_events
     unless table_update?
       @cached_events = @events.values
+      @cached_events.select!{|event| !event.terminated?}
       return
     end
     #---------------------------------------------------------------------------
@@ -383,7 +384,7 @@ class Game_Map
         ypos = loop_vertical? ? (y + dpy) % height : y + dpy
         next if xpos >= width || ypos >= height
         ary = @table.get(xpos, ypos)
-        ary.each do |ev| 
+        ary.each do |ev|
           if ev.terminated # tag: modified
             ary.delete(ev)
             next

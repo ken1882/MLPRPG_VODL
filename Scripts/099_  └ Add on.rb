@@ -25,6 +25,7 @@ class Game_Event < Game_Character
   attr_accessor :self_vars
   attr_accessor :aggressive_level
   attr_accessor :condition_flag
+  attr_accessor :terminate_cd
   #--------------------------------------------------------------------------
   # * Overwrite: Object Initialization
   #     event:  RPG::Event
@@ -34,6 +35,7 @@ class Game_Event < Game_Character
     @map_id = map_id
     @event = event
     @id = @event.id
+    @terminate_cd = 0
     moveto(@event.x, @event.y)
     collect_code_conditions
     refresh
@@ -142,11 +144,17 @@ class Game_Event < Game_Character
   def get_comments
     return unless @list
     comments = ""
-    for command in @list
-      next unless command.code == 108
-      command.parameters[0].split(/[\r\n]+/).each do |text|
-        comments += text + 10.chr
+    cnt = 0
+    listn = @list.size
+    while cnt < listn
+      if @list[cnt].code == 108
+        comments += @list[cnt].parameters[0]
+        while cnt < listn && @list[cnt + 1].code == 408
+          cnt += 1
+          comments += @list[cnt].parameters[0] + 10.chr
+        end
       end
+      cnt += 1
     end
     return comments
   end
@@ -175,7 +183,7 @@ class Game_Event < Game_Character
   # * Setup enemy
   #-------------------------------------------------------------------------------
   def setup_enemy(invalid)
-    if @enemy && !terminated?
+    if @enemy
       BattleManager.resign_battle_unit(self)
       @enemy = nil
     end
@@ -203,7 +211,7 @@ class Game_Event < Game_Character
         npc_config = false
       when DND::REGEX::NPCEvent::StaticObject
         @static_object = true
-        puts "#{event.name} #{@id} is a static object"
+        debug_print "#{event.name} #{@id} is a static object"
       end
       process_npc_event_config(line) if npc_config
     end # each comment line
@@ -257,15 +265,29 @@ class Game_Event < Game_Character
     $game_map.make_unique_names
   end
   #----------------------------------------------------------------------------
+  def update_terminate
+    @terminate_cd -= 1
+    if @terminate_cd <= 0
+      @terminated = true
+    end
+  end
+  #----------------------------------------------------------------------------
   # * Permanently delete the event
   #----------------------------------------------------------------------------
   def terminate
-    @terminated = true
-    $game_map.terminate_event(self)
+    @terminate_cd = 180 if (@terminate_cd || 0) <= 0
   end
   #----------------------------------------------------------------------------
   def terminated?
     @terminated
+  end
+  #--------------------------------------------------------------------------
+  # * Frame Update
+  #--------------------------------------------------------------------------
+  alias update_gvednd update
+  def update
+    update_terminate if @terminate_cd > 0
+    update_gvednd
   end
   #--------------------------------------------------------------------------
   # * Overwrite: Update During Autonomous Movement
@@ -274,6 +296,8 @@ class Game_Event < Game_Character
     return if $game_system.story_mode?
     if !@pathfinding_moves.empty?
       process_pathfinding_movement
+    elsif BattleManager.valid_battler?(self) && @current_target
+      chase_target
     elsif near_the_screen? && @stop_count > stop_count_threshold
       case @move_type
       when 1;  move_type_random
@@ -314,6 +338,8 @@ class Game_Event < Game_Character
   def kill
     process_event_death
     super
+    refresh
+    puts "#{event.id} #{event.name} killed"
   end
   #-------------------------------------------------------------------------------
   # * Params to method

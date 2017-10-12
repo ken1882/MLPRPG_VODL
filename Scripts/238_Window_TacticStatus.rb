@@ -60,7 +60,6 @@ class Window_TacticStatus < Window_Base
   def setup_battler(battler)
     return if @battler == battler
     name = battler.nil? ? "nil" : battler.name
-    puts "[Tactic]: Setup battler: #{battler} #{name}"
     @battler = battler
     refresh
   end

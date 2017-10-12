@@ -22,6 +22,10 @@ module PONY::Rescue
     eve.set_graphic("Princess_Luna%(6)", 0)
     eve.spawn_npc_battler(9)
     $game_map.register_event(eve)
+    item = $data_skills[15]
+    target = BattleManager.autotarget(eve, item)
+    eve.step_anime = true
+    eve.action = Game_Action.new(eve, target, item)
   end
   
 end

@@ -47,7 +47,7 @@ class Game_DroppedItem
   end
   #--------------------------------------------------------------------------
   def process_pickup
-    loots.each do |loot|
+    @loots.each do |loot|
       if loot.is_a?(Fixnum)
         $game_party.gain_gold(loot)
       else
@@ -57,6 +57,11 @@ class Game_DroppedItem
     Audio.se_play('Audio/SE/coin01', 100, 100)
     @loots.clear
     dispose
+  end
+  #--------------------------------------------------------------------------
+  def merge(gold, items = [])
+    @loots[0] += gold
+    @loots << items
   end
   #--------------------------------------------------------------------------
 end

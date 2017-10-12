@@ -20,6 +20,7 @@ class Window_EquipStatus < Window_Base
   
 end
 class RPG::Weapon < RPG::EquipItem
+  
   def initialize
     super
     @wtype_id = 0
@@ -27,6 +28,7 @@ class RPG::Weapon < RPG::EquipItem
     @features.push(RPG::BaseItem::Feature.new(31, 1, 0))
     @features.push(RPG::BaseItem::Feature.new(22, 0, 0))
   end
+  
   def performance
     base = (params[2] + params[4]) * 20
     plus = 0
@@ -37,7 +39,7 @@ class RPG::Weapon < RPG::EquipItem
       element  = feat[3]
       plus += (time * face + bonus)
     end
-    point = base + plus
+    point = base + plus + self.rarity
     return point
   end
   attr_accessor :wtype_id

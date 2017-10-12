@@ -308,7 +308,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def event_usable?(character)
     return true unless character.is_a?(Game_Event)
-    return character.character_name || character.terminated
+    return character.character_name || character.terminated?
   end
   #--------------------------------------------------------------------------
   def refresh
@@ -366,6 +366,7 @@ class Spriteset_Map
   end
   #--------------------------------------------------------------------------
   def dispose_override_sprite(battler)
+    return if @override.nil? || @override.disposed?
     @override.dispose
     @override = nil
   end

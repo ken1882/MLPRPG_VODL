@@ -43,6 +43,7 @@ module BattleManager
     @can_lose         = can_lose
     @battle_end_delay = 0
     @detect_delay     = 0
+    @party_exp_gained = 0
     @last_inbattle_flag = false
     debug_print "Battle Manager setup"
   end
@@ -262,7 +263,7 @@ module BattleManager
       names << char.actor.name if char.is_a?(Game_Player)   && char.actor
       names << char.actor.name if char.is_a?(Game_Follower) && char.actor
     end
-    debug_print "Action subjects: #{names}}"
+    
     return candidates
   end
   #--------------------------------------------------------------------------
@@ -273,12 +274,12 @@ module BattleManager
     dir = item.tool_scopedir == 0 ? user.direction : item.tool_scopedir
     angle1 = (Direction_Angles[dir] + item.tool_scopeangle / 2 + 360) % 360
     angle2 = (Direction_Angles[dir] - item.tool_scopeangle / 2 + 360) % 360
-    puts "Dir: #{dir} #{Direction_Angles[dir]}"
+    
     distance = item.tool_scope
     
     re = Math.in_arc?(target.x + 0.5, target.y + 0.5, user.x + 0.5, user.y + 0.5,
                       angle1, angle2, item.tool_scope, dir)
-    puts "In arc: #{re}"
+    
     return re
   end
   #--------------------------------------------------------------------------
@@ -328,6 +329,7 @@ module BattleManager
     return invoke_action_sequence(action) if item.action_sequence > 0
     action.subject.each do |target|
       next unless valid_battler?(target)
+      action.user.map_char.last_hit_target = target
       target.item_apply(action.user, item)
     end
   end
@@ -454,6 +456,7 @@ module BattleManager
     @flags[:detect_combat] = false
     replay_bgm_and_bgs if !$game_switches[5]
     $game_party.members.each{|actor| actor.revive if actor.dead?}
+    dispute_party_exp
   end
   #--------------------------------------------------------------------------
   def self.clear_flag(symbol = nil)
@@ -487,6 +490,16 @@ module BattleManager
     return if @map_bgm.nil?
     @map_bgm.replay unless $BTEST
     @map_bgs.replay unless $BTEST
+  end
+  #--------------------------------------------------------------------------
+  def self.add_party_exp(amount)
+    @party_exp_gained += amount
+  end
+  #--------------------------------------------------------------------------
+  def self.dispute_party_exp
+    return if @party_exp_gained < 0
+    $game_party.gain_exp(@party_exp_gained)
+    @party_exp_gained = 0
   end
   #--------------------------------------------------------------------------
   def self.on_encounter

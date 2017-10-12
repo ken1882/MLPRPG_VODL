@@ -31,7 +31,11 @@ class Game_Map
     update_scroll
     update_parallax
     @screen.update
-    $game_system.time_stopper.update unless $game_system.time_stopper.nil?
+    update_drops
+    unless $game_system.time_stopper.nil?
+      $game_system.time_stopper.update
+      $game_system.time_stopper.update_battler
+    end
     @timestop_timer += 1
     if @timestop_timer >= $game_system.timestop_duration
       $game_system.resume_time 

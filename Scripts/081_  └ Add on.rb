@@ -15,6 +15,10 @@ class Game_Map
                        'Ｋ','Ｌ','Ｍ','Ｎ','Ｏ','Ｐ','Ｑ','Ｒ','Ｓ','Ｔ',
                        'Ｕ','Ｖ','Ｗ','Ｘ','Ｙ','Ｚ']
   #--------------------------------------------------------------------------
+  #  Constants
+  #--------------------------------------------------------------------------
+  Battler_Updates   = 20
+  #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_reader   :map
@@ -35,13 +39,15 @@ class Game_Map
     @projectiles     = []
     @timer           = 0
     @timestop_timer  = 0
-    @item_drops      = []
+    @item_drops      = {}
     @accurate_event_positions = {}
     @event_battler_instance   = {}
     @enemies         = []
     @queued_actions  = []
     @flag_after_load = false
     @fog_enabled     = false
+    @sort_timer         = 0
+    @enemy_update_index = 0
     init_battle_members
     initialize_opt
     set_max_edge
@@ -99,6 +105,7 @@ class Game_Map
     setup_battleback
     @need_refresh = false
     @map.battle_bgm = $battle_bgm
+    @backup = nil
     after_setup
   end
   #--------------------------------------------------------------------------
@@ -154,7 +161,7 @@ class Game_Map
     @map.events.each do |i, event|
       SceneManager.update_loading # tag: loading
       eve = Game_Event.new(@map_id, event)
-      next if eve.terminated
+      next if eve.terminated?
       @events[i] = eve
     end
     
@@ -203,6 +210,7 @@ class Game_Map
     update_timer
     update_drops
     update_queued_actions
+    update_enemies
     update_gmap_timer(main)
   end
   #--------------------------------------------------------------------------
@@ -220,8 +228,26 @@ class Game_Map
   #--------------------------------------------------------------------------
   def update_timer
     @timer += 1
+    @sort_timer -= 1
+    sort_enemies if @sort_timer == 0
     process_battler_regenerate if @timer % DND::BattlerSetting::RegenerateTime == 0
     process_timecycle_end      if @timer >= PONY::TimeCycle
+  end
+  #--------------------------------------------------------------------------
+  # * Update NPC battler
+  #--------------------------------------------------------------------------
+  def update_enemies
+    return if @enemies.size == 0
+    @enemy_update_index = (@enemy_update_index + 1) % @enemies.size
+    @enemies[@enemy_update_index].update_battler
+  end
+  #--------------------------------------------------------------------------
+  def sort_enemies
+    tn = Battler_Updates
+    @sort_timer  = tn
+    @sort_timer += rand(@enemies.size - tn) if @enemies.size > tn
+    @enemy_update_index = 0
+    @enemies.sort!{|a,b| a.distance_to_character($game_player) <=> b.distance_to_character($game_player)}
   end
   #--------------------------------------------------------------------------
   def process_battler_regenerate
@@ -235,8 +261,11 @@ class Game_Map
   end
   #--------------------------------------------------------------------------
   def terminate_event(event)
+    puts "Terminate event: #{event.id}"
     @events.delete(event.id)
     @cached_events.delete(event) if @cached_events
+    @keep_update_events.delete(event) if @keep_update_events
+    @forced_update_events.delete(event) if @forced_update_events
   end
   #--------------------------------------------------------------------------
   # * Push character into active battlers
@@ -350,6 +379,7 @@ class Game_Map
   #--------------------------------------------------------------------------
   def on_game_save
     @events.each do |key, event|
+      event.dispose_sprites
       pos = [POS.new(event.real_x, event.real_y),POS.new(event.x, event.y), POS.new(event.px, event.py)]
       @accurate_event_positions[key] = pos
     end
@@ -405,6 +435,11 @@ class Game_Map
   #--------------------------------------------------------------------------
   def register_item_drop(x, y, gold, loots)
     return if loots.empty? && gold < 1
+    @item_drops[@map_id].each do |drop|
+      if (drop.x - x).abs < 1 && (drop.y - y).abs < 1
+        return drop.merge(gold, loots)
+      end
+    end
     loots.unshift(gold)
     drops = Game_DroppedItem.new(@map_id, x, y, loots)
     @item_drops[@map_id] << drops
@@ -432,5 +467,14 @@ class Game_Map
   def all_dead?(team_id)
     return !(@enemies.select{|c| c.team_id == team_id}.any?{|b| !b.dead?})
   end
+  #--------------------------------------------------------------------------
+  def cache_crash_backup
+    @backup = Marshal.dump($game_map) rescue @backup
+  end
+  #--------------------------------------------------------------------------
+  def get_cached_backup
+    return @backup
+  end
+  #--------------------------------------------------------------------------
   
 end

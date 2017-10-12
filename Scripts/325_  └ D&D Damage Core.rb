@@ -262,7 +262,6 @@ class Game_Battler < Game_BattlerBase
         SceneManager.display_info("#{user.name} - weapon ineffective")
         info = "Resisted"
       end
-      puts "Readt popup for #{self} #{info}"
       popup_info(info, DND::COLOR::White)
       apply_damaged_target_change(user, 0)
     end
@@ -327,7 +326,7 @@ class Game_Battler < Game_BattlerBase
   # *) Apply hit
   # ---------------------------------------------------------------------------
   def apply_hit(user, item)
-    puts "Apply hit: #{item} #{item.name}"
+    #puts "Apply hit: #{item} #{item.name}"
     unless item.is_a?(RPG::Skill) && item.damage.none?
       value = make_damage_value(user, item)
       execute_damage(user)

@@ -64,7 +64,8 @@ module TH
       3 => [40,60,200], #blue
       4 => [255, 90, 0], #orange
       5 => [150, 40, 160], #purple
-      6 => [25,25,45], #very deep blue
+      6 => [25,25,45], # very deep blue
+      7 => [245, 30, 10] # Red
     }
     
     Regex = /<item[-_ ]rarity:\s*(\d+)\s*>/i

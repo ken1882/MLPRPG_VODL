@@ -73,7 +73,7 @@ class Game_Interpreter
   #--------------------------------------------------------------------------
   def command_302
     return if $game_party.in_combat?
-    puts "Interpreter: Event Id: #{@event_id}"
+    
     goods = [@params]
     while next_event_code == 605
       @index += 1

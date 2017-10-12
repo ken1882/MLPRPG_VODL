@@ -224,7 +224,7 @@ module Variable
   # self.message_rows
   #--------------------------------------------------------------------------
   def self.message_rows
-    return 4 if YEA::MESSAGE::VARIABLE_ROWS <= 0
+    return 4 if YEA::MESSAGE::VARIABLE_ROWS <= 0 || $game_variables.nil?
     return 4 if $game_variables[YEA::MESSAGE::VARIABLE_ROWS] <= 0
     return $game_variables[YEA::MESSAGE::VARIABLE_ROWS]
   end

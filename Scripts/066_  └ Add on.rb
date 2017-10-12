@@ -47,6 +47,7 @@ class Game_Battler < Game_BattlerBase
     return false if !ignore_cdt && !cooldown_ready?(item)
     return skill_conditions_met?(item)  if item.is_a?(RPG::Skill)
     return item_conditions_met?(item)   if item.is_a?(RPG::Item)
+    return false if !item.is_a?(RPG::UsableItem) && !SceneManager.scene_is?(Scene_Map)
     return weapon_conditions_met?(item) if item.is_a?(RPG::Weapon)
     return false
   end
@@ -108,12 +109,12 @@ class Game_Battler < Game_BattlerBase
   def item_test(user, item)
     return false if casting?
     item = item.object if item.methods.include?(:object)
-    return true if item.is_a?(RPG::Weapon) || item.is_a?(RPG::Armor)
+    return true if (item.is_a?(RPG::Weapon) || item.is_a?(RPG::Armor)) && SceneManager.scene_is?(Scene_Map)
     return false if item.for_dead_friend? != dead?
     return true if item.for_opponent?
-    return true if item.damage.recover? && item.damage.to_hp? && hp < mhp
-    return true if item.damage.recover? && item.damage.to_mp? && mp < mmp
-    return true if item_has_any_valid_effects?(user, item)
+    return true if item.is_a?(RPG::UsableItem) && item.damage.recover? && item.damage.to_hp? && hp < mhp
+    return true if item.is_a?(RPG::UsableItem) && item.damage.recover? && item.damage.to_mp? && mp < mmp
+    return true if item.is_a?(RPG::UsableItem) && item_has_any_valid_effects?(user, item)
     return true if item.is_a?(RPG::UsableItem) && !item.damage.none?
     return false
   end
@@ -195,6 +196,16 @@ class Game_Battler < Game_BattlerBase
     return reset_state_counts_default(state_id) if duration.nil?
     @state_turns[state_id] = duration
     @state_steps[state_id] = state.steps_to_remove
+  end
+  #--------------------------------------------------------------------------
+  # * Use Skill/Item
+  #    Called for the acting side and applies the effect to other than the user.
+  #--------------------------------------------------------------------------
+  def use_item(item)
+    pay_skill_cost(item) if item.is_a?(RPG::Skill)
+    consume_item(item)   if item.is_a?(RPG::Item)
+    return unless item.is_a?(RPG::Skill) || item.is_a?(RPG::Item)
+    item.effects.each {|effect| item_global_effect_apply(effect) }
   end
   #--------------------------------------------------------------------------
   # * Alias: Use Skill/Item

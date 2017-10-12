@@ -11,9 +11,10 @@ class Game_CharacterBase
   #--------------------------------------------------------------------------
   attr_accessor :weight, :velocity, :opacity, :x, :y, :move_speed
   attr_accessor :movment_formula  # delta y = f(x)
-  attr_accessor :action
+  attr_accessor :action, :casting_flag
   attr_accessor :next_action
   attr_accessor :current_target
+  attr_accessor :last_hit_target
   #----------------------------------------------------------------------------
   # *) Initialize Object
   #----------------------------------------------------------------------------
@@ -23,12 +24,15 @@ class Game_CharacterBase
     @weight   = 10
     @velocity = @move_speed
     @opacity  = 0xff
-    @movment_formula = nil
-    @next_action     = nil
-    @action          = nil
-    @current_target  = nil
-    @hint_cooldown   = 0
-    @popup_timer     = 0
+    @movment_formula    = nil
+    @next_action        = nil
+    @action             = nil
+    @current_target     = nil
+    @last_hit_target    = nil
+    @hint_cooldown      = 0
+    @popup_timer        = 0
+    @combo_timer        = 0
+    @weapon_combo_stack = []
     @queued_popups   = []
   end
   #----------------------------------------------------------------------------
@@ -44,8 +48,10 @@ class Game_CharacterBase
   # * Update RTA
   #----------------------------------------------------------------------------
   def update_realtime_action
+    @last_hit_target = nil if !@last_hit_target.nil? && (!BattleManager.valid_battler?(@last_hit_target) || @last_hit_target.dead?)
     update_cooldown
-    update_action if @action || @next_action
+    update_combo    if @combo_timer > 0
+    update_action   if @action || @next_action
   end
   #----------------------------------------------------------------------------
   # * Cool down reduce
@@ -64,6 +70,11 @@ class Game_CharacterBase
     battler.armor_cooldown.each do |id, cdt|
       battler.armor_cooldown[id] -= 1 if cdt > 0
     end
+  end
+  #----------------------------------------------------------------------------
+  def update_combo
+    @combo_timer -= 1 if @combo_timer > 0
+    clear_combo       if @combo_timer == 0
   end
   #----------------------------------------------------------------------------
   # * Can perform action?
@@ -125,23 +136,27 @@ class Game_CharacterBase
   # * Use item
   #----------------------------------------------------------------------------
   def use_tool(item, target = nil)
-    puts "[Debug]: Use item: #{item}, target: #{target}"
+    #puts "[Debug]: Use item: #{item}, target: #{target}"
     target = BattleManager.autotarget(self, item) if target.nil?
     name = target.name rescue nil
-    puts "[Debug]: Item final target: #{target}(#{name}) at #{[target.x,target.y]}"
+    #puts "[Debug]: Item final target: #{target}(#{name}) at #{[target.x,target.y]}"
     @next_action = Game_Action.new(self, target, item)
   end
   #----------------------------------------------------------------------------
   # * Update current action
   #----------------------------------------------------------------------------
   def update_action
+    return if $game_system.story_mode?
     if @next_action && battler.stiff == 0
       @ori_step_anime = @step_anime
       @action      = @next_action.dup
       @action.start
       @next_action = nil
       @step_anime = true unless static_object?
-      @chase_timer = 20 unless @action.item.tool_castime < 10
+      unless @action.item.tool_castime < 10
+        @casting_flag = true
+        @chase_timer = 20
+      end
     end
     return if @action.nil?
     @action.update
@@ -153,7 +168,7 @@ class Game_CharacterBase
   # * Execute action
   #----------------------------------------------------------------------------
   def execute_action
-    if @action.item.tool_castime > 10
+    if @action.item.tool_castime > 5
       info = sprintf("%s: %s", @action.user.name, @action.item.name)
       SceneManager.display_info(info)
     end
@@ -163,11 +178,12 @@ class Game_CharacterBase
     @step_anime = @ori_step_anime; @ori_step_anime = nil;
     @action.execute
     turn_toward_character(@action.target)
-    debug_print("#{self.name} execute action: #{@action.item.name}")
+    #debug_print("#{self.name} execute action: #{@action.item.name}")
     process_skill_action  if @action.item.is_a?(RPG::Skill)
     process_item_action   if @action.item.is_a?(RPG::Item)
     process_weapon_action if @action.item.is_a?(RPG::Weapon)
     process_armor_action  if @action.item.is_a?(RPG::Armor)
+    clear_combo           if !@weapon_combo_stack.empty? && !combo_continue?(@action.item)
     apply_action_stiff
   end
   #----------------------------------------------------------------------------
@@ -191,8 +207,20 @@ class Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def process_weapon_action
+    
+    cdt = @action.item.tool_cooldown
+    if !@weapon_combo_stack.empty? && @action.item.id == @weapon_combo_stack.first
+      prev_item = $data_weapons[@weapon_combo_stack.last]
+      @action.item = $data_weapons[prev_item.tool_combo]
+    end
+    
+    if @action.item.tool_combo > 1
+      @weapon_combo_stack << @action.item.id
+      cdt = 15
+      @combo_timer = 40
+    end
     SceneManager.setup_weapon_use(@action)
-    apply_cooldown(:weapon, @action.item.id, @action.item.tool_cooldown)
+    apply_cooldown(:weapon, @action.item.id, cdt)
   end
   #----------------------------------------------------------------------------
   def process_armor_action
@@ -208,6 +236,17 @@ class Game_CharacterBase
     when :armor;  battler.armor_cooldown[id] = time;
     when :skill;  battler.skill_cooldown[id] = time;
     end
+  end
+  #----------------------------------------------------------------------------
+  def combo_continue?(item)
+    return false unless item.is_a?(RPG::Weapon)
+    return false unless @weapon_combo_stack.include?(item.id)
+    return false unless item.tool_combo > 1
+    return true
+  end
+  #----------------------------------------------------------------------------
+  def clear_combo
+    @weapon_combo_stack.clear
   end
   #----------------------------------------------------------------------------
   # * Pop-up text
@@ -258,14 +297,15 @@ class Game_CharacterBase
   def action; @action end
   #----------------------------------------------------------------------------
   def casting_interrupted?
+    return false if @action.initial_casting?
     return true if moving? && saving_throw(:wis) <= 15
-    return false
   end
   #----------------------------------------------------------------------------
   def interrupt_casting
     @aggressive_level = @ori_agresilv
     @aggressive_level = 4 if @aggressive_level.nil?
     @casting_flag = false
+    @step_anime = @ori_step_anime; @ori_step_anime = nil;
     id = @action.item.id; time = (@action.item.tool_cooldown / 5).to_i;
     type = :item    if @action.item.is_a?(RPG::Item)
     type = :weapon  if @action.item.is_a?(RPG::Weapon)

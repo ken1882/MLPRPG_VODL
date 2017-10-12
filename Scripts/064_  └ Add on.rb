@@ -16,7 +16,7 @@ class Game_BattlerBase
   #--------------------------------------------------------------------------
   def ctr;  sparam(3); end     # CTR Casting Time Reducation Rate
                                             # Original: Pharmacology
-  def csr;  1 + (sparam(5) - 1) * 10;         end     # CSR Casting Speed Rate
+  def csr;  sparam(5); end     # CSR Casting Speed Rate
                                             # Original: TP Charge Rate
   #--------------------------------------------------------------------------
   # * Object Initialization

@@ -35,6 +35,15 @@ class Game_Event < Game_Character
   
   #------------------
 end
+class Block_Surface
+  
+  def dispose
+    valid = bitmap && !bitmap.disposed? rescue false
+    return unless valid
+    bitmap.dispose
+  end
+  
+end
 #==============================================================================
 # ** Game_Map
 #------------------------------------------------------------------------------

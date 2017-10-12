@@ -26,7 +26,7 @@ class Game_CharacterBase
   #--------------------------------------------------------------------------
   # * Start animation
   #--------------------------------------------------------------------------
-  def start_animation(animation)
+  def start_animation(animation, mirror = false)
     
     if animation.is_a?(Numeric)
       id = animation
@@ -38,7 +38,7 @@ class Game_CharacterBase
     if animation_id > 0
       @animation_queue.each {|sprite|
         if !sprite.animation?
-          sprite.start_animation(animation)
+          sprite.start_animation(animation, mirror)
           break
         end
       } # check idle animation sprite

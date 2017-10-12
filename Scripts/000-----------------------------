@@ -46,7 +46,7 @@ Quick Tag for temp:
 ╠─╣                                                                          ╠─╣
 ║ ╚══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╝ ║
 ╚════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════╝
-$game_switches[3]  => Allow game-over flag # last work: allow game over flag
+$game_switches[3]  => Allow game-over flag
 $game_switches[5]  => Disable auto play battle BGM
 $game_switches[6]  => Initial map events setup done flag
 $game_switches[9]  => Boss Battling Flag
@@ -101,6 +101,7 @@ end
 # * Print debug info
 #--------------------------------------------------------------------------
 def debug_print(*args)
+  return unless $debug_mode
   info = ""
   args.each do |line|
     info += line.to_s + ' '
@@ -111,6 +112,7 @@ alias debug_printf debug_print
 #--------------------------------------------------------------------------
 alias puts_debug puts
 def puts(*args)
+  return unless $debug_mode
   args[0] = "<#{Time.now}> " + args[0] if args[0] =~ /\[(.*)\]/i
   puts_debug(*args)
 end

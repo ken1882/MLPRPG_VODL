@@ -222,6 +222,7 @@ class Game_Party < Game_Unit
   # * Make all party member's exp as closer as possible
   #--------------------------------------------------------------------------
   def gain_exp(xp)
+    return if xp == 0
     info = sprintf("Party has gained xp: %d", xp)
     SceneManager.display_info(info)
     # Number of pones

@@ -164,8 +164,22 @@ module DataManager
     header[:actors]        = Marshal.load(Marshal.dump($game_actors))
     header[:party]         = Marshal.load(Marshal.dump($game_party))
     header[:troop]         = Marshal.load(Marshal.dump($game_troop))
-    header[:map]           = Marshal.load(Marshal.dump($game_map))
-    header[:player]        = Marshal.load(Marshal.dump($game_player))
+    begin
+      header[:map] = Marshal.load(Marshal.dump($game_map))
+    rescue Exception => e
+      info = e.to_s
+      errfilename = "SaveErr.txt"
+      text = "\nPlease submit #{errfilename} to the developer and try again later"
+      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while saving game:\n" + info + text);
+      info = sprintf("%s\n%s\n%s\n", SPLIT_LINE, Time.now.to_s, e)
+      e.backtrace.each{|line| info += line + 10.chr}
+      puts "#{info}"
+      File.open(errfilename, 'a') do |file|
+        file.write(info)
+      end
+      header[:map] = Marshal.load($game_map.get_cached_backup) rescue Marshal.load(Marshal.dump(Game_Map.new))
+    end
+    header[:player] = Marshal.load(Marshal.dump($game_player))
     header
   end
   

@@ -12,16 +12,16 @@ class Game_Event < Game_Character
   #--------------------------------------------------------------------------
   alias update_gaevdndai update
   def update
-    update_sight if @enemy && aggressive_level > 1 && !static_object? && !@casting_flag
     update_gaevdndai
   end
   #----------------------------------------------------------------------------
   # * update enemies in sight
   #----------------------------------------------------------------------------
   def update_sight
+    return unless aggressive_level > 1 && !static_object? && !@casting_flag
     @sight_timer -= 1 if @sight_timer > 0
     return if @sight_timer > 0
-    @sight_timer = 20
+    @sight_timer = 15
     return update_sighted if @current_target
     target = find_nearest_enemy
     set_target(target) if change_target?(target)
@@ -61,22 +61,25 @@ class Game_Event < Game_Character
     return in_sight?(battler, vrange)
   end
   #----------------------------------------------------------------------------
+  def update_battler
+    return if dead? || $game_system.story_mode?
+    @combat_timer -= 1 if @combat_timer > 0
+    @chase_timer  -= 1 if @chase_timer > 0
+    @chase_pathfinding_timer -= 1 if @chase_pathfinding_timer > 0
+    update_sight
+    update_combat if @current_target && @combat_timer == 0 && !casting? && !@casting_flag
+  end
+  #----------------------------------------------------------------------------
   def update_sighted
-    #key = [$game_map.id]
     if !battler_in_sight?(@current_target)
       @sight_lost_timer -= 15 if @sight_lost_timer > 0
       process_target_missing if @sight_lost_timer == 0
     else
       @sight_lost_timer = 180
       @target_last_pos = @current_target.pos
+      new_target = find_nearest_enemy  
     end
-    
-    BattleManager.opponent_battler(self).each do |battler|
-      next if !battler.primary_weapon
-      next if distance_to_character(battler) > visible_sight
-      next if !in_sight?(battler, visible_sight)
-      set_target(battler) if change_target?(battler)
-    end
+    set_target(new_target) if change_target?(new_target)
   end
   #----------------------------------------------------------------------------
   def process_target_missing

@@ -17,6 +17,23 @@ class Game_Follower < Game_Character
     return if gather?# || command_gathering?
     super
   end
+  #--------------------------------------------------------------------------
+  # * Alias: Frame Update
+  #--------------------------------------------------------------------------
+  alias update_dnd_combat update
+  def update
+    update_dnd_combat
+    update_battler
+  end
+  #----------------------------------------------------------------------------
+  def update_battler
+    return if dead? || $game_system.story_mode?
+    @combat_timer -= 1 if @combat_timer > 0
+    @chase_timer  -= 1 if @chase_timer > 0
+    @chase_pathfinding_timer -= 1 if @chase_pathfinding_timer > 0
+    chase_target  if @current_target && !@next_action
+    update_combat if @current_target && @combat_timer == 0 && !casting? && !@casting_flag
+  end
   #----------------------------------------------------------------------------
   # *) Determind sight angle
   #----------------------------------------------------------------------------

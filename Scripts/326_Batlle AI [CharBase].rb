@@ -32,13 +32,6 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   alias update_gachdndai update
   def update
-    if !dead? && !$game_system.story_mode?
-      @combat_timer -= 1 if @combat_timer > 0
-      @chase_timer  -= 1 if @chase_timer > 0
-      @chase_pathfinding_timer -= 1 if @chase_pathfinding_timer > 0
-      chase_target  if @current_target && !frozen? && !casting? && !@casting_flag
-      update_combat if @current_target && @combat_timer == 0 && !casting? && !@casting_flag
-    end
     update_gachdndai
   end
   #----------------------------------------------------------------------------
@@ -50,7 +43,6 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def set_target(target)
-    return if self.is_a?(Game_Player)
     @current_target = target
     signal = target.nil? ? false : true
     BattleManager.send_flag(in_battle: signal)
@@ -58,15 +50,17 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def update_combat
     return set_target(nil) if aggressive_level == 0
-    @combat_timer = 20
+    start_timer(:combat)
     return process_tactic_commands unless @tactic_commands.empty?
+    return if casting? || @next_action
     determine_item_usage
     determine_skill_usage
     determine_attack
   end
   #----------------------------------------------------------------------------
   def chase_target
-    return if casting? || @casting_flag
+    return if @current_target.nil?
+    return if casting? || @casting_flag || frozen?
     return process_target_dead if @current_target.dead?
     return if aggressive_level < 3 || @chase_timer > 0 || command_holding?
     if primary_weapon
@@ -74,8 +68,8 @@ class Game_Character < Game_CharacterBase
       if @chase_pathfinding_timer == 0 && !path_clear?(@x, @y, tx, ty)
         move_to_position(tx, ty, goal: @current_target, 
                            tool_range: primary_weapon.tool_distance)
-        @chase_pathfinding_timer = 120 + rand(60)
-        @chase_timer = 60
+        start_timer(:chase_pathfinding)
+        start_timer(:chse, 112)
       else
         # if weapon is ranged and enemy too close, move away from
         if primary_weapon.tool_distance > 2 && distance_to_character(@current_target) < 2
@@ -86,11 +80,12 @@ class Game_Character < Game_CharacterBase
             movable_dir = [2,4,6,8]
             movable_dir.delete(turn_toward_character(@current_target))
             move_straight(movable_dir[rand(3)], false)
-            @chase_timer = 8 if @chase_pathfinding_timer == 0
+            start_timer(:chase) if @chase_pathfinding_timer == 0
           end
         # when too fat, moev toward
         else
           move_toward_character(@current_target)
+          start_timer(:chase)
         end
       end
     else # run way, run away!
@@ -100,6 +95,7 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def determine_attack
     return if !primary_weapon
+    return unless battler.cooldown_ready?(primary_weapon)
     return if @casting_flag || casting?
     BattleManager.opponent_battler(self).each do |enemy|
       next if distance_to_character(enemy) > primary_weapon.tool_distance
@@ -157,6 +153,7 @@ class Game_Character < Game_CharacterBase
   # * Change target to attacker when being attcked
   #----------------------------------------------------------------------------
   def apply_damaged_target_change(attacker, value)
+    return unless BattleManager.valid_battler?(self)
     return if aggressive_level == 0
     return unless is_opponent?(attacker)
     set_target(attacker) if change_target?(attacker)
@@ -167,8 +164,8 @@ class Game_Character < Game_CharacterBase
   def change_target?(target)
     return false if casting?
     return false if target == @current_target
-    return true  if @current_taret.nil? || @current_taret.dead?
-    return true  if distance_to_character(target) < distance_to_character(@current_target)
+    return true  if @current_target.nil? || @current_target.dead?
+    return true  if target && distance_to_character(target) < distance_to_character(@current_target)
     return false
   end
   #----------------------------------------------------------------------------
@@ -198,11 +195,28 @@ class Game_Character < Game_CharacterBase
     return result
   end
   #----------------------------------------------------------------------------
+  def update_battler
+  end
+  #----------------------------------------------------------------------------
   def process_target_dead
     set_target(find_nearest_enemy)
   end
   #----------------------------------------------------------------------------
   def find_nearest_enemy
   end
+  #---------------------------------------------------------------------------
+  def update_sight
+  end
   #----------------------------------------------------------------------------
+  def start_timer(sym, plus = 0)
+    case sym
+    when :combat
+      return @comba_timer = 20 + plus;
+    when :chase_pathfinding
+      return @chase_pathfinding_timer = 120 + plus;
+    when :chase
+      return @chase_timer = 8 + plus;
+    end
+  end
+  
 end

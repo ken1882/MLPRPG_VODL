@@ -650,9 +650,11 @@ class Game_Event < Game_Character
     return if sx > Graphics.width && sy > Graphics.height && sx + w < 0 && sy + h < 0
     $game_map.light_surface.bitmap.blt(sx,sy,@light.bitmap,Rect.new(0,0,w,h),@light.opacity)
   end
+  
   def dispose_light
     @light.dispose
   end
+  
   def restore_light
     @light.restore
   end
@@ -937,6 +939,7 @@ class Spriteset_Map
   end
   def dispose_lights
     $game_map.lantern.dispose
+    $game_map.surfaces.each{|s| s.dispose}
     $game_map.light_sources.each { |source| source.dispose_light }
     $game_map.light_surface.bitmap.dispose
     $game_map.light_surface.dispose

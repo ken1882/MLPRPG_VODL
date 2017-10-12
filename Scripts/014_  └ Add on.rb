@@ -16,6 +16,7 @@ module SceneManager
   # * Execute
   #--------------------------------------------------------------------------
   def self.run
+    FileManager.export_all_map_dialog
     DataManager.unpack_data if $ENCRYPT
     @timer = 0
     info = "To ensure your best gameplay experience, please close the app that will consume your system resource, such as Flash, Youtube and other games."

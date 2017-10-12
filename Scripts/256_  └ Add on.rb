@@ -19,6 +19,7 @@ class Scene_Item < Scene_ItemBase
     create_action_window
     create_skillbar
     create_foreground
+    @actor = $game_party.leader
   end
   #--------------------------------------------------------------------------
   def init_vars

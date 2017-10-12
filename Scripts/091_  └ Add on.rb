@@ -201,5 +201,8 @@ class Game_Player < Game_Character
   def casting_animation 
     actor.actor.casting_animation rescue super
   end
-  #--------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
+  def set_target(target)
+  end
+  
 end

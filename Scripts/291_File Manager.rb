@@ -99,5 +99,58 @@ module FileManager
     
     return true_str
   end # def convert
-  
+  #--------------------------------------------------------------------------
+  def self.export_all_map_dialog
+    path = "Data/Map*.rvdata2"
+    files = Dir.glob(path)
+    files.each do |filename|
+     export_map_dialog(filename)
+    end
+  end
+  #--------------------------------------------------------------------------
+  def self.export_map_dialog(map_sym)
+    map_sym =~ /(?:Map)[ ]\d+/i
+    if map_sym.is_a?(Numeric)
+      map_id = map_sym.to_fileid(3) 
+    else
+      map_id = map_sym.split("Map")[1].split('.').first
+    end
+    path = "Data/Dialog/"
+    Dir.mkdir(path) unless File.exist?(path)
+    path     += map_id
+    Dir.mkdir(path) unless File.exist?(path)
+    filename = path + "/dialog.txt"
+    map  = load_data(sprintf("Data/Map%03d.rvdata2", map_sym)) if map_sym.is_a?(Numeric)
+    map  = load_data(map_sym) if map_sym.is_a?(String)
+    return unless map.is_a?(RPG::Map)
+    output = ""
+    map.events.each_value do |event|
+      output += sprintf("[%03d] %s\n", event.id, event.name)
+      event.pages.each do |page|
+        listsize = page.list.size
+        index = 0
+        while index < listsize
+          outputed = false
+          if page.list[index].code == 101 || page.list[index].code == 105
+            while page.list[index+1].code == 101 && Variable.message_rows > 4 || page.list[index+1].code == 401
+              index += 1
+              output += page.list[index].parameters[0].to_s + 10.chr
+              outputed = true
+            end
+          end # if page will show text
+          index += 1
+          output += SPLIT_LINE + 10.chr if outputed
+        end # commands in list
+      end # pages in event
+    end # events in map
+    File.open(filename, 'w') do |file|
+        file.write(output)
+    end
+  end
+  #--------------------------------------------------------------------------
+  def self.continue_message_string?
+    return true if next_event_code == 101 && Variable.message_rows > 4
+    return next_event_code == 401
+  end
+  #--------------------------------------------------------------------------
 end

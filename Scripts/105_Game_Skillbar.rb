@@ -237,10 +237,10 @@ class Game_Skillbar
     hotkey_items  = @actor.get_hotkeys
     @primary_tool = hotkey_items.first
     clear_page
-    debug_print("Skillbar stack size: #{@stack.size}")
+    #debug_print("Skillbar stack size: #{@stack.size}")
     case @stack.size
     when HotKeySelection
-      debug_print "Refresh hotkey selection"
+      #debug_print "Refresh hotkey selection"
       @first_scan_index = 0
       @items = hotkey_items
       @items.push(AllItem_Flag)
@@ -249,7 +249,7 @@ class Game_Skillbar
       @items.insert(2, Follower_Flag)
       @sprite.refresh if sprite_valid?
     when AllSelection
-      debug_print "Refresh hotkey bar page #{@current_page}"
+      #debug_print "Refresh hotkey bar page #{@current_page}"
       @items = @actor.get_hotkeys(true)
       @items.push(Follower_Flag)
       divide_pages(@actor.get_valid_skills)     if @stack.last == AllSkill_Flag
@@ -292,11 +292,10 @@ class Game_Skillbar
     return unless button_cooled?
     if Mouse.click?(1) && !Mouse.hover_UI? && SceneManager.scene_is?(Scene_Map) &&
       !SceneManager.tactic_enabled?
-      puts 'use primary tool'
       process_item_use(@primary_tool)
     elsif Mouse.click?(2) && @stack.size > HotKeySelection
       fallback
-    else
+    elsif !Input.press?(:kCTRL)
       for i in @first_scan_index...HotKeys::SkillBarSize
         select(i)    if Input.trigger?(HotKeys::SkillBar[i]) || Mouse.trigger_skillbar?(i)
         show_item_help(i) if Mouse.hover_skillbar?(i) && Input.trigger?(:kTAB)
@@ -307,7 +306,7 @@ class Game_Skillbar
   # *) Select item
   #--------------------------------------------------------------------------
   def select(index)
-    debug_print("Hotkey Bar selected: #{index} (#{@items[index]})")
+    #debug_print("Hotkey Bar selected: #{index} (#{@items[index]})")
     select_hotkey(index)
     heatup_button
   end
