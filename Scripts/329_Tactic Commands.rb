@@ -138,7 +138,7 @@ module Tactic_Config
       case @args[:atk_type]
       when :melee && target.default_weapon.melee?;    return priority;
       when :magic && target.default_weapon.is_magic?;  return priority;
-      when :ranged && target.default_weapon.ranged?;   return priority;
+        when :ranged && target.default_weapon.ranged?;   return priority;
       end
     end
     

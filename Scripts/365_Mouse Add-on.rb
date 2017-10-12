@@ -65,8 +65,10 @@ module Mouse
   #------------------------------------------------------------------------------
   def hover_window_log?
     window = SceneManager.scene.window_log
-    #return window ? collide_sprite?(window) && !window.active? : false
-    return window ? collide_sprite?(window) : false
+    return false if !window
+    return true  if collide_sprite?(window.button_sprite)
+    return false if !window.active?
+    return collide_sprite?(window)
   end
   #------------------------------------------------------------------------------
   def trigger_sprite?(sprite)

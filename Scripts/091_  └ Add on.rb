@@ -12,6 +12,7 @@ class Game_Player < Game_Character
   attr_accessor :target_event   # Event auto trigger when touched
   attr_reader   :new_x, :new_y
   attr_accessor :recurrence_delay
+  attr_accessor :free_fire
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -19,6 +20,7 @@ class Game_Player < Game_Character
   def initialize
     @target_event     = nil
     @recurrence_delay = nil
+    @free_fire = false
     initialize_gapc_opt
   end
   #--------------------------------------------------------------------------
@@ -177,7 +179,13 @@ class Game_Player < Game_Character
   # * Use item
   #----------------------------------------------------------------------------
   def use_tool(item, target = nil)
-    super
+    if @free_fire && item.ranged?
+      pos = Mouse.true_grid_by_pos(false)
+      pos = POS.new(pos[0], pos[1])
+      pos.x += 0.375; pos.y += 0.375;
+      target = pos
+    end
+    super(item, target)
     SceneManager.spriteset.hud_sprite[actor.index].draw_action(@next_action)
   end
   #----------------------------------------------------------------------------

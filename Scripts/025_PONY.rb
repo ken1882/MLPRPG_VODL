@@ -24,6 +24,8 @@ module PONY
     :chromastal     => 571,
     :mouse_casting  => 386,
     :loot_drop      => 573,
+    :aim            => 6140,
+    
   }
   #----------------------------------
   StateID = {

@@ -18,7 +18,9 @@ class Game_Projectile < Game_Character
     super()
     @user   = action.user
     @target = action.target ? action.target : POS.new(user.x, user.y)
+    @moved_dis = 0
     @item   = action.item
+    @max_range     = item.tool_distance
     @move_speed    = item.tool_speed
     @through       = item.tool_through
     @priority_type = item.tool_priority
@@ -45,7 +47,18 @@ class Game_Projectile < Game_Character
   def update_movement
     return if SceneManager.time_stopped?
     execute_action if !process_projectile_move
-    @sprite.execute_collide if self.adjacent?(target.x, target.y)
+    @sprite.execute_collide if collision_ready?
+  end
+  #--------------------------------------------------------------------------
+  def collision_ready?
+    if @moved_dis >= @max_range
+      pos = POS.new(@x, @y)
+      @action.target = pos
+      return true
+    end
+    return true if (@x - target.x).abs < 0.2 && (@y - target.y).abs < 0.2
+    return true if !@target.is_a?(POS) && self.adjacent?(target.x, target.y)
+    return false
   end
   #--------------------------------------------------------------------------
   def process_projectile_move
@@ -63,6 +76,7 @@ class Game_Projectile < Game_Character
     @y = $game_map.round_y(@y + delta_y)
     @real_x = @x - delta_x
     @real_y = @y - delta_y
+    @moved_dis += Math.hypot(delta_x, delta_y)
     @direction = (delta_x.abs > delta_y.abs) ? (delta_x > 0 ? 6 : 4) : (delta_y > 0 ? 2 : 8)
     return !(delta_x == 0 && delta_y == 0)
   end

@@ -150,7 +150,17 @@ class Spriteset_Map
     end
   end
   #--------------------------------------------------------------------------
+  # * Update Tilemap
+  #--------------------------------------------------------------------------
+  def update_tilemap(main = true)
+    @tilemap.map_data = $game_map.data
+    @tilemap.ox = $game_map.display_x * 32
+    @tilemap.oy = $game_map.display_y * 32
+    @tilemap.update if main
+  end
+  #--------------------------------------------------------------------------
   def relocate_units
+    update_tilemap
     @character_sprites.each do |sprite|
       sprite.relocate
     end
@@ -370,5 +380,4 @@ class Spriteset_Map
     @override.dispose
     @override = nil
   end
-  #--------------------------------------------------------------------------
 end

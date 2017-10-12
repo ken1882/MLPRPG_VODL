@@ -102,6 +102,13 @@ class Scene_Map < Scene_Base
     # > Ranged tool free-fire mode
     #--------------------------------------------------------------------------
     elsif Input.trigger?(:kR)
+      $game_player.free_fire ^= 1
+      if $game_player.free_fire
+        $game_system.change_cursor_bitmap(PONY::IconID[:aim])
+      else
+        $game_system.change_cursor_bitmap(nil)
+      end
+      return true
     #-----------------------------------------------------
     end
     return false

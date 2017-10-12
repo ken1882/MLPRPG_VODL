@@ -148,7 +148,7 @@ class Game_Event < Game_Character
     listn = @list.size
     while cnt < listn
       if @list[cnt].code == 108
-        comments += @list[cnt].parameters[0]
+        comments += @list[cnt].parameters[0] + 10.chr
         while cnt < listn && @list[cnt + 1].code == 408
           cnt += 1
           comments += @list[cnt].parameters[0] + 10.chr
@@ -156,6 +156,7 @@ class Game_Event < Game_Character
       end
       cnt += 1
     end
+    
     return comments
   end
   #--------------------------------------------------------

@@ -29,7 +29,7 @@ class Spriteset_Map
   # * Update when tactic mode
   #-----------------------------------------------------------------------------
   def update_tactic
-    update_tilemap
+    update_tilemap(false)
     update_skillbar
     update_tactic_cursor
     update_units
@@ -43,7 +43,7 @@ class Spriteset_Map
   end
   #-----------------------------------------------------------------------------
   def update_timestop
-    update_tilemap
+    update_tilemap(false)
     update_skillbar
     update_units
     update_viewports

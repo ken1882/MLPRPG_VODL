@@ -27,8 +27,8 @@ class Game_Follower < Game_Character
     # opacity sync to $game_player is removed
     @move_speed     = $game_player.real_move_speed
     @transparent    = $game_player.transparent
-    #@walk_anime     = $game_player.walk_anime
-    @step_anime     = $game_player.step_anime
+    @walk_anime     = $game_player.walk_anime
+    #@step_anime     = $game_player.step_anime
     @direction_fix  = $game_player.direction_fix
     @blend_type     = $game_player.blend_type
     update_movement

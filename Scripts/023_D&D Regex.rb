@@ -161,7 +161,7 @@ module DND
                                                                #   using this tool (default: in 20 frames)
     
     DamageSavingThrow = /(?:Saving Throw =)[ ](.+),[ ](.+)/i   # Saving Throw when hitted
-    ToolRanged        = /<(?:ranged)>/i  # last work: ranged weapon process
+    ToolRanged        = /<(?:ranged)>/i
     ApplyAction       = /(?:Apply Action =)[ ](\d+)/i          # Apply given action sequence id when item is used
   end
   

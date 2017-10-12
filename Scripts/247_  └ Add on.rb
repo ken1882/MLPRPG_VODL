@@ -51,6 +51,7 @@ class Scene_Map < Scene_Base
   def terminate
     @message_window.dispose_all_windows
     SceneManager.save_map_infos(@window_log.data)
+    $game_system.change_cursor_bitmap(nil)
     terminate_scmap_dnd
   end
   #--------------------------------------------------------------------------
@@ -101,6 +102,7 @@ class Scene_Map < Scene_Base
   def create_tactic_cursor
     @tactic_cursor = Game_TacticCursor.new
     @spriteset.create_tactic_cursor(@tactic_cursor)
+    $game_system.change_cursor_bitmap(PONY::IconID[:aim]) if $game_player.free_fire
   end
   #----------------------------------------------------------------------------
   # * Display info on window

@@ -92,6 +92,12 @@ class Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def determine_targets(item)
+    if $game_player.free_fire && self.is_a?(Game_Player)
+      pos = Mouse.true_grid_by_pos(false)
+      pos = POS.new(pos[0], pos[1])
+      pos.x -= 0.125; pos.y -= 0.125;
+      return pos
+    end
     if item.is_a?(RPG::Item) && item.for_friend?
       return battler
     elsif item.is_a?(RPG::Weapon)
@@ -136,11 +142,11 @@ class Game_CharacterBase
   # * Use item
   #----------------------------------------------------------------------------
   def use_tool(item, target = nil)
-    #puts "[Debug]: Use item: #{item}, target: #{target}"
+    #puts "[Debug]: Use item: #{item}, target: #{target} #{target.x} #{target.y}"
     target = BattleManager.autotarget(self, item) if target.nil?
     name = target.name rescue nil
     #puts "[Debug]: Item final target: #{target}(#{name}) at #{[target.x,target.y]}"
-    @next_action = Game_Action.new(self, target, item)
+    @next_action = Game_Action.new(battler, target, item)
   end
   #----------------------------------------------------------------------------
   # * Update current action
@@ -207,7 +213,6 @@ class Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def process_weapon_action
-    
     cdt = @action.item.tool_cooldown
     if !@weapon_combo_stack.empty? && @action.item.id == @weapon_combo_stack.first
       prev_item = $data_weapons[@weapon_combo_stack.last]

@@ -424,7 +424,7 @@ class Game_Actor < Game_Battler
   #--------------------------------------------------------------------------
   def weapon_ammo_ready?(weapon)
     return false if weapon.nil?
-    
+    # last work: ammo weapon
     weapon = $data_weapons[weapon] if weapon.is_a?(Fixnum)
     slot_id   = self.class.ammo_slot_id
     result    = false

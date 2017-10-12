@@ -350,11 +350,12 @@ module Mouse
     [pos[0] / 32, pos[1] / 32]
   end
   
-  def true_grid_by_pos
+  #tag: modified
+  def true_grid_by_pos(to_int = true)
     xy = pos
-    x = ((xy[0] + ($game_map.display_x * 32)) / 32).floor
-    y = ((xy[1] + ($game_map.display_y * 32)) / 32).floor
-    [x, y]
+    x = ((xy[0] + ($game_map.display_x * 32)) / 32)
+    y = ((xy[1] + ($game_map.display_y * 32)) / 32)
+    return to_int ? [x.floor, y.floor] : [x, y]
   end
   
   def area?(x, y, width, height)
@@ -382,7 +383,7 @@ module Mouse
         self.bitmap = Bitmap.new(24, 24)
         icon_index = data
         rect = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
-        self.bitmap.blt(0, 0, Cache.system("Iconset"), rect, 255)
+        self.bitmap.blt(0, 0, Cache.iconset, rect, 255)
       end
       @bitmap_cache = self.bitmap.dup
       @cursor_bitmap = data
@@ -693,15 +694,19 @@ end
 class Game_System
   
   attr_accessor :mouse_movement, :cursor_bitmap
+  attr_reader :main_cursor_bitmap
   
   alias jet2735_initialize initialize
   def initialize(*args, &block)
     jet2735_initialize(*args, &block)
     @mouse_movement = Jet::MouseSystem::ALLOW_MOUSE_MOVEMENT
     @cursor_bitmap = Mouse.cursor.cursor_bitmap
+    @main_cursor_bitmap = @cursor_bitmap
   end
   
   def change_cursor_bitmap(data)
+    @main_cursor_bitmap = Jet::MouseSystem::CURSOR_ICON if @main_cursor_bitmap.nil?
+    data = @main_cursor_bitmap if data.nil?
     Mouse.cursor.swap_bitmap(data)
     @cursor_bitmap = data
   end
