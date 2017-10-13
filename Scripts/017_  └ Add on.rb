@@ -219,12 +219,24 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.apply_action_effect(action)
     execute_subaction(action) if action.item.tool_invoke
+    return apply_subitem(action)      if action.item.item_required?
     action.subject = determine_effected_targets(action.user, action.item, action.target)
     action.user.use_item(action.item) if action.item.tool_animmoment == 0 # Directly use
     apply_skill(action)  if action.item.is_a?(RPG::Skill)
     apply_item(action)   if action.item.is_a?(RPG::Item)
     apply_weapon(action) if action.item.is_a?(RPG::Weapon)
     apply_armor(action)  if action.item.is_a?(RPG::Armor)
+  end
+  #--------------------------------------------------------------------------
+  def self.apply_subitem(action)
+    return if action.user.dead?
+    action.item = action.user.get_ammo_item(action.item)
+    if action.target.is_a?(Game_Battler)
+      action.target = BattleManager.autotarget(action.user, action.item)
+    end
+    $game_party.lose_item(action.item, 1, true, nil, nil, false) if action.user.battler.is_a?(Game_Actor)
+    proj = Game_Projectile.new(action)  if action.item.tool_graphic
+    SceneManager.setup_projectile(proj) if action.item.tool_graphic
   end
   #--------------------------------------------------------------------------
   def self.execute_subaction(action)
@@ -263,7 +275,6 @@ module BattleManager
       names << char.actor.name if char.is_a?(Game_Player)   && char.actor
       names << char.actor.name if char.is_a?(Game_Follower) && char.actor
     end
-    
     return candidates
   end
   #--------------------------------------------------------------------------

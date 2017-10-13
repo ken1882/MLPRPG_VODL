@@ -335,6 +335,8 @@ class RPG::Enemy
       puts "[System]: #{@name} has weapon level prof: #{$1.to_i}"
     when DND::REGEX::Character::CastingAnimation
       @casting_animation = $1.to_i
+    when DND::REGEX::Character::DefaultAmmo
+      @default_ammo = $1.to_i
     end
   end
   #--------------------------------------------------------------------------
@@ -356,6 +358,7 @@ class RPG::Enemy
     @face_index           = 0
     @body_size            = DND::BattlerSetting::BodySize
     @weapon_level_prof    = 0
+    @default_ammo         = 0
   end
   #------------------------------------
 end
@@ -577,6 +580,8 @@ class RPG::BaseItem
     @tool_combo         = 0
     @action_sequence    = 0
     @tool_effectdelay   = 0
+    @tool_itemcost      = 0
+    @tool_itemcost_type = 0
     @dmg_saves          = nil
     @tool_soundeffect   = [nil, 80]
   end
@@ -589,7 +594,7 @@ class RPG::BaseItem
   # *) Item need consume items
   #------------------------------------------------------------------------  
   def item_required?
-    @tool_itemcost != 0 || !@tool_itemcost_type.nil?
+    return (@tool_itemcost || 0) > 0 || (@tool_itemcost_type || 0) > 0
   end
   #------------------------------------------------------------------------
   # *) Item is an ammo?
@@ -597,8 +602,7 @@ class RPG::BaseItem
   def is_ammo?
     return false if !self.is_a?(RPG::Weapon)
     _id = self.wtype_id
-    return true if _id == 11 || _id == 12 || _id == 13
-    return false
+    return [11, 12, 13].include?(_id)
   end
   #------------------------------------------------------------------------
   # is_magic?

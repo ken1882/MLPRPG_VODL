@@ -290,8 +290,7 @@ class Game_Skillbar
   #--------------------------------------------------------------------------
   def process_input
     return unless button_cooled?
-    if Mouse.click?(1) && !Mouse.hover_UI? && SceneManager.scene_is?(Scene_Map) &&
-      !SceneManager.tactic_enabled?
+    if Mouse.click?(1) && !Mouse.hover_UI? && SceneManager.scene_is?(Scene_Map) && !SceneManager.tactic_enabled?
       process_item_use(@primary_tool)
     elsif Mouse.click?(2) && @stack.size > HotKeySelection
       fallback

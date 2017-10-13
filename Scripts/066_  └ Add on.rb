@@ -55,7 +55,7 @@ class Game_Battler < Game_BattlerBase
   # * Weapon Ammo Ready?
   #--------------------------------------------------------------------------
   def weapon_conditions_met?(item)
-    if item.tool_itemcost != nil || item.tool_itemcost_type != nil
+    if item.item_required?
       return weapon_ammo_ready?(item)
     end
     return true

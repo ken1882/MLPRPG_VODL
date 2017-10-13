@@ -89,6 +89,8 @@ module DND
     DeathSwitchGlobal = /(?:Death Global Switch =)[ ](\d+)/i      # Game_Switch trigger when dead
     DeathVarSelf      = /(?:Death Self Variable =)[ ](\d+), [ ](\d+)/i
     DeathVarGlobal    = /(?:Death Global Variable =)[ ](\d+), [ ](\d+)/i
+    
+    DefaultAmmo       = /(?:Default Ammo =)[ ](\d+)/i
     # Variable change when dead, $2 = number, $3 = value
     
     DeathAnimation    = /(?:Death Animation =)[ ](\d+)/i          # Animation display when dead

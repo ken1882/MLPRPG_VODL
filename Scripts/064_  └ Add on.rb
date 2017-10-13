@@ -141,4 +141,10 @@ class Game_BattlerBase
     popup_info(value.abs.to_s, color)
   end
   #--------------------------------------------------------------------------
+  # * Determine if Equippable
+  #--------------------------------------------------------------------------
+  alias :freehoof_equippable? :equippable?
+  def equippable?(item)
+    return freehoof_equippable?(item)
+  end
 end

@@ -124,9 +124,11 @@ class Game_Party < Game_Unit
     container = item_container(item.class)
     return encrypt_data unless container
     last_number = item_number(item)
-    new_number  = [[last_number + amount, 0].max, max_item_number(item)].min
+    new_number  = [[last_number + amount, -1].max, max_item_number(item)].min
     container.delete(item.id) if new_number == 0
     discard_members_equip(item, -new_number) if include_equip && new_number < 0
+    new_number = [new_number, 0].max
+    $game_party.skillbar.need_refresh = true
     return encrypt_data unless last_number != new_number
     
     # source is who pay the bits, thus source will gain the item

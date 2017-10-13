@@ -119,6 +119,24 @@ class Game_Actor < Game_Battler
   def death_pattern;    return actor.death_pattern;   end
   def death_direction;  return actor.death_direction;  end
   def death_sound;      return actor.death_sound;     end
+  #--------------------------------------------------------------------------
+  # * Change Equipment
+  #     slot_id:  Equipment slot ID
+  #     item:    Weapon/armor (remove equipment if nil)
+  #--------------------------------------------------------------------------
+  # tag: equipment
+  def change_equip(slot_id, item)
+    return unless trade_item_with_party(item, equips[slot_id])
+    if item
+      if equip_slots[slot_id] == 1
+        return unless offhoof_equippable?(equip_slots[slot_id], item)
+      else
+        return if equip_slots[slot_id] != item.etype_id
+      end
+    end
+    @equips[slot_id].object = item
+    refresh
+  end
   #---------------------------------------------------------------------------
   # * Method Missing
   # ----------------------------------------------------------------------   
@@ -126,7 +144,7 @@ class Game_Actor < Game_Battler
   #---------------------------------------------------------------------------
   def method_missing(symbol, *args)
     super(symbol, args) unless @map_char
-    super(symbol, args) unless @map_char.methods.include?(symbol)
+      super(symbol, args) unless @map_char.methods.include?(symbol)
     @map_char.method(symbol).call(*args)
   end
   

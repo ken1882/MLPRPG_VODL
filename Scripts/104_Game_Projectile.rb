@@ -18,6 +18,7 @@ class Game_Projectile < Game_Character
     super()
     @user   = action.user
     @target = action.target ? action.target : POS.new(user.x, user.y)
+    #puts "Projectile target address: #{target.x} #{target.y}"
     @moved_dis = 0
     @item   = action.item
     @max_range     = item.tool_distance

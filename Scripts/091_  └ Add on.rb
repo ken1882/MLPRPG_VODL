@@ -182,7 +182,7 @@ class Game_Player < Game_Character
     if @free_fire && item.ranged?
       pos = Mouse.true_grid_by_pos(false)
       pos = POS.new(pos[0], pos[1])
-      pos.x += 0.375; pos.y += 0.375;
+      pos.x -= 0.125; pos.y -= 0.125;
       target = pos
     end
     super(item, target)
@@ -212,5 +212,13 @@ class Game_Player < Game_Character
   #----------------------------------------------------------------------------
   def set_target(target)
   end
-  
+  #--------------------------------------------------------------------------
+  def get_ammo_item(item)
+    if item.is_a?(RPG::Weapon) && item.tool_itemcost_type > 0
+      return actor.current_ammo
+    elsif (item.tool_itemcost || 0) > 0
+      return $data_items[item.tool_itemcost]
+    end
+  end
+  #--------------------------------------------------------------------------
 end

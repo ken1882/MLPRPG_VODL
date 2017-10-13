@@ -314,4 +314,8 @@ class Game_Character < Game_CharacterBase
   def casting_index
     @character_index
   end
+  #--------------------------------------------------------------------------
+  def get_ammo_item(item)
+  end
+  #--------------------------------------------------------------------------
 end

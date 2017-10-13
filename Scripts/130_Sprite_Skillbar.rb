@@ -257,8 +257,10 @@ class Sprite_Skillbar < Sprite
       if item.is_a?(RPG::Item)
         return $game_party.item_number(item)
       elsif item.is_a?(RPG::Weapon) && item.tool_itemcost_type > 0
-        return $game_party.item_number(actor.current_ammo)
-      elsif item.tool_itemcost || 0 > 0
+        n = $game_party.item_number(actor.current_ammo)
+        n = n.nil? ? 0 : n + 1
+        return n
+      elsif (item.tool_itemcost || 0) > 0
         return $game_party.item_number($data_items[item.tool_itemcost])
       end
     end

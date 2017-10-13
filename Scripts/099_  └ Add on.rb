@@ -471,6 +471,12 @@ class Game_Event < Game_Character
     super
   end
   #--------------------------------------------------------------------------
+  def default_ammo
+    return @default_ammo if @default_ammo
+    return @default_ammo = @enemy.default_ammo if @enemy
+    return 0
+  end
+  #--------------------------------------------------------------------------
   def primary_weapon
     return @enemy.default_weapon if @enemy
   end
@@ -482,6 +488,14 @@ class Game_Event < Game_Character
   def casting_animation 
     return super if !@enemy
     return @enemy.enemy.casting_animation rescue super
+  end
+  #--------------------------------------------------------------------------
+  def get_ammo_item(item)
+    if item.is_a?(RPG::Weapon) && item.tool_itemcost_type > 0
+      return $data_weapons[default_ammo]
+    elsif (item.tool_itemcost || 0) > 0
+      return $data_items[item.tool_itemcost]
+    end
   end
   #---------------------------------------------------------------------------
   # * Method Missing

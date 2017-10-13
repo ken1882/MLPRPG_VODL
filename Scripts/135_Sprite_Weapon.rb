@@ -150,7 +150,7 @@ class Sprite_Weapon < Sprite
     pos = POS.new(@user.map_char.real_x + OffsetX[dir] / 32.0, @user.map_char.real_y + OffsetY[dir] / 32.0)
     @animation_sprite.character = pos 
     animation = $data_animations[animation_id]
-    @animation_sprite.start_animation(animation, @dir == 6 || @dir == 8)
+    @animation_sprite.start_animation(animation, @dir == 6 || @dir == 2)
   end
   #--------------------------------------------------------------------------
   def dispose

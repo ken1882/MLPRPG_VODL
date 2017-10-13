@@ -151,4 +151,12 @@ class Game_Follower < Game_Character
     actor.actor.casting_animation rescue super
   end
   #--------------------------------------------------------------------------
+  def get_ammo_item(item)
+    if item.is_a?(RPG::Weapon) && item.tool_itemcost_type > 0
+      return actor.current_ammo
+    elsif (item.tool_itemcost || 0) > 0
+      return $data_items[item.tool_itemcost]
+    end
+  end
+  #--------------------------------------------------------------------------
 end
