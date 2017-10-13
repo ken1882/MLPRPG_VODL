@@ -30,8 +30,13 @@ class Window_Base < Window
     text.each_char do |char|
       bsize = [char.bytesize, 2].min
       rect = Rect.new(x + width * cnt, y, width * bsize, line_height)
-      draw_text(rect, char)
-      cnt += bsize
+      if char.ord == 10
+        cnt = 0
+        y += line_height
+      else
+        draw_text(rect, char)
+        cnt += bsize
+      end
     end
   end
   #--------------------------------------------------------------------------

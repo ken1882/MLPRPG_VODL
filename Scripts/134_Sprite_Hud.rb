@@ -73,8 +73,10 @@ class Sprite_Hud < Sprite_Base
   end
   #--------------------------------------------------------------------------
   def dectect_actor_change
-    actor = $game_party.members[@party_index]
+    actor = battler
+    #actor = $game_party.members[@party_index]
     return unless need_refresh?(actor)
+    
     @actor = actor
     create_layout if !@face_sprite
     @actor_changed = true
@@ -96,6 +98,7 @@ class Sprite_Hud < Sprite_Base
   #--------------------------------------------------------------------------
   def update_values
     on_actor_change if @actor_changed
+    return hide if @actor.nil?
     @hp     = @actor.hp
     @mp     = @actor.mp
     @mhp    = @actor.mhp
@@ -111,10 +114,18 @@ class Sprite_Hud < Sprite_Base
     draw_action(@actor.action) if @action_timer >= 90
   end
   #--------------------------------------------------------------------------
+  def battler
+    if @party_index == 0
+      return $game_player.actor
+    else
+      return $game_player.followers[@party_index - 1].actor
+    end
+  end
+  #--------------------------------------------------------------------------
   # * Hash value
   #--------------------------------------------------------------------------
   def hash_value
-    actor = $game_party.members[@party_index]
+    actor = battler
     return -1 if actor.nil?
     value  = actor.mp * 100 + actor.hp * 10 + actor.hashid + @party_index
     value += actor.action.nil? ? 0 : actor.action.item.hashid
@@ -122,7 +133,8 @@ class Sprite_Hud < Sprite_Base
   end
   #--------------------------------------------------------------------------
   def on_actor_change
-    @actor  = $game_party.members[@party_index]
+    @actor = battler
+    return hide if @actor.nil?
     @action = nil
     @hp     = @actor.hp
     @mp     = @actor.mp

@@ -231,7 +231,7 @@ class Game_CharacterBase
   def play_item_soundeffect(item)
     tool_se = item.tool_soundeffect
     volume  = tool_se.last * $game_system.volume(:sfx) * 0.01
-    Audio.se_play('Audio/Se/' + tool_se.first, volume, 100) if tool_se && tool_se.first
+    Audio.se_play('Audio/SE/' + tool_se.first, volume, 100) if tool_se && tool_se.first
   end
   #----------------------------------------------------------------------------
   def process_armor_action

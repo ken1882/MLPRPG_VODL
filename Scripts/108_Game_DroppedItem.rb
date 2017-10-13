@@ -54,7 +54,7 @@ class Game_DroppedItem
         $game_party.gain_item(loot, 1)
       end
     end
-    Audio.se_play('Audio/SE/coin01', 100, 100)
+    Audio.se_play('Audio/SE/coin01', 80 * $game_system.volume(:sfx) * 0.01, 100)
     @loots.clear
     dispose
   end

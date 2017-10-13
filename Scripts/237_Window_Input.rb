@@ -74,7 +74,7 @@ class Window_Input < Window_Base
   end
   #--------------------------------------------------------------------------
   def window_height
-    return line_height * 2
+    line_height * 2
   end
   #--------------------------------------------------------------------------
   def window_width

@@ -189,10 +189,13 @@ class Game_Party < Game_Unit
   #--------------------------------------------------------------------------
   alias swap_order_opt swap_order
   def swap_order(index1, index2)
+    @battle_members_array[index1], @battle_members_array[index2] = @battle_members_array[index2], @battle_members_array[index1]
+    puts "Battler array: #{index1} #{index2} #{@battle_members_array[index1]} #{@battle_members_array[index2]}"
     members[index1].map_char.swap_member(members[index2].map_char)
     members[index1].map_char, members[index2].map_char = members[index2].map_char, members[index1].map_char
     $game_map.need_refresh = true
     swap_order_opt(index1, index2)
+    rearrange_actors
     members.each {|member| member.map_char.process_actor_death if member.dead?}
     $game_player.current_target = nil
     SceneManager.immediate_refresh
@@ -215,7 +218,11 @@ class Game_Party < Game_Unit
     all_members.each_with_index do |member, index|
       next if member.dead?
       next if member == leader
+      if !@battle_members_array.include?(member.actor.id)
+        @battle_members_array << member.actor.id
+      end
       swap_order(0, index)
+      puts "recurrence leader: #{all_members[0].name} <=> #{all_members[index].name}"
       break
     end
     $game_player.recurrence_delay = nil

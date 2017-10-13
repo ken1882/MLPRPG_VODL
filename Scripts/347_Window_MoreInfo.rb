@@ -36,8 +36,8 @@ class Window_Selectable < Window_Base
   #--------------------------------------------------------------------------
   def process_overlay_handling
     if moreinfo_enabled?
-      if Input.trigger?(:X) || Mouse.click?(3)
-        process_moreinfo(:X)
+      if Input.trigger?(:kTAB) || Mouse.click?(3)
+        process_moreinfo(:kTAB)
       elsif Input.trigger?(:B)
         process_moreinfo(:B)
       end # Input.trigger?
@@ -52,7 +52,7 @@ class Window_Selectable < Window_Base
   #--------------------------------------------------------------------------
   # * Processing show/hide more info window
   #--------------------------------------------------------------------------
-  def process_moreinfo(key = :X)
+  def process_moreinfo(key = :kTAB)
     item = show_moreinfo?
     return if !item
     @info_window.set_item(item) if !@info_window.visible?
@@ -62,7 +62,7 @@ class Window_Selectable < Window_Base
       Sound.play_cancel
       heatup_button
       @overlayed = false
-    elsif key == :X
+    elsif key == :kTAB
       @info_window.show
       Audio.se_play("Audio/SE/BG_Select", 90, 100)
       heatup_button
@@ -73,6 +73,7 @@ class Window_Selectable < Window_Base
   # * Show more info?
   #--------------------------------------------------------------------------
   def show_moreinfo?
+    return if !@data
     item = @data[index] if @data && @data[index]
     item = self.item if !item && self.methods.include?(:item)
     item = nil unless (item.is_a?(RPG::EquipItem) || item.is_a?(RPG::UsableItem))

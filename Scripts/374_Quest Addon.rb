@@ -49,3 +49,30 @@ class Game_Quests
     end
   end
 end
+#==============================================================================
+# ** Game_Party
+#------------------------------------------------------------------------------
+#  This class handles parties. Information such as gold and items is included.
+# Instances of this class are referenced by $game_party.
+#==============================================================================
+class Game_Party < Game_Unit
+  #------------------------------------------------------------------------------
+  # * Reveal quest
+  #------------------------------------------------------------------------------
+  def reveal_quest(id)
+    @quests[id].concealed = false
+  end
+  #------------------------------------------------------------------------------
+  def hide_quest(id)
+    @quests[id].concealed = true
+  end
+  #------------------------------------------------------------------------------
+  def reveal_objective(qid, oid)
+    @quests[qid].reveal_objective(oid)
+  end
+  #------------------------------------------------------------------------------
+  def hide_objective
+    @quests[qid].conceal_objective(oid)
+  end
+  #------------------------------------------------------------------------------
+end

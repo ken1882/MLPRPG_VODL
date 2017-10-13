@@ -727,9 +727,14 @@ class Game_Quest
   def reveal_objective(*obj)
     valid_obj = obj.select {|x| x < objectives.size && !@revealed_objectives.include?(x) }
     valid_obj.each {|i| @revealed_objectives.maqj_insert_sort(i) }
-    quest_status_changed unless valid_obj.empty?
-    Audio.se_play("Audio/SE/AOE_mission",100, 100) if !@symbol_failed
+    unless valid_obj.empty?
+      quest_status_changed
+      info = sprintf("Your journal has updated: %s", @name)
+      SceneManager.display_info(info)
+      Audio.se_play("Audio/SE/AOE_mission",100, 100) if !@symbol_failed
+    end
   end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def conceal_objective(*obj)
     quest_status_changed unless (obj & @revealed_objectives).empty?
     obj.each { |obj_id| @revealed_objectives.delete(obj_id) }
@@ -764,9 +769,13 @@ class Game_Quest
     uncomplete_objective(*valid_obj)
     was_failed = status?(:failed)
     valid_obj.each {|i| @failed_objectives.maqj_insert_sort(i) }
-    quest_status_changed unless valid_obj.empty?
+    unless valid_obj.empty?
+      quest_status_changed
+      info = sprintf("Your journal has updated: %s", @name)
+      SceneManager.display_info(info)
+      Audio.se_play("Audio/SE/AOE_WW_destroyed",100, 100)
+    end
     $game_party.quests.add_to_sort_array(:failed, @id) if status?(:failed) && !was_failed
-    Audio.se_play("Audio/SE/AOE_WW_destroyed",100, 100)
   end
   def unfail_objective(*obj)
     quest_status_changed unless (obj & @failed_objectives).empty?

@@ -31,7 +31,7 @@ class Window_MenuCommand < Window_ImageCommand
   # * Add Formation to Command List
   #--------------------------------------------------------------------------
   def add_formation_command
-    add_command(Vocab::formation, "Menu_Party", :formation, false, nil, "Change formation and squad setup")
+    add_command(Vocab::formation, "Menu_Party", :formation, main_commands_enabled, nil, "Change formation and squad setup")
   end
   #--------------------------------------------------------------------------
   # * For Adding Original Commands

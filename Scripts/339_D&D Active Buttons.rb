@@ -31,24 +31,26 @@ class Scene_Map < Scene_Base
     # > Swap current control actor
     #--------------------------------------------------------------------------
     if Input.press?(:kF3)
-      return if $game_party.members[1].nil?
-      return if $game_party.members[1].dead?
+      return if ($game_party.battle_members_array[1] || 0) < 1
+      return if $game_actors[$game_party.battle_members_array[1]].dead?
       $game_party.swap_order(0,1)
       return true
     #--------------------------------------------------------------------------
     # > Swap current control actor
     #--------------------------------------------------------------------------
     elsif Input.press?(:kF4)
-      return if $game_party.members[2].nil?
-      return if $game_party.members[2].dead?
+      #return if $game_party.members[2].nil?
+      #return if $game_party.members[2].dead?
+      return if ($game_party.battle_members_array[2] || 0) < 1
+      return if $game_party.battle_members_array[2].dead?
       $game_party.swap_order(0,2)
       return true
     #--------------------------------------------------------------------------
     # > Swap current control actor
     #--------------------------------------------------------------------------
     elsif Input.press?(:kF5)
-      return if $game_party.members[3].nil?
-      return if $game_party.members[3].dead?
+      return if ($game_party.battle_members_array[3] || 0) < 1
+      return if $game_actors[$game_party.battle_members_array[3]].dead?
       $game_party.swap_order(0,3)
       return true
     end

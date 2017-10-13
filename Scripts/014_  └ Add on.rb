@@ -262,6 +262,7 @@ module SceneManager
   end
   #-------------------------------------------------------------------------
   def self.immediate_refresh
+    return unless spriteset
     spriteset.relocate_units
     spriteset.update_huds
   end
