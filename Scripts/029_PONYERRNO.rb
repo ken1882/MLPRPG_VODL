@@ -18,6 +18,7 @@ module PONY::ERRNO
     :illegel_value    => "Illegel value:\n",
     :checksum_failed  => "File CheckSum failure",
     :file_missing     => "File missing:\n",
+    :tactic_sym_missing => "Tactic command symbol unavailable:\n"
   }
   
   @raised = false

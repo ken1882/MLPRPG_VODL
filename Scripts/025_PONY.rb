@@ -25,7 +25,9 @@ module PONY
     :mouse_casting  => 386,
     :loot_drop      => 573,
     :aim            => 6140,
-    
+    :fighting       => 115,
+    :self           => 125,
+    :plus           => 1143,
   }
   #----------------------------------
   StateID = {

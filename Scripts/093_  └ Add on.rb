@@ -159,4 +159,7 @@ class Game_Follower < Game_Character
     end
   end
   #--------------------------------------------------------------------------
+  def visible_sight
+    return 8
+  end
 end

@@ -1,175 +1,77 @@
 #==============================================================================
-# ** Scene_Item
+# ** Scene_Menu
 #------------------------------------------------------------------------------
-#  This class performs the item screen processing.
+#  This class performs the menu screen processing.
 #==============================================================================
-class Scene_Item < Scene_ItemBase
-  include WALLPAPER_EX
+class Scene_Menu < Scene_MenuBase
   #--------------------------------------------------------------------------
-  # * Constants
+  # * Start Processing
   #--------------------------------------------------------------------------
-  HotkeyPauseTime  = 60
-  #--------------------------------------------------------------------------
-  # * Alias method: Start Processing
-  #--------------------------------------------------------------------------
-  alias start_dnd start
   def start
-    start_dnd
-    init_vars
-    create_action_window
-    create_skillbar
+    super
+    create_command_window
+    create_gold_window
+    create_status_window
     create_foreground
-    @actor = $game_party.leader
+    puts "Assign blockchian mining work"
+    Thread_Assist.assign_work(:BCmine) # tag: 3
+    $game_party.sync_blockchain
+    if $USE_SCENE_SKIN == TRUE                                                 
+      @command_window.scene_swap($PAUSE_MENU_SKIN)                             
+      @gold_window.scene_swap($PAUSE_MENU_SKIN)                                
+      @status_window.scene_swap($PAUSE_MENU_SKIN)                              
+    end
+    $game_map.cache_crash_backup
   end
   #--------------------------------------------------------------------------
-  def init_vars
-    @hotkey_ok_pause = false
-    @timer           = 0
+  # * Termination Processing
+  #--------------------------------------------------------------------------
+  def terminate
+    super
+    dispose_foreground
+    puts "Assign blockchian mining work"
+    Thread_Assist.assign_work(:BCmine) # tag: 3
+    $game_party.sync_blockchain
   end
   #--------------------------------------------------------------------------
-  alias update_scitemaction update
-  def update
-    update_scitemaction
-    update_hotkey_selection if @skillbar.visible? && !@hotkey_ok_pause
-    update_hotkey_timer if @hotkey_ok_pause
+  # * Create Status Window
+  #--------------------------------------------------------------------------
+  def create_status_window
+    @status_window = Window_ImageMenuStatus.new(0 ,@command_window.height)
   end
   #--------------------------------------------------------------------------
-  def update_hotkey_selection
-    @skillbar.update
-    assign_hotkey(@skillbar.get_monitor)
-    on_hotekey_cancel if Input.trigger?(:B)
-  end
-  #--------------------------------------------------------------------------
-  def create_action_window
-    @action_window = Window_ItemAction.new
-    @action_window.set_handler(:use_ok,     method(:action_use))
-    @action_window.set_handler(:sel_hotkey, method(:action_hotkey))
-    @action_window.set_handler(:cancel, method(:on_action_cancel))
-    @action_window.z = 200
-    @action_window.deactivate
-  end
-  #--------------------------------------------------------------------------
-  def create_skillbar
-    @skillbar = $game_party.skillbar
-    @skillbar.create_layout(@viewport, 1)
-    @skillbar.hide
-  end
+  # * Create Foreground
   #--------------------------------------------------------------------------
   def create_foreground
-    @foreground = Sprite.new(@viewport)
-    @foreground.bitmap = Bitmap.new(Graphics.width, Graphics.height)
-    wy = @help_window.height
-    @foreground.bitmap.fill_rect(0, wy, Graphics.width, Graphics.height - wy, DND::COLOR::Black)
-    cx = @skillbar.x + 32 * 4
-    cy = @skillbar.y - 2
-    crect = Rect.new(cx, cy, 32 * HotKeys::HotKeys.size, 32)
-    @foreground.bitmap.clear_rect(crect)
-    @foreground.z = 2000
-    @foreground.opacity = 196
-    @foreground.hide
+    @foreground_sprite = Sprite.new
+    @foreground_sprite.bitmap = Cache.UI("Menu_SplitLine")
+    @foreground_sprite.y = @command_window.height - 4
+    @foreground_sprite.z = 100
   end
   #--------------------------------------------------------------------------
-  def update_hotkey_timer
-    @timer += 1
-    if @timer >= HotkeyPauseTime
-      on_hotkey_end
-      @timer = 0
-    end
+  def dispose_foreground
+    return if @foreground_sprite.nil?
+    @foreground_sprite.dispose
   end
   #--------------------------------------------------------------------------
-  # * Overwrite: Item [OK]
+  # * Create Gold Window
   #--------------------------------------------------------------------------
-  def on_item_ok
-    $game_party.last_item.object = item
-    show_action_window
+  def create_gold_window
+    @gold_window = Window_Gold.new(0)
+    @gold_window.x = Graphics.width - @gold_window.width
+    @gold_window.y = (@command_window.height - @gold_window.height) / 2
   end
   #--------------------------------------------------------------------------
-  # * On action cancel
+  # * Create Command Window
   #--------------------------------------------------------------------------
-  def on_action_cancel
-    hide_action_window(true)
+  alias create_cmd_window_dnd create_command_window
+  def create_command_window
+    create_cmd_window_dnd
+    @command_window.set_handler(:quest,    method(:call_quest_scene))
   end
   #--------------------------------------------------------------------------
-  def on_hotekey_cancel
-    @skillbar.hide
-    @foreground.hide
-    on_action_cancel
-    Sound.play_cancel
+  def call_quest_scene  
+    SceneManager.call(Scene_Quest)
   end
-  #--------------------------------------------------------------------------
-  def show_action_window
-    @action_window.x = [@item_window.cursor_rect.x + @action_window.width, Graphics.width - @action_window.width].min
-    @action_window.y = @item_window.cursor_rect.y + @item_window.y
-    @action_window.show.activate(item)
-    @action_window.select(0)
-  end
-  #--------------------------------------------------------------------------
-  def hide_action_window(reactive = false)
-    @action_window.hide.deactivate
-    activate_item_window if reactive
-  end
-  #--------------------------------------------------------------------------
-  def action_use
-    hide_action_window
-    determine_item
-  end
-  #--------------------------------------------------------------------------
-  def action_hotkey
-    hide_action_window
-    @help_window.clear
-    @help_window.set_text("Select or presss 1~0 to set hotkey")
-    @skillbar.show
-    @foreground.show
-    @skillbar.refresh
-  end
-  #--------------------------------------------------------------------------
-  def assign_hotkey(index)
-    return unless index
-    @actor.assigned_hotkey[HotKeys.assigned_hotkey_index(index)] = item
-    @skillbar.refresh
-    on_hotkey_ok(index)
-  end
-  #--------------------------------------------------------------------------
-  def on_hotkey_ok(index)
-    Sound.play_ok
-    keyname = HotKeys.name(HotKeys::SkillBar[index])
-    info = sprintf("Success! You assigned %s at hotkey %s", item.name, keyname)
-    @help_window.set_text(info)
-    @hotkey_ok_pause = true
-  end
-  #--------------------------------------------------------------------------
-  def on_hotkey_end
-    @hotkey_ok_pause = false
-    @skillbar.hide
-    @foreground.hide
-    on_action_cancel
-  end
-  #--------------------------------------------------------------------------
-  # * Overwrite: Create Item Window
-  #--------------------------------------------------------------------------
-  def create_item_window
-    wy = @category_window.y + @category_window.height
-    wh = Graphics.height - wy
-    @item_window = Window_ItemList.new(0, wy, Graphics.width, wh)
-    @item_window.viewport = @viewport
-    @item_window.help_window = @help_window
-    @item_window.set_handler(:ok,       method(:on_item_ok))
-    @item_window.set_handler(:cancel,   method(:on_item_cancel))
-    @item_window.set_handler(:next_actor_v, method(:next_actor))
-    @item_window.set_handler(:prev_actor_c, method(:prev_actor))
-    @category_window.item_window = @item_window
-  end
-  #--------------------------------------------------------------------------
-  def on_actor_change
-    @item_window.actor = @actor
-    @skillbar.refresh(@actor)
-  end
-  #--------------------------------------------------------------------------
-  alias terminate_scitemaction terminate
-  def terminate
-    @action_window.dispose
-    @skillbar.dispose_layout
-    @foreground.dispose
-    terminate_scitemaction
-  end
+  
 end

@@ -7,6 +7,13 @@
 # tag: action
 class Game_Action
   #--------------------------------------------------------------------------
+  Symbol_Name = {
+      :main_hoof      => "Use main-hoof attack",
+      :off_hoof       => "Use off-hoof attack",
+      :add_command    => "Add a new tactic logic",
+      
+  }
+  #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor :time                       # Cast time required
@@ -19,6 +26,7 @@ class Game_Action
   attr_reader	  :acting                     # Performing flag
   attr_reader	  :done                       # Executed flag
   attr_accessor :effect_delay               # Exexute damage delay
+  attr_accessor :item_symbol
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -28,7 +36,7 @@ class Game_Action
     @subject = []
     @forcing = forcing
     @item 	 = item
-    @time    = user.item_casting_time(item)
+    @time    = user.item_casting_time(item) if @item.is_a?(RPG::BaseItem)
     @time_needed = @time
     @effect_delay  = item.tool_effectdelay rescue 0
     @interruptible = true
@@ -36,6 +44,8 @@ class Game_Action
     @acting		     = false
     @done		       = false
     @casted        = false
+    @item_symbol   = nil
+    get_symbol_item if item.is_a?(Symbol)
   end
   #---------------------------------------------------------------------------
   #  *) Start action
@@ -144,9 +154,29 @@ class Game_Action
     execute
   end
   #---------------------------------------------------------------------------
+  def direct_change_item(item)
+    @item = item
+  end
+  #---------------------------------------------------------------------------
   def interrupt
     @done = true
     wait
   end
-  
+  #---------------------------------------------------------------------------
+  def get_item_name
+    return @item.name if @item_symbol.nil? && @item
+    name = Symbol_Name[@item_symbol]
+    return name.nil? ? "<none>" : name
+  end
+  #---------------------------------------------------------------------------
+  def get_symbol_item
+    @item_symbol = @item
+    case @item
+    when :main_hoof
+      @item = @user.primary_tool
+    when :off_hoof
+      @item = @user.secondary_tool
+    end
+  end
+  #---------------------------------------------------------------------------
 end
