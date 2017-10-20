@@ -8,10 +8,14 @@
 class Game_Action
   #--------------------------------------------------------------------------
   Symbol_Name = {
-      :main_hoof      => "Use main-hoof attack",
-      :off_hoof       => "Use off-hoof attack",
-      :add_command    => "Add a new tactic logic",
-      
+      :attack_mainhoof      => "Use main-hoof attack",
+      :attack_offhoof       => "Use off-hoof attack",
+      :add_command          => "Add a new tactic logic",
+      :target_none          => "Set target to none",
+      :hp_most_power        => "Use Hp potion: most powerful",
+      :hp_least_power       => "Use Hp potion: least powerful",
+      :ep_most_power        => "Use Ep potion: most powerful",
+      :ep_least_power       => "Use Ep potion: least powerful",
   }
   #--------------------------------------------------------------------------
   # * Public Instance Variables
@@ -44,7 +48,7 @@ class Game_Action
     @acting		     = false
     @done		       = false
     @casted        = false
-    @item_symbol   = nil
+    @symbol_item   = nil
     get_symbol_item if item.is_a?(Symbol)
   end
   #---------------------------------------------------------------------------
@@ -154,8 +158,13 @@ class Game_Action
     execute
   end
   #---------------------------------------------------------------------------
-  def direct_change_item(item)
-    @item = item
+  def reassign_item(item, redect = true)
+    @symbol_item  = item.is_a?(Symbol) ? item : nil
+    @item         = item
+    get_symbol_item if @symbol_item && redect
+    @time         = user.item_casting_time(item) if @item.is_a?(RPG::BaseItem)
+    @time_needed  = @time
+    @effect_delay = item.tool_effectdelay rescue 0
   end
   #---------------------------------------------------------------------------
   def interrupt
@@ -163,20 +172,43 @@ class Game_Action
     wait
   end
   #---------------------------------------------------------------------------
+  def item_valid?
+    return @item.is_a?(RPG::BaseItem)
+  end
+  #---------------------------------------------------------------------------
   def get_item_name
-    return @item.name if @item_symbol.nil? && @item
-    name = Symbol_Name[@item_symbol]
+    return @item.name if !@symbol_item && @item.is_a?(RPG::BaseItem)
+    name = Symbol_Name[@item]
     return name.nil? ? "<none>" : name
   end
   #---------------------------------------------------------------------------
   def get_symbol_item
-    @item_symbol = @item
     case @item
-    when :main_hoof
-      @item = @user.primary_tool
-    when :off_hoof
-      @item = @user.secondary_tool
-    end
+    when :attack_mainhoof
+      reassign_item(@user.primary_weapon)
+    when :attack_offhoof
+      reassign_item(@user.secondary_weapon)
+    when :target_none
+      @user.map_char.set_target(nil)
+    when :hp_most_power
+      potions = $game_party.items.select{|item| item.hp_recover? && !item.mp_recover?}
+      potion  = potions.max_by{|item| item.price}
+      reassign_item(potion)
+    when :hp_least_power
+      potions = $game_party.items.select{|item| item.hp_recover? && !item.mp_recover?}
+      potion  = potions.min_by{|item| item.price}
+      reassign_item(potion)
+    when :ep_most_power
+      potions = $game_party.items.select{|item| !item.hp_recover? && item.mp_recover?}
+      potion  = potions.max_by{|item| item.price}
+      reassign_item(potion)
+    when :ep_least_power
+      potions = $game_party.items.select{|item| !item.hp_recover? && !item.mp_recover?}
+      potion  = potions.min_by{|item| item.price}
+      reassign_item(potion)
+    else
+      @item
+    end # last work
   end
   #---------------------------------------------------------------------------
 end

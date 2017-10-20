@@ -147,6 +147,10 @@ class Game_Player < Game_Character
     return actor.equips[0]
   end
   #--------------------------------------------------------------------------
+  def secondary_weapon
+    return actor.equips[1]
+  end
+  #--------------------------------------------------------------------------
   def body_size
     return 1 * @zoom_x
   end

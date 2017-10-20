@@ -7,7 +7,7 @@
 class Window_TacticList < Window_Selectable
   #--------------------------------------------------------------------------
   attr_accessor :data
-  attr_accessor :actor
+  attr_reader   :actor
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -40,11 +40,17 @@ class Window_TacticList < Window_Selectable
     @data ? @data.size : 1
   end
   #--------------------------------------------------------------------------
+  def actor=(_actor)
+    @actor = _actor
+    @data  = @actor.tactic_commands.dup
+    refresh
+  end
+  #--------------------------------------------------------------------------
   # * Create Item List
   #--------------------------------------------------------------------------
   def make_item_list
     return if @actor.nil?
-    @data = @actor.tactic_commands
+    @data = @actor.tactic_commands.dup
     command_add = Game_TacticCommand.new(@actor)
     command_add.action = Game_Action.new(@actor, nil, :add_command)
     command_add.category = :new
@@ -74,6 +80,12 @@ class Window_TacticList < Window_Selectable
     end
   end
   #--------------------------------------------------------------------------
+  # * Get Item
+  #--------------------------------------------------------------------------
+  def item
+    @data && index >= 0 ? @data[index] : nil
+  end
+  #--------------------------------------------------------------------------
   # * Restore Previous Selection Position
   #--------------------------------------------------------------------------
   def select_last
@@ -86,7 +98,7 @@ class Window_TacticList < Window_Selectable
     cx = rect.x
     cy = rect.y
     case command.category
-    when :enemy
+    when :targeting
       draw_icon(PONY::IconID[:aim], cx, cy)
       rect.x += 26
       contents.font.color.set(DND::COLOR::Orange)
@@ -125,6 +137,15 @@ class Window_TacticList < Window_Selectable
       draw_text(rect, action)
       change_color(normal_color)
     end
+  end
+  #--------------------------------------------------------------------------
+  def apply_tactic_change
+    return if @data.nil?
+    puts "Apply tactic change"
+    @data.each {|cmd| puts "#{cmd} #{cmd.condition_symbol} #{cmd.action.item}"}
+    @actor.tactic_commands = @data.select{|cmd| cmd.category && cmd.category != :new}
+    puts "After:"
+    @actor.tactic_commands.each {|cmd| puts "#{cmd} #{cmd.condition_symbol} #{cmd.action.item}"}
   end
   #--------------------------------------------------------------------------
 end

@@ -291,6 +291,8 @@ class RPG::Enemy
   attr_accessor :face_name  # Face filename show in map status window
   attr_accessor :face_index # Face index
   attr_accessor :body_size
+  
+  attr_accessor :secondary_weapon
   #--------------------------------------------------------------------------
   # * Attributes setup
   #--------------------------------------------------------------------------
@@ -308,6 +310,14 @@ class RPG::Enemy
       id = $1.to_i
       @default_weapon = $data_weapons[id] if id > 1
       puts "[System]: #{self.name}'s default weapon: #{@default_weapon.name}" if id > 1
+    when DND::REGEX::Character::SecondaryWeapon
+      id = $1.to_i
+      @secondary_weapon = $data_weapons[id] if id > 1
+      puts "[System]: #{self.name}'s secondary weapon: #{@secondary_weapon.name}" if id > 1
+    when DND::REGEX::Character::SecondaryArmor
+      id = $1.to_i
+      @secondary_weapon = $data_armors[id] if id > 1
+      puts "[System]: #{self.name}'s secondary armor: #{@secondary_weapon.name}" if id > 1
     when DND::REGEX::Character::TeamID
       @team_id = $1.to_i
     when DND::REGEX::Character::DeathSwitchSelf
@@ -355,6 +365,7 @@ class RPG::Enemy
     @death_animation      = DND::BattlerSetting::DeathAnimation
     @casting_animation    = DND::BattlerSetting::CastingAnimation
     @face_name            = nil
+    @secondary_weapon     = nil
     @face_index           = 0
     @body_size            = DND::BattlerSetting::BodySize
     @weapon_level_prof    = 0

@@ -9,16 +9,42 @@ module Tactic_Config
   Name_Table = {
     :lowest_hp              => "Lowest HP",
     :highest_hp             => "Highest HP",
-    :has_state              => "Has state",
+    :has_state              => "Has state:",
     :nearest_visible        => "Nearest visible",
-    :attacking_ally         => "Attacking ally",
-    :target_of_ally         => "Target of ally",
-    :rank                   => "Rank"
+    :attacking_ally         => "Attacking ally:",
+    :target_of_ally         => "Target of ally:",
+    :rank                   => "Rank:",
+    
+    :any                    => "Any",
+    :clustered              => "Clustered:",
+    :hp_lower               => "Hp lower than:",
+    :hp_higher              => "Hp higher than:",
+    :target_range           => "At ragne:",
+    :target_atk_type        => "Attack type:",
+    
+    :ep_lower               => "EP lower than:",
+    :being_attacked_by_type => "Hurt by attack type:",
+    :allies_alive           => "Team member alive:",
+    :allies_dead            => "Team member knocked out:",
+    :surrounded_by_enemies  => "Surrounded by X enemies:",
+    
+    :attack_mainhoof        => "Main-hoof attack",
+    :attack_offhoof         => "Off-hoof attack",
+    :target_none            => "Set target to none",
+    :hp_most_power          => "Use hp potion: most powerful",
+    :hp_least_power         => "Use hp potion: least powerful",
+    :ep_most_power          => "Use ep potion: most powerful",
+    :ep_least_power         => "Use ep potion: least powerful",
   }
   #--------------------------------------------------------------------------
   General_Actions = {
     :attack_mainhoof        => :attack_mainhoof,
     :attack_offhoof         => :attack_offhoof,
+    :target_none            => :target_none,
+    :hp_most_power          => :hp_most_power,
+    :hp_least_power         => :hp_least_power,
+    :ep_most_power          => :ep_most_power,
+    :ep_least_power         => :ep_least_power,
   }
   #--------------------------------------------------------------------------
   # * This module contains the conditions when targeting a opponent

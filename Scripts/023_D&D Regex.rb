@@ -84,6 +84,8 @@ module DND
   # See "tag: charparam" for details
   module REGEX::Character
     DefaultWeapon     = /(?:Default Weapon =)[ ](\d+)/i           # Weapon id when no weapon is equipped
+    SecondaryWeapon   = /(?:Secondary Weapon =)[ ](\d+)/i         # Secondary Weapon id
+    SecondaryArmor    = /(?:Secondary Armor =)[ ](\d+)/i          # Secondary Weapon in data_armors id
     TeamID            = /(?:Team ID =)[ ](\d+)/i                  # Team ID
     DeathSwitchSelf   = /(?:Death Self Switch =)[ ](.+?)/i        # Self Switch trigger when dead
     DeathSwitchGlobal = /(?:Death Global Switch =)[ ](\d+)/i      # Game_Switch trigger when dead

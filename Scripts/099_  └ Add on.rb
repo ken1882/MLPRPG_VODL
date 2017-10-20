@@ -481,6 +481,10 @@ class Game_Event < Game_Character
     return @enemy.default_weapon if @enemy
   end
   #----------------------------------------------------------------------------
+  def secondary_weapon
+    return @enemy.secondary_weapon if @enemy
+  end
+  #----------------------------------------------------------------------------
   def static_object?
     return @static_object
   end

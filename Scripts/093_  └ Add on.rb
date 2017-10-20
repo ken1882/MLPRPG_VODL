@@ -68,6 +68,11 @@ class Game_Follower < Game_Character
     return actor.equips[0]
   end
   #--------------------------------------------------------------------------
+  def secondary_weapon
+    return nil if !actor
+    return actor.equips[1]
+  end
+  #--------------------------------------------------------------------------
   # * Overwrite: Determine Visibility
   #--------------------------------------------------------------------------
   def visible?

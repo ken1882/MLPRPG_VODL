@@ -48,6 +48,7 @@ class Scene_Tactic < Scene_MenuBase
   #--------------------------------------------------------------------------
   def create_action_window
      @action_window = Window_TacticAction.new
+     @action_window.set_handler(:call_delete, method(:on_action_delete))
      @action_window.set_handler(:targeting, method(:on_action_ok))
      @action_window.set_handler(:fighting,  method(:on_action_ok))
      @action_window.set_handler(:self,      method(:on_action_ok))
@@ -58,15 +59,17 @@ class Scene_Tactic < Scene_MenuBase
   end
   #--------------------------------------------------------------------------
   def create_item_window
-    @item_window = Window_TacticItemList.new(0, 0, 200, 180)
-    @item_window.set_handler(:ok, method(:on_item_return))
+    @item_window = Window_TacticItemList.new(0, 0, 300, 240)
+    @item_window.set_handler(:ok, method(:on_item_ok))
     @item_window.set_handler(:cancel, method(:on_item_return))
     @action_window.item_window = @item_window
+    @item_window.x = @command_list.width - @item_window.width - 4  
+    @item_window.y = @command_list.y
     @item_window.hide
   end
   #--------------------------------------------------------------------------
   def on_command_ok
-    @action_window.activate
+    @action_window.activate(@command_list.item, @actor)
     rect = @command_list.item_rect(@command_list.index)
     @action_window.x = [(rect.x + rect.width) / 2, Graphics.width - @action_window.width].min
     @action_window.y = [[@command_list.y + rect.y - @command_list.oy + 2, 0].max, Graphics.height - @action_window.height - 2].min
@@ -74,9 +77,21 @@ class Scene_Tactic < Scene_MenuBase
     @action_window.select(0)
   end
   #--------------------------------------------------------------------------
+  def on_action_delete
+    cmd = @action_window.command
+    @command_list.data.delete(cmd)
+    @command_list.apply_tactic_change
+    @action_window.unselect
+    @action_window.hide
+    @command_list.refresh
+    @command_list.activate
+  end
+  #--------------------------------------------------------------------------
   def on_action_ok
     @action_window.unselect
     @action_window.hide
+    @item_window.show
+    @item_window.refresh
     @item_window.activate
     @item_window.select(0)
   end # last work: tactic processing
@@ -89,9 +104,15 @@ class Scene_Tactic < Scene_MenuBase
     end
   end
   #--------------------------------------------------------------------------
+  def on_item_ok
+    @command_list.apply_tactic_change
+    on_item_return
+  end
+  #--------------------------------------------------------------------------
   def on_item_return
     @item_window.unselect
     @item_window.hide
+    @command_list.refresh
     @command_list.activate
   end
   #--------------------------------------------------------------------------

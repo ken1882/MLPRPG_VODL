@@ -11,7 +11,7 @@ module WindowSkin
   "Luna",                    # 6
   "Pinkie pie4",             # 7
   "Celestia",                # 8
-  
+  "Fluttershy7",             # 9 
   ]
   
   Default = "Window"
@@ -36,6 +36,7 @@ module WindowSkin
   Rainbow     = Skins[5]
   Luna        = Skins[6]
   Celestia    = Skins[8]
+  Fluttershy  = Skins[9]
   ItemAction  = Skins[6]
   
 end

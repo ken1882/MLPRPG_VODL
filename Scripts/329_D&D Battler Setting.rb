@@ -174,6 +174,8 @@ class Game_CharacterBase
   # * Execute action
   #----------------------------------------------------------------------------
   def execute_action
+    @action.get_symbol_item unless @action.item_valid?
+    return @action.execute  unless @action.item_valid?
     if @action.item.tool_castime > 5
       info = sprintf("%s: %s", @action.user.name, @action.item.name)
       SceneManager.display_info(info)
@@ -289,6 +291,7 @@ class Game_CharacterBase
   # tag: casting
   #----------------------------------------------------------------------------
   def item_casting_time(item)
+    return 0 unless item.is_a?(RPG::BaseItem)
     timer = [item.tool_castime - ctr, 0].max
     return timer
   end

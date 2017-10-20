@@ -78,6 +78,10 @@ class Game_Enemy < Game_Battler
     enemy.weapon_level_prof
   end
   #---------------------------------------------------------------------------
+  def secondary_weapon
+    enemy.secondary_weapon
+  end
+  #---------------------------------------------------------------------------
   # * Method Missing
   # ----------------------------------------------------------------------   
   # DANGER ZONE: Redirect to Actor

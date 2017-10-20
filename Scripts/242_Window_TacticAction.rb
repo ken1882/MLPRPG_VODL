@@ -24,7 +24,10 @@ class Window_TacticAction < Window_Command
   #--------------------------------------------------------------------------
   def update
     super 
-    @item_window.category = current_symbol if @item_window
+    if @item_window && !@ok_called
+      @item_window.category = current_symbol
+      @item_window.command  = @command
+    end
   end
   #--------------------------------------------------------------------------
   # * Processing When OK Button Is Pressed
@@ -65,6 +68,7 @@ class Window_TacticAction < Window_Command
     else
       add_command('Edit condition', :call_condition)
       add_command('Edit Action', :call_action)
+      add_command('Delete', :call_delete)
     end
   end
   #--------------------------------------------------------------------------
@@ -86,16 +90,16 @@ class Window_TacticAction < Window_Command
   def activate(command = nil, actor = nil)
     @command = command
     @actor   = actor
+    @symbol  = nil
+    @ok_called = false
     super()
     self.opacity = 255
     refresh
   end
   #--------------------------------------------------------------------------
   def deactivate
-    @symbol   = nil
-    @actor    = nil
-    @command  = nil
     super
+    @ok_called = true
   end
   #--------------------------------------------------------------------------
   # * Set Item Window
