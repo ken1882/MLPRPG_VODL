@@ -161,7 +161,9 @@ class Game_CharacterBase
       @step_anime = true unless static_object?
       unless @action.item.tool_castime < 10
         @casting_flag = true
-        @chase_timer = 20
+        @chase_timer  = 30
+        @combat_timer = 30
+        clear_pathfinding_moves
       end
     end
     return if @action.nil?
@@ -174,6 +176,7 @@ class Game_CharacterBase
   # * Execute action
   #----------------------------------------------------------------------------
   def execute_action
+    return if $game_system.story_mode?
     @action.get_symbol_item unless @action.item_valid?
     return @action.execute  unless @action.item_valid?
     if @action.item.tool_castime > 5

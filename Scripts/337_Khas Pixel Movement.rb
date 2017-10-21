@@ -229,7 +229,7 @@ class Game_CharacterBase
     end
     
     if @priority_type == 1
-      return true  if ($game_player.px - px).abs <= @cx && ($game_player.py - py).abs <= @cy
+      return true if ($game_player.px - px).abs <= @cx && ($game_player.py - py).abs <= @cy && !$game_player.dead?
     end
     return false
   end
@@ -594,11 +594,12 @@ class Game_Event < Game_Character
     
     for follower in $game_player.followers
       next unless follower.actor || follower.through
+      return false if follower.dead?
       return true if (follower.px - px).abs <= follower.cx && (follower.py - py).abs <= follower.cy
     end
     
     if @priority_type == 1
-      return true if ($game_player.px - px).abs <= @cx && ($game_player.py - py).abs <= @cy
+      return true if ($game_player.px - px).abs <= @cx && ($game_player.py - py).abs <= @cy && !$game_player.dead?
     end
     return false
   end

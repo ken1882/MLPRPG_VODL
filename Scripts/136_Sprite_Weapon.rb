@@ -73,6 +73,7 @@ class Sprite_Weapon < Sprite
   # * Frame Update
   #--------------------------------------------------------------------------
   def update
+    return if disposed?
     super
     update_animation
     update_attacking if @attacking

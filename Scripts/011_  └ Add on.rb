@@ -43,6 +43,21 @@ module DataManager
   #--------------------------------------------------------------------------
   # * Execute Save (No Exception Processing)
   #--------------------------------------------------------------------------
+  def self.save_game_without_rescue(index)
+    File.open(make_filename(index), "wb") do |file|
+      $game_system.on_before_save
+      header   = make_save_header
+      contents = make_save_contents
+      return false unless header && contents
+      Marshal.dump(header, file)
+      Marshal.dump(contents, file)
+      @last_savefile_index = index
+    end
+    return true
+  end
+  #--------------------------------------------------------------------------
+  # * Execute Save (No Exception Processing)
+  #--------------------------------------------------------------------------
   class << self; alias save_game_without_rescue_chain save_game_without_rescue; end
   def self.save_game_without_rescue(index)
     begin

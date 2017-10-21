@@ -28,13 +28,6 @@ class Game_Character < Game_CharacterBase
     init_public_combatdnd
   end
   #----------------------------------------------------------------------------
-  # *) Frame update
-  #----------------------------------------------------------------------------
-  alias update_gachdndai update
-  def update
-    update_gachdndai
-  end
-  #----------------------------------------------------------------------------
   def target_rate(target, modifier = 0)
     sum  = 100
     sum  = apply_tactic_target(sum, target)
@@ -113,7 +106,7 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def attack(target = @current_target)
-    move_toward_character(target) if aggressive_level > 2
+    #move_toward_character(target) if aggressive_level > 2
     turn_toward_character(target)
   end
   #----------------------------------------------------------------------------
@@ -211,7 +204,7 @@ class Game_Character < Game_CharacterBase
   def start_timer(sym, plus = 0)
     case sym
     when :combat
-      return @comba_timer = 20 + plus;
+      return @combat_timer = 20 + plus;
     when :chase_pathfinding
       return @chase_pathfinding_timer = 120 + plus;
     when :chase

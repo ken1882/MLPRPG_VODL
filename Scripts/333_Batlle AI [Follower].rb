@@ -9,6 +9,7 @@
 class Game_Follower < Game_Character
   #----------------------------------------------------------------------------
   def attack(target = @current_target)
+    return if casting? || @casting_flag
     super
     actor.process_tool_action(primary_weapon)
   end
@@ -31,8 +32,9 @@ class Game_Follower < Game_Character
     @combat_timer -= 1 if @combat_timer > 0
     @chase_timer  -= 1 if @chase_timer > 0
     @chase_pathfinding_timer -= 1 if @chase_pathfinding_timer > 0
-    chase_target  if @current_target && !@next_action
-    update_combat if @current_target && @combat_timer == 0 && !casting? && !@casting_flag
+    return if @next_action || casting? || @casting_flag
+    chase_target  if @current_target
+    update_combat if @current_target && @combat_timer == 0
   end
   #----------------------------------------------------------------------------
   # *) Determind sight angle

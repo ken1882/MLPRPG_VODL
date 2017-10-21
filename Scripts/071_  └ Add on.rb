@@ -14,7 +14,7 @@ class Game_Enemy < Game_Battler
   # * Set hashid
   #------------------------------------------------------------------------
   def hash_self
-    @hashid  = enemy.hashid
+    @hashid  = enemy.hashid + self.hash
     super
   end
   #--------------------------------------------------------------------------

@@ -31,6 +31,7 @@ class Game_Map
   attr_accessor :event_battler_instance, :queued_actions
   attr_reader   :item_drops
   attr_accessor :fog_enabled                      # Light effect fog
+  attr_reader   :active_enemies, :active_enemy_count
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -44,10 +45,11 @@ class Game_Map
     @event_battler_instance   = {}
     @enemies         = []
     @queued_actions  = []
+    @active_enemies  = []
     @flag_after_load = false
     @fog_enabled     = false
-    @sort_timer         = 0
     @enemy_update_index = 0
+    @active_enemy_count = 0
     init_battle_members
     initialize_opt
     set_max_edge
@@ -80,6 +82,8 @@ class Game_Map
   # tag: loading
   #--------------------------------------------------------------------------
   def setup(map_id)
+    dispose_sprites
+    
     save_battler_instance if @map_id > 0
     @event_battler_instance[map_id] = Hash.new if @event_battler_instance[map_id].nil?
     clear_battlers
@@ -91,6 +95,8 @@ class Game_Map
     Graphics.fadein(60)
     SceneManager.set_loading_phase("Mining Block Chain", -1)
     
+    @active_enemies.clear
+    @active_enemy_count = 0
     BlockChain.mining
     $game_party.sync_blockchain
     setup_battlers
@@ -228,8 +234,6 @@ class Game_Map
   #--------------------------------------------------------------------------
   def update_timer
     @timer += 1
-    @sort_timer -= 1
-    sort_enemies if @sort_timer == 0
     process_battler_regenerate if @timer % DND::BattlerSetting::RegenerateTime == 0
     process_timecycle_end      if @timer >= PONY::TimeCycle
   end
@@ -237,17 +241,27 @@ class Game_Map
   # * Update NPC battler
   #--------------------------------------------------------------------------
   def update_enemies
-    return if @enemies.size == 0
-    @enemy_update_index = (@enemy_update_index + 1) % @enemies.size
-    @enemies[@enemy_update_index].update_battler
+    @active_enemy_count = [@active_enemy_count, 0].max
+    return if @active_enemy_count == 0
+    battler = @active_enemies[@enemy_update_index]
+    if battler.nil?
+      @active_enemies = @active_enemies.compact
+      @active_enemy_count = @active_enemies.size
+    else
+      battler.update_battler
+    end
+    @enemy_update_index = (@enemy_update_index + 1) % @active_enemy_count
   end
   #--------------------------------------------------------------------------
-  def sort_enemies
-    tn = Battler_Updates
-    @sort_timer  = tn
-    @sort_timer += rand(@enemies.size - tn) if @enemies.size > tn
-    @enemy_update_index = 0
-    @enemies.sort!{|a,b| a.distance_to_character($game_player) <=> b.distance_to_character($game_player)}
+  def remove_active_enemy(enemy)
+    @active_enemies.delete(enemy)
+    @active_enemy_count -= 1
+  end
+  #--------------------------------------------------------------------------
+  def add_active_enemy(enemy)
+    return if @active_enemies.include?(enemy)
+    @active_enemies << enemy
+    @active_enemy_count += 1
   end
   #--------------------------------------------------------------------------
   def process_battler_regenerate
@@ -378,12 +392,19 @@ class Game_Map
   end
   #--------------------------------------------------------------------------
   def on_game_save
+    dispose_sprites
+    dispose_lights
     @events.each do |key, event|
-      event.dispose_sprites
       pos = [POS.new(event.real_x, event.real_y),POS.new(event.x, event.y), POS.new(event.px, event.py)]
       @accurate_event_positions[key] = pos
     end
     save_battler_instance
+  end
+  #--------------------------------------------------------------------------
+  def dispose_sprites
+    @events.each do |key, event|
+      event.dispose_sprites
+    end
   end
   #--------------------------------------------------------------------------
   def after_game_load
@@ -476,5 +497,15 @@ class Game_Map
     return @backup
   end
   #--------------------------------------------------------------------------
+  def dispose_lights
+    @lantern.dispose if @lantern
+    @surfaces.each{|s| s.dispose} if @surfaces
+    @light_sources.each { |source| source.dispose_light } if @light_sources
+    if @light_surface
+      @light_surface.bitmap.dispose
+      @light_surface.dispose
+      @light_surface = nil
+    end
+  end
   
 end

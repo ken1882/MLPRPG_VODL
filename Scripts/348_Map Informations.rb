@@ -24,6 +24,7 @@ class Window_InformationLog < Window_Selectable
     create_active_icon(2141)
     deactivate
     self.windowskin = Cache.system(WindowSkin::MapInfo)  if WindowSkin::Enable
+    contents.font.size = 16
     refresh
   end
   #--------------------------------------------------------------------------
@@ -168,7 +169,7 @@ class Window_InformationLog < Window_Selectable
       @lines.shift      if item_max > item_limit
       @lines.push(line) if line.size > 0
     end
-    refresh
+    refresh(true)
   end
   #--------------------------------------------------------------------------
   # * Get Text From Last Line
@@ -179,12 +180,11 @@ class Window_InformationLog < Window_Selectable
   #--------------------------------------------------------------------------
   # * Refresh
   #--------------------------------------------------------------------------
-  def refresh
+  def refresh(lazy = false)
     contents.clear
-    make_font_smaller
+    contents.dispose
     create_contents
-    draw_all_items
-    make_font_bigger
+    draw_all_items(lazy)
   end
   #--------------------------------------------------------------------------
   # * Activate Window
@@ -192,6 +192,7 @@ class Window_InformationLog < Window_Selectable
   def activate
     super
     select(@lines.size - 1)
+    refresh
   end
   #--------------------------------------------------------------------------
   # * Deactivate Window
@@ -267,13 +268,19 @@ class Window_InformationLog < Window_Selectable
   #--------------------------------------------------------------------------
   # * Draw All Items
   #--------------------------------------------------------------------------
-  def draw_all_items
-    make_font_smaller
+  def draw_all_items(lazy = false)
     self.contents.font.color = Color.new(255,255,255, [self.opacity ,150].max)
-    item_max.times {|i| draw_item(i) }
+    if lazy && item_max >= 4
+      n = item_max - 4
+      item_max.times do |i|
+        next if i < n
+        draw_item(i)
+      end
+    else
+      item_max.times {|i| draw_item(i) }
+    end
     self.index = item_max - 1
     self.index = -1
-    make_font_bigger
   end
   #--------------------------------------------------------------------------
   # draw_item

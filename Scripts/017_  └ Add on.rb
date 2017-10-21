@@ -275,6 +275,7 @@ module BattleManager
       names << char.actor.name if char.is_a?(Game_Player)   && char.actor
       names << char.actor.name if char.is_a?(Game_Follower) && char.actor
     end
+    
     return candidates
   end
   #--------------------------------------------------------------------------

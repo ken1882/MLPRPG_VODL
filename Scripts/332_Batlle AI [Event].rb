@@ -12,6 +12,7 @@ class Game_Event < Game_Character
   #--------------------------------------------------------------------------
   alias update_gaevdndai update
   def update
+    update_sight if @enemy
     update_gaevdndai
   end
   #----------------------------------------------------------------------------
@@ -66,7 +67,6 @@ class Game_Event < Game_Character
     @combat_timer -= 1 if @combat_timer > 0
     @chase_timer  -= 1 if @chase_timer > 0
     @chase_pathfinding_timer -= 1 if @chase_pathfinding_timer > 0
-    update_sight
     update_combat if @current_target && @combat_timer == 0 && !casting? && !@casting_flag
   end
   #----------------------------------------------------------------------------
@@ -90,6 +90,7 @@ class Game_Event < Game_Character
   end
   #----------------------------------------------------------------------------
   def attack(target = @current_target)
+    return if casting? || @casting_flag
     super
     @enemy.process_tool_action(primary_weapon)
   end
@@ -125,6 +126,15 @@ class Game_Event < Game_Character
       target = BattleManager.autotarget(self, skill)
       @next_action = Game_Action.new(self, target, skill) 
       clear_pathfinding_moves
+    end
+  end
+  #----------------------------------------------------------------------------
+  def set_target(target)
+    super
+    if target.nil?
+      $game_map.remove_active_enemy(self)
+    else
+      $game_map.add_active_enemy(self)
     end
   end
 end

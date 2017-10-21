@@ -286,10 +286,10 @@ class Game_Party < Game_Unit
   #--------------------------------------------------------------------------
   def all_dead?(check_only = false)
     return false if !check_only && !$game_system.allow_gameover?
-    return false if BattleManager.ally_battler($game_player).any?{|i| i.distance_to_character($game_player) < 6}
     re = super() && ($game_party.in_battle || members.size > 0)
     @dead_confirm_timer = 0 if @dead_confirm_timer.nil?
     @dead_confirm_timer = re ? @dead_confirm_timer + 1 : 0
+    BattleManager.send_flag(in_battle: true) if re
     return re && @dead_confirm_timer > 180
   end
 end

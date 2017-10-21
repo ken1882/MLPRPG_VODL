@@ -177,7 +177,7 @@ module DataManager
       File.open(errfilename, 'a') do |file|
         file.write(info)
       end
-      header[:map] = Marshal.load($game_map.get_cached_backup) rescue Marshal.load(Marshal.dump(Game_Map.new))
+      return false
     end
     header[:player] = Marshal.load(Marshal.dump($game_player))
     header

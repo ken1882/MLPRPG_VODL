@@ -479,8 +479,8 @@ class Game_Map
   end
   def setup_events
     @light_sources.nil? ? @light_sources = [] : @light_sources.clear
-    setup_surfaces
-    merge_surfaces
+    #setup_surfaces
+    #merge_surfaces
     kbl_setup_events
   end
   def setup_surfaces
@@ -938,12 +938,7 @@ class Spriteset_Map
     dispose_lights
   end
   def dispose_lights
-    $game_map.lantern.dispose
-    $game_map.surfaces.each{|s| s.dispose}
-    $game_map.light_sources.each { |source| source.dispose_light }
-    $game_map.light_surface.bitmap.dispose
-    $game_map.light_surface.dispose
-    $game_map.light_surface = nil
+    $game_map.dispose_lights
   end
   def update_lights
     $game_map.light_surface.bitmap.clear

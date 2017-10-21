@@ -579,7 +579,7 @@ class RPG::BaseItem
   #---------------------------------------------------------------------------
   def ensure_property_correct
     @tool_animation     = 0
-    @tool_distance      = 8
+    @tool_distance      = 2
     @tool_animmoment    = 0
     @tool_castime       = 0
     @tool_itemcost      = 0

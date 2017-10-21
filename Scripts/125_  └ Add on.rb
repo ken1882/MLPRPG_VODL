@@ -181,7 +181,7 @@ class Spriteset_Map
       return
     end
     sprite = Unit_Circle.new(@viewport1, battler)
-    @weapon_sprites[battler.hashid] = Sprite_Weapon.new(@viewport1, battler)
+    @weapon_sprites[battler.battler.hashid] = Sprite_Weapon.new(@viewport1, battler)
     @unitcir_sprites << sprite
     @unit_table[battler.hashid] = @unitcir_sprites.size - 1
     debug_print "Battler registered #{battler}"
@@ -225,7 +225,6 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def show_units
     @unitcir_sprites.each do |sprite|
-      #puts "Show unit: #{sprite.character} #{BattleManager.valid_battler?(sprite.character)}"
       sprite.show if BattleManager.valid_battler?(sprite.character)
     end
     @tactic_cursor.show if @tactic_cursor

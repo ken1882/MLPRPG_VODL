@@ -118,7 +118,7 @@ module Theo
   #=============================================================================
     
   #-----------------------------------------------------------------------------
-    Table_Limit_Search = 50
+    Table_Limit_Search = 16
   #-----------------------------------------------------------------------------
   # Table search is a custom algorithm to grab events based on the map table.
   # Instead of iterating all events and checked them if they're on the screen,
@@ -347,12 +347,14 @@ class Game_Map
     select_on_screen_events
     events = @cached_events | @keep_update_events | @forced_update_events
     cnt = 0
+    
     if Theo::AntiLag::Dispose_Sprite
       offscreen_events = last_events - events
       offscreen_events.each do |event|
         event.delete_sprite
       end
     end
+    
     events.each do |event|
       event.update unless event.frozen? # tag: modified
       terminate_event(event) if event.terminated?
