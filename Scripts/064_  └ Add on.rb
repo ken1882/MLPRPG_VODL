@@ -32,19 +32,27 @@ class Game_BattlerBase
   # * Change HP
   #--------------------------------------------------------------------------
   def hp=(hp)
+    hp = [[hp, mhp].min, 0].max
     delta = hp - @hp
+    return if delta == 0
+    check_security
     popup_hp_change(delta) if delta != 0
     @hp  = hp
     refresh
+    update_security
   end
   #--------------------------------------------------------------------------
   # * Change MP
   #--------------------------------------------------------------------------
   def mp=(mp)
+    mp = [[mp, mmp].min, 0].max
     delta = mp - @mp
+    return if delta == 0
+    check_security
     popup_ep_change(delta) if delta > 30
     @mp  = mp
     refresh
+    update_security
   end
   #--------------------------------------------------------------------------   
   # ● Easier method for check skilll learned

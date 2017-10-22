@@ -35,12 +35,11 @@ class Game_Battler < Game_BattlerBase
   # *) Make base damage via rolls
   # ---------------------------------------------------------------------------
   def roll_base_damages(user, item)
-    
     damages = []
     for feat in item.damage_index
       damages.push(process_damage_roll(feat, user, item))
     end
-    
+    damages << user.primary_weapon.attack_bonus if user.primary_weapon && item.is_ammo?
     return damages
   end
   #------------------------------------------------------------------------
@@ -175,7 +174,8 @@ class Game_Battler < Game_BattlerBase
     
     type = item.damage_index[0][4]
     type = get_param_id(type) if type.is_a?(String)
-    value = bonus + self.attack_bonus
+    value  = bonus + self.attack_bonus + item.attack_bonus
+    value += user.primary_weapon.attack_bonus if user.primary_weapon && item.is_ammo?
     
     if actor?
       param_id = get_param_id(DND::CLASS_ACTIONDC[self.class_id][0])

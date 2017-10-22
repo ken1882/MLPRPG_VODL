@@ -37,11 +37,9 @@ class Game_Party < Game_Unit
   # * Gold & Max gold
   #--------------------------------------------------------------------------
   def gold(quick_access = true)
-    # tag: queued >> security
-    #@gold = PONY.EncInt(BlockChain.account_balance(Vocab::Player)) if !quick_access
     @gold = BlockChain.account_balance(Vocab::Player) if !quick_access
     return @gold
-  end # queued: gold enctyption!
+  end
   #--------------------------------------------------------------------------
   def max_gold; return 10 ** 6; end
   #--------------------------------------------------------------------------  

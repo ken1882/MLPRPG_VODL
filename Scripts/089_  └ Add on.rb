@@ -318,4 +318,9 @@ class Game_Character < Game_CharacterBase
   def get_ammo_item(item)
   end
   #--------------------------------------------------------------------------
+  def secure_hash
+    return unless battler
+    battler.secure_hash
+  end
+  #--------------------------------------------------------------------------
 end

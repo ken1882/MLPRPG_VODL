@@ -137,6 +137,15 @@ class Game_Actor < Game_Battler
     @equips[slot_id].object = item
     refresh
   end
+  #--------------------------------------------------------------------------
+  # * Change Experience
+  #--------------------------------------------------------------------------
+  alias change_exp_security change_exp
+  def change_exp(exp, show)
+    check_security
+    change_exp_security(exp, show)
+    update_security
+  end
   #---------------------------------------------------------------------------
   # * Method Missing
   # ----------------------------------------------------------------------   

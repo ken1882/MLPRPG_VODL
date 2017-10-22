@@ -18,7 +18,8 @@ module PONY::ERRNO
     :illegel_value    => "Illegel value:\n",
     :checksum_failed  => "File CheckSum failure",
     :file_missing     => "File missing:\n",
-    :tactic_sym_missing => "Tactic command symbol unavailable:\n"
+    :tactic_sym_missing => "Tactic command symbol unavailable:\n",
+    :secure_hash_failed => "Security hash match failed:\n",
   }
   
   @raised = false

@@ -208,7 +208,7 @@ class Game_Action
       reassign_item(potion)
     else
       @item
-    end # last work
+    end
   end
   #---------------------------------------------------------------------------
 end

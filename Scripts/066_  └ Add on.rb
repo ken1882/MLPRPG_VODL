@@ -10,6 +10,7 @@ class Game_Battler < Game_BattlerBase
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_reader   :state_steps
+  attr_reader   :safe_hash
   attr_accessor :map_char     # character on the map
   attr_accessor :stiff        # Stiff time
   attr_accessor :skill_cooldown, :item_cooldown, :weapon_cooldown, :armor_cooldown
@@ -228,5 +229,21 @@ class Game_Battler < Game_BattlerBase
   def weapon_level_prof
     return 0
   end
-  
+  #---------------------------------------------------------------------------
+  def update_security
+    v = @hp + @mp + exp
+    @safe_hash = PONY.MD5(v.to_s)
+  end
+  #---------------------------------------------------------------------------
+  def check_security
+    update_security if @safe_hash.nil?
+    v = @hp + @mp + exp
+    result = ( @safe_hash == PONY.MD5(v.to_s) )
+    return true if result
+    p SPLIT_LINE
+    puts "Name: #{name} Sum: #{v} Safe-hash: #{@safe_hash} Hash: #{PONY.MD5(v.to_s)}"
+    PONY::ERRNO.raise(:secure_hash_failed, :exit, nil, name)
+    return false
+  end
+  #---------------------------------------------------------------------------
 end

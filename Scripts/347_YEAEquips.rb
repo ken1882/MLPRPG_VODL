@@ -1051,7 +1051,7 @@ class Window_EquipStatus < Window_Base
     elsif type == 1
       draw_text(0, dy, dw, line_height, @actor.armor_class, 2)
     elsif type == 2
-      v = @original_item.nil? ? "None" : ( 20 - (@original_item.tool_cooldown / 5) )
+      v = @original_item.nil? ? "None" : 60 - @original_item.tool_cooldown
       draw_text(0, dy, dw, line_height, v, 2)
     elsif type == 3
       v = @original_item.nil? ? "None" : @original_item.tool_distance
@@ -1081,7 +1081,7 @@ class Window_EquipStatus < Window_Base
       new_value = @temp_item.tool_cooldown
       v = @original_item.nil? ? 0 : @original_item.tool_cooldown
       change_color(param_change_color(v - new_value))
-      info = ( 20 - (@temp_item.tool_cooldown / 5) )
+      info = 60 - @temp_item.tool_cooldown
     elsif type == 3
       new_value = @temp_item.tool_distance
       v = @original_item.nil? ? 0 : @original_item.tool_distance
@@ -1102,9 +1102,7 @@ class Window_EquipStatus < Window_Base
     change_color(system_color)
     draw_text(0, y, w, line_height, "Speed")
     change_color(normal_color)
-    
-    speed = 20 - (@temp_item.tool_cooldown / 5)
-    
+    speed = 60 - @temp_item.tool_cooldown
     draw_text(0, y, w, line_height, speed, 2)
   end
   #--------------------------------------------------------------------------

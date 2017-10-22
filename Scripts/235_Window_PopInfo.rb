@@ -56,6 +56,7 @@ class Window_PopInfo < Window_Overlay
   def raise_overlay(info = nil, stack_commandname = nil, args = nil, forced = false)
     @countdown = @exist_time
     unselect
+    SceneManager.process_tactic(true) unless SceneManager.tactic_enabled?
     super(info, stack_commandname, args, forced)
   end
   #--------------------------------------------------------------------------
