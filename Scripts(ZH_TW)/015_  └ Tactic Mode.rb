@@ -22,16 +22,17 @@ module SceneManager
     return @tactic_enabled ? end_tactic : start_tactic
   end
   #--------------------------------------------------------------------------
+  # tag: translate
   def start_tactic
     return unless scene_is?(Scene_Map)
-    display_info 'Paused'
+    display_info '暫停'
     @tactic_enabled = true
     scene.start_tactic
   end
   #--------------------------------------------------------------------------
   def end_tactic
     return unless scene_is?(Scene_Map)
-    display_info 'Unpaused'
+    display_info '解除暫停'
     @tactic_enabled = false
     scene.end_tactic
   end

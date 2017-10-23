@@ -24,14 +24,14 @@ class Scene_Test < Scene_Base
   end
   
   def create_all_window
-    @window_input = Window_Input.new(Graphics.center_width(480), Graphics.center_height(28), 480, autoscroll: true)
+    @window_input = Window_Input.new(Graphics.center_width(480), Graphics.center_height(28), 480, autoscroll: true, number: true)
   end
   
   def update
     super
     if Input.trigger?(:kF5)
       @window_input.dispose unless @window_input.disposed?
-      @window_input = Window_Input.new(Graphics.center_width(480), Graphics.center_height(28), 480, autoscroll: true)
+      create_all_window
     end
     process_input
     #Sound.low_hp if @se_timer == 0

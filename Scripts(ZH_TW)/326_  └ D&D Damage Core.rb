@@ -250,17 +250,17 @@ class Game_Battler < Game_BattlerBase
       apply_hit(user, item)
     else
       results = @result.result?
-      info = "Blocked"
+      info = "格擋"
       if results[:evaded]
-        info = "Evaded"
+        info = "閃避"
       elsif results[:missed]
-        info = "Missed"
-        SceneManager.display_info("#{user.name} - critical miss")
+        info = "失誤"
+        SceneManager.display_info("#{user.name} - 嚴重失誤")
       elsif results[:critical]
-        SceneManager.display_info("#{user.name} - critical attack")
+        SceneManager.display_info("#{user.name} - 致命一擊")
       elsif results[:immune]
-        SceneManager.display_info("#{user.name} - weapon ineffective")
-        info = "Resisted"
+        SceneManager.display_info("#{user.name} - 武器無效")
+        info = "抵抗"
       end
       popup_info(info, DND::COLOR::White)
       apply_damaged_target_change(user, 0)

@@ -8,10 +8,10 @@ class Window_TacticCommand < Window_Command
   #--------------------------------------------------------------------------
   # * Constants
   #--------------------------------------------------------------------------
-  Command_Move        = "Move to"
-  Command_Follow      = "Follow"
-  Command_Guard       = "Guard"
-  Command_Patrol      = "Patrol"
+  Command_Move        = "移動到"
+  Command_Follow      = "跟隨"
+  Command_Guard       = "保護"
+  Command_Patrol      = "巡邏"
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
@@ -35,15 +35,15 @@ class Window_TacticCommand < Window_Command
   # * Create Command List
   #--------------------------------------------------------------------------
   def make_command_list
-    add_command(Command_Move, :move, tactic_command_enabled?, nil, "Move to a position or attack an enemy")
-    add_command(get_moving_name, :hold, tactic_command_enabled?, nil, "Press to toggle between hold/moving")
-    add_command(get_reaction_name, :reaction, tactic_command_enabled?, nil, "Toggle between combat reactions")
+    add_command(Command_Move, :move, tactic_command_enabled?, nil, "移動到一定點或攻擊敵人")
+    add_command(get_moving_name, :hold, tactic_command_enabled?, nil, "按鍵切換是否移動")
+    add_command(get_reaction_name, :reaction, tactic_command_enabled?, nil, "按鍵切換戰鬥反應模式")
     # unfinished
-    add_command(Command_Follow, :follow, false, nil, "Follow a character")
+    add_command(Command_Follow, :follow, false, nil, "跟隨目標")
     # unfinished
-    add_command(Command_Guard, :guard, false, nil, "Protect a character")
+    add_command(Command_Guard, :guard, false, nil, "保護目標")
     # unfinished
-    add_command(Command_Patrol, :patrol, false, nil, "Guard an area")
+    add_command(Command_Patrol, :patrol, false, nil, "巡邏區域")
   end
   #--------------------------------------------------------------------------
   def tactic_command_enabled?
@@ -54,9 +54,9 @@ class Window_TacticCommand < Window_Command
   end
   #--------------------------------------------------------------------------
   def get_moving_name
-    return "Hold/Move" if !@battler || !@battler.movement_command
-    return ":Hold"     if @battler.command_holding?
-    return ":Move"
+    return "移動/停止" if !@battler || !@battler.movement_command
+    return ":停止"     if @battler.command_holding?
+    return ":移動"
   end
   #--------------------------------------------------------------------------
   # * Get current battler's aggressive level

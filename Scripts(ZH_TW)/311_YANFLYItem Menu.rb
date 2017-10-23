@@ -181,7 +181,7 @@ module YEA
       :hp_recover => "恢復生命",      # Text used for HP Recovery.
       :mp_recover => "恢復能量",      # Text used for MP Recovery.
       :tp_recover => "TP恢復",      # Text used for TP Recovery.
-      :tp_gain    => "TP惠德",      # Text used for TP Gain.
+      :tp_gain    => "TP獲得",      # Text used for TP Gain.
       :applies    => "狀態增加",      # Text used for applied states and buffs.
       :removes    => "狀態移除",      # Text used for removed states and buffs.
     } # Do not remove this.

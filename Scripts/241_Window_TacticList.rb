@@ -51,6 +51,10 @@ class Window_TacticList < Window_Selectable
   def make_item_list
     return if @actor.nil?
     @data = @actor.tactic_commands.dup
+    push_add_command if @data.size < @actor.command_limit
+  end
+  #--------------------------------------------------------------------------
+  def push_add_command
     command_add = Game_TacticCommand.new(@actor)
     command_add.action = Game_Action.new(@actor, nil, :add_command)
     command_add.category = :new
@@ -107,36 +111,37 @@ class Window_TacticList < Window_Selectable
       rect.x = self.width / 2 + 4
       action = "> Set to current target"
       draw_text(rect, action)
-      change_color(normal_color)
     when :fighting
       draw_icon(PONY::IconID[:fighting], cx, cy)
       rect.x += 26
       name = "Target: " + Tactic_Config::Name_Table[command.condition_symbol]
       draw_text(rect, name)
-      rect.x = self.width / 2 + 4
-      action = command.action.get_item_name
-      draw_text(rect, action)
+      draw_action_item(rect, command.action)
     when :self
       draw_icon(PONY::IconID[:self], cx, cy)
       rect.x += 26
       contents.font.color.set(DND::COLOR::Green)
       name = "Self: " + Tactic_Config::Name_Table[command.condition_symbol]
       draw_text(rect, name)
-      rect.x = self.width / 2 + 4
-      action = command.action.get_item_name
-      draw_text(rect, action)
-      change_color(normal_color)
+      draw_action_item(rect, command.action)
     when :new
       draw_icon(PONY::IconID[:plus], cx, cy)
       rect.x += 26
       contents.font.color.set(DND::COLOR::Yellow)
       name = "<Add New Tactic>"
       draw_text(rect, name)
-      rect.x = self.width / 2 + 4
-      action = command.action.get_item_name
-      draw_text(rect, action)
-      change_color(normal_color)
+      draw_action_item(rect, command.action)
     end
+    change_color(normal_color)
+  end
+  #--------------------------------------------------------------------------
+  def draw_action_item(rect, action)
+    rect.x  = self.width / 2 + 4
+    icon_id = action.get_icon_id
+    draw_icon(icon_id, rect.x, rect.y) if icon_id > 0
+    rect.x += 26
+    name    = action.get_item_name
+    draw_text(rect, name)
   end
   #--------------------------------------------------------------------------
   def apply_tactic_change

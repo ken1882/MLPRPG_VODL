@@ -42,6 +42,7 @@ $imported["YEA-CommandWindowIcons"] = true
 module YEA
   module COMMAND_WINDOW_ICONS
     # tag: icon
+    # tag: translate
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     # - Icon Hash -
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

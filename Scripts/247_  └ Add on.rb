@@ -60,23 +60,13 @@ class Scene_Base
     $verify_countdown -= 1 
     return if $verify_countdown > 0
     result = PONY.DoVerifyCode if $giftcode_verify
-    err_info = "An error occurred while calling API:\n"
-    case result
-    when true
-      raise_overlay_window(:popinfo, "Sucess!")
-    when :json_failed
-      raise_overlay_window(:popinfo, err_info + "Config file cannot be built")
-    when :connection_failed
-      raise_overlay_window(:popinfo, err_info + "Internet connection failed")
-    when :invalid_code
-      raise_overlay_window(:popinfo, err_info + "Your code has been used or invalid")
-    when :close_failed
-      raise_overlay_window(:popinfo, err_info + "Gateway cannot be closed")
-    when :decrypt_failed
-      raise_overlay_window(:popinfo, err_info + "File decryption failed")
-    when false
-      raise_overlay_window(:popinfo, err_info + "I dunno, plz connect the dev!")
+    
+    if result == true
+      info = Vocab::APISymbol_Table[true]
+    else
+      info = sprintf(Vocab::APIErr, Vocab::APISymbol_Table[result])
     end
+    raise_overlay_window(:popinfo, info)
   end
   #--------------------------------------------------------------------------
   # * Post-Start Processing
@@ -118,7 +108,7 @@ class Scene_Base
   #--------------------------------------------------------------------------
   def create_overlay_windows
     if self.is_a?(SceneManager.first_scene_class)
-      $confirm_exit_win = Window_Confirm.new(160, 180, "  Do you really want to leave? Ponies will miss you...", true)
+      $confirm_exit_win = Window_Confirm.new(160, 180, Vocab::ExitConfirm, true)
       $confirm_win = Window_Confirm.new(160, 180, '', true)
       $popup_win = Window_PopInfo.new(160, 180, "", 300, true)
     end

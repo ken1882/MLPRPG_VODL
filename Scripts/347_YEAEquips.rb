@@ -193,20 +193,17 @@ module YEA
     # be removable or not, or whether or not optimize will affect them.
     TYPES ={
     # TypeID => ["Type Name", Removable?, Optimize?],
-           0 => [   "Weapon",      true,      true],
-           
-           1 => [   "Shield",       true,      true],
-           2 => [ "Headgear",       true,      true],
-           3 => [ "Bodygear",       true,      true],
-           4 => ["Accessory",       true,     true],
-           
-           5 => [    "Cloak",       true,      true],
-           6 => [ "Necklace",       true,      true],
-           7 => [     "Hoof",       true,      true],
-           8 => [      "Gem",       true,      true],
-           9 => [     "Rune",       true,      false],
-           
-           10 => [    "Ammo",       true,      true],
+           0  => [ Vocab::Equipment::Weapon   ,   true,   true],
+           1  => [ Vocab::Equipment::Shield   ,   true,   true],
+           2  => [ Vocab::Equipment::Head     ,   true,   true],
+           3  => [ Vocab::Equipment::Body     ,   true,   true],
+           4  => [ Vocab::Equipment::Accessory,   true,   true],
+           5  => [ Vocab::Equipment::Cloak    ,   true,   true],
+           6  => [ Vocab::Equipment::Necklace ,   true,   true],
+           7  => [ Vocab::Equipment::Boots    ,   true,   true],
+           8  => [ Vocab::Equipment::Gem      ,   true,   true],
+           9  => [ Vocab::Equipment::Rune     ,   true,  false],
+           10 => [ Vocab::Equipment::Ammo     ,   true,   true],
     } # Do not remove this.
     
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -262,11 +259,11 @@ module YEA
     
     # This sets the remove equip command in the item window.
     REMOVE_EQUIP_ICON = 185
-    REMOVE_EQUIP_TEXT = "<Remove Equip>"
+    REMOVE_EQUIP_TEXT = Vocab::Equipment::Remove
     
     # This sets the no-equipment text in the slot window.
     NOTHING_ICON = 185
-    NOTHING_TEXT = "<Empty>"
+    NOTHING_TEXT = Vocab::Equipment::Empty
     
   end # EQUIP
   
@@ -1020,15 +1017,15 @@ class Window_EquipStatus < Window_Base
     #contents.font.size = YEA::EQUIP::STATUS_FONT_SIZE
     change_color(system_color)
     if type == 0
-      draw_text(0, y, contents.width, line_height,"Attack")
+      draw_text(0, y, contents.width, line_height, Vocab::Equipment::Thac0)
     elsif type == 1
-      draw_text(0, y, contents.width, line_height,"AC")
+      draw_text(0, y, contents.width, line_height, Vocab::Equipment::AC)
     elsif type == 2
-      draw_text(0, y, contents.width, line_height,"Speed")
+      draw_text(0, y, contents.width, line_height, Vocab::Equipment::Speed)
     elsif type == 3
-      draw_text(0, y, contents.width, line_height,"Range")
+      draw_text(0, y, contents.width, line_height, Vocab::Equipment::Range)
     elsif type == 4
-      draw_text(0, y, contents.width, line_height,"Damages")
+      draw_text(0, y, contents.width, line_height, Vocab::Equipment::Damage)
     end
     
     draw_current_dndparam(x + 4, y, type, ori)   if @actor
@@ -1051,10 +1048,10 @@ class Window_EquipStatus < Window_Base
     elsif type == 1
       draw_text(0, dy, dw, line_height, @actor.armor_class, 2)
     elsif type == 2
-      v = @original_item.nil? ? "None" : 60 - @original_item.tool_cooldown
+      v = @original_item.nil? ? Vocab::None : 60 - @original_item.tool_cooldown
       draw_text(0, dy, dw, line_height, v, 2)
     elsif type == 3
-      v = @original_item.nil? ? "None" : @original_item.tool_distance
+      v = @original_item.nil? ? Vocab::None : @original_item.tool_distance
       draw_text(0, dy, dw, line_height, v, 2)
     elsif type == 4
     
@@ -1100,7 +1097,7 @@ class Window_EquipStatus < Window_Base
   def draw_weapon_speed(x,y)
     w = contents.width
     change_color(system_color)
-    draw_text(0, y, w, line_height, "Speed")
+    draw_text(0, y, w, line_height, Vocab::Equipment::Speed)
     change_color(normal_color)
     speed = 60 - @temp_item.tool_cooldown
     draw_text(0, y, w, line_height, speed, 2)

@@ -37,7 +37,8 @@ def flag_error(error)
     error_txt = report_exception(error)
     Audio.se_play('Audio/SE/Buzzer1',80,100)
     print "Submit the file \"ErrorLog.txt\" in your project folder to the upper most script creators noted in the message.\n"
-    msgbox("An error has occurred during the game.\nPlease submit the file \"ErrorLog.txt\" in your game folder to the developer in order to fix the bug.\n")
+    info = "遊戲運行時發生錯誤! 請將檔案\"ErrorLog.txt\"寄送給開發人員以處理錯誤.\n"
+    msgbox(info)
     
     filename = "ErrorLog.txt"
     File.open(filename, 'w+') {|f| f.write(error_txt + "\n") }

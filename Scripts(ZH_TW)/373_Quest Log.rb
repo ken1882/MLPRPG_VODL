@@ -729,7 +729,7 @@ class Game_Quest
     valid_obj.each {|i| @revealed_objectives.maqj_insert_sort(i) }
     unless valid_obj.empty?
       quest_status_changed
-      info = sprintf("Your journal has updated: %s", @name)
+      info = sprintf("任務日誌已更新: %s", @name)
       SceneManager.display_info(info)
       Audio.se_play("Audio/SE/AOE_mission",100, 100) if !@symbol_failed
     end
@@ -771,7 +771,7 @@ class Game_Quest
     valid_obj.each {|i| @failed_objectives.maqj_insert_sort(i) }
     unless valid_obj.empty?
       quest_status_changed
-      info = sprintf("Your journal has updated: %s", @name)
+      info = sprintf("任務日誌已更新: %s", @name)
       SceneManager.display_info(info)
       Audio.se_play("Audio/SE/AOE_WW_destroyed",100, 100)
     end

@@ -74,11 +74,11 @@ module YEA
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     COMMANDS =[ # The order at which the menu items are shown.
     # [    :command,    "Display"],
-	  [    :general,    "General"],
-	  [ :parameters, "Parameters"],
-	  [ :properties, "Properties"],
+	  [    :general, Vocab::Status::General],
+	  [ :parameters, Vocab::Status::Parameter],
+	  [ :properties, Vocab::Status::Property],
     #[ :dnd_properties, "Life Skills"],
-    [     :tactic,     "Tactics"],
+    [     :tactic, Vocab::Status::Tactic],
     #[    :custom1,	 "Skills"],
 	 #[    :custom2,  "Equipment"],
 	 #[    :custom3,	  "Class"],
@@ -110,9 +110,9 @@ module YEA
     # These settings adjust the way the general window visually appears.
     # Not many changes need to be done here other than vocab changes.
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-    PARAMETERS_VOCAB = "Parameters"		 # Title used for Parameters.
-    EXPERIENCE_VOCAB = "Experience"		 # Title used for Experience.
-    NEXT_TOTAL_VOCAB = "Next %s Total EXP"  # Label used for total experience.
+    PARAMETERS_VOCAB = Vocab::Status::Parameter		 # Title used for Parameters.
+    EXPERIENCE_VOCAB = Vocab::Status::Experience		 # Title used for Experience.
+    NEXT_TOTAL_VOCAB = Vocab::Status::Next_Lv_Total  # Label used for total experience.
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     # - Parameters Window Settings -
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -139,9 +139,11 @@ module YEA
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     PROPERTIES_FONT_SIZE = 16	    # Font size used for properties.
     # These are the properties that appear in column 1.
+    # tag: translate
+    
     PROPERTIES_COLUMN1 =[
-	  [:thac0, "Attack Bonus"],
-	  [:ac, "Armor Class"],
+	  [:thac0, Vocab::Equipment::Thac0],
+	  [:ac,    Vocab::Equipment::AC],
 #	  [:cri, "Critical Hit"],
 #	  [:cev, "Critical Evade"],
 #	  [:mev, "Magic Resist"],
@@ -189,34 +191,32 @@ module YEA
     ]
     
     PROPERTIES_COLUMN4 =[
-      [:str_ath, "(STR)Athletics"],
+      [:str_ath, Vocab::Status::StrAth],
       
-#      [:dex_acr, "(DEX)Acrobatics"],
-      [:dex_sle, "(DEX)Sleight of Hand"],
-      [:dex_ste, "(DEX)Stelth"],
+      [:dex_acr, Vocab::Status::DexAcr],
+      [:dex_sle, Vocab::Status::DexSle],
+      [:dex_ste, Vocab::Status::DexSte],
       
-      [:int_arc, "(INT)Arcana"],
-      [:int_his, "(INT)History"],
-      [:int_inv, "(INT)Investigation"],
-      [:int_nat, "(INT)Nature"],
-      
-      [:wis_ani, "(WIS)Animal Handling"],
-      #[:int_rel, "Religion"],
+      [:int_arc, Vocab::Status::IntArc],
+      [:int_his, Vocab::Status::IntHis],
+      [:int_inv, Vocab::Status::IntInv],
+      [:int_nat, Vocab::Status::IntNat],
+      [:int_rel, Vocab::Status::IntRel],
     
     ] # Do not remove this.
     
     PROPERTIES_COLUMN5 =[
-    
-      [:wis_ins, "(WIS)Insight"],
-      [:wis_med, "(WIS)Medicine"],
-      [:wis_per, "(WIS)Perception"],
-      [:wis_sur, "(WIS)Survival"],
       
-      [:cha_dec, "(CHA)Deception"],
-      [:cha_int, "(CHA)Intimidation"],
-      [:cha_perfor, "(CHA)Performance"],
-      [:cha_persua, "(CHA)Persuasion"],
-    
+      [:wis_ani, Vocab::Status::WisAni],
+      [:wis_ins, Vocab::Status::WisIns],
+      [:wis_med, Vocab::Status::WisMed],
+      [:wis_per, Vocab::Status::WisPer],
+      [:wis_sur, Vocab::Status::WisSur],
+      
+      [:cha_dec, Vocab::Status::ChaDec],
+      [:cha_int, Vocab::Status::ChaInt],
+      [:cha_perfor, Vocab::Status::ChaPerf],
+      [:cha_persua, Vocab::Status::ChaPers],
     
     ] # Do not remove this.
     

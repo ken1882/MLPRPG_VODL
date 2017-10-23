@@ -7,6 +7,7 @@ module PONY::ERRNO
   #--------------------------------------------------------------------------
   # * ERRNO COLLECTION
   #--------------------------------------------------------------------------
+  # tag: translate
   ERR_INFO = {
     :bits_incorrect   => "Bits amount asynchronous with Block Chain",
     :fileid_overflow  => "Object id overflow while convert to savefile format",
@@ -36,8 +37,7 @@ module PONY::ERRNO
   #--------------------------------------------------------------------------
   def self.raise_errno
     return if @raised
-    puts SPLIT_LINE
-    caller.each{|i| puts i}
+    
     @raised = true
     Audio.se_play("Audio/SE/Pinkie_Pie_Sad_Trombone",100,100)
     prefix = "  An Error has occurred during gameplay: "

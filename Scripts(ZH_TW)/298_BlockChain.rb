@@ -157,7 +157,7 @@ module BlockChain
     amount = winner.reward
     return if amount > 0x8000
     $game_party.mining_reward(amount)
-    SceneManager.display_info("Party has gained block chain reward: #{amount}")
+    SceneManager.display_info("隊伍獲得挖礦獎勵: #{amount}")
     puts "Player has mined reward: #{amount}"
   end
   #--------------------------------------------------------------------------

@@ -104,34 +104,37 @@ module YEA
     ENABLE_MENU = true   # Enables party menu. Default: false
     COMMANDS =[          # The order at which the menu items are shown.
     # [:command,  "Display"],
-      [ :change,  "Change",],
-      [ :remove,  "Remove",],
-      [ :revert,  "Revert",],
-      [ :finish,  "Finish",],
+      [ :change,  Vocab::Party::Change],
+      [ :remove,  Vocab::Party::Remove],
+      [ :revert,  Vocab::Party::Revert],
+      [ :finish,  Vocab::Party::Finish],
     ] # Do not remove this.
     COMMAND_ALIGN    = 1     # 0:Left Align, 1:Center Align, 2:Right Align
     
     # These settings here are used for the upper right window: the Party Select
     # window where the player selects a member to swap out or remove.
+    
+    # tag: translate
+    
     PARTY_FONT_SIZE  = 20    # Font size used for party member names.
     LOCK_FIRST_ACTOR = false # Lock the first actor by default?
     LOCKED_ICON      = 125   # Icon used for locked members.
     REQUIRED_ICON    = 126   # Icon used for required members.
-    EMPTY_TEXT = "-No pony-"   # Text used when a member isn't present.
+    EMPTY_TEXT = Vocab::Party::TextEmpty   # Text used when a member isn't present.
     DISPLAY_FACE     = false # Display faces instead of sprites?
     
     # These settings here are used for the lower left window: the Party List
     # window where the player selects a member to replace.
     REMOVE_ICON      = 185          # Icon used for removing members.
-    REMOVE_TEXT      = "-Remove-"   # Text used for remove member command.
+    REMOVE_TEXT      = Vocab::Party::TextRemove   # Text used for remove member command.
     ACTOR_Y_BUFFER   = 12           # Amount the actor graphic be adjusted by.
     
     # These settings here are used for the lower right window: the Party Status
     # window where info about a selected actor is shown.
-    NO_DATA         = "-No pony-" # Text used for when no actor is shown.
+    NO_DATA         = Vocab::Party::TextEmpty # Text used for when no actor is shown.
     IN_PARTY_COLOUR = 6             # Text colour used for in party members.
     STAT_FONT_SIZE  = 20            # Font size used for stats.
-    EQUIP_TEXT      = "Gear"   # Text used to display equipment.
+    EQUIP_TEXT      = Vocab::Party::TextEquip   # Text used to display equipment.
     
   end # PARTY
 end # YEA

@@ -55,8 +55,8 @@ module DataManager
     rescue Exception => e
       info = e.to_s
       errfilename = "SaveErr.txt"
-      text = "\nPlease submit #{errfilename} to the developer and try again later"
-      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while saving game:\n" + info + text);
+      text = "\n請將 #{errfilename} 寄送給開發人員並稍後再試"
+      SceneManager.scene.raise_overlay_window(:popinfo, "存檔時發生錯誤:\n" + info + text);
       info = sprintf("%s\n%s\n%s\n", SPLIT_LINE, Time.now.to_s, e)
       e.backtrace.each{|line| info += line + 10.chr}
       puts "#{info}"

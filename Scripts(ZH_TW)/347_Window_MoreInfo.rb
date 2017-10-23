@@ -73,13 +73,11 @@ class Window_Selectable < Window_Base
   # * Show more info?
   #--------------------------------------------------------------------------
   def show_moreinfo?
-    return if !@data
-    item = @data[index] if @data && @data[index]
-    item = self.item if !item && self.methods.include?(:item)
+    item = @data[index] if !@data.nil? && @data[index]
+    item = self.item    if !item && self.methods.include?(:item)
     item = nil unless (item.is_a?(RPG::EquipItem) || item.is_a?(RPG::UsableItem))
     return item
   end
-  
   #--------------------------------------------------------------------------
 end
 #==============================================================================
@@ -290,7 +288,7 @@ class Window_Moreinfo < Window_Base
     y = 0
     w = contents.width
     change_color(system_color)
-    draw_text(0, y, w, line_height, "Description:")
+    draw_text(0, y, w, line_height, "物品描述:")
     
     color_red   = 240
     color_green = 225

@@ -106,19 +106,20 @@ module PONY
     #API::OpenALPlay.call(filename, sx, sy, sz, lx, ly, lz, svx, svy, svz, lvx, lvy, lvz)
   end
   #-----------------------------------------------------------------------------
+  # tag: translate
   def VerifyGiftCode(code)
     path = "System\\"
     if File.exist?(path + "DownloadManager")
-      info = "Gemfile missing: GDownloader"
-      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while verifing code:\n" + info);
+      info = "遺失程式: GDownloader"
+      SceneManager.scene.raise_overlay_window(:popinfo, "禮物碼驗證失敗:\n" + info);
       return false
     end
     if File.exist?(path + "GateCloser")
-      info = "Gemfile missing: GDownloader"
-      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while verifing code:\n" + info);
+      info = "遺失程式: GDownloader"
+      SceneManager.scene.raise_overlay_window(:popinfo, "禮物碼驗證失敗:\n" + info);
       return false
     end
-    SceneManager.scene.raise_overlay_window(:popinfo, "Obtaining data from internet, your game may be no respond for about one miniute, please wait...");
+    SceneManager.scene.raise_overlay_window(:popinfo, "連線中...遊戲程式可能會沒有回應數分鐘, 請耐心等待");
     # need some time to make overlay window displayed
     $giftcode_verify  = code
     $verify_countdown = 20

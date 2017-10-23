@@ -7,19 +7,23 @@ module PONY::ERRNO
   #--------------------------------------------------------------------------
   # * ERRNO COLLECTION
   #--------------------------------------------------------------------------
-  ERR_INFO = {
-    :bits_incorrect   => "Bits amount asynchronous with Block Chain",
-    :fileid_overflow  => "Object id overflow while convert to savefile format",
-    :item_unconsumed  => "Consumable Item can't be consumed",
-    :int_overflow     => "Integer Overflow",
-    :datatype_error   => "Data Type Error:\n",
-    :nil_block        => "Block nil miner",
-    :chain_broken     => "Block Chain Error:\n",
-    :illegel_value    => "Illegel value:\n",
-    :checksum_failed  => "File CheckSum failure",
-    :file_missing     => "File missing:\n",
-  }
+  # tag: translate
   
+  ERR_Prefix = "進行遊戲時發生錯誤: "
+  
+  ERR_INFO = {
+    :bits_incorrect   => "貨幣數量與區塊鏈同步失敗",
+    :fileid_overflow  => "物件ID轉換成檔案時溢位",
+    :item_unconsumed  => "消耗品使用時期錯誤",
+    :int_overflow     => "整數溢位",
+    :datatype_error   => "資料型別錯誤:\n",
+    :nil_block        => "區塊鏈沒有礦工:",
+    :chain_broken     => "區塊鏈錯誤:\n",
+    :illegel_value    => "偵測到非法數值:\n",
+    :checksum_failed  => "檔案驗證和失敗",
+    :file_missing     => "遺失檔案:\n",
+  }
+  #--------------------------------------------------------------------------
   @raised = false
   #--------------------------------------------------------------------------
   # * Raise Error Overlay
@@ -38,7 +42,7 @@ module PONY::ERRNO
     caller.each{|i| puts i}
     @raised = true
     Audio.se_play("Audio/SE/Pinkie_Pie_Sad_Trombone",100,100)
-    prefix = "  An Error has occurred during gameplay: "
+    prefix = "進行遊戲時發生錯誤: "
     info   = ERR_INFO[@sym] ? ERR_INFO[@sym] : ""
     info   = info + ' ' + @extra_info
     puts SPLIT_LINE

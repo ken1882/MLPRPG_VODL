@@ -139,6 +139,7 @@ module YEA
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     PROPERTIES_FONT_SIZE = 16	    # Font size used for properties.
     # These are the properties that appear in column 1.
+    # tag: translate
     PROPERTIES_COLUMN1 =[
 	  [:thac0, "攻擊骰加成"],
 	  [:ac, "護甲等級"],

@@ -226,14 +226,20 @@ class Game_Battler < Game_BattlerBase
     @map_char.revive_character if @map_char
   end
   #---------------------------------------------------------------------------
+  # * Immune weapon enchant level, 0 = none, 1 = below +1 and so on
+  #---------------------------------------------------------------------------
   def weapon_level_prof
     return 0
   end
+  #---------------------------------------------------------------------------
+  # * Update security hash value
   #---------------------------------------------------------------------------
   def update_security
     v = @hp + @mp + exp
     @safe_hash = PONY.MD5(v.to_s)
   end
+  #---------------------------------------------------------------------------
+  # * Abort if hash check failed
   #---------------------------------------------------------------------------
   def check_security
     update_security if @safe_hash.nil?
@@ -244,6 +250,12 @@ class Game_Battler < Game_BattlerBase
     puts "Name: #{name} Sum: #{v} Safe-hash: #{@safe_hash} Hash: #{PONY.MD5(v.to_s)}"
     PONY::ERRNO.raise(:secure_hash_failed, :exit, nil, name)
     return false
+  end
+  #---------------------------------------------------------------------------
+  # * Max tactic command count
+  #---------------------------------------------------------------------------
+  def command_limit
+    return 20
   end
   #---------------------------------------------------------------------------
 end

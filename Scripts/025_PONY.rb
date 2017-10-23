@@ -111,16 +111,18 @@ module PONY
   def VerifyGiftCode(code)
     path = "System\\"
     if File.exist?(path + "DownloadManager")
-      info = "Gemfile missing: GDownloader"
-      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while verifing code:\n" + info);
+      info  = sprintf(Vocab::Errno::GiftCodeFailed, Vocab::Errno::ProgramMissing)
+      info += "GDownloader"
+      SceneManager.scene.raise_overlay_window(:popinfo, info);
       return false
     end
     if File.exist?(path + "GateCloser")
-      info = "Gemfile missing: GDownloader"
-      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while verifing code:\n" + info);
+      info  = sprintf(Vocab::Errno::GiftCodeFailed, Vocab::Errno::ProgramMissing)
+      info += "GCloser"
+      SceneManager.scene.raise_overlay_window(:popinfo, info);
       return false
     end
-    SceneManager.scene.raise_overlay_window(:popinfo, "Obtaining data from internet, your game may be no respond for about one miniute, please wait...");
+    SceneManager.scene.raise_overlay_window(:popinfo, Vocab::Connection);
     # need some time to make overlay window displayed
     $giftcode_verify  = code
     $verify_countdown = 20

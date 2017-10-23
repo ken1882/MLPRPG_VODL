@@ -55,27 +55,28 @@ class Scene_Base
     PONY::ERRNO.raise_errno if PONY::ERRNO.errno_occurred?
   end
   #--------------------------------------------------------------------------
+  # tag: translate
   def update_verify
     return unless $verify_countdown
     $verify_countdown -= 1 
     return if $verify_countdown > 0
     result = PONY.DoVerifyCode if $giftcode_verify
-    err_info = "An error occurred while calling API:\n"
+    err_info = "呼叫API時發生錯誤:\n"
     case result
     when true
-      raise_overlay_window(:popinfo, "Sucess!")
+      raise_overlay_window(:popinfo, "成功!")
     when :json_failed
-      raise_overlay_window(:popinfo, err_info + "Config file cannot be built")
+      raise_overlay_window(:popinfo, err_info + "組態檔建立失敗")
     when :connection_failed
-      raise_overlay_window(:popinfo, err_info + "Internet connection failed")
+      raise_overlay_window(:popinfo, err_info + "網際網路連線失敗")
     when :invalid_code
-      raise_overlay_window(:popinfo, err_info + "Your code has been used or invalid")
+      raise_overlay_window(:popinfo, err_info + "您的代碼已經被使用過或無效")
     when :close_failed
-      raise_overlay_window(:popinfo, err_info + "Gateway cannot be closed")
+      raise_overlay_window(:popinfo, err_info + "網路閘道關閉失敗")
     when :decrypt_failed
-      raise_overlay_window(:popinfo, err_info + "File decryption failed")
+      raise_overlay_window(:popinfo, err_info + "檔案解密失敗")
     when false
-      raise_overlay_window(:popinfo, err_info + "I dunno, plz connect the dev!")
+      raise_overlay_window(:popinfo, err_info + "痾...我也不知道, 請聯絡開發人員!")
     end
   end
   #--------------------------------------------------------------------------

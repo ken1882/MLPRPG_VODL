@@ -4,22 +4,22 @@
 #  Pony should poni pony
 #==============================================================================
 $imported = {} if $imported.nil?
-module PONY
-	module Menu_UI
-		First_Item_Position =  [168, 20]
-		Second_Item_Position = [10, 35]
-    
-    NAME_COLOR = {
-      1 => Color.new(215, 170, 225),
-      2 => Color.new(245, 140,  90),
-      4 => Color.new(255, 255, 255),
-      5 => Color.new( 60, 175, 230),
-      6 => Color.new(250, 145, 250),
-      7 => Color.new(235, 235, 140),
-    }
-    
-	end
-end
+  module PONY
+    module Menu_UI
+      First_Item_Position =  [168, 20]
+      Second_Item_Position = [10, 35]
+      
+      NAME_COLOR = {
+        1 => Color.new(215, 170, 225),
+        2 => Color.new(245, 140,  90),
+        4 => Color.new(255, 255, 255),
+        5 => Color.new( 60, 175, 230),
+        6 => Color.new(250, 145, 250),
+        7 => Color.new(235, 235, 140),
+      }
+      
+    end
+  end
 #==============================================================================
 # ** Window_MenuStatus
 #------------------------------------------------------------------------------

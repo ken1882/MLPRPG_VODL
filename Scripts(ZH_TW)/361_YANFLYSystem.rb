@@ -245,6 +245,7 @@ module YEA
     # command help descriptions, you may use text codes. Use \n to linebreak.
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     COMMAND_VOCAB ={
+    #tag: translate
     # -------------------------------------------------------------------------
     # :command    => [Command Name, Option1, Option2
     #                 Help Window Description,

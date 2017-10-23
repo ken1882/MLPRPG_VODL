@@ -163,6 +163,8 @@ class Sprite_Hud < Sprite_Base
     rect = NameRect
     @contents.bitmap.font.size = 18
     @contents.bitmap.clear_rect(rect)
+    color = PONY::Menu_UI::NAME_COLOR[@actor.id] rescue nil
+    @contents.bitmap.font.color.set(color) if color
     @contents.bitmap.draw_text(rect, @actor.name, 1) 
   end
   #--------------------------------------------------------------------------

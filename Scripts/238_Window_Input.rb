@@ -12,10 +12,24 @@ class Window_Input < Window_Base
   WS_CHILD        = 0x40000000
   WS_VISIBLE      = 0x10000000
   WS_DISABLED     = 0x08000000
-  ES_AUTOSCROLL   = 0x00000080
+  ES_AUTOHSCROLL  = 0x00000080
   ES_NUMBER       = 0x00002000
+  ES_MULTILINE    = 0x00000004
   EM_SETSEL       = 0xb1
   EM_GETSEL       = 0xb0
+  #--------------------------------------------------------------------------
+  Number_Full = {
+    '０' => '0',
+    '１' => '1',
+    '２' => '2',
+    '３' => '3',
+    '４' => '4',
+    '５' => '5',
+    '６' => '6',
+    '７' => '7',
+    '８' => '8',
+    '９' => '9',
+  }
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
@@ -25,10 +39,11 @@ class Window_Input < Window_Base
   #--------------------------------------------------------------------------
   def get_windowstyle(args)
     ws  = WS_CHILD
-    ws |= WS_POPUP      if args[:popup]
-    ws |= WS_DISABLED   if args[:visible]
-    ws |= ES_NUMBER     if args[:number]
-    ws |= ES_AUTOSCROLL if args[:autoscroll]
+    ws |= ES_MULTILINE
+    ws |= WS_POPUP        if args[:popup]
+    ws |= WS_DISABLED     if args[:visible]
+    ws |= ES_NUMBER       if args[:number]
+    ws |= ES_AUTOHSCROLL  if args[:autoscroll]
     return ws
   end
   #--------------------------------------------------------------------------
@@ -47,6 +62,7 @@ class Window_Input < Window_Base
     @viewport        = SceneManager.viewport
     @display_width   = (window_width - spacing * 2) / item_width
     @char_limit      = attributes[:autoscroll] ? 256 : @display_width
+    @char_limit      = attributes[:limit] if attributes[:limit]
     @last_str        = ""
     @last_len        = 0
     @last_index      = 0
@@ -63,6 +79,7 @@ class Window_Input < Window_Base
     @keyboard_action = []
     @arrow_sprites   = []
     @focus           = true
+    @number_only     = (attributes[:number] | 0)
     self.z = @viewport.z
     
     create_sprites
@@ -135,7 +152,7 @@ class Window_Input < Window_Base
   end
   #--------------------------------------------------------------------------
   def update_focus
-    focus_window if !@focus && Mouse.click?(1) &&  Mouse.collide_sprite?(self)
+    focus_window if active? || !@focus && Mouse.click?(1) &&  Mouse.collide_sprite?(self)
     wfocus = (GetFocus.call(0) == @hwnd) if @focus
     kill_focus   if !wfocus || (@focus && Mouse.click?(1) && !Mouse.collide_sprite?(self))
     return @focus
@@ -315,10 +332,17 @@ class Window_Input < Window_Base
     @select_start * 1000 + @select_end
   end
   #--------------------------------------------------------------------------
+  def enter_included?
+    @lpstr.each_char do |ch|
+      return true if ch.ord == 13
+    end
+    return false
+  end
+  #--------------------------------------------------------------------------
   def process_ok
-    @enter_cnt += 1 if Input.trigger?(:kENTER)
-    return if !@keyboard_action.empty? && @enter_cnt < 3
-    if Input.trigger?(:kENTER)
+    #@enter_cnt += 1 if Input.trigger?(:kENTER)
+    #return if !@keyboard_action.empty? && @enter_cnt < 3
+    if enter_included?#Input.trigger?(:kENTER)
       return process_terminate
     elsif Input.trigger?(:kESC)
       @lpstr = ""
@@ -327,9 +351,16 @@ class Window_Input < Window_Base
     return false
   end
   #--------------------------------------------------------------------------
+  def delete_letters
+    @lpstr.gsub!(/[^1234567890]/, '')
+  end
+  #--------------------------------------------------------------------------
   def process_terminate
     kill_focus
     dispose
+    @lpstr.gsub!(/[０１２３４５６７８９]/, Number_Full)
+    @lpstr.tr!(10.chr, ''); @lpstr.tr!(13.chr, ''); @lpstr.tr!(0.chr, '');
+    delete_letters if @number_only
     debug_print "String received from win32 window: ", @lpstr
     @enter_cnt = 0
     SceneManager.send_input(@lpstr)

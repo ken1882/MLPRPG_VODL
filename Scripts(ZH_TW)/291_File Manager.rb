@@ -22,11 +22,13 @@ module FileManager
       text = ""
       clone_text.shift if clone_text[0] == ' '
       n = clone_text.size
+      text_len = 0
       for i in 0...n
         ch = clone_text[i]
         text += ch
+        text_len += ch.bytesize
         break if ch == 10.chr
-        break if text.size >= text_limit
+        break if text_len >= text_limit
       end
       
       processed  = ensure_lines_connected(text, clone_text.drop(text.size))

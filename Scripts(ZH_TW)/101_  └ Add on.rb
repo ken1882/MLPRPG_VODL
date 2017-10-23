@@ -57,7 +57,7 @@ class Game_Interpreter
     rescue Exception => e
       errfilename = "InterpreterErr.txt"
       SceneManager.display_info("Error: " + e.to_s)
-      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while eval in Interpreter!\nPlease submit #{errfilename} to developer")
+      SceneManager.scene.raise_overlay_window(:popinfo, "事件腳本運行時期錯誤!\n請寄送 #{errfilename} 給開發人員")
       info = sprintf("%s\n%s\n%s\n", SPLIT_LINE, Time.now.to_s, e)
       e.backtrace.each{|line| info += line + 10.chr}
       puts "#{info}"
@@ -89,13 +89,13 @@ class Game_Interpreter
   def command_201(params = nil)
     return if @transfer_cd > 0
     if $game_party.in_combat?
-      SceneManager.display_info("You can't change location during the combat")
+      SceneManager.display_info("戰鬥中無法脫出")
       @transfer_cd = 120
       $game_player.move_straight(10 - $game_player.direction)
       return
     elsif !$game_party.gathered?
       Audio.se_play("Audio/SE/hint_transfer_gather", 100, 100)
-      SceneManager.display_info("you must gather your party before venturing forth")
+      SceneManager.display_info("你必須集合你的隊伍才能繼續前進")
       @transfer_cd = 120
       $game_player.move_straight(10 - $game_player.direction)
       return

@@ -49,6 +49,7 @@ module YEA
     # item. Any text items without icons won't display icons. The text has to
     # match with the hash (case sensitive) to display icons.
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    # tag: translate
     ICON_HASH ={
     # Matching Text   => Icon ID,
       "New story"            => 125,    # Title scene.
@@ -141,7 +142,7 @@ module YEA
       ":主動"    => 131,
       ":突襲"      => 116,
       "戰術"        => 2103,
-      
+      "保護"         => 506,
     } # Do not remove this.
     
   end # COMMAND_WINDOW_ICONS

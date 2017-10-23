@@ -18,6 +18,17 @@ class Game_Action
       :ep_least_power       => "Use Ep potion: least powerful",
   }
   #--------------------------------------------------------------------------
+  Symbol_IconID = {
+      :attack_mainhoof      => 131,
+      :attack_offhoof       => 134,
+      :add_command          => PONY::IconID[:plus],
+      :target_none          => 1142,
+      :hp_most_power        => 2775,
+      :hp_least_power       => 2743,
+      :ep_most_power        => 2741,
+      :ep_least_power       => 2773,
+  }
+  #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor :time                       # Cast time required
@@ -180,6 +191,12 @@ class Game_Action
     return @item.name if !@symbol_item && @item.is_a?(RPG::BaseItem)
     name = Symbol_Name[@item]
     return name.nil? ? "<none>" : name
+  end
+  #---------------------------------------------------------------------------
+  def get_icon_id
+    return (@item.icon_index || 0) if !@symbol_item && @item.is_a?(RPG::BaseItem)
+    id = Symbol_IconID[@item]
+    return (id || 0)
   end
   #---------------------------------------------------------------------------
   def get_symbol_item
