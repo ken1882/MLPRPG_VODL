@@ -179,7 +179,8 @@ module DataManager
         @last_savefile_index = index
       rescue Exception => e
         errfilename = "LoadGameErr.txt"
-        SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while loading file!\nPlease submit #{errfilename} to the developer.")
+        info = sprintf(Vocab::Errno::LoadErr, e, errfilename)
+        SceneManager.scene.raise_overlay_window(:popinfo, info)
         info = sprintf("%s\n%s\n%s\n", SPLIT_LINE, Time.now.to_s, e)
         e.backtrace.each{|line| info += line + 10.chr}
         File.open(errfilename, 'a') do |file|

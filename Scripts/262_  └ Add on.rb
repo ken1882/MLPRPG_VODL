@@ -1,10 +1,9 @@
 #==============================================================================
-# ** Scene_Skill
+# ** Scene_Item
 #------------------------------------------------------------------------------
-#  This class performs skill screen processing. Skills are handled as items for
-# the sake of process sharing.
+#  This class performs the item screen processing.
 #==============================================================================
-class Scene_Skill < Scene_ItemBase
+class Scene_Item < Scene_ItemBase
   include WALLPAPER_EX
   #--------------------------------------------------------------------------
   # * Constants
@@ -20,6 +19,7 @@ class Scene_Skill < Scene_ItemBase
     create_action_window
     create_skillbar
     create_foreground
+    @actor = $game_party.leader
   end
   #--------------------------------------------------------------------------
   def init_vars
@@ -117,7 +117,7 @@ class Scene_Skill < Scene_ItemBase
   def action_hotkey
     hide_action_window
     @help_window.clear
-    @help_window.set_text("Select or presss 1~0 to set hotkey")
+    @help_window.set_text(Vocab::Skillbar::SelHelp)
     @skillbar.show
     @foreground.show
     @skillbar.refresh
@@ -133,7 +133,7 @@ class Scene_Skill < Scene_ItemBase
   def on_hotkey_ok(index)
     Sound.play_ok
     keyname = HotKeys.name(HotKeys::SkillBar[index])
-    info = sprintf("Success! You assigned %s at hotkey %s", item.name, keyname)
+    info = sprintf(Vocab::Skillbar::SelSucc, item.name, keyname)
     @help_window.set_text(info)
     @hotkey_ok_pause = true
   end
@@ -143,6 +143,26 @@ class Scene_Skill < Scene_ItemBase
     @skillbar.hide
     @foreground.hide
     on_action_cancel
+  end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Create Item Window
+  #--------------------------------------------------------------------------
+  def create_item_window
+    wy = @category_window.y + @category_window.height
+    wh = Graphics.height - wy
+    @item_window = Window_ItemList.new(0, wy, Graphics.width, wh)
+    @item_window.viewport = @viewport
+    @item_window.help_window = @help_window
+    @item_window.set_handler(:ok,       method(:on_item_ok))
+    @item_window.set_handler(:cancel,   method(:on_item_cancel))
+    @item_window.set_handler(:next_actor_v, method(:next_actor))
+    @item_window.set_handler(:prev_actor_c, method(:prev_actor))
+    @category_window.item_window = @item_window
+  end
+  #--------------------------------------------------------------------------
+  def on_actor_change
+    @item_window.actor = @actor
+    @skillbar.refresh(@actor)
   end
   #--------------------------------------------------------------------------
   alias terminate_scitemaction terminate

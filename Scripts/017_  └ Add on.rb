@@ -269,12 +269,12 @@ module BattleManager
       candidates = target.is_a?(POS) ? [candidates.first] : [target]
     end
     candidates.compact!; candidates.select!{|battler| !battler.dead?}
-    names = []
-    candidates.each do |char|
-      names << char.enemy.name if char.is_a?(Game_Event)    && char.enemy
-      names << char.actor.name if char.is_a?(Game_Player)   && char.actor
-      names << char.actor.name if char.is_a?(Game_Follower) && char.actor
-    end
+    #names = []
+    #candidates.each do |char|
+    #  names << char.enemy.name if char.is_a?(Game_Event)    && char.enemy
+    #  names << char.actor.name if char.is_a?(Game_Player)   && char.actor
+    #  names << char.actor.name if char.is_a?(Game_Follower) && char.actor
+    #end
     
     return candidates
   end

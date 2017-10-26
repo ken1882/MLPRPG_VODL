@@ -4,16 +4,16 @@
 #  This module defines terms and messages. It defines some data as constant
 # variables. Terms in the database are obtained from $data_system.
 #==============================================================================
+# tag: translate
 module Vocab
-  # tag: translate
   
   # BlockChain Node Name
   Player         = "Player"
   Coinbase       = "Equestria"
   
   # Tactic processing
-  Pause           = "paused"
-  Unpause         = "unpaused"
+  Pause           = "Paused"
+  Unpause         = "Unpaused"
   
   # Title Screen
   NewGame         = "Start a new story"
@@ -21,12 +21,22 @@ module Vocab
   ShutDown        = "Crashing back to your OS"
   
   # Connections
-  Connection      = "Obtaining data from internet, your game may be no respond for about one miniute, please wait..."
+  Connection      = "Connecting...Your game will have no response for few minutes, please wait..."
   
-  # Exit Confirm Info
-  ExitConfirm     = "  Do you really want to leave? Ponies will miss you..."
+  # Exit Info
+  ExitConfirm     = "Are you really want to leave? Ponies will miss you..."
   
-  None            = "<none>"
+  None            = "<Nonce>"  
+  Type            = "Type"
+  
+  Quest           = "Quest Journal"
+  QuestUpdated    = "Your journal has been updated: %s"
+  
+  InitLoadingMsg  = "To ensure your best gameplay experience, please close the app that will consume your system resource, such as Flash, Youtube and other games."
+  Unavailable     = "Not available yet"
+  
+  TransferGather  = "You must gather your party before venturing forth"
+  TransferCombat  = "You can't change location during the combat"
   
 end
 #==============================================================================
@@ -36,21 +46,21 @@ end
 #==============================================================================
 module Vocab::SaveLoad
   
-  ACTION_LOAD   = "讀檔"           # Text used for loading games.
-  ACTION_SAVE   = "存檔"           # Text used for saving games.
-  ACTION_DELETE = "刪除"         # Text used for deleting games.
+  ACTION_LOAD   = "Load"           # Text used for loading games.
+  ACTION_SAVE   = "Save"           # Text used for saving games.
+  ACTION_DELETE = "Delete"         # Text used for deleting games.
     
   # These text settings adjust what displays in the help window.
-  SELECT_HELP = "請選擇檔案欄位"
-  LOAD_HELP   = "讀取已儲存的遊戲進度"
-  SAVE_HELP   = "儲存當前遊戲進度"
-  DELETE_HELP = "刪除該存檔"
+  SELECT_HELP = "Select a savefile..."
+  LOAD_HELP   = "Load saved game progress"
+  SAVE_HELP   = "Save current game progress"
+  DELETE_HELP = "Delete this savefile"
     
-  EMPTY_TEXT = "~沒有檔案~"      # Text used when no save data is present.
-  PLAYTIME   = "遊戲時間"          # Text used for total playtime.
-  TOTAL_SAVE = "儲存次數: "     # Text used to indicate total saves.
-  TOTAL_GOLD = "擁有貨幣: "      # Text used to indicate total gold.
-  LOCATION   = "地點: "        # Text used to indicate current location.
+  EMPTY_TEXT = "~No Data~"      # Text used when no save data is present.
+  PLAYTIME   = "Play time"          # Text used for total playtime.
+  TOTAL_SAVE = "Times saved: "     # Text used to indicate total saves.
+  TOTAL_GOLD = "βits: "      # Text used to indicate total gold.
+  LOCATION   = "Location: "        # Text used to indicate current location.
   
 end
 #==============================================================================
@@ -60,29 +70,37 @@ end
 #==============================================================================
 module Vocab::Equipment
   
-  Weapon    = "武器"
-  Shield    = "盾牌"
-  Head      = "頭部"
-  Body      = "身體"
-  Accessory = "飾品"
-  Cloak     = "斗篷"
-  Necklace  = "項鍊"
-  Boots     = "靴子"
-  Rune      = "符文"
-  Gem       = "寶石"
-  Ammo      = "彈藥"
+  Weapon    = "Weapon"
+  Shield    = "Shield"
+  Head      = "Head"
+  Body      = "Body"
+  Accessory = "Accessory"
+  Cloak     = "Cloak"
+  Necklace  = "Necklace"
+  Boots     = "Boots"
+  Rune      = "Rune"
+  Gem       = "Gem"
+  Ammo      = "Ammo"
   
-  WeaponDMG = "武器傷害"
-  AmmoDMG   = "彈藥傷害"
-  Speed     = "速度"
+  WeaponDMG = "Weapon Damage"
+  AmmoDMG   = "Ammo Damage"
+  Speed     = "Speed"
   
   Thac0     = "Attack Bonus"
   AC        = "Armor Class"
   Damage    = "Damage"
   Range     = "Range"
+  SType     = "Skill Type"
+  Cost      = "EP Cost"
+  Cooldown  = "Cooldown"
+  Save      = "Save"
   
   Remove    = "<Remove Equip>"
   Empty     = "<Empty>"
+  
+  None      = "None"
+  Type      = "Type"
+  
 end
 #==============================================================================
 # ** Vocab::System
@@ -91,27 +109,29 @@ end
 #==============================================================================
 module Vocab::System
   
-  WarCry        = "啟用戰鬥語音"
-  WarCryDec     = "開關進入戰鬥時的開場白以及戰鬥時的部分語音效果"
-  Difficulty    = "戰鬥難度"
-  DifficultyDec = "改變戰鬥難度, 生命/傷害變化: 簡單: 0.5x/0.8x, 普通: 1x/1x\n" + 
-                  "困難:1.5x/1.2x, 專家: 2x/1.5x"
+  WarCry        = "Way cry"
+  WarCryDec     = "Character voices when enter the battle and other actions"
+  Difficulty    = "Combat Difficulty"
+  DifficultyDec = "Change the combat difficulty, Hp/Damage multipler: Easy: 0.5x/0.8x, \n" + 
+                  "Normal: 1x/1x, Hard:1.5x/1.2x, Expert: 2x/1.5x"
                   
-  BGM           = "BGM音量"
-  BGMDec        = "調整背景音樂的音量, 可滑鼠拖曳數量條來改變"
-  BGS           = "BGS音量"
-  BGSDec        = "調整背景聲音的音量, 可滑鼠拖曳數量條來改變"
-  SE            = "SE音量"
-  SEDec         = "調整聲音特效的音量, 可滑鼠拖曳數量條來改變"
+  BGM           = "BGM Volume"
+  BGMDec        = "Adjust the volume of Background music\n" + "You can drag the meter by mouse to change the value"
+  BGS           = "BGS Volume"
+  BGSDec        = "Adjust the volume of Background sound\n" + "You can drag the meter by mouse to change the value"
+  SE            = "SE Volume"
+  SEDec         = "Adjust the volume of SFX\n" + "You can drag the meter by mouse to change the value"
   
-  ToTitle       = "回到標題"
-  ToTitleDec    = "離開當前遊戲並回到標題畫面, 不要忘記存檔喔~"
+  ToTitle       = "Back to Title"
+  ToTitleDec    = "Leave current game and back to title screen, please don't forget to save"
   
-  ShutDown      = "離開遊戲"
-  ShutDownDec   = "離開遊戲, 不要忘記存檔喔~"
+  ShutDown      = "Shutdown"
+  ShutDownDec   = "Close the game, please don't forget to save"
   
-  UnsavedInfo   = "未儲存的進度將會遺失，確認繼續嗎?"
+  UnsavedInfo   = "Unsaved progress will be lost, continue?"
   
+  Overwrite     = "Selected file will be overwritten, continue?"
+  Delete        = "Are you reaaly wanna delete this file?"
 end
 #==============================================================================
 # ** Vocab::Errno
@@ -120,22 +140,43 @@ end
 #==============================================================================
 module Vocab::Errno
   
-  LoadErr         = "讀取檔案時發生錯誤! 請將 %s\n寄送給開發人員"
-  SaveErr         = "存檔時發生錯誤:\n%s, 請將 %s 寄送給開發人員並稍後再試"
-  Exception       = "遊戲運行時發生錯誤! 請將檔案\"ErrorLog.txt\"寄送給開發人員以處理錯誤.\n"
-  GiftCodeFailed  = "禮物碼驗證失敗: %s"
-  ProgramMissing  = "遺失程式: "
+  LoadErr         = "An error occurred while loading the file, please submit %s\n to the developers"
+  SaveErr         = "An error occurred while saving the file:\n%s, please submit %s to the developers and try again later"
   
-  APIErr          = "呼叫API過程中發生錯誤:\n%s"
+  Exception       = "An error occurred during the gameplay, please submit \"ErrorLog.txt\" to the developers in order to resolve the problem.\n"
+  ScriptErr       = "An error occurred while executing the event script: %s\nplease submit %s to the developers"
+  
+  GiftCodeFailed  = "Gift code verify failed: %s"
+  ProgramMissing  = "Program missing: "
+  
+  
+  APIErr          = "An error occurred while calling API:\n%s"
   
   APISymbol_Table = {
-    true               => "成功!",
-    :json_failed       => "組態檔建立失敗",
-    :connection_failed => "網際網路連線失敗",
-    :invalid_code      => "您的代碼已經被使用過或無效",
-    :close_failed      => "網路閘道關閉失敗",
-    :decrypt_failed    => "檔案解密失敗",
-    false              => "痾...我也不知道, 請聯絡開發人員!",
+    true               => "Success!",
+    :json_failed       => "Configuration file build failed",
+    :connection_failed => "Internet connection failed",
+    :invalid_code      => "Your code has been used or invalid",
+    :close_failed      => "Gateway close error",
+    :decrypt_failed    => "File decryption failed",
+    false              => "Hmm...IDK, please contact the developers!",
+  }
+  
+  RunTimeErr  = "  An Error has occurred during gameplay: %s %s"
+  
+  RESymbol_Table = {
+    :bits_incorrect   => "Bits amount asynchronous with Block Chain",
+    :fileid_overflow  => "Object id overflow while convert to savefile format",
+    :item_unconsumed  => "Consumable Item can't be consumed",
+    :int_overflow     => "Integer Overflow",
+    :datatype_error   => "Data Type Error:\n",
+    :nil_block        => "Block nil miner",
+    :chain_broken     => "Block Chain Error:\n",
+    :illegel_value    => "Illegel value:\n",
+    :checksum_failed  => "File CheckSum failure",
+    :file_missing     => "File missing:\n",
+    :tactic_sym_missing => "Tactic command symbol unavailable:\n",
+    :secure_hash_failed => "Security hash match failed:\n",
   }
   
 end
@@ -186,6 +227,15 @@ module Vocab::Party
   TextEmpty   = "-No pony-"
   TextRemove  = "-Remove-"
   TextEquip   = "Gear"
+  
+  GoldGain    = "Party has %s βits: %s%s"
+  ItemGain    = "Party has %s an item(x%s)"
+  EXPGain     = "Party has gained xp: %d"
+  BCGain      = "Party has gained block chain reward: %s"
+  
+  Limited     = "(max amount reached)"
+  WordGain    = "gained"
+  WordLost    = "lost"
 end
 #==============================================================================
 # ** Vocab::Tactic
@@ -201,6 +251,9 @@ module Vocab::Tactic
   CmdHolding  = ":Hold"
   CmdMHing    = "Hold/Move"
   
+  HelpMove    = "Select a location to move, or an enemy to attack."
+  HelpSel     = "Select a location"
+  
   DecMove     = "Move to a position or attack an enemy"
   DecMHing    = "Press to toggle between hold/moving"
   DecReaction = "Toggle between combat reactions"
@@ -208,7 +261,7 @@ module Vocab::Tactic
   DecGuard    = "Protect a character"
   DecPatrol   = "Guard an area"
   
-  Targeting   = 'Enemy targeting'
+  Targeting   = 'Enemies'
   Fighting    = 'Target fighting'
   Self        = 'Self and party'
   Item        = 'Items'
@@ -227,6 +280,8 @@ module Vocab::Tactic
     :hp_least_power       => "Use Hp potion: least powerful",
     :ep_most_power        => "Use Ep potion: most powerful",
     :ep_least_power       => "Use Ep potion: least powerful",
+    :set_target           => "Set to primary target",
+    :jump_to              => "Jump to tactic: ",
   }
 end
 #==============================================================================
@@ -254,9 +309,12 @@ module Vocab::TacticConfig
     
     :ep_lower               => "EP lower than:",
     :being_attacked_by_type => "Hurt by attack type:",
+    
+    :enemies_alive          => "Sighted enemies X alive:",
     :allies_alive           => "Team member alive:",
     :allies_dead            => "Team member knocked out:",
     :surrounded_by_enemies  => "Surrounded by X enemies:",
+    :using_attack_type      => "Main-hoof attack type:",
     
     :attack_mainhoof        => "Main-hoof attack",
     :attack_offhoof         => "Off-hoof attack",
@@ -265,6 +323,38 @@ module Vocab::TacticConfig
     :hp_least_power         => "Use hp potion: least powerful",
     :ep_most_power          => "Use ep potion: most powerful",
     :ep_least_power         => "Use ep potion: least powerful",
+    
+    :set_target             => "Set to primary target",
+    :jump_to                => "Jump to tactic:",
+    
+    :enemies      => "Enemies:",
+    :target       => "Target:",
+    :self         => "Self/Party:",
+    :new_command  => "<Add New Tactic>",
   }
   
+end
+#==============================================================================
+# ** Vocab::Skillbar
+#------------------------------------------------------------------------------
+#   Text info in skillbar
+#==============================================================================
+module Vocab::Skillbar
+  
+  Follower    = "Toggle on/off Follower AI"
+  AllSkill    = "All Skills"
+  Vancian     = "Vancian"
+  AllItem     = "All Items"
+  PrevPage    = "Previous page"
+  NextPage    = "Next page"
+  Cancel      = "Cancel"
+  None        = "<Empty>"
+  
+  Use         = "Use"
+  Hotkey      = "Hotkey"
+  Info        = "Info"
+  MouseEdit   = "現在您可以使用滑鼠拖曳編輯熱鍵欄"
+  
+  SelHelp     = "請用滑鼠點擊熱鍵欄位或按下對應按鍵來設定"
+  SelSucc     = "您已經將%s指定在熱鍵%s上"
 end

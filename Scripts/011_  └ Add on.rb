@@ -68,10 +68,9 @@ module DataManager
       save_game_without_rescue_chain(index)
       build_checksum_file(index)
     rescue Exception => e
-      info = e.to_s
       errfilename = "SaveErr.txt"
-      text = "\nPlease submit #{errfilename} to the developer and try again later"
-      SceneManager.scene.raise_overlay_window(:popinfo, "An error occurred while saving game:\n" + info + text);
+      info = sprintf(Vocab::Errno::SaveErr, e, errfilename)
+      SceneManager.scene.raise_overlay_window(:popinfo, info);
       info = sprintf("%s\n%s\n%s\n", SPLIT_LINE, Time.now.to_s, e)
       e.backtrace.each{|line| info += line + 10.chr}
       puts "#{info}"

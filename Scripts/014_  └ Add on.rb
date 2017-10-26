@@ -19,7 +19,7 @@ module SceneManager
     FileManager.export_all_map_dialog
     DataManager.unpack_data if $ENCRYPT
     @timer = 0
-    info = "To ensure your best gameplay experience, please close the app that will consume your system resource, such as Flash, Youtube and other games."
+    info = Vocab::InitLoadingMsg
     reserve_loading_screen(nil, subtitle: info)
     DataManager.init
     Audio.setup_midi if use_midi?
@@ -242,6 +242,10 @@ module SceneManager
   #----------------------------------------------------------------------------
   def self.send_input(string)
     scene.retrieve_input(string)
+  end
+  #----------------------------------------------------------------------------
+  def self.get_input
+    scene.get_input
   end
   #----------------------------------------------------------------------------
   def self.setup_weapon_use(action)
