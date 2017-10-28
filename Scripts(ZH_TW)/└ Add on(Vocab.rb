@@ -47,12 +47,15 @@ module Vocab
   Quest           = "任務日誌"
   QuestUpdated    = "任務日誌已更新: %s"
   
-  InitLoadingMsg  = "為了確保最佳的遊戲體驗, 請關閉占用系統資源的軟體及視窗.\n 例如Youtube或其他遊戲等"
+  InitLoadingMsg  = "為了確保最佳的遊戲體驗, 請關閉占用系統資源的軟體及視窗.\n 例如Flash, Youtube或其他遊戲等"
   
   Unavailable     = "尚未開發完成, 敬請期待"
   
   TransferGather  = "您必須集合隊伍才能繼續前進"
   TransferCombat  = "戰鬥中無法脫出"
+  
+  SaveDec         = "儲存遊戲進度或讀取先前的檔案"
+  SystemDec       = "更改參數選項或離開遊戲"
 end
 #==============================================================================
 # ** Vocab::SaveLoad
@@ -114,6 +117,19 @@ module Vocab::Equipment
   Empty     = "<無>"
   None      = "<無>"
   Type      = "類別"
+  
+  Melee     = "物理"
+  Magic     = "魔法"
+  Ranged    = "遠程"
+  
+  SavingThrow = "豁免率檢定"
+  
+  SavingName = {
+    :halfdmg  => "1/2",
+    :nullify  => "通過則無效(Neg.)",
+    :none     => "無",
+    nil       => "無",
+  }
   
 end
 #==============================================================================
@@ -276,9 +292,9 @@ module Vocab::Tactic
   DecGuard    = "保護目標"
   DecPatrol   = "巡邏區域"
   
-  Targeting   = '設為目標的條件'
-  Fighting    = '戰鬥目標條件'
-  Self        = '隊伍/自身條件'
+  Targeting   = '視野內敵方單位'
+  Fighting    = '主要目標條件'
+  Self        = '自身條件'
   Item        = '物品'
   Skill       = '技能'
   General     = '一般'
@@ -316,17 +332,20 @@ module Vocab::TacticConfig
     :rank                   => "等級:",
     
     :any                    => "任何時刻",
-    :clustered              => "X名敵方單位聚集成群:",
+    :clustered              => "X名敵方聚集:",
     :hp_lower               => "生命少於:",
     :hp_higher              => "生命多於:",
     :target_range           => "與目標的距離:",
     :target_atk_type        => "攻擊型態:",
     
     :ep_lower               => "能量少於:",
-    :being_attacked_by_type => "被某種攻擊所傷:",
+    :being_attacked_by_type => "被某攻擊所傷:",
+    
+    :enemies_alive          => "X名敵方存活:",
     :allies_alive           => "存活隊員數量:",
     :allies_dead            => "死亡隊員數量:",
-    :surrounded_by_enemies  => "被X名敵方單位包圍:",
+    :surrounded_by_enemies  => "被X名敵方包圍:",
+    :using_attack_type      => "主武器攻擊類型:",
     
     :attack_mainhoof        => "使用主武器攻擊",
     :attack_offhoof         => "使用副武器攻擊",
@@ -339,10 +358,62 @@ module Vocab::TacticConfig
     :set_target             => "設為主要攻擊目標",
     :jump_to                => "跳到戰術: ",
     
-    :enemies      => "所有敵人: ",
-    :target       => "主要目標: ",
-    :self         => "自己/隊伍: ",
+    :enemies      => "所有敵人:",
+    :targeting    => "所有敵人:",
+    :target       => "主要目標:",
+    :fighting     => "主要目標:",
+    :self         => "自己:",
     :new_command  => "<新增戰術>",
+    
+    :short      => "短程",
+    :medium     => "中程",
+    :long       => "長程",
+    
+    :critter    => "弱雞",
+    :minion     => "嘍囉",
+    :elite      => "菁英",
+    :boss       => "頭目",
+    :chief      => "首領",
+    
+    :melee      => "物理攻擊",
+    :ranged     => "遠程攻擊",
+    :magic      => "魔法攻擊或詠唱",
+  }
+  
+  InputHelp = {
+    :attacking_ally => "請選擇一名隊伍成員",
+    :target_of_ally => "請選擇一名隊伍成員",
+    :has_state    => "請選擇一個狀態",
+    :rank         => "請選擇一個等級",
+    :hp_lower     => "請輸入百分比, 按下Enter鍵完成, ESC取消",
+    :hp_higher    => "請輸入百分比, 按下Enter鍵完成, ESC取消",
+    :ep_lower     => "請輸入百分比, 按下Enter鍵完成, ESC取消",
+    :target_range => "請選擇一個距離",
+    :target_atk_type  => "請選擇一個類型",
+    :being_attacked_by_type => "請選擇一個類型",
+    :using_attack_type      => "請選擇一個類型",
+    :clustered              => "請輸入數量, 條件門檻為大於等於這個數字",
+    :enemies_alive          => "請輸入數量, 條件門檻為大於等於這個數字",
+    :allies_alive           => "請輸入數量, 條件門檻為大於等於這個數字",
+    :allies_dead            => "請輸入數量, 條件門檻為大於等於這個數字",
+    :surrounded_by_enemies  => "請輸入數量, 條件門檻為大於等於這個數字",
+  }
+  
+  ArgDec_Table = {
+    :has_state    => "%s",
+    :rank         => "%s",
+    :hp_lower     => "%d\%",
+    :hp_higher    => "%d\%",
+    :ep_lower     => "%d\%",
+    :target_range => "在 %s 時",
+    :target_atk_type  => "%s",
+    :being_attacked_by_type => "%s",
+    :using_attack_type      => "%s",
+    :clustered              => "%d名或更多",
+    :enemies_alive          => ">= %d",
+    :allies_alive           => ">= %d",
+    :allies_dead            => ">= %d",
+    :surrounded_by_enemies  => ">= %d",
   }
   
 end

@@ -129,7 +129,10 @@ class Window_Input < Window_Base
   #--------------------------------------------------------------------------
   def create_text_sprite
     @text_sprite = Sprite.new(@viewport2)
-    @text_sprite.bitmap = Bitmap.new(Graphics.width, self.width)
+    @text_sprite.bitmap = Bitmap.new(Graphics.width, line_height * 2)
+    @text_sprite.x = 0
+    @text_sprite.y = self.y - line_height
+    @text_sprite.z = self.z + 1
   end
   #--------------------------------------------------------------------------
   # * Create Cursor Sprite
@@ -160,9 +163,13 @@ class Window_Input < Window_Base
   #--------------------------------------------------------------------------
   def draw_title(title)
     return unless title
-    cw = title.bytesize * Font.default_size / 2
-    cx = self.x + [[(width - cw) / 2, 0].max, self.width].min
-    rect = Rect.new(cx, self.y - line_height, cw, line_height)
+    bsize = 0
+    title.each_char do |ch|
+      bsize += [ch.bytesize, 1.9].min
+    end
+    cw = [(bsize * Font.default_size * 0.35).to_i, Graphics.width].min
+    cx = [[(Graphics.width - cw) / 2, 0].max, Graphics.width].min
+    rect = Rect.new(cx, 0, cw, line_height)
     @text_sprite.bitmap.draw_text(rect, title)
   end
   #--------------------------------------------------------------------------
@@ -364,7 +371,7 @@ class Window_Input < Window_Base
   end
   #--------------------------------------------------------------------------
   def process_ok
-    @enter_cnt += 1 if Input.trigger?(:kENTER)
+    @enter_cnt += 1 if Input.trigger?(:kENTER) || Input.trigger?(:kESC)
     return if !@keyboard_action.empty? && @enter_cnt < 3
     if Input.trigger?(:kENTER)
       return process_terminate

@@ -79,6 +79,7 @@ class Window_TacticList < Window_Selectable
     item = @data[index]
     if item
       rect = item_rect(index)
+      draw_order(index, rect)
       rect.width /= 2
       rect.width -= 4
       draw_command(item, rect)
@@ -97,6 +98,15 @@ class Window_TacticList < Window_Selectable
     select(0)
   end
   #--------------------------------------------------------------------------
+  def draw_order(index, rect)
+    return if index >= @actor.tactic_commands.size
+    text = sprintf("[%02d]", index)
+    rect.width = 32
+    draw_text(rect, text)
+    rect.x = 32
+    rect.width = item_width
+  end
+  #--------------------------------------------------------------------------
   # * Draw command
   #--------------------------------------------------------------------------
   def draw_command(command, rect)
@@ -104,25 +114,18 @@ class Window_TacticList < Window_Selectable
     cy = rect.y
     case command.category
     when :targeting
-      draw_icon(PONY::IconID[:aim], cx, cy)
-      rect.x += 26
       contents.font.color.set(DND::COLOR::Orange)
-      name = sprintf("%s %s",Name_Table[:enemies], Name_Table[command.condition_symbol])
-      draw_text(rect, name)
+      draw_condition(:targeting, rect, command)
       rect.x = self.width / 2 + 4
       draw_action_item(rect, command.action)
     when :fighting
-      draw_icon(PONY::IconID[:fighting], cx, cy)
-      rect.x += 26
-      name = sprintf("%s %s",Name_Table[:target], Name_Table[command.condition_symbol])
-      draw_text(rect, name)
+      draw_condition(:fighting, rect, command)
+      rect.x = self.width / 2 + 4
       draw_action_item(rect, command.action)
     when :self
-      draw_icon(PONY::IconID[:self], cx, cy)
-      rect.x += 26
       contents.font.color.set(DND::COLOR::Green)
-      name = sprintf("%s %s",Name_Table[:self], Name_Table[command.condition_symbol])
-      draw_text(rect, name)
+      draw_condition(:self, rect, command)
+      rect.x = self.width / 2 + 4
       draw_action_item(rect, command.action)
     when :new
       draw_icon(PONY::IconID[:plus], cx, cy)
@@ -133,6 +136,47 @@ class Window_TacticList < Window_Selectable
       draw_action_item(rect, command.action)
     end
     change_color(normal_color)
+  end
+  #--------------------------------------------------------------------------
+  def draw_condition(symbol, rect, command)
+    icon_id = 0
+    if command.condition_symbol == :has_state && command.args.first.to_bool
+      icon_id = $data_states[command.args.first].icon_index
+    elsif command.args.first.is_a?(Game_Actor)
+      icon_id = command.args.first.icon_index
+    else
+      icon_id = PONY::IconID[symbol]
+    end
+    draw_icon(icon_id, rect.x, rect.y)
+    rect.x += 26
+    name = sprintf("%s %s",Name_Table[symbol], Name_Table[command.condition_symbol])
+    name = get_condition_args_name(command.condition_symbol, command.args, name) 
+    if name.bytesize > 31
+      temp = ""
+      bsize = 0
+      name.each_char do |ch|
+        break if bsize > 30
+        bsize += [ch.bytesize, 1.9].min
+        temp += ch
+      end
+      name = temp + "..." unless temp.bytesize == name.bytesize
+    end
+    draw_text(rect, name)
+  end
+  #--------------------------------------------------------------------------
+  def get_condition_args_name(symbol, args, text)
+    return text + args.first.name if args.first.is_a?(RPG::BaseItem)
+    return text if ArgDec_Table[symbol].nil?
+    case symbol
+    when :has_state
+      name = ""
+      name = $data_states[args.first].name if args.first.to_bool
+      return text + ' ' + sprintf(ArgDec_Table[:has_state], name)
+    else
+      info = ArgDec_Table[args.first] if args.first.is_a?(Symbol)
+      info = args.first if info.nil?
+      return text + ' ' + sprintf(ArgDec_Table[symbol], info)
+    end
   end
   #--------------------------------------------------------------------------
   def draw_action_item(rect, action)
@@ -146,11 +190,7 @@ class Window_TacticList < Window_Selectable
   #--------------------------------------------------------------------------
   def apply_tactic_change
     return if @data.nil?
-    puts "Apply tactic change"
-    @data.each {|cmd| puts "#{cmd} #{cmd.condition_symbol} #{cmd.action.item}"}
     @actor.tactic_commands = @data.select{|cmd| cmd.category && cmd.category != :new}
-    puts "After:"
-    @actor.tactic_commands.each {|cmd| puts "#{cmd} #{cmd.condition_symbol} #{cmd.action.item}"}
   end
   #--------------------------------------------------------------------------
 end

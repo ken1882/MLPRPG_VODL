@@ -26,7 +26,7 @@ module Vocab
   # Exit Info
   ExitConfirm     = "Are you really want to leave? Ponies will miss you..."
   
-  None            = "<Nonce>"  
+  None            = "<None>"  
   Type            = "Type"
   
   Quest           = "Quest Journal"
@@ -38,6 +38,8 @@ module Vocab
   TransferGather  = "You must gather your party before venturing forth"
   TransferCombat  = "You can't change location during the combat"
   
+  SaveDec         = "Save your game progess"
+  SystemDec       = "Change options or leave current game"
 end
 #==============================================================================
 # ** Vocab::SaveLoad
@@ -100,6 +102,19 @@ module Vocab::Equipment
   
   None      = "None"
   Type      = "Type"
+  
+  Melee     = "Melee"
+  Magic     = "Magic"
+  Ranged    = "Ranged"
+  
+  SavingThrow = "Saves"
+  
+  SavingName = {
+    :halfdmg  => "1/2",
+    :nullify  => "Neg.",
+    :none     => "None",
+    nil       => "None",
+  }
   
 end
 #==============================================================================
@@ -189,7 +204,7 @@ module Vocab::Status
   
   General         = "General"
   Property        = "Properties"
-  Tactic          = "Tacitc"
+  Tactic          = "Tactics"
   
   Parameter       = "Parameters"
   Experience      = "Experience"
@@ -310,9 +325,9 @@ module Vocab::TacticConfig
     :ep_lower               => "EP lower than:",
     :being_attacked_by_type => "Hurt by attack type:",
     
-    :enemies_alive          => "Sighted enemies X alive:",
-    :allies_alive           => "Team member alive:",
-    :allies_dead            => "Team member knocked out:",
+    :enemies_alive          => "X Enemies alive:",
+    :allies_alive           => "X Team member alive:",
+    :allies_dead            => "X Team member K.O.:",
     :surrounded_by_enemies  => "Surrounded by X enemies:",
     :using_attack_type      => "Main-hoof attack type:",
     
@@ -328,9 +343,61 @@ module Vocab::TacticConfig
     :jump_to                => "Jump to tactic:",
     
     :enemies      => "Enemies:",
+    :targeting    => "Enemies:",
     :target       => "Target:",
-    :self         => "Self/Party:",
+    :fighting     => "Target:",
+    :self         => "Self:",
     :new_command  => "<Add New Tactic>",
+    
+    :short      => "Short",
+    :medium     => "Medium",
+    :long       => "Long",
+    
+    :critter    => "Critter",
+    :minion     => "Minion",
+    :elite      => "Elite",
+    :boss       => "Boss",
+    :chief      => "Chief",
+    
+    :melee      => "Melee",
+    :ranged     => "Ranged",
+    :magic      => "Magic/Casting",
+  }
+  
+  InputHelp = {
+    :attacking_ally => "Select a team member",
+    :target_of_ally => "Select a team member",
+    :has_state    => "Select a state",
+    :rank         => "Select a rank",
+    :hp_lower     => "Please enter the percentage, press Enter ot finish, ESC to abort",
+    :hp_higher    => "Please enter the percentage, press Enter ot finish, ESC to abort",
+    :ep_lower     => "Please enter the percentage, press Enter ot finish, ESC to abort",
+    :target_range => "Select a scale",
+    :target_atk_type  => "Select a type",
+    :being_attacked_by_type => "Select a type",
+    :using_attack_type      => "Select a type",
+    :clustered              => "Enter a number, operator is greater or equal",
+    :enemies_alive          => "Enter a number, operator is greater or equal",
+    :allies_alive           => "Enter a number, operator is greater or equal",
+    :allies_dead            => "Enter a number, operator is greater or equal",
+    :surrounded_by_enemies  => "Enter a number, operator is greater or equal",
+  }
+  
+  ArgDec_Table = {
+    :has_state    => "%s",
+    :rank         => "%s",
+    :hp_lower     => "%d\%",
+    :hp_higher    => "%d\%",
+    :ep_lower     => "%d\%",
+    :target_range => "at %s range",
+    :target_atk_type  => "%s",
+    :being_attacked_by_type => "%s",
+    :using_attack_type      => "%s",
+    :clustered              => "%d or more",
+    :enemies_alive          => ">= %d",
+    :allies_alive           => ">= %d",
+    :allies_dead            => ">= %d",
+    :surrounded_by_enemies  => ">= %d",
   }
   
 end
@@ -353,8 +420,8 @@ module Vocab::Skillbar
   Use         = "Use"
   Hotkey      = "Hotkey"
   Info        = "Info"
-  MouseEdit   = "現在您可以使用滑鼠拖曳編輯熱鍵欄"
+  MouseEdit   = "Now you can edit your hotkeys with mouse"
   
-  SelHelp     = "請用滑鼠點擊熱鍵欄位或按下對應按鍵來設定"
-  SelSucc     = "您已經將%s指定在熱鍵%s上"
+  SelHelp     = "Please press the hotkey(0~9) or mouse left-clicking on the slot"
+  SelSucc     = "You have assigned %s on hotkey '%s'"
 end

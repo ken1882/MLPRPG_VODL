@@ -13,6 +13,7 @@ class Game_Event < Game_Character
   alias update_gaevdndai update
   def update
     update_sight if @enemy
+    update_timer
     update_gaevdndai
   end
   #----------------------------------------------------------------------------
@@ -26,6 +27,11 @@ class Game_Event < Game_Character
     return update_sighted if @current_target
     target = find_nearest_enemy
     set_target(target) if change_target?(target)
+  end
+  #----------------------------------------------------------------------------
+  def update_timer
+    @chase_timer  -= 1 if @chase_timer > 0
+    @chase_pathfinding_timer -= 1 if @chase_pathfinding_timer > 0
   end
   #----------------------------------------------------------------------------
   # *) Determind sight angle
@@ -65,8 +71,6 @@ class Game_Event < Game_Character
   def update_battler
     return if dead? || $game_system.story_mode?
     @combat_timer -= 1 if @combat_timer > 0
-    @chase_timer  -= 1 if @chase_timer > 0
-    @chase_pathfinding_timer -= 1 if @chase_pathfinding_timer > 0
     update_combat if @current_target && @combat_timer == 0 && !casting? && !@casting_flag
   end
   #----------------------------------------------------------------------------

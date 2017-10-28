@@ -10,11 +10,11 @@ module Tactic_Config
     :attack_mainhoof        => :attack_mainhoof,
     :attack_offhoof         => :attack_offhoof,
     :target_none            => :target_none,
+    :set_target             => :set_target,
     :hp_most_power          => :hp_most_power,
     :hp_least_power         => :hp_least_power,
     :ep_most_power          => :ep_most_power,
     :ep_least_power         => :ep_least_power,
-    :set_target             => :set_target,
     :jump_to                => :nil,
   }
   #--------------------------------------------------------------------------
@@ -111,6 +111,7 @@ module Tactic_Config
     #--------------------------------------------------------------------------
     Condition_Table = {
       :any              => :return_any,
+      :has_state        => :state_included?,
       :clustered        => :determine_cluster_number,
       :hp_lower         => :hp_lower,
       :hp_higher        => :hp_higher,
@@ -129,6 +130,10 @@ module Tactic_Config
     #--------------------------------------------------------------------------
     def return_any
       return true
+    end
+    #--------------------------------------------------------------------------
+    def state_included?
+      return @target.state?(@args[0])
     end
     #--------------------------------------------------------------------------
     def determine_cluster_number
@@ -153,14 +158,14 @@ module Tactic_Config
       dis = @user.distance_to_character(@target)
       return dis <= 2 if @args[0] == :short
       return dis <= 6 if @args[0] == :medium
-      return dis > 6 if @args[0] == :long
+      return dis > 6 if @args[0]  == :long
     end
     #--------------------------------------------------------------------------
     def determine_target_attack_type
       return false if @target.primary_weapon.nil?
       return @target.primary_weapon.melee?  if @args[0] == :melee
       return @target.primary_weapon.ranged? if @args[0] == :ranged
-      return @target.casting?               if @args[0] == :casting
+      return @target.casting?               if @args[0] == :magic
     end
     
   end # queued: tactic AI
@@ -171,7 +176,6 @@ module Tactic_Config
      #--------------------------------------------------------------------------
     Condition_Table = {
       :any                    => :return_any,
-      :in_battle              => :check_in_battle?,
       :has_state              => :state_included?,
       :hp_lower               => :hp_lower,
       :ep_lower               => :ep_lower,
@@ -244,5 +248,55 @@ module Tactic_Config
       return number >= @args[0]
     end
   end
+  
+end
+#==============================================================================
+# ** Module: Tactic Condition
+#------------------------------------------------------------------------------
+#  Define the conditions of tactic command
+#==============================================================================
+module Tactic_Config
+  Condition_Symbol = {
+    :has_state              => :collect_valid_states,
+    :attacking_ally         => :player_party_members, 
+    :target_of_ally         => :player_party_members,
+    :rank                   => DND::Rank,
+    :target_atk_type        => DND::AttackType,
+    :being_attacked_by_type => DND::AttackType,
+    :using_attack_type      => DND::AttackType,
+    :jump_to                => :get_setting_actor,
+    :target_range           => [:short, :medium, :long],
+  }
+  #--------------------------------------------------------------------------
+  module_function
+  #--------------------------------------------------------------------------
+  def call_function(symbol)
+    return method(symbol).call
+  end
+  #--------------------------------------------------------------------------
+  def player_party_members
+    return $game_party.members
+  end
+  #--------------------------------------------------------------------------
+  def get_setting_actor
+    actor = SceneManager.scene.current_actor
+    return unless actor
+    n = actor.tactic_commands.size - 1
+    return Array.new(n){|i| i + 1}
+  end
+  #--------------------------------------------------------------------------
+  def collect_valid_states
+    return $data_states.select{|state| state_valied?(state)}
+  end
+  #--------------------------------------------------------------------------
+  def state_valied?(state)
+    return false if state.nil?
+    return false if state.id < 1
+    return false if (state.icon_index || 0) < 1
+    return false if state.name.nil? || state.name.empty?
+    return false if state.features.empty? && state.note.empty?
+    return true
+  end
+  #--------------------------------------------------------------------------
   
 end

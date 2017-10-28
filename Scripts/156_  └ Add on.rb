@@ -42,13 +42,13 @@ class Window_MenuCommand < Window_ImageCommand
   # * Add Save to Command List
   #--------------------------------------------------------------------------
   def add_save_command
-    add_command(Vocab::save, "Menu_Save", :save, save_enabled?, nil, "Save your game progess")
+    add_command(Vocab::save, "Menu_Save", :save, save_enabled?, nil, Vocab::SaveDec)
   end
   #--------------------------------------------------------------------------
   # * Add Exit Game to Command List
   #--------------------------------------------------------------------------
   def add_game_end_command
-    add_command(Vocab::game_end, "Menu_System", :game_end, true, nil, "Change options or leave current game")
+    add_command(Vocab::game_end, "Menu_System", :game_end, true, nil, Vocab::SystemDec)
   end
   #--------------------------------------------------------------------------
   def save_enabled?

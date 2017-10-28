@@ -14,6 +14,11 @@ class Object
     hash_self if @hashid.nil?
     return @hashid
   end
+  #------------------------------------------------------------------------
+  def to_bool
+    return true
+  end
+  
 end
 #===============================================================================
 # * True/Flase class
@@ -100,6 +105,14 @@ class Fixnum
   
   def self
     return PONY.EncInt(self)
+  end
+end
+class NilClass
+  #----------------------------------------------------------------------------
+  # *) Convert to boolean
+  #----------------------------------------------------------------------------
+  def to_bool
+    false
   end
 end
 #===============================================================================
@@ -389,6 +402,7 @@ class RPG::Actor < RPG::BaseItem
   attr_reader :casting_graphic
   attr_reader :casting_index
   attr_reader :casting_pattern
+  attr_reader :icon_index
   #--------------------------------------------------------------------------
   # * Attributes setup
   #--------------------------------------------------------------------------
@@ -404,6 +418,7 @@ class RPG::Actor < RPG::BaseItem
       when DND::REGEX::Character::CastGraphic; @casting_graphic = $1.to_i
       when DND::REGEX::Character::CastIndex;   @casting_index   = $1.to_i
       when DND::REGEX::Character::CastPattern; @casting_pattern = $1.to_i
+      when DND::REGEX::Character::IconIndex;   @icon_index      = $1.to_i
       when DND::REGEX::Character::CastingAnimation; @casting_animation = $1.to_i
       end
     end

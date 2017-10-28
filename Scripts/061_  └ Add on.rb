@@ -16,8 +16,8 @@ class Game_Action
       :target_none          => 1142,
       :hp_most_power        => 2775,
       :hp_least_power       => 2743,
-      :ep_most_power        => 2741,
-      :ep_least_power       => 2773,
+      :ep_most_power        => 2773,
+      :ep_least_power       => 2741,
       :set_target           => PONY::IconID[:aim],
       :jump_to              => 2103,
   }

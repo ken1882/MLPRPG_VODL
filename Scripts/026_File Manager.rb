@@ -46,7 +46,7 @@ module FileManager
     return [0, text] if !clone_text[0] || !text[-1]
     return [0, text] if !clone_text[0].match(/^[[:alpha:]]$/)
     return [0, text] if !text[-1].match(/^[[:alpha:]]$/)
-    return [0, test] if test[-1].bytesize > 1
+    return [0, text] if text[-1].bytesize > 1
     endl_pos = 0
     surplus = ""
     3.times do |i|

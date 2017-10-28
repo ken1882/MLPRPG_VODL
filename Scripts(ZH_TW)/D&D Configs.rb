@@ -3,6 +3,7 @@
 #------------------------------------------------------------------------------
 #  Config: Item and features sets
 #==============================================================================
+# tag: config
 module DND
   # tag: translate
   
@@ -33,6 +34,14 @@ module DND
     "弩矢",
     "子彈",
     "法杖"
+  ]
+  
+  SKILL_TYPE_NAME = [
+  "",
+  "技能",
+  "法術",
+  "萬西安",
+  "被動",
   ]
   
   ARMOR_TYPE_NAME = [
@@ -70,6 +79,20 @@ module DND
   "雷電",
   ]
   
+  Rank  = [
+    :critter,
+    :minion,
+    :elite,
+    :boss,
+    :chief,
+  ]
+  
+  AttackType = [
+    :melee,
+    :magic,
+    :ranged,
+  ]
+  
   Race  = [
     "陸馬",
     "獨角獸",
@@ -78,7 +101,13 @@ module DND
     "林地生物",
     "鹿",
     "獅蠍獸",
-    
   ]
+  
+  ItemParamDec = {
+    :weapon => [:wtype, :speed, :range, :damage],
+    :armor  => [:atype, :ac],
+    :skill  => [:stype, :cost, :range, :cooldown, :save, :damage],
+    :item   => [:cooldown, :range, :save, :damage],
+  }
   
 end

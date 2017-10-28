@@ -17,6 +17,10 @@ class Window_TacticItemList < Window_ItemList
     @subwindow = nil
   end
   #--------------------------------------------------------------------------
+  def init
+    @ori_category = @command.category rescue nil
+  end
+  #--------------------------------------------------------------------------
   # * Get Digit Count
   #--------------------------------------------------------------------------
   def col_max
@@ -77,17 +81,18 @@ class Window_TacticItemList < Window_ItemList
   #--------------------------------------------------------------------------
   def draw_item(index)
     item = @data[index]
+    rect = item_rect(index)
+    rect.width -= 4
     if item.is_a?(RPG::UsableItem)
-      super
+      name = item.name
+      icon_id = item.icon_index
     else
-      rect = item_rect(index)
-      rect.width -= 4
       name = Vocab::TacticConfig::Name_Table[item]
-      name = "<none>" if name.nil?
       icon_id = (PONY::IconID[item] || 0)
-      draw_icon(icon_id, rect.x, rect.y) if icon_id > 0
-      draw_text(rect.x + 24, rect.y, item_width, line_height, name)
     end
+    name = "<none>" if name.nil?
+    draw_icon(icon_id, rect.x, rect.y) if icon_id > 0
+    draw_text(rect.x + 24, rect.y, item_width, line_height, name)
   end
   #--------------------------------------------------------------------------
   # * Call OK Handler
@@ -98,28 +103,50 @@ class Window_TacticItemList < Window_ItemList
       when :condition
         cond = item
         result = call_subwindow(item)
-        return call_cancel_handler unless result
+        return call_cancel_handler if !result
+        return call_cancel_handler if result.is_a?(Array) && !result.first
+        @command.args = result
         if item.is_a?(Symbol)
           @command.condition_symbol = item
           @command.condition = ""
         else
           @command.condition_symbol = :code
-          @commadn.condition = item
+          @command.condition = item
         end
       when :action
         @command.action.reassign_item(item, false)
       end
-      
-      puts "#{@command} #{@command.condition_symbol} #{@command.action.item}"
     end
-    show_intput_window if subwindow_call
+    super
+  end
+  #--------------------------------------------------------------------------
+  def call_cancel_handler
+    @command.category = @ori_category if @ori_category
     super
   end
   #--------------------------------------------------------------------------
   def call_subwindow(item)
     help_text = Vocab::TacticConfig::InputHelp[item]
-    return true if help_text.nil?
-    cw = 480
+    return [true] if help_text.nil?
+    if Tactic_Config::Condition_Symbol[item]
+      @subwindow = create_select_window
+      @subwindow.category = item
+      @subwindow.activate
+      @subwindow.select(0)
+    else
+      @subwindow = create_input_window(help_text)
+      @subwindow.activate
+      @subwin_flag = :input
+    end
+    re = update_subwindow(item) # Infinity loop until input processed
+    @subwindow.dispose
+    @subwindow   = nil
+    @subwin_flag = nil
+    return re
+  end
+  #--------------------------------------------------------------------------
+  def create_input_window(help_text)
+    cw = 120
     cx = Graphics.center_width(cw)
     cy = Graphics.center_height(48)
     attrs = {
@@ -129,15 +156,45 @@ class Window_TacticItemList < Window_ItemList
       dim_background: true,
       title: help_text
     }
-    @subwindow = Window_Input.new(cx, cy, cw, attrs)
-    loop do
-      Graphics.update
-      Input.update
-      @subwindow.update
-      str = SceneManager.get_input
-      break if str
-    end
-    return str.empty? ? false : [[(str.to_i || 0), 0].max, 100].min
+    return window = Window_Input.new(cx, cy, cw, attrs)
   end
   #--------------------------------------------------------------------------
+  def create_select_window
+    cw = 240
+    ch = 240
+    cx = Graphics.center_width(cw)
+    cy = Graphics.center_height(ch)
+    window = Window_InstanceItemList.new(cx, cy, cw, ch)
+    window.set_handler(:ok, method(:on_select_ok))
+    window.set_handler(:cancel, method(:on_subwindow_cancel))
+    return window
+  end
+  #--------------------------------------------------------------------------
+  def update_subwindow(item)
+    re = nil
+    loop do
+      SceneManager.update_basic
+      if @subwin_flag == :input
+        @subwindow.update
+        re = SceneManager.get_input
+        re = re.empty? ? false : [[(re.to_i || 0), 0].max, 100].min if re
+        re = :nil if @subwindow.disposed? && !re
+      else
+        re = @subwindow.update
+        if re && item == :has_state
+          re = re.id rescue :nil
+        end
+      end
+      break if re
+    end
+    re = false if re == :nil
+    return [re]
+  end
+  #--------------------------------------------------------------------------
+  def on_select_ok
+  end
+  #--------------------------------------------------------------------------
+  def on_subwindow_cancel
+  end
+  
 end

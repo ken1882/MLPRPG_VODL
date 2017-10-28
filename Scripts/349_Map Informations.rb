@@ -313,6 +313,7 @@ class Window_InformationLog < Window_Selectable
   # * Show the window
   #--------------------------------------------------------------------------
   def show
+    return hide if $game_system.story_mode?
     super
     @back_sprite.show
     @button_sprite.show

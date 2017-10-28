@@ -42,7 +42,7 @@ class Sprite_Weapon < Sprite
       @type = 0
       index = item.icon_index rescue nil
       temp = Cache.iconset
-      self.bitmap.clear
+      self.bitmap = Bitmap.new(24, 24)
       self.bitmap.blt(0,0,temp,Rect.new(index % 16 * 24, index / 16 * 24, 24, 24))
       self.src_rect.set(0,0,24,24)
       self.ox    = 22

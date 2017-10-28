@@ -44,6 +44,7 @@ class Scene_Tactic < Scene_MenuBase
     @command_list.set_handler(:pagedown, method(:next_actor))
     @command_list.set_handler(:pageup,   method(:prev_actor))
     @command_list.refresh
+    @command_list.select(0)
   end
   #--------------------------------------------------------------------------
   def create_action_window
@@ -75,6 +76,7 @@ class Scene_Tactic < Scene_MenuBase
     @action_window.y = [[@command_list.y + rect.y - @command_list.oy + 2, 0].max, Graphics.height - @action_window.height - 2].min
     @action_window.show
     @action_window.select(0)
+    @item_window.init
   end
   #--------------------------------------------------------------------------
   def on_action_delete

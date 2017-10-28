@@ -292,5 +292,9 @@ module SceneManager
   def self.call_all_dead_rescue
     PONY::Rescue.CallPrincessLuna
   end
-  
+  #-------------------------------------------------------------------------
+  def self.update_basic
+    return unless scene
+    scene.update_basic
+  end
 end

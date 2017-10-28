@@ -29,6 +29,11 @@ class Game_Actor < Game_Battler
     hash_self
   end
   #--------------------------------------------------------------------------
+  alias :is_a_obj? :is_a?
+  def is_a?(cls)
+    return is_a_obj?(cls) || actor.is_a?(cls)
+  end
+  #--------------------------------------------------------------------------
   def dualclass
     $data_classes[@dualclass_id]
   end
@@ -117,8 +122,9 @@ class Game_Actor < Game_Battler
   def death_graphic;    return actor.death_graphic;   end
   def death_index;      return actor.death_index;     end
   def death_pattern;    return actor.death_pattern;   end
-  def death_direction;  return actor.death_direction;  end
+  def death_direction;  return actor.death_direction; end
   def death_sound;      return actor.death_sound;     end
+  def icon_index;       return actor.icon_index;      end
   #--------------------------------------------------------------------------
   # * Change Equipment
   #     slot_id:  Equipment slot ID
@@ -153,7 +159,7 @@ class Game_Actor < Game_Battler
   #---------------------------------------------------------------------------
   def method_missing(symbol, *args)
     super(symbol, args) unless @map_char
-      super(symbol, args) unless @map_char.methods.include?(symbol)
+    super(symbol, args) unless @map_char.methods.include?(symbol)
     @map_char.method(symbol).call(*args)
   end
   

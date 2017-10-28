@@ -30,6 +30,11 @@ class Game_Enemy < Game_Battler
     @event = nil
     @skills = get_learned_skills
   end
+  #--------------------------------------------------------------------------
+  alias :is_a_obj? :is_a?
+  def is_a?(cls)
+    return is_a_obj?(cls) || enemy.is_a?(cls)
+  end
   #-----------------------------------------------------------
   # *) is_boss?
   #-----------------------------------------------------------

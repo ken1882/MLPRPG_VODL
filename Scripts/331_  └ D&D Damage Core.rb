@@ -340,7 +340,7 @@ class Game_Battler < Game_BattlerBase
     item.damage.eval(user, self, $game_variables) if item.is_a?(RPG::UsableItem) && !item.damage.none?
     
     apply_damaged_target_change(user, value)
-    @last_attacked_action << Game_Action.new(user, item) unless item.nil?
+    @last_attacked_action << Game_Action.new(user, self, item) unless item.nil?
     @last_attacked_action.shift if @last_attacked_action.size > 3
   end
   #----------------------------------------------------------------------------

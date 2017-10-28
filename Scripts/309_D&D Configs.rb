@@ -3,6 +3,7 @@
 #------------------------------------------------------------------------------
 #  Config: Item and features sets
 #==============================================================================
+#tag: config
 module DND
   
   # tag: translate
@@ -54,6 +55,14 @@ module DND
   "Gem",
   ]
   
+  SKILL_TYPE_NAME = [
+  "",
+  "Skill",
+  "Spell",
+  "Vancian",
+  "Passive",
+  ]
+  
   ELEMENT_NAME = [
   "",
   "Bludgeoning",
@@ -71,6 +80,20 @@ module DND
   "Thunder",
   ]
   
+  Rank  = [
+    :critter,
+    :minion,
+    :elite,
+    :boss,
+    :chief,
+  ]
+  
+  AttackType = [
+    :melee,
+    :magic,
+    :ranged,
+  ]
+  
   Race  = [
     "Earth Pony",
     "Unicorn",
@@ -81,5 +104,12 @@ module DND
     "Manticore",
     
   ]
+  
+  ItemParamDec = {
+    :weapon => [:wtype, :speed, :range, :damage],
+    :armor  => [:atype, :ac],
+    :skill  => [:stype, :cost, :range, :cooldown, :save, :damage],
+    :item   => [:cooldown, :range, :save, :damage],
+  }
   
 end

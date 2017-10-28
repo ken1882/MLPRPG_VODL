@@ -44,7 +44,7 @@ class Game_Character < Game_CharacterBase
   def update_combat
     return set_target(nil) if aggressive_level == 0
     start_timer(:combat)
-    return process_tactic_commands unless @tactic_commands.empty?
+    #return process_tactic_commands unless @tactic_commands.empty? # tag: queued
     return if casting? || @next_action
     determine_item_usage
     determine_skill_usage

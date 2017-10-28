@@ -225,6 +225,7 @@ class Game_Battler < Game_BattlerBase
   alias revive_dnd revive
   def revive
     revive_dnd
+    update_security
     erase_state(death_state_id) if state?(death_state_id)
     @map_char.revive_character if @map_char
   end
@@ -261,4 +262,7 @@ class Game_Battler < Game_BattlerBase
     return 20
   end
   #---------------------------------------------------------------------------
+  def icon_index
+    return 0;
+  end
 end

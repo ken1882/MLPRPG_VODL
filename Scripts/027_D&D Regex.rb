@@ -110,6 +110,7 @@ module DND
     CastGraphic       = /(?:Casting Graphic =)[ ](.+)/i
     CastIndex         = /(?:Casting Index =)[ ](\d+)/i
     CastPattern       = /(?:Casting pattern =)[ ](\d+)/i
+    IconIndex         = /(?:Icon Index =)[ ](\d+)/i
     
     WeaponLvProtect   = /(?:Weapon Level Prof =)[ ](\d+)/i  # Immune weapon attacks bwlown N level
     CastingAnimation  = /(?:Casting Animation =)[ ](\d+)/i

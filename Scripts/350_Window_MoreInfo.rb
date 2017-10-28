@@ -88,6 +88,8 @@ end
 #==============================================================================
 class Window_Moreinfo < Window_Base
   #--------------------------------------------------------------------------
+  IndexColor = Color.new(240, 225, 185)
+  #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_reader   :index                    # cursor position
@@ -96,10 +98,11 @@ class Window_Moreinfo < Window_Base
   #--------------------------------------------------------------------------
   def initialize(x, y, width, height)
     super(x, y, width, height)
-    @item             = nil
-    @display_category = nil
-    @actor            = nil
-    @pages            = []
+    @item              = nil
+    @display_category  = nil
+    @actor             = nil
+    @pages             = []
+    @first_page_offset = 0
     @index = -1
     @handler = {}
     create_background
@@ -136,6 +139,7 @@ class Window_Moreinfo < Window_Base
   # * Update mouse scroll
   #--------------------------------------------------------------------------
   def update_scroll
+    return
     f = Mouse.scroll
     if !f.nil?
       Mouse.flag_scroll = f[2]
@@ -198,6 +202,7 @@ class Window_Moreinfo < Window_Base
     @index = 0
     @item  = item
     @actor = actor
+    @first_page_offset = get_item_param_lines
     setup_description_pages
     refresh(@index)
   end
@@ -240,70 +245,169 @@ class Window_Moreinfo < Window_Base
   # *) Draw Item Info
   #--------------------------------------------------------------------------
   def draw_item_info(index)
-    cnt = 0
+    if index == 0
+      cy = 0
+      DND::ItemParamDec[:item].each do |param|
+        cy = draw_param(param, cy)
+      end
+    end
     draw_description(index)
   end
   #--------------------------------------------------------------------------
   # *) Draw Weapon Info
   #--------------------------------------------------------------------------
   def draw_weapon_info(index)
-    cnt = 0
+    if index == 0
+      cy = 0
+      DND::ItemParamDec[:weapon].each do |param|
+        draw_param(param, cy)
+        cy += line_height
+      end
+    end
     draw_description(index)
   end
   #--------------------------------------------------------------------------
   # *) Draw Armor Info
   #--------------------------------------------------------------------------
   def draw_armor_info(index)
-    cnt = 0
+    if index == 0
+      cy = 0
+      DND::ItemParamDec[:armor].each do |param|
+        draw_param(param, cy)
+        cy += line_height
+      end
+    end
     draw_description(index)
   end
   #--------------------------------------------------------------------------
   # *) Draw Skill Info
   #--------------------------------------------------------------------------
   def draw_skill_info(index)
-    cnt = 0
+    if index == 0
+      cy = 0
+      DND::ItemParamDec[:skill].each do |param|
+        draw_param(param, cy)
+        cy += line_height
+      end
+    end
     draw_description(index)
   end
+  #--------------------------------------------------------------------------
+  def get_item_param_lines
+    return DND::ItemParamDec[:skill].size  if @item.is_a?(RPG::Skill)
+    return DND::ItemParamDec[:weapon].size if @item.is_a?(RPG::Weapon)
+    return DND::ItemParamDec[:armor].size  if @item.is_a?(RPG::Armor)
+    return DND::ItemParamDec[:item].size   if @item.is_a?(RPG::Item)
+    return 0
+  end
+  
   #--------------------------------------------------------------------------
   # *) setup_description_pages
   #--------------------------------------------------------------------------
   def setup_description_pages
-    page_cnt = 0; cnt = 1;
+    page_cnt = 0; cnt = @first_page_offset + 1;
     info = @item.information
     @pages[page_cnt] = []
     texts = FileManager.textwrap(info, Graphics.width)
-    
     texts.each do |line|
-      if (y + (cnt + 2) * line_height) >= self.height
+      if (self.y + (cnt + 2) * line_height) >= self.height
         page_cnt += 1; @pages[page_cnt] = []; cnt = 1;
       end
       @pages[page_cnt].push(line)
       cnt += 1
     end
+  end
+  #--------------------------------------------------------------------------
+  def get_saving_name(saves)
+    return Vocab::Equipment::None if saves.nil?
+    return Vocab::Equipment::SavingName[saves.first]
+  end
+  #--------------------------------------------------------------------------
+  # * Get element name
+  #--------------------------------------------------------------------------
+  def get_element_name(id)
+    return DND::ELEMENT_NAME[id]
+  end
+  #--------------------------------------------------------------------------
+  # * Get param name
+  #--------------------------------------------------------------------------
+  def get_param_name(id)
+    return (DND::PARAM_NAME[id] || "")
+  end
+  #--------------------------------------------------------------------------
+  # *) Draw Item params
+  #--------------------------------------------------------------------------
+  def draw_param(param, cy)
     
+    rect = Rect.new(0, cy, contents.width, line_height)
+    change_color(DND::COLOR::Tan)
+    case param
+    when :wtype
+      draw_text(rect, Vocab::Equipment::Type)
+      text = sprintf("%s", DND::WEAPON_TYPE_NAME[@item.wtype_id])
+    when :atype
+      draw_text(rect, Vocab::Equipment::Type)
+      text = sprintf("%s", DND::ARMOR_TYPE_NAME[@item.atype_id])
+    when :stype
+      draw_text(rect, Vocab::Equipment::Type)
+      text = sprintf("%s", DND::SKILL_TYPE_NAME[@item.stype_id])
+    when :ac
+      draw_text(rect, Vocab::Equipment::AC)
+      text = sprintf("%s", @item.armor_class)
+    when :speed
+      draw_text(rect, Vocab::Equipment::Speed)
+      text = sprintf("%s", @item.wield_speed)
+    when :range
+      draw_text(rect, Vocab::Equipment::Range)
+      text = sprintf("%s", @item.tool_distance)
+    when :damage
+      return if @item.damage_index.nil?
+      @item.damage_index.each do |feat|
+        change_color(DND::COLOR::Tan)
+        draw_text(rect, Vocab::Equipment::Damage)
+        info = sprintf("%dd%d +(%d), %s; %s",feat[0],feat[1],feat[2], get_element_name(feat[3]), get_param_name(feat[4]))
+        change_color(normal_color)
+        draw_text(rect, info, 2)
+        cy += line_height
+      end
+      return cy
+    when :cost
+      draw_text(rect, Vocab::Equipment::Cost)
+      text = sprintf("%s", @item.mp_cost)
+    when :cooldown
+      draw_text(rect, Vocab::Equipment::Cooldown)
+      text = sprintf("%s sec", (@item.tool_cooldown / 60.0).round(2))
+    when :save
+      draw_text(rect, Vocab::Equipment::SavingThrow)
+      text = sprintf("%s", get_saving_name(@item.dmg_saves))
+    else
+      return cy
+    end
+    change_color(normal_color)
+    draw_text(rect, text, 2)
+    return cy + line_height
   end
   #--------------------------------------------------------------------------
   # *) Draw Item Info
   #--------------------------------------------------------------------------
   def draw_description(page_id)
-    y = 0
-    w = contents.width
+    cy = @first_page_offset * line_height
+    w  = contents.width
     change_color(system_color)
-    draw_text(0, y, w, line_height, "Description:")
+    draw_text(0, cy, w, line_height, "Description:")
     
-    color_red   = 240
-    color_green = 225
-    color_blue  = 185
-    
-    change_color(Color.new(color_red, color_green, color_blue))
+    change_color(index_color)
     cnt = 1
     @pages[page_id].each do |line|
-      draw_text(0, (y + cnt * line_height), w, line_height, line , 1)
+      draw_text(0, (cy + cnt * line_height), w, line_height, line , 1)
       cnt += 1
     end
     change_color(normal_color)
   end
   #--------------------------------------------------------------------------
+  def index_color
+    IndexColor
+  end
 end
 #==============================================================================
 # 

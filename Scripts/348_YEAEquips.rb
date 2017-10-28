@@ -1044,7 +1044,7 @@ class Window_EquipStatus < Window_Base
     elsif type == 1
       draw_text(0, dy, dw, line_height, @actor.armor_class, 2)
     elsif type == 2
-      v = @original_item.nil? ? Vocab::None : 60 - @original_item.tool_cooldown
+      v = @original_item.nil? ? Vocab::None : @original_item.wield_speed
       draw_text(0, dy, dw, line_height, v, 2)
     elsif type == 3
       v = @original_item.nil? ? Vocab::None : @original_item.tool_distance
@@ -1074,7 +1074,7 @@ class Window_EquipStatus < Window_Base
       new_value = @temp_item.tool_cooldown
       v = @original_item.nil? ? 0 : @original_item.tool_cooldown
       change_color(param_change_color(v - new_value))
-      info = 60 - @temp_item.tool_cooldown
+      info = @temp_item.wield_speed
     elsif type == 3
       new_value = @temp_item.tool_distance
       v = @original_item.nil? ? 0 : @original_item.tool_distance
@@ -1095,7 +1095,7 @@ class Window_EquipStatus < Window_Base
     change_color(system_color)
     draw_text(0, y, w, line_height, Vocab::Equipment::Speed)
     change_color(normal_color)
-    speed = 60 - @temp_item.tool_cooldown
+    speed = @temp_item.wield_speed
     draw_text(0, y, w, line_height, speed, 2)
   end
   #--------------------------------------------------------------------------
@@ -1382,12 +1382,12 @@ end # Window_EquipSlot
 class Window_EquipItem < Window_ItemList
   
   #--------------------------------------------------------------------------
-  # overwrite method: col_max
+  # * overwrite method: col_max
   #--------------------------------------------------------------------------
   def col_max; return 1; end
   
   #--------------------------------------------------------------------------
-  # overwrite method: slot_id=
+  # * overwrite method: slot_id=
   #--------------------------------------------------------------------------
   def slot_id=(slot_id)
     return if @slot_id == slot_id
@@ -1398,7 +1398,7 @@ class Window_EquipItem < Window_ItemList
   end
   
   #--------------------------------------------------------------------------
-  # overwrite method: draw_item
+  # * overwrite method: draw_item
   #--------------------------------------------------------------------------
   def draw_item(index)
     item = @data[index]
@@ -1412,9 +1412,8 @@ class Window_EquipItem < Window_ItemList
     draw_item_name(item, rect.x, rect.y, enable?(item), dw)
     draw_item_number(rect, item)
   end
-  
   #--------------------------------------------------------------------------
-  # new method: draw_remove_equip
+  # * new method: draw_remove_equip
   #--------------------------------------------------------------------------
   def draw_remove_equip(rect)
     draw_icon(Icon.remove_equip, rect.x, rect.y)
@@ -1425,7 +1424,7 @@ class Window_EquipItem < Window_ItemList
   end
   
   #--------------------------------------------------------------------------
-  # overwrite method: include?
+  # * overwrite method: include?
   #--------------------------------------------------------------------------
   # tag: equipment
   def include?(item)
@@ -1447,7 +1446,7 @@ class Window_EquipItem < Window_ItemList
     return @actor.equippable?(item)
   end
   #--------------------------------------------------------------------------
-  # overwrite method: enable?
+  # * overwrite method: enable?
   #--------------------------------------------------------------------------
   def enable?(item)
     if item.nil? && !@actor.nil?
@@ -1458,7 +1457,7 @@ class Window_EquipItem < Window_ItemList
   end
   
   #--------------------------------------------------------------------------
-  # new method: show
+  # * new method: show
   #--------------------------------------------------------------------------
   def show
     @last_item = 0
@@ -1467,7 +1466,7 @@ class Window_EquipItem < Window_ItemList
   end
   
   #--------------------------------------------------------------------------
-  # overwrite method: update_help
+  # * overwrite method: update_help
   #--------------------------------------------------------------------------
   def update_help
     super

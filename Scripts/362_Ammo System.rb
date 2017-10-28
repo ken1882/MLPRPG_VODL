@@ -360,6 +360,7 @@ class Game_Actor < Game_Battler
   def offhoof_equippable?(slot_id, item)
     return false  if !([0,1].include?(item.etype_id))
     return true   if item.etype_id == 1
+    return false  if actor && actor.id != 2 # tag: last work( race special
     return [1,2,4,9].include?(item.wtype_id)
   end
   #--------------------------------------------------------------------------

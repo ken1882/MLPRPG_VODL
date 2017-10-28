@@ -35,6 +35,13 @@ class Scene_Base
     terminate
   end
   #--------------------------------------------------------------------------
+  # * Overwrite: Frame Update
+  #--------------------------------------------------------------------------
+  def update
+    update_basic
+    update_all_windows unless @@overlayed
+  end
+  #--------------------------------------------------------------------------
   # * Overwrite: Update Frame (Basic)
   #--------------------------------------------------------------------------
   def update_basic
@@ -43,7 +50,6 @@ class Scene_Base
     update_mutex
     update_errno
     update_global_help_window
-    update_all_windows unless @@overlayed
   end
   #--------------------------------------------------------------------------
   def update_mutex

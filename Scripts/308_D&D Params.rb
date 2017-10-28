@@ -201,7 +201,11 @@ class RPG::BaseItem
     
     return value
   end
-  
+  #---------------------------------------------------------------------------
+  def wield_speed
+    return 60 - @tool_cooldown
+  end
+  #---------------------------------------------------------------------------
   def physical?; @property.include?(3) end
   def magical?;  @property.include?(4) end
   
@@ -253,7 +257,11 @@ class RPG::EquipItem < RPG::BaseItem
   def magical?
     false
   end
-  
+  #---------------------------------------------------------------------------
+  def wield_speed
+    return 60 - @tool_cooldown
+  end
+  #---------------------------------------------------------------------------
   def physical?; super end
   def magical?; super end
   #----------------------------------------------------------------------------

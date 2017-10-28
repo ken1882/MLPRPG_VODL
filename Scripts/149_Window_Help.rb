@@ -37,7 +37,6 @@ class Window_Help < Window_Base
   #--------------------------------------------------------------------------
   def refresh
     contents.clear
-    puts @text
     draw_text_ex(4, 0, @text)
   end
 end

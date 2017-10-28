@@ -768,9 +768,9 @@ class Window_PartySelect < Window_Selectable
   end
   
   #--------------------------------------------------------------------------
-  # item
+  # * item
   #--------------------------------------------------------------------------
-  def item; return @data[index]; end
+  def item; return @data[index] rescue nil; end
   
 end # Window_PartySelect
 #==============================================================================
@@ -921,7 +921,7 @@ class Window_PartyList < Window_Selectable
   #--------------------------------------------------------------------------
   # item
   #--------------------------------------------------------------------------
-  def item; return @data[index]; end
+  def item; return @data[index] rescue nil; end
   
 end # Window_PartyList
 #==============================================================================

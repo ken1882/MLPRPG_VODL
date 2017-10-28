@@ -52,6 +52,7 @@ class Scene_Skill < Scene_ItemBase
   def create_skillbar
     @skillbar = $game_party.skillbar
     @skillbar.create_layout(@viewport, 1)
+    @skillbar.refresh(@actor)
     @skillbar.hide
   end
   #--------------------------------------------------------------------------

@@ -233,6 +233,7 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def revive_character
+    update_security
     @through = @ori_through
     @character_name  = actor.character_name
     @character_index = actor.character_index
