@@ -112,7 +112,6 @@ module Vocab::Equipment
   Magic     = "Magic"
   Ranged    = "Ranged"
   
-  CastingTime = "Casting Time"
   SavingThrow = "Saves"
   
   SavingName = {

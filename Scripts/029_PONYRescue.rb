@@ -10,7 +10,7 @@ module PONY::Rescue
     return if $LunaCalled
     $LunaCalled = true
     $game_player.start_animation(159)
-    info = "\\af[9]\\n<Luna>Thou shall glad I followed you.."
+    info = Vocab::Rescue::Luna
     $game_message.add(info)
     ex, ey = $game_player.x, $game_player.y
     rpeve = RPG::Event.new(ex,ey)
@@ -24,6 +24,7 @@ module PONY::Rescue
     $game_map.register_event(eve)
     item = $data_skills[15]
     target = BattleManager.autotarget(eve, item)
+    eve.priority_type = 1
     eve.step_anime = true
     eve.action = Game_Action.new(eve, target, item)
   end

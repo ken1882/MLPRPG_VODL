@@ -138,6 +138,8 @@ class Game_Follower < Game_Character
   end
   #----------------------------------------------------------------------------
   def setup_light(light_id)
+    # tag: light
+    #return
     $game_map.lantern.change_owner($game_player)
     $game_map.lantern.set_graphic(Light_Core::Effects[light_id])
     $game_map.lantern.set_opacity(180,30)

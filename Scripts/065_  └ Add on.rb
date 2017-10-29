@@ -155,4 +155,6 @@ class Game_BattlerBase
   def equippable?(item)
     return freehoof_equippable?(item)
   end
+  
+  
 end

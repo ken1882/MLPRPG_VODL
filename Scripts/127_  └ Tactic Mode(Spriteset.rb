@@ -26,6 +26,13 @@ class Spriteset_Map
     return update_timestop if SceneManager.time_stopped?
   end
   #-----------------------------------------------------------------------------
+  def update_character_popups
+    @character_sprites.each do |sprite|
+      next unless sprite.character
+      sprite.character.update_popups
+    end
+  end
+  #-----------------------------------------------------------------------------
   # * Update when tactic mode
   #-----------------------------------------------------------------------------
   def update_tactic
@@ -34,6 +41,7 @@ class Spriteset_Map
     update_tactic_cursor
     update_units
     update_viewports
+    update_character_popups
     update_popups
     update_huds
   end
@@ -51,6 +59,7 @@ class Spriteset_Map
     update_characters
     update_projectiles
     update_weapons
+    update_character_popups
     update_popups
     @override.update unless @override.nil? || @override.disposed?
     return if $game_system.time_stopper.map_char.nil?

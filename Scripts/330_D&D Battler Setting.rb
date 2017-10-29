@@ -295,6 +295,7 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def item_casting_time(item)
     return 0 unless item.is_a?(RPG::BaseItem)
+    return 0 unless BattleManager.valid_battler?(self)
     timer = [item.tool_castime - ctr, 0].max
     return timer
   end

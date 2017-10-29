@@ -64,4 +64,8 @@ class Game_DroppedItem
     @loots << items
   end
   #--------------------------------------------------------------------------
+  def sprite_valid?
+    return false if @sprite.nil?
+    return @sprite.disposed?
+  end  
 end

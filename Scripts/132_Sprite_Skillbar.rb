@@ -163,9 +163,8 @@ class Sprite_Skillbar < Sprite
         item_hash  = item.hashid
       end
       
-      bitmap = Cache.iconset
       rect = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
-      @icon_sprite.bitmap.blt(cx, cy, bitmap, rect, enabled ? 0xff : translucent_alpha)
+      @icon_sprite.bitmap.blt(cx, cy, Cache.iconset, rect, enabled ? 0xff : translucent_alpha)
       @cooldown_flag[index] = true
     end
   end

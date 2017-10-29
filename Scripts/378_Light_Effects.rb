@@ -470,7 +470,7 @@ class Game_Map
     @lantern = Light_DSource.new
   end
   def update(main = false)
-    @effect_surface.refresh if main
+    @effect_surface.refresh if main # tag: light
     kbl_update(main)
   end
   def first_tag(x,y)
@@ -624,11 +624,15 @@ class Game_Event < Game_Character
   end
   
   def setup_light(dispose)
+    # tag: light
+    #return
     unless @light.nil?
       $game_map.light_sources.delete(self)
+      @light.bitmap.dispose
       @light.dispose
       @light = nil
     end
+    
     unless dispose && @list.nil? && !$light_effects
       for command in @list
         if command.code == 108 && command.parameters[0].include?("[light")
@@ -941,6 +945,7 @@ class Spriteset_Map
     $game_map.dispose_lights
   end
   def update_lights
+    #return # tag: light
     $game_map.light_surface.bitmap.clear
     $game_map.light_surface.bitmap.fill_rect(0,0,Graphics.width,Graphics.height,$game_map.effect_surface.color)
     $game_map.light_sources.each { |source| source.draw_light }
@@ -956,6 +961,8 @@ class Spriteset_Map
     $game_map.light_surface.bitmap.blt($game_map.lantern.sx,$game_map.lantern.sy,@btr,Rect.new(0,0,dr,dr),$game_map.lantern.opacity)
   end
   def setup_lights
+    #return
+    # tag: light
     @btr = nil
     $game_map.lantern.restore
     $game_map.light_sources.each { |source| source.restore_light }

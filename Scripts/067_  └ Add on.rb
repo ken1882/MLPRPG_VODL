@@ -265,4 +265,11 @@ class Game_Battler < Game_BattlerBase
   def icon_index
     return 0;
   end
+  #--------------------------------------------------------------------------
+  # * Recover All
+  #--------------------------------------------------------------------------
+  def recover_all
+    super
+    update_security
+  end
 end

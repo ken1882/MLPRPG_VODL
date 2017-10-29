@@ -194,6 +194,8 @@ class Game_Player < Game_Character
   end
   #----------------------------------------------------------------------------
   def setup_light(light_id)
+    # tag: light
+    #return
     p 'setup lantern'
     $game_map.lantern = $game_map.lantern
     $game_map.lantern.change_owner($game_player)

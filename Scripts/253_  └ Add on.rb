@@ -52,6 +52,7 @@ class Scene_Map < Scene_Base
     @message_window.dispose_all_windows
     SceneManager.save_map_infos(@window_log.data)
     $game_system.change_cursor_bitmap(nil)
+    $game_map.dispose_item_drops
     terminate_scmap_dnd
   end
   #--------------------------------------------------------------------------

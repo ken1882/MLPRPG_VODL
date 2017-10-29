@@ -139,7 +139,7 @@ class Window_Moreinfo < Window_Base
   # * Update mouse scroll
   #--------------------------------------------------------------------------
   def update_scroll
-    return
+    return 
     f = Mouse.scroll
     if !f.nil?
       Mouse.flag_scroll = f[2]
@@ -335,6 +335,21 @@ class Window_Moreinfo < Window_Base
     return (DND::PARAM_NAME[id] || "")
   end
   #--------------------------------------------------------------------------
+  # * Get param id
+  #--------------------------------------------------------------------------
+  def get_param_id(string)
+    string = string.downcase.to_sym
+    _id = 0
+    if     string == :str then _id = 2
+    elsif  string == :con then _id = 3
+    elsif  string == :int then _id = 4
+    elsif  string == :wis then _id = 5
+    elsif  string == :dex then _id = 6
+    elsif  string == :cha then _id = 7
+    end
+    return _id
+  end
+  #--------------------------------------------------------------------------
   # *) Draw Item params
   #--------------------------------------------------------------------------
   def draw_param(param, cy)
@@ -371,6 +386,9 @@ class Window_Moreinfo < Window_Base
         cy += line_height
       end
       return cy
+    when :casting
+      draw_text(rect, Vocab::Equipment::CastingTime)
+      text = sprintf("%s sec", (@item.tool_castime / 60.0).round(2))
     when :cost
       draw_text(rect, Vocab::Equipment::Cost)
       text = sprintf("%s", @item.mp_cost)
@@ -379,7 +397,7 @@ class Window_Moreinfo < Window_Base
       text = sprintf("%s sec", (@item.tool_cooldown / 60.0).round(2))
     when :save
       draw_text(rect, Vocab::Equipment::SavingThrow)
-      text = sprintf("%s", get_saving_name(@item.dmg_saves))
+      text = sprintf("%s, %s", get_saving_name(@item.dmg_saves), get_param_name(get_param_id(@item.dmg_saves.last)))
     else
       return cy
     end

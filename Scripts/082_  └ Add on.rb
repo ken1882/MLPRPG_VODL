@@ -83,7 +83,7 @@ class Game_Map
   #--------------------------------------------------------------------------
   def setup(map_id)
     dispose_sprites
-    
+    dispose_item_drops
     save_battler_instance if @map_id > 0
     @event_battler_instance[map_id] = Hash.new if @event_battler_instance[map_id].nil?
     clear_battlers
@@ -112,6 +112,7 @@ class Game_Map
     @need_refresh = false
     @map.battle_bgm = $battle_bgm
     @backup = nil
+    deploy_map_item_drops
     after_setup
   end
   #--------------------------------------------------------------------------
@@ -394,11 +395,13 @@ class Game_Map
   def on_game_save
     dispose_sprites
     dispose_lights
+    dispose_item_drops
     @events.each do |key, event|
       pos = [POS.new(event.real_x, event.real_y),POS.new(event.x, event.y), POS.new(event.px, event.py)]
       @accurate_event_positions[key] = pos
     end
     save_battler_instance
+    super_dispose
   end
   #--------------------------------------------------------------------------
   def dispose_sprites
@@ -450,7 +453,15 @@ class Game_Map
   def deploy_map_item_drops
     @item_drops[@map_id] = Array.new if @item_drops[@map_id].nil?
     @item_drops[@map_id].each do |drops|
+      next if drops.sprite_valid?
       deploy_item_drop(drops)
+    end
+  end
+  #--------------------------------------------------------------------------
+  def dispose_item_drops
+    @item_drops[@map_id] = Array.new if @item_drops[@map_id].nil?
+    @item_drops[@map_id].each do |drops|
+      drops.dispose
     end
   end
   #--------------------------------------------------------------------------
@@ -507,5 +518,12 @@ class Game_Map
       @light_surface = nil
     end
   end
-  
+  #--------------------------------------------------------------------------
+  def super_dispose
+    instance_variables.each do |varname|
+      ivar = instance_variable_get(varname)
+      ivar.dispose if ivar.is_a?(Window) || ivar.is_a?(Sprite) || ivar.is_a?(Bitmap)
+    end
+  end
+  #--------------------------------------------------------------------------
 end

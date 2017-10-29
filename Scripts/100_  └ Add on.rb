@@ -26,6 +26,7 @@ class Game_Event < Game_Character
   attr_accessor :aggressive_level
   attr_accessor :condition_flag
   attr_accessor :terminate_cd
+  attr_accessor :priority_type
   #--------------------------------------------------------------------------
   # * Overwrite: Object Initialization
   #     event:  RPG::Event

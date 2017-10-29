@@ -22,8 +22,7 @@ class Game_Battler < Game_BattlerBase
     end
     value = apply_saving_throw(user, item, final_value)
     if value == 0 && is_opponent?(user)
-      #text = sprintf("%s - Weapon Ineffective",self.name)
-      text = sprintf("%s - %s immune to my damage", user.name, self.name)
+      text = sprintf(Vocab::AttackImmune, user.name, self.name)
       SceneManager.display_info(text)
     end
     @result.hited = true if value < 0
@@ -255,11 +254,14 @@ class Game_Battler < Game_BattlerBase
         info = "Evaded"
       elsif results[:missed]
         info = "Missed"
-        SceneManager.display_info("#{user.name} - critical miss")
+        text = sprintf(Vocab::CritialMiss, user.name)
+        SceneManager.display_info(text)
       elsif results[:critical]
-        SceneManager.display_info("#{user.name} - critical attack")
+        text = sprintf(Vocab::CritialHit, user.name)
+        SceneManager.display_info(text)
       elsif results[:immune]
-        SceneManager.display_info("#{user.name} - weapon ineffective")
+        text = sprintf(Vocab::Ineffective, user.name)
+        SceneManager.display_info(text)
         info = "Resisted"
       end
       popup_info(info, DND::COLOR::White)

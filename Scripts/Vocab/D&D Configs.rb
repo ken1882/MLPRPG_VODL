@@ -94,40 +94,21 @@ module DND
     :ranged,
   ]
   
-  RaceName  = [
+  Race  = [
     "Earth Pony",
     "Unicorn",
     "Pegasus",
-    "Alicorn",
-    "Crystal Pony",
-    "Shadow Pony",
-    "Seapony",
-    "Zebra",
-    "Donkey",
-    "Changeling",
-    "Buffalo",
-    "Diamond Dog",
-    "Griffon",
-    "Minotaur",
-    "Yak",
-    "Deer",
     "Dragon",
-    "Hippogriff",
     "Woodlands",
-    "Mountains",
-    "Deserts",
-    "Oceans",
-    "Swamps",
-    "Negative Planes",
-    "Mythicals",
-    "Insects",
-    "Skeleton",
+    "Deer",
+    "Manticore",
+    
   ]
   
   ItemParamDec = {
     :weapon => [:wtype, :speed, :range, :damage],
     :armor  => [:atype, :ac],
-    :skill  => [:stype, :cost, :casting, :range, :cooldown, :save, :damage],
+    :skill  => [:stype, :cost, :range, :cooldown, :save, :damage],
     :item   => [:cooldown, :range, :save, :damage],
   }
   
