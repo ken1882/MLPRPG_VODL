@@ -1,4 +1,4 @@
-#tag: D&D_actor_class_settings
+#tag: param
 module DND
   
   SKILL_STYPE_ID      =   1
@@ -20,7 +20,7 @@ module DND
     10 => [:con, :cha],    # Sorcerer
     11 => [:wis, :cha],    # Warlock
     12 => [:wis, :int],    # Wizard
-    13 => [:con, :int],    # Arch-Mage
+    13 => [:cha, :int],    # Arch-Mage
     
   }
   
@@ -309,6 +309,98 @@ class RPG::Armor < RPG::EquipItem
   #--------------------
 end
 #==============================================================================
+# ** Game_Battler
+#------------------------------------------------------------------------------
+#  A battler class with methods for sprites and actions added. This class 
+# is used as a super class of the Game_Actor class and Game_Enemy class.
+#==============================================================================
+class Game_Battler < Game_BattlerBase
+  #--------------------------------------------------------------------------
+  attr_accessor :attack_bonus_pool
+  attr_accessor :armor_class_pool
+  # last work: auto-sync uninitialized instance variables
+  #--------------------------------------------------------------------------
+  # * Object Initialization
+  #--------------------------------------------------------------------------
+  alias init_battler_dnd initialize
+  def initialize
+    @attack_bonus_pool = {}
+    @armor_class_pool  = {}
+    init_battler_dnd
+  end
+  #--------------------------------------------------------------------------
+  # * Attack Bonus
+  #--------------------------------------------------------------------------
+  def attack_bonus
+    attack_bonus_base + attack_bonus_plus
+  end
+  #--------------------------------------------------------------------------
+  # * Attack Bonus Base
+  #--------------------------------------------------------------------------
+  def attack_bonus_base
+    return 0
+  end
+  #--------------------------------------------------------------------------
+  # * Attack Bonus Plus
+  #--------------------------------------------------------------------------
+  def attack_bonus_plus
+    value = 0
+    @attack_bonus_pool.each_value do |plus|
+      value += plus
+    end
+    #------------------------------------------------
+    # * process equips effect
+    #------------------------------------------------
+    equips.compact.each do |equip|
+      value += equip.attack_bonus
+    end
+    #------------------------------------------------
+    # * process state effect
+    #------------------------------------------------
+    states.compact.each do |state|
+      state = $data_states[state] if state.is_a?(Fixnum)
+      value += (state_id.attack_bonus || 0)
+    end
+    return value
+  end
+  #--------------------------------------------------------------------------
+  # * Armor Class
+  #--------------------------------------------------------------------------
+  def armor_class
+    param_modifier( get_param_id(:dex) ) + armor_class + armor_class_plus
+  end
+  #--------------------------------------------------------------------------
+  # * Armor Class Base
+  #--------------------------------------------------------------------------
+  def armor_class_base
+    return 0
+  end
+  #--------------------------------------------------------------------------
+  # * AC Plus
+  #--------------------------------------------------------------------------
+  def armor_class_plus
+    value = 0
+    @armor_class_pool.each_value do |plus|
+      value += plus
+    end
+    #------------------------------------------------
+    # * process equips effect
+    #------------------------------------------------
+    equips.compact.each do |equip|
+      value += equip.armor_class
+    end
+    #------------------------------------------------
+    # * process state effect
+    #------------------------------------------------
+    states.compact.each do |state|
+      state = $data_states[state] if state.is_a?(Fixnum)
+      value += (state_id.attack_bonus || 0)
+    end
+    return value
+  end
+  #------------
+end
+#==============================================================================
 # ** Game_Actor
 #------------------------------------------------------------------------------
 #  This class handles actors. It is used within the Game_Actors class
@@ -322,80 +414,17 @@ class Game_Actor < Game_Battler
     return (DND::EXP_FOR_LEVEL[level] * 1000).to_i
   end
   #--------------------------------------------------------------------------
-  # * Attack Bonus
-  #--------------------------------------------------------------------------
-  def attack_bonus
-    attack_bonus_base + attack_bonus_plus
-  end
-  #--------------------------------------------------------------------------
   # * Attack Bonus Base
   #--------------------------------------------------------------------------
   def attack_bonus_base
     self.class.attack_bonus
   end
   #--------------------------------------------------------------------------
-  # * Attack Bonus Plus
-  #--------------------------------------------------------------------------
-  def attack_bonus_plus
-    value = 0
-    #------------------------------------------------
-    #   process equips effect
-    #------------------------------------------------
-    equips.compact.each do |equip|
-      value += equip.attack_bonus
-    end
-    #------------------------------------------------
-    #   process state effect
-    #------------------------------------------------
-    states.compact.each do |state_id|
-      if state_id.is_a?(RPG::State)
-        value += state_id.attack_bonus
-      else
-        value += $data_states[state_id].attack_bonus
-      end
-    end
-    
-    return value
-  end
-  #--------------------------------------------------------------------------
-  # * Armor Class
-  #--------------------------------------------------------------------------
-  def armor_class
-    param_modifier( get_param_id('DEX') ) + armor_calss_base + armor_class_plus
-  end
-  #--------------------------------------------------------------------------
   # * Armor Class Base
   #--------------------------------------------------------------------------
-  def armor_calss_base
+  def armor_class_base
     self.class.armor_class
   end
-  #--------------------------------------------------------------------------
-  # * AC Plus
-  #--------------------------------------------------------------------------
-  def armor_class_plus
-    
-    value = 0
-    #------------------------------------------------
-    #   process equips effect
-    #------------------------------------------------
-    equips.compact.each do |equip|
-      value += equip.armor_class
-    end
-    #------------------------------------------------
-    #   process state effect
-    #------------------------------------------------
-    states.compact.each do |state_id|
-      if state_id.is_a?(RPG::State)
-        value += state_id.attack_bonus
-      else
-        value += $data_states[state_id].attack_bonus
-      end
-    end
-    
-    return value
-  end
-  
-  #------------
 end
   
 #==============================================================================
@@ -406,89 +435,16 @@ end
 #==============================================================================
 class Game_Enemy < Game_Battler
   #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
-  alias initialize_dnd initialize
-  def initialize(index, enemy_id)
-    initialize_dnd(index, enemy_id)
-  end
-  #--------------------------------------------------------------------------
-  # * Attack Bonus
-  #--------------------------------------------------------------------------
-  def attack_bonus
-    attack_bonus_base + attack_bonus_plus
-  end
-  #--------------------------------------------------------------------------
   # * Attack Bonus Base
   #--------------------------------------------------------------------------
   def attack_bonus_base
     self.enemy.attack_bonus
   end
   #--------------------------------------------------------------------------
-  # * Attack Bonus Plus
-  #--------------------------------------------------------------------------
-  def attack_bonus_plus
-    
-    value = 0
-    #------------------------------------------------
-    #   process state effect
-    #------------------------------------------------
-    states.compact.each do |state_id|
-      if state_id.is_a?(RPG::State)
-        value += state_id.attack_bonus
-      else
-        value += $data_states[state_id].attack_bonus
-      end
-    end
-    
-    return value
-  end
-  #--------------------------------------------------------------------------
-  # * Armor Class
-  #--------------------------------------------------------------------------
-  def armor_class
-    param_modifier( get_param_id('DEX') ) + armor_calss_base + armor_class_plus
-  end
-  #--------------------------------------------------------------------------
   # * Armor Class Base
   #--------------------------------------------------------------------------
-  def armor_calss_base
+  def armor_class_base
     self.enemy.armor_class
   end
-  #--------------------------------------------------------------------------
-  # * AC Plus
-  #--------------------------------------------------------------------------
-  def armor_class_plus
-    
-    value = 0
-    #------------------------------------------------
-    #   process state effect
-    #------------------------------------------------
-    states.compact.each do |state_id|
-      if state_id.is_a?(RPG::State)
-        value += state_id.attack_bonus
-      else
-        value += $data_states[state_id].attack_bonus
-      end
-    end
-    
-    return value
-  end
-  
   #------------
-end
-#==============================================================================
-# Class RPG::Class
-#==============================================================================
-class RPG::Class < RPG::BaseItem
-  # tag: queued >> D&D Class Settings
-  attr_reader :level
-  #---------------------------------------------------------------------
-  # *) Initialize D&D params
-  #---------------------------------------------------------------------
-  def initialize_dndparams
-    @level = 1
-  end
-  
-  def level_up; @level += 1; end
 end

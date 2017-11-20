@@ -11,6 +11,7 @@ class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
   attr_reader   :state_steps
   attr_reader   :safe_hash
+  attr_reader   :skill_charges
   attr_accessor :map_char     # character on the map
   attr_accessor :stiff        # Stiff time
   attr_accessor :skill_cooldown, :item_cooldown, :weapon_cooldown, :armor_cooldown
@@ -27,6 +28,7 @@ class Game_Battler < Game_BattlerBase
     @item_cooldown    = {}
     @weapon_cooldown  = {}
     @armor_cooldown   = {}
+    @skill_charges    = {}
     @map_char         = nil
     @stiff            = 0
     @move_limit       = DND::BattlerSetting::MoveLimit

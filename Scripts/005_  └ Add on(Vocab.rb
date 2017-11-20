@@ -211,6 +211,7 @@ module Vocab::Status
   General         = "General"
   Property        = "Properties"
   Tactic          = "Tactics"
+  Leveling        = "Level up"
   
   Parameter       = "Parameters"
   Experience      = "Experience"

@@ -179,6 +179,15 @@ module DND
     }
   end
   
+  # tag: leveling
+  module REGEX::Leveling
+    Leveling          = /<(?:leveling)>/i           # Just a leveling flag
+    Selectable        = /(?:Selectable:)[ ](\.+)/i  # Select feats when level up
+    DNDRace           = /(?:Race =)[ ](\d+)/i       # Race, next is race id in data_classes
+    DNDClass          = /(?:Class =)[ ](\d+)/i
+    DNDDualClass      = /(?:DualClass =)[ ](\d+)/i
+  end
+  
 end
 #===============================================================================
 =begin

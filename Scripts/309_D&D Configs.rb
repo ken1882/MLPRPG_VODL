@@ -131,4 +131,24 @@ module DND
     :item   => [:cooldown, :range, :save, :damage],
   }
   
+  module ClassID
+    Barbarian   = [1, 15, 16]
+    Bard        = [2, 17, 18]
+    Cleric      = [3, 19, 20, 21, 22, 23, 24, 25, 26, 27]
+    Druid       = [4, 28, 29, 30, 31, 32, 33, 34, 35, 36]
+    Fighter     = [5, 37, 38, 39]
+    Monk        = [6, 40, 41, 42]
+    Paladin     = [7, 43, 44, 45]
+    Ranger      = [8, 46, 47]
+    Rogue       = [9, 48, 49, 50]
+    Sorcerer    = [10, 51, 52, 53, 54]
+    Warlock     = [11, 55, 56, 57]
+    Wizard      = [12, 58, 59, 60, 61, 62, 63, 64, 65]
+    
+    PrimaryPathes =[
+      Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue,
+      Sorcerer, Warlock, Wizard,
+    ]
+    
+  end
 end

@@ -394,6 +394,7 @@ class RPG::Actor < RPG::BaseItem
   # * instance variables
   #------------------------------------------------------------------------
   #tag: charparam
+  #tag: actor
   attr_reader :death_graphic        # Graphic filename when K.O
   attr_reader :death_index          # Graphic index
   attr_reader :death_pattern        # Pattern
@@ -420,6 +421,9 @@ class RPG::Actor < RPG::BaseItem
       when DND::REGEX::Character::CastPattern; @casting_pattern = $1.to_i
       when DND::REGEX::Character::IconIndex;   @icon_index      = $1.to_i
       when DND::REGEX::Character::CastingAnimation; @casting_animation = $1.to_i
+      when DND::REGEX::Leveling::DNDRace;      @race_id         = $1.to_i
+      when DND::REGEX::Leveling::DNDClass;     @class_id        = $1.to_i
+      when DND::REGEX::Leveling::DNDDualClass; @dualclass_id    = $1.to_i
       end
     end
   end
@@ -544,6 +548,8 @@ class RPG::BaseItem
       @property.push(3)
     when DND::REGEX::IS_MAGICAL
       @property.push(4)
+    when DND::REGEX::Leveling::Leveling
+      @property.push(5)
     end
     load_item_features(line)
   end
@@ -631,25 +637,31 @@ class RPG::BaseItem
     return [11, 12, 13].include?(_id)
   end
   #------------------------------------------------------------------------
-  # is_magic?
+  # * Is_magic?
   #------------------------------------------------------------------------
   def is_magic?
     @property.include?(0)
   end
   #------------------------------------------------------------------------
-  # is_debuff?
+  # * Is_debuff?
   #------------------------------------------------------------------------
   def is_debuff?
     @property.include?(1)
   end
   #------------------------------------------------------------------------
-  # is_poison?
+  # * Is_poison?
   #------------------------------------------------------------------------
   def is_poison?
     @property.include?(2)
   end
   #------------------------------------------------------------------------
-  # is a spell?
+  # * For leveling?
+  #------------------------------------------------------------------------
+  def for_leveling?
+    @property.include?(5)
+  end
+  #------------------------------------------------------------------------
+  # * Is a spell?
   #------------------------------------------------------------------------
   def is_spell?
     return false if self.nil?
@@ -737,6 +749,7 @@ class RPG::Skill < RPG::UsableItem
     when DND::PASSIVE_STYPE_ID; return :passive;
     end
   end
+  #--------------------------------------------------------------------------
 end
 #===============================================================================
 # * RPG::Map

@@ -156,5 +156,4 @@ class Game_BattlerBase
     return freehoof_equippable?(item)
   end
   
-  
 end
