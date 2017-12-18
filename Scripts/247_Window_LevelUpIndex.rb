@@ -4,7 +4,6 @@
 #  Index item for level up feats selection or skill tree index
 #==============================================================================
 # tag: level up
-
 class Window_LevelUpIndex < Window_Selectable
   #--------------------------------------------------------------------------
   attr_reader :actor

@@ -4,7 +4,6 @@
 #  Handles all advancing stuff when leveling
 #==============================================================================
 # tag: last work: leveling
-
 class Scene_LevelUp < Scene_MenuBase
   #--------------------------------------------------------------------------
   # * Start Processing
@@ -51,6 +50,5 @@ class Scene_LevelUp < Scene_MenuBase
   end
   #--------------------------------------------------------------------------
   def command_skilltree
-
   end
 end

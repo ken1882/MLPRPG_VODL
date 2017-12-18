@@ -102,17 +102,6 @@ class Game_Actor < Game_Battler
     return DND::ACTOR_PARAMS[@actor_id].at(param_id) rescue 8
   end
   #--------------------------------------------------------------------------
-  # * Level Up
-  #--------------------------------------------------------------------------
-  def level_up
-    @level += 1
-    self.class.level_up
-    self.class.learnings.each do |learning|
-      learn_skill(learning.skill_id) if learning.level == @level
-    end
-    $game_map.need_refresh = true
-  end
-  #--------------------------------------------------------------------------
   def aggressive_level
     return @aggressive_level
   end
@@ -153,12 +142,29 @@ class Game_Actor < Game_Battler
   end
   #--------------------------------------------------------------------------
   # * Change Experience
+  #     show : Level up display flag
+  #--------------------------------------------------------------------------
+  def change_exp(exp, show = false)
+    @exp[@class_id] = [exp, 0].max
+    #last_level = @level
+    #last_skills = skills
+    #level_up while !max_level? && self.exp >= next_level_exp
+    #level_down while self.exp < current_level_exp
+    #display_level_up(skills - last_skills) if show && @level > last_level
+    refresh
+  end
+  #--------------------------------------------------------------------------
+  # * Change Experience
   #--------------------------------------------------------------------------
   alias change_exp_security change_exp
   def change_exp(exp, show)
     check_security
     change_exp_security(exp, show)
     update_security
+  end
+  #--------------------------------------------------------------------------
+  def upgradeable?
+    return self.exp >= next_level_exp
   end
   #---------------------------------------------------------------------------
   # * Method Missing

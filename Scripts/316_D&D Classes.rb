@@ -65,5 +65,5 @@ class Game_Actor < Game_Battler
     classid = self.dualclass if compare_template.include?(@dualclass_id)
     return classid
   end
-  
+  #--------------------------------------------------------------------------
 end

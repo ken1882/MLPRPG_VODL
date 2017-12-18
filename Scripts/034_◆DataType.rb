@@ -17,8 +17,7 @@ class Object
   #------------------------------------------------------------------------
   def to_bool
     return true
-  end
-  
+  end  
 end
 #===============================================================================
 # * True/Flase class
@@ -504,13 +503,12 @@ class RPG::BaseItem
   def load_notetags_dndsubs
     @saving_throw_adjust      = [0,0,0,0,0,0,0,0]
     @difficulty_class_adjust  = [0,0,0,0,0,0,0,0]
-    @property                 = []
+    @property                 = 0
     @damage_index             = []
     @physical_damage_modify   = 0
     @magical_damage_modify    = 0
     @block_by_event           = false
     @item_own_max             = 10
-    @property.push(0)
     ensure_property_correct
     self.note.split(/[\r\n]+/).each { |line|
       case line
@@ -538,18 +536,18 @@ class RPG::BaseItem
   #---------------------------------------------------------------------------
   def load_item_property(line)
     case line
-    when DND::REGEX::POISON && self.is_a?(RPG::State)
-      @property.push(2)
-    when DND::REGEX::DEBUFF && self.is_a?(RPG::State)
-      @property.push(1)
     when DND::REGEX::MAGIC_EFFECT
-      @property.push(0)
+      @property |= PONY::Bitset[0]
+    when DND::REGEX::DEBUFF && self.is_a?(RPG::State)
+      @property |= PONY::Bitset[1]
+    when DND::REGEX::POISON && self.is_a?(RPG::State)
+      @property |= PONY::Bitset[2]
     when DND::REGEX::IS_PHYSICAL
-      @property.push(3)
+      @property |= PONY::Bitset[3]
     when DND::REGEX::IS_MAGICAL
-      @property.push(4)
+      @property |= PONY::Bitset[4]
     when DND::REGEX::Leveling::Leveling
-      @property.push(5)
+      @property |= PONY::Bitset[5]
     end
     load_item_features(line)
   end
@@ -640,25 +638,25 @@ class RPG::BaseItem
   # * Is_magic?
   #------------------------------------------------------------------------
   def is_magic?
-    @property.include?(0)
+    return (@property & PONY::Bitset[0]).to_bool
   end
   #------------------------------------------------------------------------
   # * Is_debuff?
   #------------------------------------------------------------------------
   def is_debuff?
-    @property.include?(1)
+    return (@property & PONY::Bitset[1]).to_bool
   end
   #------------------------------------------------------------------------
   # * Is_poison?
   #------------------------------------------------------------------------
   def is_poison?
-    @property.include?(2)
+    return (@property & PONY::Bitset[2]).to_bool
   end
   #------------------------------------------------------------------------
   # * For leveling?
   #------------------------------------------------------------------------
   def for_leveling?
-    @property.include?(5)
+    return (@property & PONY::Bitset[5]).to_bool
   end
   #------------------------------------------------------------------------
   # * Is a spell?

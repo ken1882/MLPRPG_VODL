@@ -206,9 +206,13 @@ class RPG::BaseItem
     return 60 - @tool_cooldown
   end
   #---------------------------------------------------------------------------
-  def physical?; @property.include?(3) end
-  def magical?;  @property.include?(4) end
-  
+  def physical?
+    return (@property & PONY::Bitset[3]).to_bool
+  end
+  #---------------------------------------------------------------------------
+  def magical?
+    return (@property & PONY::Bitset[4]).to_bool
+  end
   #----------------
 end
 #===============================================================================

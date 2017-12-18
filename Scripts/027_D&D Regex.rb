@@ -180,6 +180,7 @@ module DND
   end
   
   # tag: leveling
+  # last work: add leveling tag
   module REGEX::Leveling
     Leveling          = /<(?:leveling)>/i           # Just a leveling flag
     Selectable        = /(?:Selectable:)[ ](\.+)/i  # Select feats when level up
