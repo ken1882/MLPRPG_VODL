@@ -32,6 +32,12 @@ class FalseClass
     return 0
   end
 end
+#==============================================================================
+# ■ Numeric
+#==============================================================================
+class Numeric
+  
+end
 #===============================================================================
 # * Basic Fixnum class
 #===============================================================================
@@ -98,13 +104,29 @@ class Fixnum
     return ('0' * (deg - cnt)) + self.to_s
   end
   #----------------------------------------------------------------------------
+  # * To second in frame
+  #----------------------------------------------------------------------------
   def to_sec
-    return (self / 60).to_i + 1
+    return (self / Graphics.frame_rate).to_i + 1
   end
-  
-  def self
-    return PONY.EncInt(self)
+  #----------------------------------------------------------------------------
+  def set_bit(index, n)
+    n = n.to_i rescue nil
+    if n.nil?
+      PONY::ERRNO.raise(:datatype_error, nil, nil, "Nil bit given")
+      return
+    elsif n != 1 && n != 0
+      puts "n: #{n}"
+      PONY::ERRNO.raise(:datatype_error, nil, nil, "Bit operation excess 0/1")
+      return
+    end
+    
+    return self |  (1 << index) if n == 1
+    return self & ~(1 << index)
   end
+  alias setbit set_bit
+  alias sb set_bit
+  #----------------------------------------------------------------------------
 end
 class NilClass
   #----------------------------------------------------------------------------
