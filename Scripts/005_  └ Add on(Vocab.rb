@@ -32,6 +32,9 @@ module Vocab
   Quest           = "Quest Journal"
   QuestUpdated    = "Your journal has been updated: %s"
   
+  LevelUp         = "Level Up"
+  Skilltree       = "Skill Tree"
+  
   InitLoadingMsg  = "To ensure your best gameplay experience, please close the app that will consume your system resource, such as Flash, Youtube and other games."
   Unavailable     = "Not available yet"
   

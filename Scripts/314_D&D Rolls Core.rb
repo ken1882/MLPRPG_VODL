@@ -32,8 +32,8 @@ class Game_BattlerBase
   def initialize
     @lskills      = Table.new(18)
     @lskill_bonus = Table.new(18)
-    @wprof = Table.new(DND::WEAPON_TYPE_NAME.size)
-    @aprof = Table.new(DND::ARMOR_TYPE_NAME.size)
+    @wprof = Table.new(Vocab::DND::WEAPON_TYPE_NAME.size)
+    @aprof = Table.new(Vocab::DND::ARMOR_TYPE_NAME.size)
     @result_critical = false
     @result_miss = false
     

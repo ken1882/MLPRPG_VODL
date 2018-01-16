@@ -326,13 +326,13 @@ class Window_Moreinfo < Window_Base
   # * Get element name
   #--------------------------------------------------------------------------
   def get_element_name(id)
-    return DND::ELEMENT_NAME[id]
+    return Vocab::DND::ELEMENT_NAME[id]
   end
   #--------------------------------------------------------------------------
   # * Get param name
   #--------------------------------------------------------------------------
   def get_param_name(id)
-    return (DND::PARAM_NAME[id] || "")
+    return (Vocab::DND::PARAM_NAME[id] || "")
   end
   #--------------------------------------------------------------------------
   # * Get param id
@@ -359,13 +359,13 @@ class Window_Moreinfo < Window_Base
     case param
     when :wtype
       draw_text(rect, Vocab::Equipment::Type)
-      text = sprintf("%s", DND::WEAPON_TYPE_NAME[@item.wtype_id])
+      text = sprintf("%s", Vocab::DND::WEAPON_TYPE_NAME[@item.wtype_id])
     when :atype
       draw_text(rect, Vocab::Equipment::Type)
-      text = sprintf("%s", DND::ARMOR_TYPE_NAME[@item.atype_id])
+      text = sprintf("%s", Vocab::DND::ARMOR_TYPE_NAME[@item.atype_id])
     when :stype
       draw_text(rect, Vocab::Equipment::Type)
-      text = sprintf("%s", DND::SKILL_TYPE_NAME[@item.stype_id])
+      text = sprintf("%s", Vocab::DND::SKILL_TYPE_NAME[@item.stype_id])
     when :ac
       draw_text(rect, Vocab::Equipment::AC)
       text = sprintf("%s", @item.armor_class)

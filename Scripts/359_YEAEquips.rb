@@ -907,19 +907,19 @@ class Window_EquipStatus < Window_Base
   # * get wtype name
   #--------------------------------------------------------------------------
   def get_weapon_type_name(id)
-    return DND::WEAPON_TYPE_NAME[id]
+    return Vocab::DND::WEAPON_TYPE_NAME[id]
   end
   #--------------------------------------------------------------------------
   # * Get element name
   #--------------------------------------------------------------------------
   def get_element_name(id)
-    return DND::ELEMENT_NAME[id]
+    return Vocab::DND::ELEMENT_NAME[id]
   end
   #--------------------------------------------------------------------------
   # * Get param name
   #--------------------------------------------------------------------------
   def get_param_name(id)
-    return (DND::PARAM_NAME[id] || "")
+    return (Vocab::DND::PARAM_NAME[id] || "")
   end
   
   #--------------------------------------------------------------------------
@@ -981,10 +981,10 @@ class Window_EquipStatus < Window_Base
     draw_text(0, y, w, line_height, Vocab::Equipment::Type)
     change_color(normal_color)
     if @temp_item.is_a?(RPG::Weapon)
-      wname = DND::WEAPON_TYPE_NAME[@temp_item.wtype_id]
+      wname = Vocab::DND::WEAPON_TYPE_NAME[@temp_item.wtype_id]
       draw_text(0, y, w, line_height, wname , 2)
     elsif @temp_item.is_a?(RPG::Armor)
-      aname = DND::ARMOR_TYPE_NAME[@temp_item.atype_id]
+      aname = Vocab::DND::ARMOR_TYPE_NAME[@temp_item.atype_id]
       draw_text(0, y, w, line_height, aname, 2)
     end
   end
