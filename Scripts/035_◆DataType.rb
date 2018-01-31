@@ -17,7 +17,37 @@ class Object
   #------------------------------------------------------------------------
   def to_bool
     return true
-  end  
+  end
+  #------------------------------------------------------------------------
+  # * Synchronize instance variables with newer verison of object
+  #------------------------------------------------------------------------
+  def sync_new_data(newone)
+    
+    # Exception handle due to class method is used for database
+    return if newone.is_a?(Game_Actor) && !self.is_a?(Game_Actor)
+    return unless newone.class != self.class
+    
+    vars    = self.instance_variables
+    newvars = newone.instance_variables
+    
+    # Create instance of new variable
+    newvars.each do |varname|
+      next if vars.include?(varname)
+      ivar = newone.instance_variable_get(varname)
+      ivar = 'nil' unless ivar
+      code = varname.to_s + '=' + ivar.to_s
+      debug_print("New instance variable for #{self}: #{varname} = #{ivar}")
+      self.instance_eval(code)
+    end
+    
+    # Delete unused variable in newer verison
+    vars.each do |varname|
+      next if newvars.include?(varname)
+      debug_print("Unused instance variable for #{self}: #{varname} deleted")
+      ivar = self.instance_variable_get(varname)
+      ivar = nil
+    end
+  end
 end
 #===============================================================================
 # * True/Flase class
@@ -408,7 +438,7 @@ class RPG::Enemy
   #------------------------------------
 end
 #==========================================================================
-# ■ RPG::BaseItem
+# ■ RPG::Actor
 #==========================================================================
 class RPG::Actor < RPG::BaseItem
   #------------------------------------------------------------------------
@@ -430,6 +460,7 @@ class RPG::Actor < RPG::BaseItem
   #--------------------------------------------------------------------------
   def load_character_attributes
     apply_default_attributes
+    dnd_loading = false
     self.note.split(/[\r\n]+/).each do |line|
       case line
       when DND::REGEX::Character::KOGraphic;   @death_graphic   = $1
@@ -442,10 +473,21 @@ class RPG::Actor < RPG::BaseItem
       when DND::REGEX::Character::CastPattern; @casting_pattern = $1.to_i
       when DND::REGEX::Character::IconIndex;   @icon_index      = $1.to_i
       when DND::REGEX::Character::CastingAnimation; @casting_animation = $1.to_i
-      when DND::REGEX::Leveling::DNDRace;      @race_id         = $1.to_i
-      when DND::REGEX::Leveling::DNDClass;     @class_id        = $1.to_i
-      when DND::REGEX::Leveling::DNDDualClass; @dualclass_id    = $1.to_i
+      when DND::REGEX::Leveling::LoadStart; dnd_loading = true;
+      when DND::REGEX::Leveling::LoadEnd; dnd_loading = false;
       end
+      load_character_attribute(line) if dnd_loading
+    end
+  end
+  #--------------------------------------------------------------------------
+  def load_character_attribute(line)
+    case line
+      when DND::REGEX::Leveling::Race;      @race_id         = $1.to_i
+      when DND::REGEX::Leveling::Subrace;   @subrace_id      = $1.to_i
+      when DND::REGEX::Leveling::Class
+        @class_id = $1.to_i
+        @class_id = DND::BattlerSetting::DefaultClassID if @class_id == 0
+      when DND::REGEX::Leveling::DualClass; @dualclass_id    = $1.to_i
     end
   end
   #--------------------------------------------------------------------------
@@ -455,6 +497,9 @@ class RPG::Actor < RPG::BaseItem
     @death_pattern      = DND::BattlerSetting::KOPattern
     @death_direction    = DND::BattlerSetting::KODirection
     @casting_animation  = DND::BattlerSetting::CastingAnimation
+    @class_id           = DND::BattlerSetting::DefaultClassID unless @class_id
+    @race_id            = DND::BattlerSetting::DefaultRaceID
+    @subrace_id = @dualclass_id = 0 
   end
   #--------------------------------------------------------------------------
 end

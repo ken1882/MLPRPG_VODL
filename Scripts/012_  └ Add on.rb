@@ -208,4 +208,34 @@ module DataManager
     $ObjectivePath.gsub!("\u0000", '').delete!('\0').squeeze!('\\').tr!('\\','/')
     $ObjectivePath += 'VODL/'
   end
+  #--------------------------------------------------------------------------
+  # * Extract Save Contents
+  #--------------------------------------------------------------------------
+  class << self; alias extract_save_contents_sync extract_save_contents; end
+  def self.extract_save_contents(contents)
+    extract_save_contents_sync(contents)
+    temps = [
+      Game_System.new, Game_Timer.new, Game_Message.new, Game_Switches.new,
+      Game_Variables.new, Game_SelfSwitches.new, Game_Actors.new, Game_Party.new,
+      Game_Troop.new, Game_Map.new, Game_Player.new
+    ];
+    saves = [
+      $game_system, $game_timer, $game_message, $game_switches, $game_variables,
+      $game_self_switches, $game_actors, $game_party, $game_troop, $game_map,
+      $game_player
+    ];
+    saves.size.times do |i| saves[i].sync_new_data(temps[i]) end
+    $game_party.members.each do |member|
+      temp = Game_Actor.new(member.actor.id)
+      member.sync_new_data(temp)
+    end
+    $game_map.events.values do |event|
+      temp = Game_Event.new($game_map.map_id, event.event)
+      event.sync_new_data(temp)
+    end
+    $game_player.followers.each do |follower|
+      temp = Game_Follower.new(follower.member_index, follower.preceding_character)
+      follower.sync_new_data(temp)
+    end
+  end
 end

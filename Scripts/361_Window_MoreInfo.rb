@@ -365,13 +365,21 @@ class Window_Moreinfo < Window_Base
       text = sprintf("%s", Vocab::DND::ARMOR_TYPE_NAME[@item.atype_id])
     when :stype
       draw_text(rect, Vocab::Equipment::Type)
-      text = sprintf("%s", Vocab::DND::SKILL_TYPE_NAME[@item.stype_id])
+      if @item.scope == BattleManager::Scope_None || BattleManager::Scope_User
+        text = Vocab::None
+      else
+        text = sprintf("%s", Vocab::DND::SKILL_TYPE_NAME[@item.stype_id])
+      end
     when :ac
       draw_text(rect, Vocab::Equipment::AC)
       text = sprintf("%s", @item.armor_class)
     when :speed
       draw_text(rect, Vocab::Equipment::Speed)
-      text = sprintf("%s", @item.wield_speed)
+      if @item.scope == BattleManager::Scope_None
+        text = Vocab::None
+      else
+        text = sprintf("%s", @item.wield_speed)
+      end
     when :range
       draw_text(rect, Vocab::Equipment::Range)
       text = sprintf("%s", @item.tool_distance)
@@ -388,16 +396,28 @@ class Window_Moreinfo < Window_Base
       return cy
     when :casting
       draw_text(rect, Vocab::Equipment::CastingTime)
-      text = sprintf("%s sec", (@item.tool_castime / 60.0).round(2))
+      if (@item.tool_castime | 0) > 10
+        text = sprintf("%s sec", (@item.tool_castime / 60.0).round(2))
+      else
+        text = Vocab::None
+      end
     when :cost
       draw_text(rect, Vocab::Equipment::Cost)
       text = sprintf("%s", @item.mp_cost)
     when :cooldown
       draw_text(rect, Vocab::Equipment::Cooldown)
-      text = sprintf("%s sec", (@item.tool_cooldown / 60.0).round(2))
+      if @item.tool_cooldown
+        text = sprintf("%s sec", (@item.tool_cooldown / 60.0).round(2))
+      else
+        text = Vocab::None
+      end
     when :save
       draw_text(rect, Vocab::Equipment::SavingThrow)
-      text = sprintf("%s, %s", get_saving_name(@item.dmg_saves), get_param_name(get_param_id(@item.dmg_saves.last)))
+      if @item.dmg_saves
+        text = sprintf("%s, %s", get_saving_name(@item.dmg_saves), get_param_name(get_param_id(@item.dmg_saves.last)))
+      else
+        text = Vocab::None
+      end
     else
       return cy
     end

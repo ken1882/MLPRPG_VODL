@@ -171,13 +171,23 @@ module DND
   end
   
   # tag: leveling
-  # last work: add leveling tag
+  # last work: add leveling tag to skills
   module REGEX::Leveling
-    Leveling          = /<(?:leveling)>/i           # Just a leveling flag
-    Selectable        = /(?:Selectable:)[ ](\.+)/i  # Select feats when level up
-    DNDRace           = /(?:Race =)[ ](\d+)/i       # Race, next is race id in data_classes
-    DNDClass          = /(?:Class =)[ ](\d+)/i
-    DNDDualClass      = /(?:DualClass =)[ ](\d+)/i
+    Leveling       = /<(?:leveling)>/i           # Just a leveling flag
+    
+    # Select feats when level up, learned feat won't show up again unless
+    # it has double proficient
+    # Pattern: <selectable: skillid0, skillid1, skillid2...>
+    # Example: <selectable: 10,11,12>
+    Selectable     = /<(?:selectable:)[ ](\.+)>/i  
+    
+    # DND Class Settings
+    LoadStart      = /<(?:DND)>/i
+    LoadEnd        = /<\/(?:DND)>/i
+    Race           = /(?:race:)[ ](\d+)/i        # Race, next is race id in data_classes
+    Subrace        = /(?:subrace:)[ ](\d+)/i
+    Class          = /(?:class:)[ ](\d+)/i
+    DualClass      = /(?:dualClass:)[ ](\d+)/i
   end
   
 end

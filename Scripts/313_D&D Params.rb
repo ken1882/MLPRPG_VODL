@@ -322,7 +322,6 @@ class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
   attr_accessor :attack_bonus_pool
   attr_accessor :armor_class_pool
-  # last work: auto-sync uninitialized instance variables
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------

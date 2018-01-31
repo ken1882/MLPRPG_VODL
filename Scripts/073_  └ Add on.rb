@@ -74,6 +74,11 @@ class Game_Enemy < Game_Battler
   def skills
     @skills
   end
+  #--------------------------------------------------------------------------
+  def collect_passive_skills
+    @passive_skills = skills.select{|skill| skill.stype_id == DND::PASSIVE_STYPE_ID}.collect{|skill| skill.id}
+    @passive_skills ||= []
+  end
   #---------------------------------------------------------------------------
   def weapon_ammo_ready?(weapon)
     return true

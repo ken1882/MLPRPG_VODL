@@ -34,6 +34,7 @@ class Game_Battler < Game_BattlerBase
     @move_limit       = DND::BattlerSetting::MoveLimit
     @aggressive_level = DND::BattlerSetting::AggressiveLevel
     @last_attacked_action = []
+    @passive_skills   = nil
     init_battler_opt
   end
   #--------------------------------------------------------------------------
@@ -273,5 +274,22 @@ class Game_Battler < Game_BattlerBase
   def recover_all
     super
     update_security
+  end
+  #--------------------------------------------------------------------------
+  # * Refresh
+  #--------------------------------------------------------------------------
+  alias refresh_dndga refresh
+  def refresh
+    collect_passive_skills
+    refresh_dndga
+  end
+  #--------------------------------------------------------------------------
+  def passive_skills
+    return @passsive_skills.collect{|id| $data_skills[id]} if @passsive_skills
+    collect_passive_skills
+    return passive_skills
+  end
+  #--------------------------------------------------------------------------
+  def collect_passive_skills
   end
 end

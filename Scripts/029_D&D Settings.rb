@@ -77,6 +77,7 @@ module DND
     KODirection       = 8
     CastingAnimation  = 162
     DefaultRaceID     = 119
+    DefaultClassID    = 119
   end
   #=============================================================================
   # * Corresponding class and subclass to its original class

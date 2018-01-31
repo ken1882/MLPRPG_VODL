@@ -26,6 +26,7 @@ class Game_Actor < Game_Battler
     @dualclass_id = 0
     @team_id = 0
     @assigned_hotkey = Array.new(HotKeys::HotKeys.size){nil}
+    @passsive_skills = nil
     init_muticlass(actor_id)
     hash_self
   end
@@ -166,6 +167,11 @@ class Game_Actor < Game_Battler
   #--------------------------------------------------------------------------
   def upgradeable?
     return self.exp >= next_level_exp
+  end
+  #--------------------------------------------------------------------------
+  def collect_passive_skills
+    @passive_skills = skills.select{|skill| skill.stype_id == DND::PASSIVE_STYPE_ID}.collect{|skill| skill.id}
+    @passive_skills ||= []
   end
   #---------------------------------------------------------------------------
   # * Method Missing

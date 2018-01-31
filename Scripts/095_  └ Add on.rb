@@ -10,6 +10,8 @@ class Game_Follower < Game_Character
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor :phase
+  attr_reader   :member_index
+  attr_reader   :preceding_character
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
