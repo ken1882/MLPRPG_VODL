@@ -25,6 +25,7 @@ class Game_Battler < Game_BattlerBase
       text = sprintf(Vocab::AttackImmune, user.name, self.name)
       SceneManager.display_info(text)
     end
+    apply_before_effect(user, item, value)
     @result.hited = true if value < 0
     @result.critical = @result.missed = false if value < 0
     @result.make_damage(value.to_i, item.is_a?(RPG::Weapon) ? $data_skills[1] : item)
@@ -102,6 +103,7 @@ class Game_Battler < Game_BattlerBase
   # ---------------------------------------------------------------------------
   # *) Applying critical
   # ---------------------------------------------------------------------------
+  # tag: edit
   def apply_critical(damage, user,item)
     multiplier     = 1.5
     ori_multiplier = 1.5
@@ -124,15 +126,25 @@ class Game_Battler < Game_BattlerBase
     
     return value * multiplier
   end
+  # ---------------------------------------------------------------------------
+  # *) Apply before effect
+  # ---------------------------------------------------------------------------
+  def apply_before_effect(user, item, value)
+    # State effect before damage taken
+    @states.each do |id|
+      on_state_react(id, user, item, value)
+    end
+    
+  end
   
   # ---------------------------------------------------------------------------
   # *) Apply after effect
   # ---------------------------------------------------------------------------
   def apply_after_effect(user, item, value)
-    #---------------------------------------------------------------------------
-    #  *)
-    #---------------------------------------------------------------------------
-  
+    # State effect after damage taken
+    @states.each do |id|
+      on_state_shock(id, user, item, value)
+    end
     
   end
   # ---------------------------------------------------------------------------

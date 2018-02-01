@@ -488,7 +488,6 @@ class Game_Battler < Game_BattlerBase
     end
     game_battler_remove_states_auto_lsta(timing)
   end
-  
   #--------------------------------------------------------------------------
   # alias method: execute_damage
   # tag: modified

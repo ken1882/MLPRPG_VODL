@@ -309,6 +309,16 @@ class Game_Event < Game_Character
     end
   end
   #----------------------------------------------------------------------------
+  def battler
+    return @enemy if @enemy
+    return super
+  end
+  #--------------------------------------------------------------------------
+  def controlable?
+    return true if !@enemy
+    return super && @enemy.controlable?
+  end
+  #----------------------------------------------------------------------------
   # * Freeze event from update
   #----------------------------------------------------------------------------
   alias ruby_freeze freeze

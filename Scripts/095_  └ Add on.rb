@@ -171,4 +171,14 @@ class Game_Follower < Game_Character
   def visible_sight
     return 8
   end
+  #----------------------------------------------------------------------------
+  def battler
+    return actor if actor
+    return super
+  end
+  #--------------------------------------------------------------------------
+  def controlable?
+    return true if !actor
+    return super && actor.controlable?
+  end
 end

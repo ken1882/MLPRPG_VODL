@@ -218,7 +218,7 @@ class Game_Player < Game_Character
   #----------------------------------------------------------------------------
   def set_target(target)
   end
-  #--------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   def get_ammo_item(item)
     if item.is_a?(RPG::Weapon) && item.tool_itemcost_type > 0
       return actor.current_ammo
@@ -226,5 +226,12 @@ class Game_Player < Game_Character
       return $data_items[item.tool_itemcost]
     end
   end
+  #----------------------------------------------------------------------------
+  def battler
+    return actor
+  end
   #--------------------------------------------------------------------------
+  def controlable?
+    return super && actor.controlable?
+  end
 end

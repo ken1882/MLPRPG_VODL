@@ -155,5 +155,21 @@ class Game_BattlerBase
   def equippable?(item)
     return freehoof_equippable?(item)
   end
-  
+  #--------------------------------------------------------------------------
+  # * Clear State Information
+  #--------------------------------------------------------------------------
+  alias clear_states_gbb clear_states
+  def clear_states
+    @state_enchanter = {}
+    clear_states_gbb
+  end
+  #--------------------------------------------------------------------------
+  # * Erase States
+  #--------------------------------------------------------------------------
+  alias erase_state_gbb erase_state
+  def erase_state(state_id)
+    @state_enchanter.delete(state_id)
+    erase_state_gbb(state_id)
+  end
+  #--------------------------------------------------------------------------
 end

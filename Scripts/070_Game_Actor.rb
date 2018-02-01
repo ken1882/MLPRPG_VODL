@@ -106,7 +106,6 @@ class Game_Actor < Game_Battler
   #--------------------------------------------------------------------------
   def init_skills
     @skills = []
-    puts @class_id
     self.class.learnings.each do |learning|
       learn_skill(learning.skill_id) if learning.level <= @level
     end

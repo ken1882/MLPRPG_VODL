@@ -7,6 +7,8 @@
 #tag: battler
 class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
+  OffHoofSkillID  = 5   # Skill id that allow to dual-wield
+  #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_reader   :state_steps
@@ -161,16 +163,18 @@ class Game_Battler < Game_BattlerBase
     self.mp -= @result.mp_damage
   end
   #--------------------------------------------------------------------------
-  # * Overwrite: Add State
+  # * Overwrite: Add State # tag: state
   #--------------------------------------------------------------------------
-  def add_state(state_id, duration = nil)
+  def add_state(state_id, enchanter, duration = nil)
     if state_addable?(state_id)
       add_new_state(state_id) unless state?(state_id)
       reset_state_counts(state_id, duration)
+      @state_enchanter[state_id] = enchanter
       if @map_char && self.is_a?(Game_Actor) && PONY::LightStateID.keys.include?(state_id)
         light_id = PONY::LightStateID[state_id]
         @map_char.setup_light(light_id)
       end
+      on_state_apply(state_id)
       @result.added_states.push(state_id).uniq!
     end
   end
@@ -183,6 +187,7 @@ class Game_Battler < Game_BattlerBase
       erase_state(state_id)
       @map_char.dispose_light if @map_char && self.is_a?(Game_Actor) && PONY::LightStateID.keys.include?(state_id)
       refresh
+      on_state_erase(state_id)
       @result.removed_states.push(state_id).uniq!
     end
   end
@@ -292,4 +297,13 @@ class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
   def collect_passive_skills
   end
+  #--------------------------------------------------------------------------
+  def offhoof_skill_learned?
+    return skill_learned?(OffHoofSkillID)
+  end
+  #--------------------------------------------------------------------------
+  def controlable?
+    return movable?
+  end
+  
 end

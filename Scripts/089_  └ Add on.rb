@@ -104,4 +104,8 @@ class Game_CharacterBase
   def pos
     return POS.new(@real_x, @real_y)
   end
+  #----------------------------------------------------------------------------
+  def battler
+    return self
+  end
 end

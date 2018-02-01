@@ -323,5 +323,4 @@ class Game_Character < Game_CharacterBase
     return unless battler
     battler.secure_hash
   end
-  #--------------------------------------------------------------------------
 end

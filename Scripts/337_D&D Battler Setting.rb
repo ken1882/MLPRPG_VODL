@@ -85,12 +85,6 @@ class Game_CharacterBase
     return true
   end
   #----------------------------------------------------------------------------
-  def battler
-    return @enemy if self.is_a?(Game_Event) && @enemy
-    return actor  if (self.is_a?(Game_Player) || self.is_a?(Game_Follower)) && actor
-    return self
-  end
-  #----------------------------------------------------------------------------
   def determine_targets(item)
     if $game_player.free_fire && self.is_a?(Game_Player) && item.ranged?
       pos = Mouse.true_grid_by_pos(false)
@@ -338,4 +332,8 @@ class Game_CharacterBase
     end
   end
   #----------------------------------------------------------------------------
+  def controlable?
+    
+  end
+  
 end
