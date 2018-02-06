@@ -33,6 +33,8 @@ class Game_Projectile < Game_Character
     @enemies       = BattleManager.opponent_battler(@action.user)
     moveto([@user.x, 0].max, [@user.y, 0].max)
     @sprite = Sprite_Projectile.new(SceneManager.viewport1, self)
+    activate
+    self
   end
   #--------------------------------------------------------------------------
   # * Frame Update
@@ -93,6 +95,7 @@ class Game_Projectile < Game_Character
     return if @executed
     @executed = true
     BattleManager.execute_action(@action)
+    deactivate
   end
   #--------------------------------------------------------------------------
   # * Restore bitmap

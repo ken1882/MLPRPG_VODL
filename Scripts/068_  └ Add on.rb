@@ -305,5 +305,32 @@ class Game_Battler < Game_BattlerBase
   def controlable?
     return movable?
   end
-  
+  #--------------------------------------------------------------------------
+  # * Overwrite: [Add State] Effect: Normal Attack
+  #--------------------------------------------------------------------------
+  def item_effect_add_state_attack(user, item, effect)
+    user.atk_states.each do |state_id|
+      chance = effect.value1
+      chance *= state_rate(state_id)
+      chance *= user.atk_states_rate(state_id)
+      chance *= luk_effect_rate(user)
+      if rand < chance
+        add_state(state_id, user)
+        @result.success = true
+      end
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Overwrite: [Add State] Effect: Normal
+  #--------------------------------------------------------------------------
+  def item_effect_add_state_normal(user, item, effect)
+    chance = effect.value1
+    chance *= state_rate(effect.data_id) if opposite?(user)
+    chance *= luk_effect_rate(user)      if opposite?(user)
+    if rand < chance
+      add_state(effect.data_id, user)
+      @result.success = true
+    end
+  end
+  #--------------------------------------------------------------------------
 end

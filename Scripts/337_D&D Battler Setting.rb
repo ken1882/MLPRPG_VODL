@@ -199,8 +199,10 @@ class Game_CharacterBase
   def process_skill_action(action = @action)
     play_item_soundeffect(action.item)
     use_item(action.item) if action.item.tool_animmoment == 1 # Projectile
-    proj = Game_Projectile.new(action) if action.item.tool_graphic
-    SceneManager.setup_projectile(proj) if action.item.tool_graphic
+    if action.item.tool_graphic
+      proj = Cache.get_idle_proj.send(:initialize, action)
+      SceneManager.setup_projectile(proj)
+    end
     apply_cooldown(:skill, action.item.id, action.item.tool_cooldown)
   end
   #----------------------------------------------------------------------------
@@ -333,7 +335,8 @@ class Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def controlable?
-    
+    return true unless @action
+    return @action.acting?
   end
   
 end

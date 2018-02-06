@@ -156,6 +156,15 @@ class Game_BattlerBase
     return freehoof_equippable?(item)
   end
   #--------------------------------------------------------------------------
+  # * Overwrite: Refresh
+  #--------------------------------------------------------------------------
+  def refresh
+    state_resist_set.each {|state_id| erase_state(state_id) }
+    @hp = [[@hp, mhp].min, 0].max
+    @mp = [[@mp, mmp].min, 0].max
+    @hp == 0 ? add_state(death_state_id, self) : remove_state(death_state_id)
+  end
+  #--------------------------------------------------------------------------
   # * Clear State Information
   #--------------------------------------------------------------------------
   alias clear_states_gbb clear_states

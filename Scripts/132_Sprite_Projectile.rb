@@ -33,6 +33,12 @@ class Sprite_Projectile < Sprite_Character
     self.dispose
   end
   #--------------------------------------------------------------------------
+  def update_deactivate
+    return unless @executed
+    return if animation?
+    deactivate
+  end
+  #--------------------------------------------------------------------------
   # * Determine if Graphic Changed
   #--------------------------------------------------------------------------
   def graphic_changed?
@@ -51,6 +57,7 @@ class Sprite_Projectile < Sprite_Character
   # * Execute effect on collide
   #--------------------------------------------------------------------------
   def execute_collide
+    puts "#{self} #{disposed?}"
     start_collide_animation
     @character.execute_action
   end

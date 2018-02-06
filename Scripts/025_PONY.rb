@@ -34,6 +34,7 @@ module PONY
   StateID = {
     :aggressive_level => [7,8,9,10,11,12],
     :true_sight       => 13,
+    :hold_position    => 4,
   }
   #----------------------------------
   LightStateID = {

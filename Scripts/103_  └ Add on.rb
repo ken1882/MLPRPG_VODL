@@ -134,10 +134,40 @@ class Game_Interpreter
     @fiber = nil
     Fiber.yield
   end
- #--------------------------------------------------------------------------
+  #--------------------------------------------------------------------------
   # * Get Target of Screen Command
   #--------------------------------------------------------------------------
   def screen
     return $game_map.screen
   end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Change State
+  #--------------------------------------------------------------------------
+  def command_313
+    iterate_actor_var(@params[0], @params[1]) do |actor|
+      already_dead = actor.dead?
+      if @params[2] == 0
+        actor.add_state(@params[3], actor) # changed here
+      else
+        actor.remove_state(@params[3])
+      end
+      actor.perform_collapse_effect if actor.dead? && !already_dead
+    end
+    $game_party.clear_results
+  end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Change Enemy State
+  #--------------------------------------------------------------------------
+  def command_333
+    iterate_enemy_index(@params[0]) do |enemy|
+      already_dead = enemy.dead?
+      if @params[1] == 0
+        enemy.add_state(@params[2], enemy) # changed here
+      else
+        enemy.remove_state(@params[2])
+      end
+      enemy.perform_collapse_effect if enemy.dead? && !already_dead
+    end
+  end
+  
 end

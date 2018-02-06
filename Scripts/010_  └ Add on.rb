@@ -8,13 +8,17 @@
 #==============================================================================
 module Cache
   #--------------------------------------------------------------------------
+  ProjPoolSize  = 20
+  #--------------------------------------------------------------------------
   # * Module instance
   #--------------------------------------------------------------------------
   @cache_sprite     = []    # Sprites cache
   @cache_projectile = []    # Map Projectiles cache
+  @projectile_pool  = []    # Projectile Pool for Game_Projectile
   #--------------------------------------------------------------------------
   def self.init
     @iconset = system("Iconset")
+    self.allocate_pools
   end
   #--------------------------------------------------------------------------
   # * Get UI Graphic
@@ -42,7 +46,7 @@ module Cache
     @cache_projectile = projs.dup
   end
   #--------------------------------------------------------------------------
-  # * Retrieve stored cahce
+  # * Retrieve stored cache
   #--------------------------------------------------------------------------
   def self.projectile
     re = @cache_projectile.dup
@@ -77,6 +81,21 @@ module Cache
   #--------------------------------------------------------------------------
   def self.iconset
     @iconset
+  end
+  #--------------------------------------------------------------------------
+  def self.allocate_pools
+    ProjPoolSize.times{|i| self.allocate_proj}
+  end
+  #--------------------------------------------------------------------------
+  def self.allocate_proj
+    proj = Game_Projectile.allocate
+    proj.deactivate
+    @projectile_pool << proj
+  end
+  #--------------------------------------------------------------------------
+  def self.get_idle_proj
+    re = @projectile_pool.find{|proj| !proj.active?}
+    re
   end
   #--------------------------------------------------------------------------
   # * Free all cached sprites

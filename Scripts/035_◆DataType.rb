@@ -3,6 +3,26 @@
 #===============================================================================
 class Object
   #------------------------------------------------------------------------
+  attr_reader :active
+  #------------------------------------------------------------------------
+  alias init_rbobj initialize
+  def initialize(*args)
+    activate
+    init_rbobj(*args)
+  end
+  #------------------------------------------------------------------------
+  def deactivate
+    @active = false
+  end
+  #------------------------------------------------------------------------
+  def activate
+    @active = true
+  end
+  #------------------------------------------------------------------------
+  def active?
+    @active || false
+  end
+  #------------------------------------------------------------------------
   # * Set hashid
   #------------------------------------------------------------------------
   def hash_self
@@ -34,18 +54,15 @@ class Object
     newvars.each do |varname|
       next if vars.include?(varname)
       ivar = newone.instance_variable_get(varname)
-      ivar = 'nil' unless ivar
-      code = varname.to_s + '=' + ivar.to_s
-      debug_print("New instance variable for #{self}: #{varname} = #{ivar}")
-      self.instance_eval(code)
+      debug_print("New instance variable for #{self}: #{varname} = #{ivar ? ivar : 'nil'}")
+      self.instance_variable_set(varname, ivar)
     end
     
     # Delete unused variable in newer verison
     vars.each do |varname|
       next if newvars.include?(varname)
       debug_print("Unused instance variable for #{self}: #{varname} deleted")
-      ivar = self.instance_variable_get(varname)
-      ivar = nil
+      self.instance_variable_set(varname, nil)
     end
   end
 end

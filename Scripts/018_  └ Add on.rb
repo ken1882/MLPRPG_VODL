@@ -235,8 +235,10 @@ module BattleManager
       action.target = BattleManager.autotarget(action.user, action.item)
     end
     $game_party.lose_item(action.item, 1, true, nil, nil, false) if action.user.battler.is_a?(Game_Actor)
-    proj = Game_Projectile.new(action)  if action.item.tool_graphic
-    SceneManager.setup_projectile(proj) if action.item.tool_graphic
+    
+    return unless action.item.tool_graphic
+    projs = Cache.get_idle_proj.send(:initialize, action)
+    SceneManager.setup_projectile(proj)
   end
   #--------------------------------------------------------------------------
   def self.execute_subaction(action)

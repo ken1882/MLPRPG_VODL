@@ -118,12 +118,11 @@ class Spriteset_Map
     @hud_sprite.each{|sp| sp.update}
   end
   #--------------------------------------------------------------------------
-  # last work: object pool for better recycle
   def update_projectiles
     n = @projectiles.size
     for i in 0...n
-      if @projectiles[i].nil?
-        @projectiles.delete_at(i); next
+      if @projectiles[i].nil? || !@projectiles[i].active?
+        @projectiles.delete_at(i); next;
       end
       @projectiles[i].update
       @projectiles.delete_at(i) if @projectiles[i].sprite.disposed?

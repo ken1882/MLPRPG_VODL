@@ -6,6 +6,12 @@
 # Game_Followers class.
 #==============================================================================
 class Game_Character
+  #--------------------------------------------------------------------------
+  MovementCommandFollow = 1
+  MovementCommandGather = 2
+  MovementCommandHold   = 3
+  HoldPositionStateID   = PONY::StateID[:hold_position]
+  #--------------------------------------------------------------------------
   attr_accessor :movement_command
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
@@ -13,37 +19,37 @@ class Game_Character
   alias init_public_members_dnd init_public_members
   def init_public_members
     init_public_members_dnd
-    @movement_command = 1
+    @movement_command = MovementCommandFollow
   end
   #----------------------------------------------------------------------------
   def command_follow
-    @movement_command = 1
+    @movement_command = MovementCommandFollow
     return if battler.nil? || battler == self
     popup_info('Move')
-    battler.remove_state(4)
-    battler.result.removed_states.delete(4)
+    battler.remove_state(HoldPositionStateID)
+    battler.result.removed_states.delete(HoldPositionStateID)
     $game_player.followers.move if self.is_a?(Game_Follower)
   end
   #----------------------------------------------------------------------------
   def command_gather
     return ; # tag: queued
-    @movement_command = 2
+    @movement_command = MovementCommandGather
     self.move_to_position($game_player.x, $game_player.y, goal:$game_player)
     $game_player.followers.move if self.is_a?(Game_Follower)
   end
   #----------------------------------------------------------------------------  
   def command_hold
     return if battler.nil? || battler == self
-    @movement_command = 3 
+    @movement_command = MovementCommandHold
     clear_pathfinding_moves
     popup_info('Hold in Position')
-    battler.add_state(4)
+    battler.add_state(HoldPositionStateID, self)
     $game_player.followers.move if self.is_a?(Game_Follower)
   end
   #----------------------------------------------------------------------------
-  def command_following?;   return  @movement_command == 1; end
-  def command_gathering?;   return  @movement_command == 2; end
-  def command_holding?  ;   return  @movement_command == 3; end
+  def command_following?;   return  @movement_command == MovementCommandFollow; end
+  def command_gathering?;   return  @movement_command == MovementCommandGather; end
+  def command_holding?  ;   return  @movement_command == MovementCommandHold;   end
   #----------------------------------------------------------------------------
   # *) update follower movement
   #----------------------------------------------------------------------------
@@ -61,13 +67,18 @@ end
 # the Game_Player class. 
 #==============================================================================
 class Game_Followers
-  
+  #--------------------------------------------------------------------------
+  MovementCommandFollow = 1
+  MovementCommandGather = 2
+  MovementCommandHold   = 3
+  HoldPositionStateID   = PONY::StateID[:hold_position]
+  #--------------------------------------------------------------------------
   attr_accessor :movement_command
   #----------------------------------------------------------------------------
   alias initialize_addon initialize
   def initialize(leader)
     initialize_addon(leader)
-    @movement_command = 1
+    @movement_command = MovementCommandFollow
   end
   #----------------------------------------------------------------------------
   def enable_followers
