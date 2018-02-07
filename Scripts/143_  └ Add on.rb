@@ -63,5 +63,18 @@ class Window_Base < Window
   def active?
     return active
   end
+  #--------------------------------------------------------------------------
+  # * Icon Sprite Creation
+  #--------------------------------------------------------------------------
+  def create_icon_sprite(x, y, z, icon_index)
+    sprite        = Sprite.new
+    sprite.x      = x
+    sprite.y      = y
+    sprite.z      = z
+    sprite.bitmap = Bitmap.new(24,24)
+    rect = Rect.new(icon_index % 16 * 24, icon_index / 16 * 24, 24, 24)
+    sprite.bitmap.blt(0, 0, Cache.iconset, rect)
+    return sprite
+  end
   
 end

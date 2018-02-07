@@ -173,7 +173,7 @@ module DND
   # tag: leveling
   # last work: add leveling tag to skills
   module REGEX::Leveling
-    Leveling       = /<(?:leveling)>/i           # Just a leveling flag
+    Leveling       = /<(?:leveling)>/i     # Just a leveling flag <leveling>
     
     # Select feats when level up, learned feat won't show up again unless
     # it has double proficient
@@ -188,6 +188,9 @@ module DND
     Subrace        = /(?:subrace:)[ ](\d+)/i
     Class          = /(?:class:)[ ](\d+)/i
     DualClass      = /(?:dualClass:)[ ](\d+)/i
+    ClassParent    = /(?:parent:)[ ](\d+)/i  # parent class for advanced class
+    HP             = /(?:HP:)[ ](\d+)/i      # init hp
+    EP             = /(?:EP:)[ ](\d+)/i      # init ep
   end
   
 end

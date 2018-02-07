@@ -29,6 +29,7 @@ module PONY
     :fighting       => 115,
     :self           => 125,
     :plus           => 1143,
+    :minus          => 1145,
   }
   #----------------------------------
   StateID = {

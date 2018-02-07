@@ -17,8 +17,8 @@ class Window_ItemList < Window_Selectable
   #--------------------------------------------------------------------------
   def process_handling
     super
-    return prev_actor if handle?(:prev_actor_c) && Input.trigger?(:kC)
-    return next_actor if handle?(:next_actor_v) && Input.trigger?(:kV)
+    return prev_actor if handle?(:prev_actor) && Input.trigger?(:R)
+    return next_actor if handle?(:next_actor) && Input.trigger?(:L)
   end
   #--------------------------------------------------------------------------
   def actor=(n_actor)
@@ -27,12 +27,12 @@ class Window_ItemList < Window_Selectable
   #--------------------------------------------------------------------------
   def prev_actor
     Sound.play_cursor
-    call_handler(:prev_actor_c)
+    call_handler(:prev_actor)
   end
   #--------------------------------------------------------------------------
   def next_actor
     Sound.play_cursor
-    call_handler(:next_actor_v)
+    call_handler(:next_actor)
   end
   #--------------------------------------------------------------------------
 end

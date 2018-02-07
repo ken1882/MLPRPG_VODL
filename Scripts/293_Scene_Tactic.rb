@@ -96,7 +96,7 @@ class Scene_Tactic < Scene_MenuBase
     @item_window.refresh
     @item_window.activate
     @item_window.select(0)
-  end # last work: tactic processing
+  end
   #--------------------------------------------------------------------------
   def on_action_cancel
     if @action_window.symbol.nil?

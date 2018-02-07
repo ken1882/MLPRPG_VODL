@@ -157,7 +157,7 @@ class Window_Selectable < Window_Base
   #--------------------------------------------------------------------------
   def process_overlay_handling
   end
-  
+  #--------------------------------------------------------------------------
   # Alias: wheel cursor move
   alias process_cursor_move_wheel process_cursor_move
   def process_cursor_move

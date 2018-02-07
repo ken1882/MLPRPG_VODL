@@ -19,7 +19,6 @@ class Scene_Item < Scene_ItemBase
     create_action_window
     create_skillbar
     create_foreground
-    @actor = $game_party.leader
   end
   #--------------------------------------------------------------------------
   def init_vars
@@ -156,9 +155,19 @@ class Scene_Item < Scene_ItemBase
     @item_window.help_window = @help_window
     @item_window.set_handler(:ok,       method(:on_item_ok))
     @item_window.set_handler(:cancel,   method(:on_item_cancel))
-    @item_window.set_handler(:next_actor_v, method(:next_actor))
-    @item_window.set_handler(:prev_actor_c, method(:prev_actor))
+    @item_window.set_handler(:next_actor, method(:next_actor))
+    @item_window.set_handler(:prev_actor, method(:prev_actor))
     @category_window.item_window = @item_window
+  end
+  #--------------------------------------------------------------------------
+  def next_actor
+    return unless @skillbar.visible?
+    super
+  end
+  #--------------------------------------------------------------------------
+  def prev_actor
+    return unless @skillbar.visible?
+    super
   end
   #--------------------------------------------------------------------------
   def on_actor_change

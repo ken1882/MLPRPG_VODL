@@ -1,4 +1,4 @@
-# I know this game can be decrypted. Respect the authors, please.
+    # I know this game can be decrypted. Respect the authors, please.
 # Warning: I have modified tons of stuffs, if any problem occured in your game
 # it's your business.
 =begin
@@ -122,4 +122,4 @@ end
 在荒謬中誕生，為反抗而鬥爭，為尋找而前行，為悔恨而贖罪，為終結而死亡，最後回到原點，一切愛恨和尊榮逝去，哪怕再無意義，哪怕一切不屬於於我，直到命運的最後，依然肯定生命。––《異域鎮魂曲》 = [273, 389,465,389,185,457,413,461,461,205]
 時間不是你的敵人，永恆才是。　 = ""
 與怪物戰鬥的人，應當小心自己不要成為怪物。當你遠遠凝視深淵時，深淵也在凝視你。= 0
-$SAFE = 0 # This is not bullshit
+#$SAFE = 0 # This is not bullshit

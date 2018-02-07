@@ -237,7 +237,7 @@ module BattleManager
     $game_party.lose_item(action.item, 1, true, nil, nil, false) if action.user.battler.is_a?(Game_Actor)
     
     return unless action.item.tool_graphic
-    projs = Cache.get_idle_proj.send(:initialize, action)
+    projs = $game_map.get_idle_proj.send(:initialize, action)
     SceneManager.setup_projectile(proj)
   end
   #--------------------------------------------------------------------------
@@ -417,6 +417,7 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.in_battle?
     return true if $game_switches[9]
+    return false unless @flags
     return @flags[:in_battle] if @flags[:in_battle]
     if @battle_end_delay == 0
       @flags[:in_battle] = all_battlers.any?{ |battler| battler.current_target.is_a?(Game_Actor) }

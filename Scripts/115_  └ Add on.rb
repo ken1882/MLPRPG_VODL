@@ -45,5 +45,9 @@ class Sprite_Base < Sprite
       end # @ani_duration
     end # @ani_dur % rate == 0
   end # def update_ani
+  #--------------------------------------------------------------------------
+  def change_viewport(vp)
+    @viewport = vp
+  end
   
 end # class SpBase

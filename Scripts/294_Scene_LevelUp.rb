@@ -6,6 +6,8 @@
 # tag: last work: leveling
 class Scene_LevelUp < Scene_MenuBase
   #--------------------------------------------------------------------------
+  BackgroundFilename = "Tree_of_Harmony"
+  #--------------------------------------------------------------------------
   # * Start Processing
   #--------------------------------------------------------------------------
   def start
@@ -58,6 +60,13 @@ class Scene_LevelUp < Scene_MenuBase
   #--------------------------------------------------------------------------
   def command_skilltree
     @command_window.activate  # undefined
+  end
+  #--------------------------------------------------------------------------
+  # * Create Background
+  #--------------------------------------------------------------------------
+  def create_background
+    @background_sprite = Sprite.new
+    @background_sprite.bitmap = Cache.background(BackgroundFilename)
   end
   #--------------------------------------------------------------------------
   # * Change Actors

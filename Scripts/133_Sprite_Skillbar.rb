@@ -24,6 +24,7 @@ class Sprite_Skillbar < Sprite
     create_hover_bitmap(viewport)
     create_cooldown_sprite(viewport)
     create_dragging_sprite(viewport)
+    create_name_sprite(viewport)
     unselect
   end
   #--------------------------------------------------------------------------
@@ -53,6 +54,7 @@ class Sprite_Skillbar < Sprite
     rect = Rect.new(0, 0, @icon_sprite.bitmap.width, @icon_sprite.bitmap.height)
     @icon_sprite.bitmap.clear_rect(rect)
     @cooldown_sprite.bitmap.clear
+    @name_sprite.bitmap.clear
     draw_item_numbers
     draw_icons
   end
@@ -88,6 +90,13 @@ class Sprite_Skillbar < Sprite
     @drag_sprite = Sprite.new(viewport)
     @drag_sprite.bitmap = Bitmap.new(32, 32)
     @drag_sprite.z = 2000
+  end
+  #--------------------------------------------------------------------------
+  def create_name_sprite(viewport)
+    @name_sprite = Sprite.new(viewport)
+    @name_sprite.bitmap = Bitmap.new(240, 30)
+    @name_sprite.x, @name_sprite.y = self.x + 4, self.y - 28
+    @name_sprite.z = self.z + 10
   end
   #--------------------------------------------------------------------------
   # *) Draw corresponding interactive key to each hotkey slot
@@ -238,6 +247,16 @@ class Sprite_Skillbar < Sprite
     @text_sprite.bitmap.draw_text(rect, cdt.to_s)
   end
   #--------------------------------------------------------------------------
+  def draw_actor_name
+    return unless @instance.actor
+    @name_sprite.bitmap.clear
+    name = @instance.actor.name || ""
+    cw = @name_sprite.bitmap.font.size / 2 * name.size
+    ch = @name_sprite.bitmap.font.size
+    rect = Rect.new(0, 0, cw, ch)
+    @name_sprite.bitmap.draw_text(rect, name)
+  end
+  #--------------------------------------------------------------------------
   def clear_texts
     HotKeys::SkillBarSize.times do |index|
       # cooldown text
@@ -277,6 +296,7 @@ class Sprite_Skillbar < Sprite
     @text_sprite.dispose
     @drag_sprite.dispose
     @cooldown_sprite.dispose
+    @name_sprite.dispose
     self.bitmap = nil
     super
   end
@@ -287,6 +307,7 @@ class Sprite_Skillbar < Sprite
     @text_sprite.hide
     @drag_sprite.hide
     @cooldown_sprite.hide
+    @name_sprite.hide
     super
   end
   #--------------------------------------------------------------------------
@@ -296,6 +317,7 @@ class Sprite_Skillbar < Sprite
     @text_sprite.show
     @drag_sprite.show
     @cooldown_sprite.show
+    @name_sprite.show
     unselect
     super
   end

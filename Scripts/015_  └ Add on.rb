@@ -88,7 +88,6 @@ module SceneManager
   class << self; alias goto_proj goto; end
   def self.goto(scene_class)
     return if $on_exit
-    Cache.clear_projectiles if !store_projectile(scene_class)
     goto_proj(scene_class)
   end
   #--------------------------------------------------------------------------
@@ -97,7 +96,6 @@ module SceneManager
   class << self; alias call_proj call; end
   def self.call(scene_class)
     return if $on_exit
-    Cache.clear_projectiles if !store_projectile(scene_class)
     call_proj(scene_class)
   end
   #--------------------------------------------------------------------------
@@ -119,14 +117,6 @@ module SceneManager
   def self.dispose_temp_sprites
     return unless scene_is?(Scene_Map)
     spriteset.dispose_temp_sprites
-  end
-  #--------------------------------------------------------------------------
-  def self.store_projectile(next_scene)
-    return false unless scene_is?(Scene_Map)
-    return false if next_scene.is_a?(Scene_Title)
-    return false if next_scene.is_a?(Scene_Gameover)
-    Cache.store_projectile(spriteset.projectiles)
-    return true
   end
   #--------------------------------------------------------------------------
   # *) Viewports

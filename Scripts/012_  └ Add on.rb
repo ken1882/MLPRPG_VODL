@@ -194,7 +194,7 @@ module DataManager
   # new method: load_character_attributes
   #--------------------------------------------------------------------------
   def self.load_enemy_attributes
-    groups = [$data_enemies, $data_actors]
+    groups = [$data_enemies, $data_actors, $data_classes]
     groups.each do |group|
       group.compact.each{|obj| obj.load_character_attributes}
     end
@@ -224,7 +224,7 @@ module DataManager
       $game_self_switches, $game_actors, $game_party, $game_troop, $game_map,
       $game_player
     ];
-    saves.size.times do |i| saves[i].sync_new_data(temps[i]) end
+    saves.size.times{|i| saves[i].sync_new_data(temps[i]);}
     $game_party.members.each do |member|
       temp = Game_Actor.new(member.actor.id)
       member.sync_new_data(temp)

@@ -44,8 +44,11 @@ class Object
   def sync_new_data(newone)
     
     # Exception handle due to class method is used for database
-    return if newone.is_a?(Game_Actor) && !self.is_a?(Game_Actor)
-    return unless newone.class != self.class
+    if newone.is_a?(Game_Actor)
+      return unless self.is_a?(Game_Actor)
+    else
+      return unless newone.class == self.class
+    end
     
     vars    = self.instance_variables
     newvars = newone.instance_variables
@@ -58,12 +61,6 @@ class Object
       self.instance_variable_set(varname, ivar)
     end
     
-    # Delete unused variable in newer verison
-    vars.each do |varname|
-      next if newvars.include?(varname)
-      debug_print("Unused instance variable for #{self}: #{varname} deleted")
-      self.instance_variable_set(varname, nil)
-    end
   end
 end
 #===============================================================================
@@ -472,6 +469,7 @@ class RPG::Actor < RPG::BaseItem
   attr_reader :casting_index
   attr_reader :casting_pattern
   attr_reader :icon_index
+  attr_reader :parent_class
   #--------------------------------------------------------------------------
   # * Attributes setup
   #--------------------------------------------------------------------------
@@ -491,13 +489,16 @@ class RPG::Actor < RPG::BaseItem
       when DND::REGEX::Character::IconIndex;   @icon_index      = $1.to_i
       when DND::REGEX::Character::CastingAnimation; @casting_animation = $1.to_i
       when DND::REGEX::Leveling::LoadStart; dnd_loading = true;
-      when DND::REGEX::Leveling::LoadEnd; dnd_loading = false;
+      when DND::REGEX::Leveling::LoadEnd;   dnd_loading = false;
+      when DND::REGEX::Leveling::EP;   dnd_loading = false;
+      when DND::REGEX::Leveling::HP;   dnd_loading = false;
+      when DND::REGEX::Leveling::ClassParent;   dnd_loading = false;    
       end
-      load_character_attribute(line) if dnd_loading
+      load_dnd_attribute(line) if dnd_loading
     end
   end
   #--------------------------------------------------------------------------
-  def load_character_attribute(line)
+  def load_dnd_attribute(line)
     case line
       when DND::REGEX::Leveling::Race;      @race_id         = $1.to_i
       when DND::REGEX::Leveling::Subrace;   @subrace_id      = $1.to_i
@@ -517,6 +518,65 @@ class RPG::Actor < RPG::BaseItem
     @class_id           = DND::BattlerSetting::DefaultClassID unless @class_id
     @race_id            = DND::BattlerSetting::DefaultRaceID
     @subrace_id = @dualclass_id = 0 
+  end
+  #--------------------------------------------------------------------------
+  def base_hp
+    return @parent_class.base_hp if @parent_class
+    return @base_hp
+  end
+  #--------------------------------------------------------------------------
+  def base_ep
+    return @parent_class.base_ep if @parent_class
+    return @base_ep
+  end
+  #--------------------------------------------------------------------------
+end
+#==========================================================================
+# ■ RPG::Class
+#==========================================================================
+class RPG::Class < RPG::BaseItem
+  #------------------------------------------------------------------------
+  # * instance variables
+  #------------------------------------------------------------------------
+  #tag: class
+  
+  attr_reader :parent_class
+  #--------------------------------------------------------------------------
+  # * Attributes setup
+  #--------------------------------------------------------------------------
+  def load_character_attributes
+    apply_default_attributes
+    dnd_loading = false
+    self.note.split(/[\r\n]+/).each do |line|
+      case line
+      when DND::REGEX::Leveling::LoadStart; dnd_loading = true;
+      when DND::REGEX::Leveling::LoadEnd;   dnd_loading = false;
+      end
+      load_dnd_attribute(line) if dnd_loading
+    end
+  end
+  #--------------------------------------------------------------------------
+  def load_dnd_attribute(line)
+    case line
+      when DND::REGEX::Leveling::EP;   @base_ep = $1.to_i;
+      when DND::REGEX::Leveling::HP;   @base_hp = $1.to_i;
+      when DND::REGEX::Leveling::ClassParent;   @parent_class = false;    
+    end # last work: dnd attribute class loading
+  end
+  #--------------------------------------------------------------------------
+  def apply_default_attributes
+    @base_hp = @base_ep = 0
+    @parent_class = 0
+  end
+  #--------------------------------------------------------------------------
+  def base_hp
+    return @parent_class.base_hp if @parent_class
+    return @base_hp
+  end
+  #--------------------------------------------------------------------------
+  def base_ep
+    return @parent_class.base_ep if @parent_class
+    return @base_ep
   end
   #--------------------------------------------------------------------------
 end

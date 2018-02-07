@@ -234,4 +234,19 @@ class Game_Player < Game_Character
   def controlable?
     return super && actor.controlable?
   end
+  #--------------------------------------------------------------------------
+  def process_weapon_action
+    toward_mouse_direction if @free_fire
+    super
+  end
+  #--------------------------------------------------------------------------
+  def toward_mouse_direction
+    mx, my = *Mouse.true_grid_by_pos
+    dx = (@x - mx).abs; dy = (@y - my).abs;
+    if dx > dy
+      set_direction(@x < mx ? 6 : 4)
+    else
+      set_direction(@y < my ? 2 : 8)
+    end
+  end
 end

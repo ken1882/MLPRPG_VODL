@@ -48,6 +48,8 @@ module Vocab
   CritialHit      = "%s - critical hit"
   AttackImmune    = "%s: %s immune to my damage"
   Ineffective     = "%s - weapon ineffective"
+  
+  MoreInfo        = "Info"
 end
 #==============================================================================
 # ** Vocab::SaveLoad

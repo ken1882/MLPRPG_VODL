@@ -18,6 +18,7 @@ class Game_Map
   #  Constants
   #--------------------------------------------------------------------------
   Battler_Updates   = 20
+  ProjPoolSize      = 20
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
@@ -26,10 +27,10 @@ class Game_Map
   attr_reader   :enemy_names_count
   attr_accessor :action_battlers, :unit_table
   attr_accessor :timer, :timestop_timer
-  attr_accessor :projectiles, :enemies
+  attr_accessor :enemies
   attr_accessor :accurate_event_positions
   attr_accessor :event_battler_instance, :queued_actions
-  attr_reader   :item_drops
+  attr_reader   :item_drops, :projectile_pool, :cache_projectile
   attr_accessor :fog_enabled                      # Light effect fog
   attr_reader   :active_enemies, :active_enemy_count
   #--------------------------------------------------------------------------
@@ -37,19 +38,21 @@ class Game_Map
   #--------------------------------------------------------------------------
   alias initialize_opt initialize
   def initialize
-    @projectiles     = []
     @timer           = 0
     @timestop_timer  = 0
     @item_drops      = {}
     @accurate_event_positions = {}
     @event_battler_instance   = {}
-    @enemies         = []
-    @queued_actions  = []
-    @active_enemies  = []
-    @flag_after_load = false
-    @fog_enabled     = false
+    @enemies            = []
+    @queued_actions     = []
+    @active_enemies     = []
+    @projectile_pool    = []
+    @cache_projectile   = []
+    @flag_after_load    = false
+    @fog_enabled        = false
     @enemy_update_index = 0
     @active_enemy_count = 0
+    allocate_pools
     init_battle_members
     initialize_opt
     set_max_edge
@@ -524,6 +527,40 @@ class Game_Map
       ivar = instance_variable_get(varname)
       ivar.dispose if ivar.is_a?(Window) || ivar.is_a?(Sprite) || ivar.is_a?(Bitmap)
     end
+  end
+  #--------------------------------------------------------------------------
+  # * Store projectiles
+  #--------------------------------------------------------------------------
+  def store_projectile(projs)
+    debug_print "Projectile stored (#{projs.size})"
+    @cache_projectile = projs.dup
+    @cache_projectile.each{|proj| proj.dispose_sprite}
+  end
+  #--------------------------------------------------------------------------
+  # * Retrieve stored cache
+  #--------------------------------------------------------------------------
+  def get_cached_projectile
+    return @cache_projectile
+  end
+  #--------------------------------------------------------------------------
+  def clear_projectiles
+    debug_print "Clear projectiles cache (#{@cache_projectile.size})"
+    @cache_projectile.clear
+  end
+  #--------------------------------------------------------------------------
+  def allocate_pools
+    ProjPoolSize.times{|i| self.allocate_proj}
+  end
+  #--------------------------------------------------------------------------
+  def allocate_proj
+    proj = Game_Projectile.allocate
+    proj.deactivate
+    @projectile_pool << proj
+  end
+  #--------------------------------------------------------------------------
+  def get_idle_proj
+    re = @projectile_pool.find{|proj| !proj.active?}
+    re
   end
   #--------------------------------------------------------------------------
 end

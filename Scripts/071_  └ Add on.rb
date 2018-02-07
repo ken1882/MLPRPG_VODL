@@ -101,7 +101,7 @@ class Game_Actor < Game_Battler
   # * Overwrite: Get Base Value of Parameter
   #--------------------------------------------------------------------------
   def param_base(param_id)
-    return DND::ACTOR_PARAMS[@actor_id].at(param_id) rescue 8
+    return DND::ACTOR_PARAMS[@actor_id].at(param_id) rescue 10
   end
   #--------------------------------------------------------------------------
   def aggressive_level

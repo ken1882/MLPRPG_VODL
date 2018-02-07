@@ -121,7 +121,7 @@ class Spriteset_Map
   def update_projectiles
     n = @projectiles.size
     for i in 0...n
-      if @projectiles[i].nil? || !@projectiles[i].active?
+      if @projectiles[i].nil? || !@projectiles[i].active? || @projectiles[i].sprite.nil?
         @projectiles.delete_at(i); next;
       end
       @projectiles[i].update
@@ -266,11 +266,15 @@ class Spriteset_Map
   # * Restore projectiles
   #--------------------------------------------------------------------------
   def restore_projectile
-    @projectiles = Cache.projectile
-    @projectiles.each {|proj| proj.restore}
+    @projectiles = $game_map.get_cached_projectile.dup
+    @projectiles.each do |proj|
+      proj.restore
+    end
+    $game_map.clear_projectiles
   end
   #--------------------------------------------------------------------------
   def dispose_temp_sprites
+    $game_map.store_projectile(@projectiles)
     dispose_projectiles
     dispose_popups
   end

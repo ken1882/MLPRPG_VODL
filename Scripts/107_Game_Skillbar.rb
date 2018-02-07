@@ -227,6 +227,7 @@ class Game_Skillbar
     @stack.clear
     @stack << @actor
     refresh_item
+    draw_actor_name unless SceneManager.scene_is?(Scene_Map)
   end
   #--------------------------------------------------------------------------
   # *) Refresh items
@@ -493,6 +494,11 @@ class Game_Skillbar
       return @items[index].name
     end
     return Vocab::Skillbar::None
+  end
+  #--------------------------------------------------------------------------
+  def draw_actor_name
+    return unless sprite_valid?
+    @sprite.draw_actor_name
   end
   #--------------------------------------------------------------------------
   # * Start button cooldown
