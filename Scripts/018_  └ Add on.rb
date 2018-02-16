@@ -413,10 +413,16 @@ module BattleManager
     $game_map.refresh_condition_events
   end
   #--------------------------------------------------------------------------
+  # * Boss fight?
+  #--------------------------------------------------------------------------
+  def self.boss_fight?
+    return $game_switches[9] || false
+  end
+  #--------------------------------------------------------------------------
   # * In battle?
   #--------------------------------------------------------------------------
   def self.in_battle?
-    return true if $game_switches[9]
+    return true if boss_fight?
     return false unless @flags
     return @flags[:in_battle] if @flags[:in_battle]
     if @battle_end_delay == 0
