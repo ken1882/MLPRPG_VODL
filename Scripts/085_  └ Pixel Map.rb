@@ -296,5 +296,14 @@ class Game_Map
     return 1 if layered_tiles_flag?((x+Counter_Axis[2]).to_i,(y+Counter_Axis[3]).to_i, 0x80)
     return 0
   end
+  #--------------------------------------------------------------------------
+  # * Determine Passability of Normal Character
+  #     d:  direction (2,4,6,8)
+  #    Determines whether the tile at the specified coordinates is passable
+  #    in the specified direction.
+  #--------------------------------------------------------------------------
+  def passable?(x, y, d)
+    return @pixel_table[x,y,0].to_bool
+  end
   #-------------------------------------------
 end

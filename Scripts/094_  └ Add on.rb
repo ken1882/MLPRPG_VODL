@@ -249,4 +249,10 @@ class Game_Player < Game_Character
       set_direction(@y < my ? 2 : 8)
     end
   end
+  #----------------------------------------------------------------------------
+  def character_collided?(px, py, ignores = [])
+    return false if through_character?
+    return true  if collide_with_events?(px, py, ignores)
+    return false
+  end
 end

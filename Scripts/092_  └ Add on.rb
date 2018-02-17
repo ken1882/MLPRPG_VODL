@@ -12,8 +12,8 @@ class Game_Character < Game_CharacterBase
   attr_reader     :zoom_x
   attr_reader     :zoom_y
   attr_reader     :knockbacks
+  attr_reader     :through_character
   attr_accessor   :through                  # pass-through
-  attr_accessor   :through_character
   attr_accessor   :step_anime               # stepping animation
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
@@ -323,4 +323,11 @@ class Game_Character < Game_CharacterBase
     return unless battler
     battler.secure_hash
   end
+  #--------------------------------------------------------------------------
+  def through_character?
+    return true  if @through_character
+    return false if battler == self
+    return battler.state?(PONY::StateID[:free_movement])
+  end
+  #--------------------------------------------------------------------------
 end

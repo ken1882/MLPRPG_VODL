@@ -34,6 +34,10 @@ module Cache
     load_bitmap("Graphics/Background/", filename)
   end
   #--------------------------------------------------------------------------
+  def self.tilemap(filename)
+    load_bitmap("Graphics/Tilemap/", filename)
+  end
+  #--------------------------------------------------------------------------
   def self.iconset
     @iconset
   end

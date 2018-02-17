@@ -108,4 +108,51 @@ class Game_CharacterBase
   def battler
     return self
   end
+  #----------------------------------------------------------------------------
+  def path_passable?(x, y, dir, ignore_chars = [])
+    px = x * 4; py = y * 4;
+    return false unless $game_map.pixel_valid?(px,py)
+    return true  if @through || debug_through?
+    return false if $game_map.pixel_table[px,py,0] == 0
+    return false if character_collided?(px, py, ignore_chars)
+    return true
+  end
+  #----------------------------------------------------------------------------
+  def character_collided?(px, py, ignores = [])
+    return false if through_character?
+    return true  if collide_with_events?(px, py, ignores)
+    return true  if collide_with_follower?(px, py, ignores)
+    return true  if collide_with_player?(px, py, ignores)
+    return false
+  end
+  #----------------------------------------------------------------------------
+  def collide_with_events?(px, py, ignores = [])
+    for event in $game_map.events.values
+      next if event.through || event == self || ignores.include?(event)
+      next if event.through_character?
+      next unless event.priority_type == 1
+      return event if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
+    end
+    return false
+  end
+  #----------------------------------------------------------------------------
+  def collide_with_follower?(px,py,ignores = [])
+    $game_player.followers.each do |follower|
+      next if ignores.include?(follower) || (follower.actor && ignores.include?(follower.actor))
+      next if follower.dead? || follower.through_character?
+      return follower if (follower.px - px).abs <= follower.cx && (follower.py - py).abs <= follower.cy
+    end
+    return false
+  end
+  #----------------------------------------------------------------------------
+  def collide_with_player?(px,py,ignores = [])
+    return false if ignores.include?($game_player)
+    return false if ($game_player.actor && ignores.include?($game_player.actor))
+    return false if $game_player.dead?
+    return ($game_player.px - px).abs <= @cx && ($game_player.py - py).abs <= @cy
+  end
+  #----------------------------------------------------------------------------
+  def through_character?
+    false
+  end
 end

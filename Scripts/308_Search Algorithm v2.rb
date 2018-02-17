@@ -24,7 +24,25 @@ class Game_Map
     return if @map.nil?
     return x < 0 || y < 0 || x >= width || y >= height
   end
-  
+  #------------------------------------------------------------------------------
+  def scene_map
+    return unless SceneManager.scene_is?(Scene_Map)
+    return SceneManager.scene
+  end
+  #------------------------------------------------------------------------------
+  def create_debug_layer
+    return unless scene_map
+    scene_map.create_debug_layer
+  end
+  #------------------------------------------------------------------------------
+  def clear_pathfinding_arrow
+    scene_map.clear_pathfinding_arrow
+  end
+  #------------------------------------------------------------------------------
+  def draw_pathfinding_arrow(x, y, dir)
+    scene_map.draw_pathfinding_arrow(x, y, dir)
+  end
+  #------------------------------------------------------------------------------
 end
 #==============================================================================
 # ** Map_Address
@@ -86,14 +104,15 @@ class PathFinding_Queue
   #--------------------------------------------------------------------------
   def dehash_address(value)
     return if value.nil?
-    x = (value / 4000.0).round(2)
-    return [x , value % 4000]
+    x = (value / 40000.0).round(2)
+    y = ((value - (x * 40000)) / 4.0).round(2)
+    return [x , y]
   end
   #--------------------------------------------------------------------------
   # * Hash address
   #--------------------------------------------------------------------------
   def hash_address(x,y)
-    return (x * 4000 + y).to_i
+    return (x * 40000 + y * 4).to_i
   end
   #--------------------------------------------------------------------------
   # *  Heuristic algorithm 
@@ -105,7 +124,7 @@ class PathFinding_Queue
     dy1 = current_location.y - goal_location.y
     dy2 = source_location.y  - goal_location.y
     
-    return (dx1.abs + dy1.abs) * 3 + (dx1 * dy2 - dx2 * dy1).abs * 2
+    return (dx1.abs + dy1.abs) * 4 + (dx1 * dy2 - dx2 * dy1).abs * 25
   end
   
   #--------------------------------------------------------------------------
@@ -113,9 +132,10 @@ class PathFinding_Queue
   #--------------------------------------------------------------------------
   def push(source_loc, current_loc, next_loc, dir, goal_loc, depth)
     
-    extra_cost = depth * 5
+    extra_cost = depth
     node_cost = predict_movement_cost(source_loc,current_loc,goal_loc) + extra_cost
     node = Map_Address.new(next_loc.x,next_loc.y,node_cost)
+    
     @nodes.push(node)
     @nodes.sort!{ |a,b| a.cost <=> b.cost}
     
@@ -147,6 +167,7 @@ class PathFinding_Queue
   # *  Top of queue, which has the minimum cost
   #--------------------------------------------------------------------------
   def top
+    puts "Node top returned: #{[@nodes[0].x, @nodes[0].y]} cost: #{@nodes[0].cost}"
     return [@nodes[0].x , @nodes[0].y]
   end
   #--------------------------------------------------------------------------
@@ -186,7 +207,8 @@ class PathFinding_Queue
       
       puts "#{debug_info} (#{curx},#{cury})" if $pathfinding_debug
       if command_id > 0
-        Pixel_Core::Pixel.times{ cmd_list << [command_id, true] }
+        #Pixel_Core::Pixel.times{  }
+        cmd_list << [command_id, true]
       end # if command_id > 0
     end # for i in path_address.size
     
@@ -296,37 +318,34 @@ class Game_Character < Game_CharacterBase
     @pathfinding_timer = 60
     clear_pathfinding_moves
     ti = Time.now
-    depth             = args[:depth].nil?          ? 100   : args[:depth]
+    depth             = args[:depth].nil?          ? 500   : args[:depth]
     tool_range        = args[:tool_range].nil?     ? 0     : args[:tool_range]
     draw_arrow        = args[:draw_arrow].nil?     ? false : true
-    through_event     = args[:through_event].nil?  ? false : true
     debug             = args[:debug].nil?          ? false : true
+    through_chars     = args[:through_chars].nil?  ? []    : args[:through_chars]
     @pathfinding_goal = args[:goal].nil?           ? nil   : args[:goal]
+    
+    through_chars << @pathfinding_goal if @pathfinding_goal
     
     puts SPLIT_LINE if debug
     puts "Current Address: #{@x} #{@y}" if debug
     puts "Goal: #{goalx} #{goaly}"      if debug
-    $game_map.clean_pathfinding_arrow if draw_arrow
+    $game_map.clear_pathfinding_arrow if draw_arrow
     $pathfinding_debug = debug
     @on_path_finding = true
-    fixed_address = fix_address
     
-    fx = fixed_address[0]; fy = fixed_address[1] 
-    fixed_address = fix_address(goalx,goaly)
-    ori_goalx = goalx
-    ori_goaly = goaly
-    goalx, goaly = *fix_address(goalx, goaly)
-    
-    tox   = [0,-1,1,0]
-    toy   = [1,0,0,-1]
+    tox   = [0,-Pixel_Core::Tile,Pixel_Core::Tile,0]
+    toy   = [Pixel_Core::Tile,0,0,-Pixel_Core::Tile]
     dir   = [2,4,6,8]
     cnt   = 0
-    path_queue = PathFinding_Queue.new([fx,0].max,[fy,0].max)
+    path_queue = PathFinding_Queue.new([@x,0].max,[@y,0].max)
     path_found = false
     best_path  = path_queue.dup
-    bestx, besty = fx, fy
-    puts "Current pos fixed: #{fx} #{fy}" if debug
-    puts "Goal Fixed: #{goalx} #{goaly}"  if debug
+    bestx, besty = @x, @y
+    goalx += 0.25; goaly += 0.25;
+    
+    puts "Current pos: #{x} #{y}" if debug
+    puts "Goal pos: #{goalx} #{goaly}"  if debug
     
     while !path_found && !path_queue.empty? && cnt <= depth
       
@@ -349,16 +368,15 @@ class Game_Character < Game_CharacterBase
       
       for i in 0...4
         break if path_found
-        
         next_x = curx + tox[i]
         next_y = cury + toy[i]
-        npx, npy = next_x * 4, next_y * 4
+        next if path_queue.visited?(next_x,next_y)
+        next if $game_map.over_edge?(next_x, next_y)
         
-        if ( pixel_passable?(npx, npy, dir[i]) || adjacent?(next_x, next_y, goalx, goaly) ) && 
-          !path_queue.visited?(next_x,next_y) && !$game_map.over_edge?(next_x, next_y)
-          
-          if adjacent?(next_x, next_y, goalx, goaly)
+        if path_passable?(next_x, next_y, dir[i], through_chars) || adjacent?(next_x, next_y, goalx, goaly)
+          if adjacent?(next_x, next_y, goalx, goaly) && path_clear?(curx, cury, goalx, goaly)
             path_found = true
+            goalx, goaly = next_x, next_y
             puts "Path found by adjacent: #{next_x} #{next_y}" if debug
           elsif ((next_x - goalx).abs + (next_y - goaly).abs ) <= tool_range && path_clear?(curx, cury, goalx, goaly)
             goalx = next_x
@@ -367,29 +385,32 @@ class Game_Character < Game_CharacterBase
             puts "Path found by range: #{next_x} #{next_y}" if debug
           end
           
-          source_loc  = Map_Address.new(fx,fy)
+          source_loc  = Map_Address.new(@x,@y)
           current_loc = Map_Address.new(curx,cury)
           next_loc    = Map_Address.new(next_x,next_y)
           goal_loc    = Map_Address.new(goalx,goaly)
           
           path_queue.push(source_loc,current_loc,next_loc,dir[i],goal_loc, cnt)
-        end # if passable?
+          if draw_arrow
+            $game_map.draw_pathfinding_arrow(next_x+0.5, next_y+0.5, dir[i])
+            $game_map.interpreter.wait(1) rescue nil
+          end
+        end # if passable?        
         path_queue.mark_visited(next_x,next_y)
-        
       end # for i in 0...4
     end # while !path_found
     
-    best_path = path_queue if path_found
-    
-    if !path_found
+    if path_found
+      best_path = path_queue
+    else 
       goalx, goaly = bestx, besty
       debug_print "Destination x,y: #{goalx}, #{goaly}" if debug
     end # if !path found
     
     debug_print "Pathfinding time takes: #{Time.now.to_f - ti.to_f}" if debug
     @pathfinding_moves = best_path.get_walk_path(goalx, goaly)
-    finalize_offset(fx, fy)
-    push_movement_offset(ori_goalx, ori_goaly, goalx, goaly)
+    #finalize_offset(fx, fy)
+    #push_movement_offset(ori_goalx, ori_goaly, goalx, goaly)
     debug_print "Pathfinding moves: #{@pathfinding_moves.size}" if debug
     interpret_debug_moves if debug
     return path_found
@@ -513,16 +534,6 @@ class Game_Event < Game_Character
   
 end
 #==============================================================================
-# ** SceneManager
-#------------------------------------------------------------------------------
-#  This module manages scene transitions. For example, it can handle
-# hierarchical structures such as calling the item screen from the main menu
-# or returning from the item screen to the main menu.
-#==============================================================================
-module SceneManager
-  
-end
-#==============================================================================
 # ** Scene_Map
 #------------------------------------------------------------------------------
 #  This class performs the map screen processing.
@@ -531,8 +542,18 @@ class Scene_Map < Scene_Base
   #-------------------------------------------------------------------------
   # *) draw pathfinding arrow
   #-------------------------------------------------------------------------
-  def draw_pathfinding_arrow
-    
+  def draw_pathfinding_arrow(x, y, dir)
+    case dir
+    when 2; name = "arow_D";
+    when 4; name = "arow_L";
+    when 6; name = "arow_R";
+    when 8; name = "arow_U";
+    end
+    @spriteset.draw_tile_picture(x, y, name) rescue nil
+  end
+  #-------------------------------------------------------------------------
+  def clear_pathfinding_arrow
+    @spriteset.clear_tile_picture
   end
   #-------------------------------------------------------------------------
 end

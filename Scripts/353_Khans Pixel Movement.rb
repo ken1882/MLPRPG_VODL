@@ -220,7 +220,7 @@ class Game_CharacterBase
   # * New: Collision?
   #-------------------------------------------------------------------------------
   def collision?(px, py)
-    return false if @through_character
+    return false if through_character?
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through || event == self
@@ -502,7 +502,7 @@ class Game_Player < Game_Character
     ny = py + Tile_Range[d][1]
     return false unless $game_map.pixel_valid?(nx,ny)
     return true if @through || debug_through?
-    puts "#{nx} #{ny} #{px} #{py} #{d} #{$game_map.pixel_table[nx,ny,0]}"
+    #puts "#{nx} #{ny} #{px} #{py} #{d} #{$game_map.pixel_table[nx,ny,0]}"
     return false if $game_map.pixel_table[nx,ny,0] == 0
     return false if collision?(nx,ny)
     return true
@@ -533,7 +533,7 @@ class Game_Player < Game_Character
   # * Collision check
   #-------------------------------------------------------------------------------
   def collision?(px, py)
-    return false if @through_character
+    return false if through_character?
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through
@@ -585,7 +585,7 @@ class Game_Event < Game_Character
   end
   #-------------------------------------------------------------------------------
   def collision?(px, py)
-    return false if @through_character
+    return false if through_character?
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through || event == self
@@ -652,7 +652,7 @@ class Game_Follower < Game_Character
   # * Collision check
   #-------------------------------------------------------------------------------
   def collision?(px, py)
-    return false if @through_character
+    return false if through_character?
     for event in $game_map.events.values
       if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
         next if event.through

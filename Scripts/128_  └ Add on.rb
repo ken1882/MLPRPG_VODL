@@ -7,14 +7,12 @@
 # tag: 1 (Spriteset_Map
 class Spriteset_Map
   #--------------------------------------------------------------------------
-  attr_reader :viewport1
-  attr_reader :viewport3
-  attr_reader :viewport2
-  attr_reader :projectiles
-  attr_reader :popups
-  attr_reader :character_sprites
-  attr_reader :unitcir_sprites
-  attr_reader :hud_sprite
+  TILESIZE = 32
+  #--------------------------------------------------------------------------
+  attr_reader :viewport1, :viewport2, :viewport3
+  attr_reader :projectiles, :popups
+  attr_reader :character_sprites, :unitcir_sprites
+  attr_reader :hud_sprite, :tilemap, :tile_layer
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -25,6 +23,7 @@ class Spriteset_Map
     @weapon_sprites = {}
     @drop_sprites = []
     create_huds
+    create_tile_layer
     init_spsetmap_dnd
   end
   #--------------------------------------------------------------------------
@@ -51,14 +50,22 @@ class Spriteset_Map
     update_popups
     update_huds
     update_weapons
+    update_tile_layer
     update_spsetmap_opt
   end
   #--------------------------------------------------------------------------
   # * Update Tileset
   #--------------------------------------------------------------------------
   def update_tileset
+    return if @tileset == $game_map.tileset
     load_tileset
     refresh_characters
+  end
+  #--------------------------------------------------------------------------
+  def create_tile_layer
+    @tile_layer   = Sprite.new(@viewport1)
+    @tile_layer.z = 1
+    @tile_layer.bitmap = Bitmap.new($game_map.width * 32, $game_map.height * 32)
   end
   #--------------------------------------------------------------------------
   # *) Create heads-up display on map
@@ -101,7 +108,6 @@ class Spriteset_Map
   def create_tactic_cursor(instance)
     @tactic_cursor = Sprite_TacticCursor.new(@viewport1, instance)
   end
-  
   #--------------------------------------------------------------------------
   def create_character_sprite(character)
     sprite = Sprite_Character.new(@viewport1, character)
@@ -148,6 +154,11 @@ class Spriteset_Map
     @weapon_sprites.values.each do |sprite|
       sprite.update
     end
+  end
+  #--------------------------------------------------------------------------
+  def update_tile_layer
+    @tile_layer.ox = $game_map.display_x * 32
+    @tile_layer.oy = $game_map.display_y * 32
   end
   #--------------------------------------------------------------------------
   # * Update Tilemap
@@ -316,6 +327,7 @@ class Spriteset_Map
     dispose_huds
     dispose_weapons
     dispose_drops
+    dispose_sprite(@tile_layer)
     dispose_sprite(@tactic_cursor)
   end
   #--------------------------------------------------------------------------
@@ -383,4 +395,15 @@ class Spriteset_Map
     @override.dispose
     @override = nil
   end
+  #--------------------------------------------------------------------------
+  def draw_tile_picture(x, y, filename)
+    bitmap = Cache.tilemap(filename)
+    rect   = Rect.new(0, 0, bitmap.width, bitmap.height)
+    @tile_layer.bitmap.blt(x * TILESIZE, y * TILESIZE, bitmap, rect)
+  end
+  #--------------------------------------------------------------------------
+  def clear_tile_picture
+    @tile_layer.bitmap.clear
+  end
+  #--------------------------------------------------------------------------
 end

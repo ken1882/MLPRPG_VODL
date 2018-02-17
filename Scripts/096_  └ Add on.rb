@@ -181,4 +181,11 @@ class Game_Follower < Game_Character
     return true if !actor
     return super && actor.controlable?
   end
+  #----------------------------------------------------------------------------
+  def character_collided?(px, py, ignores = [])
+    return false if through_character?
+    return true  if collide_with_events?(px, py, ignores)
+    return false
+  end
+  #----------------------------------------------------------------------------
 end
