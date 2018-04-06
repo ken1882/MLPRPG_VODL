@@ -12,7 +12,6 @@ class Game_Event < Game_Character
   #--------------------------------------------------------------------------
   alias update_gaevdndai update
   def update
-    update_sight if @enemy
     update_timer
     update_gaevdndai
   end
@@ -70,6 +69,7 @@ class Game_Event < Game_Character
   #----------------------------------------------------------------------------
   def update_battler
     return if dead? || $game_system.story_mode?
+    update_sight
     @combat_timer -= 1 if @combat_timer > 0
     update_combat if @current_target && @combat_timer == 0 && !casting? && !@casting_flag
   end

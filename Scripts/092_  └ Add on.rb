@@ -13,6 +13,7 @@ class Game_Character < Game_CharacterBase
   attr_reader     :zoom_y
   attr_reader     :knockbacks
   attr_reader     :through_character
+  attr_reader     :altitude
   attr_accessor   :through                  # pass-through
   attr_accessor   :step_anime               # stepping animation
   #--------------------------------------------------------------------------
@@ -24,6 +25,7 @@ class Game_Character < Game_CharacterBase
     @zoom_duration_x = @zoom_duration_y = 0
     @knockbacks = []
     @through_character = false
+    @altitude   = 1
     init_public_memdnd
   end
   #----------------------------------------------------------------------------
@@ -91,10 +93,11 @@ class Game_Character < Game_CharacterBase
     end
   end
   #--------------------------------------------------------------------------
-  def obstacle_touched?(px, py, dir)
-    px += Pixel_Core::Tile_Range[dir][0]
-    py += Pixel_Core::Tile_Range[dir][1]
-    return true  if !$game_map.pixel_valid?(px,py) || $game_map.over_edge?(px/4, py/4)
+  def obstacle_touched?(x, y, dir = @direction)
+    x += Pixel_Core::Tile_Range[dir][0]
+    y += Pixel_Core::Tile_Range[dir][1]
+    px, py = (x*4).to_i, (y*4).to_i;
+    return true  if !$game_map.pixel_valid?(px,py) || $game_map.over_edge?(x, y)
     return false if @through
     return true  if $game_map.pixel_table[px,py,0] == 0
     return true  if collide_event_objects?(px, py)
@@ -112,7 +115,8 @@ class Game_Character < Game_CharacterBase
     return false
   end
   #----------------------------------------------------------------------------
-  # *) check if straight line path is able to see
+  # *) check if straight line path is able to cross
+  #    a little hack of Bresenham's algorithm
   #----------------------------------------------------------------------------
   def path_clear?(x1, y1, x2, y2)
     dx = x2 - x1;
@@ -122,35 +126,20 @@ class Game_Character < Game_CharacterBase
       return path_clear?(x2,y2,x1,y1);
     end
     
-    dy = y2 - y1;
-    sgny = (dy >= 0 ? 1 : -1);
+    dy    = y2 - y1;
+    sgny  = (dy >= 0 ? 1 : -1);
     delta = (dy.to_f / dx.to_f).abs;
     error = 0.0;
     
-    y = y1
-    x = x1
+    x,y = x1, y1
     while x <= x2
-      result = false
-      px = (x + 0.5).to_i * 4
-      py = (y + 0.5).to_i * 4
-      (1..4).each do |i|
-        result |= (!obstacle_touched?(px, py, i*2));
-      end
-      return false if !result
-      
+      return false if obstacle_touched?(x, y)
       error += (delta / 4)
       while error >= 0.5
-        px = (x + 0.5).to_i * 4
-        py = (y + 0.5).to_i * 4
-        result = false
-        (1..4).each do |i|
-          result |= (!obstacle_touched?(px, py, i*2));
-        end
-        return false if !result        
-        y = y + sgny;
-        error -= 1.0;
+        return false if obstacle_touched?(x, y)
+        y     += sgny
+        error -= 1.0
       end # while
-      
       x += 0.25
     end # while x
     
@@ -328,6 +317,10 @@ class Game_Character < Game_CharacterBase
     return true  if @through_character
     return false if battler == self
     return battler.state?(PONY::StateID[:free_movement])
+  end
+  #--------------------------------------------------------------------------
+  def altitude=(_new)
+    @altitude = _new
   end
   #--------------------------------------------------------------------------
 end

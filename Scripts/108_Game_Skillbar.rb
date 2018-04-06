@@ -400,7 +400,7 @@ class Game_Skillbar
   end
   #--------------------------------------------------------------------------
   def prev_page_available?
-    return @current_page - 1 > 0
+    return @current_page - 1 >= 0
   end
   #--------------------------------------------------------------------------
   def cancel_edit(continue = false)

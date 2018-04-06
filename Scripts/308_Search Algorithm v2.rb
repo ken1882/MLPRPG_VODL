@@ -124,7 +124,7 @@ class PathFinding_Queue
     dy1 = current_location.y - goal_location.y
     dy2 = source_location.y  - goal_location.y
     
-    return (dx1.abs + dy1.abs) * 4 + (dx1 * dy2 - dx2 * dy1).abs * 25
+    return (dx1.abs + dy1.abs) * 20 + (dx1 * dy2 - dx2 * dy1).abs * 20
   end
   
   #--------------------------------------------------------------------------
@@ -167,7 +167,7 @@ class PathFinding_Queue
   # *  Top of queue, which has the minimum cost
   #--------------------------------------------------------------------------
   def top
-    puts "Node top returned: #{[@nodes[0].x, @nodes[0].y]} cost: #{@nodes[0].cost}"
+    #puts "Node top returned: #{[@nodes[0].x, @nodes[0].y]} cost: #{@nodes[0].cost}"
     return [@nodes[0].x , @nodes[0].y]
   end
   #--------------------------------------------------------------------------
@@ -250,6 +250,8 @@ end
 #==============================================================================
 class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
+  DefaultPathfindingDepth = 1000
+  #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor   :pathfinding_moves
@@ -318,7 +320,8 @@ class Game_Character < Game_CharacterBase
     @pathfinding_timer = 60
     clear_pathfinding_moves
     ti = Time.now
-    depth             = args[:depth].nil?          ? 500   : args[:depth]
+    
+    depth             = args[:depth].nil? ? DefaultPathfindingDepth : args[:depth]
     tool_range        = args[:tool_range].nil?     ? 0     : args[:tool_range]
     draw_arrow        = args[:draw_arrow].nil?     ? false : true
     debug             = args[:debug].nil?          ? false : true

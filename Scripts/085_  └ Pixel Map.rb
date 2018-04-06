@@ -1,4 +1,3 @@
-
 #-------------------------------------------------------------------------------
 # * Setup Part (Pixel Movement)
 #-------------------------------------------------------------------------------
@@ -34,6 +33,15 @@ module Pixel_Core
   Trigger_Range = {2=>[0,2],4=>[-2,0],6=>[2,0],8=>[0,-2]}
   Counter_Range = {2=>[0,3],4=>[-3,0],6=>[3,0],8=>[0,-3]}
   Chase_Axis = {2=>[0,1],4=>[1,0],6=>[1,0],8=>[0,1]}
+  
+  # Region id
+  # bit: 000000~111111 (0~63)
+  # index: utility
+  # 0~1  : altitude(0~3)(00/01/10/11)
+  #  2   : allow projectile pass through if set to 1
+  #  3   : reserved
+  #  4   : reserved
+  #  5   : reserved
 end
 #-------------------------------------------------------------------------------
 # * Game Map
@@ -80,7 +88,8 @@ class Game_Map
         setup_pixel_collision(x, y, 0)
       end
     end
-    File.open("debug.txt", 'w') do |file|
+    return unless $debug_mode
+    FileManager.build_debug_file("MapCol#{@map_id | 0}.txt", 'w') do |file|
       cnt = 0
       for i in 0...(height*Pixel)
         for j in 0...(width*Pixel)

@@ -504,7 +504,7 @@ class RPG::Actor < RPG::BaseItem
       when DND::REGEX::Leveling::Subrace;   @subrace_id      = $1.to_i
       when DND::REGEX::Leveling::Class
         @class_id = $1.to_i
-        @class_id = DND::BattlerSetting::DefaultClassID if @class_id == 0
+        @class_id = DND::BattlerSetting::DefaultClassID if !(@class_id || 0).to_bool
       when DND::REGEX::Leveling::DualClass; @dualclass_id    = $1.to_i
     end
   end
@@ -515,7 +515,6 @@ class RPG::Actor < RPG::BaseItem
     @death_pattern      = DND::BattlerSetting::KOPattern
     @death_direction    = DND::BattlerSetting::KODirection
     @casting_animation  = DND::BattlerSetting::CastingAnimation
-    @class_id           = DND::BattlerSetting::DefaultClassID unless @class_id
     @race_id            = DND::BattlerSetting::DefaultRaceID
     @subrace_id = @dualclass_id = 0 
   end

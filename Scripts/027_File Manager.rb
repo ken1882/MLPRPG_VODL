@@ -5,6 +5,12 @@
 #  other settings.
 #==============================================================================
 module FileManager
+  #---------------------------------------------------------------------------
+  # *) Ensure the file or dictionary
+  #---------------------------------------------------------------------------
+  def self.ensure_file_exist(filename)
+    Dir.mkdir(filename) unless File.exist?(filename)
+  end
   #--------------------------------------------------------------------------
   # * Text wrap for window contents
   #--------------------------------------------------------------------------
@@ -154,6 +160,13 @@ module FileManager
   def self.continue_message_string?
     return true if next_event_code == 101 && Variable.message_rows > 4
     return next_event_code == 401
+  end
+  #--------------------------------------------------------------------------
+  def self.build_debug_file(filename, stat, &block)
+    path = "Data/Debug"; ensure_file_exist(path); path += "/" + filename;
+    File.open(path, stat) do |file|
+      yield file if block_given?
+    end
   end
   #--------------------------------------------------------------------------
 end

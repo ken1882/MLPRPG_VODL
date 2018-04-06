@@ -247,6 +247,7 @@ class Game_Map
   def update_enemies
     @active_enemy_count = [@active_enemy_count, 0].max
     return if @active_enemy_count == 0
+    
     battler = @active_enemies[@enemy_update_index]
     if battler.nil?
       @active_enemies = @active_enemies.compact
