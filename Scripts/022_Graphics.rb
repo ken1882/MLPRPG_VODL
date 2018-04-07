@@ -190,6 +190,12 @@ class Sprite
   #-----------------------------------------------------------------------------
 end
 #==============================================================================
+# ** Plane
+#------------------------------------------------------------------------------
+#  Planes are special Sprites that tile bitmap patterns across the entire
+# screen and are used to display parallax backgrounds and so on.
+#==============================================================================
+# Effectus's improvement
 Object.send(:remove_const, :Plane)
 class Plane < Sprite
   #--------------------------------------------------------------------------
@@ -253,7 +259,7 @@ class Plane < Sprite
   #--------------------------------------------------------------------------
   def dispose
     if @real_bitmap
-      @real_bitmap  = nil
+      @real_bitmap = nil
       self.bitmap.dispose
     end
     super
