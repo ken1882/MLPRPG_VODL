@@ -9,6 +9,7 @@
 class Spriteset_Map
   #--------------------------------------------------------------------------
   TILESIZE = 32
+  EFFECTUS_EMPTY_STR = ''
   #--------------------------------------------------------------------------
   attr_reader :viewport1, :viewport2, :viewport3
   attr_reader :projectiles, :popups
@@ -58,7 +59,6 @@ class Spriteset_Map
   # * Update Tileset
   #--------------------------------------------------------------------------
   def update_tileset
-    return if @tileset == $game_map.tileset
     load_tileset
     refresh_characters
   end
@@ -115,6 +115,12 @@ class Spriteset_Map
     @character_sprites.push(sprite)
     character.create_animation_queue
     return sprite
+  end
+  #--------------------------------------------------------------------------
+  # * Vanilla Update Sprites.                                           [NEW]
+  #--------------------------------------------------------------------------
+  def effectus_vanilla_update_sprites
+    @character_sprites.each { |sprite| sprite.effectus_vanilla_update }
   end
   #--------------------------------------------------------------------------
   def update_skillbar
@@ -297,6 +303,7 @@ class Spriteset_Map
     @character_sprites.each do |sprite| 
       dispose_sprite(sprite)
     end
+    @character_sprites.clear
   end
   #--------------------------------------------------------------------------
   def dispose_huds
@@ -349,9 +356,13 @@ class Spriteset_Map
   # * Update Viewport
   #--------------------------------------------------------------------------
   def update_viewports
-    @viewport1.tone.set($game_map.screen.tone)
+    if @viewport1.tone != $game_map.screen.tone 
+      @viewport1.tone.set($game_map.screen.tone)
+    end
     @viewport1.ox = $game_map.screen.shake
-    @viewport2.color.set($game_map.screen.flash_color)
+    if @viewport2.color != $game_map.screen.flash_color
+      @viewport2.color.set($game_map.screen.flash_color)
+    end
     @viewport3.color.set(0, 0, 0, 255 - $game_map.screen.brightness)
     @viewport1.update
     @viewport2.update

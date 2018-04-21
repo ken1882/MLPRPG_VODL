@@ -213,7 +213,6 @@ class Game_Event < Game_Character
     @list               = @page.list
     @interpreter = @trigger == 4 ? Game_Interpreter.new : nil
   end
-  # last work: merge effectus
   #--------------------------------------------------------------------------
   # * Clear Starting Flag.                                              [REP]
   #--------------------------------------------------------------------------
