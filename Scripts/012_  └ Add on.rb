@@ -44,6 +44,10 @@ module DataManager
   # * Execute Save (No Exception Processing)
   #--------------------------------------------------------------------------
   def self.save_game_without_rescue(index)
+    $game_map.effectus_party_pos.default = nil
+    $game_map.effectus_event_pos.default = nil
+    $game_map.effectus_etile_pos.default = nil
+    $game_map.effectus_etriggers.default = nil
     File.open(make_filename(index), "wb") do |file|
       $game_system.on_before_save
       header   = make_save_header
@@ -53,6 +57,10 @@ module DataManager
       Marshal.dump(contents, file)
       @last_savefile_index = index
     end
+    $game_map.effectus_party_pos.default_proc = proc { |h, k| h[k] = [] }
+    $game_map.effectus_event_pos.default_proc = proc { |h, k| h[k] = [] }
+    $game_map.effectus_etile_pos.default_proc = proc { |h, k| h[k] = [] }
+    $game_map.effectus_etriggers.default_proc = proc { |h, k| h[k] = [] }
     return true
   end
   #--------------------------------------------------------------------------
@@ -214,6 +222,7 @@ module DataManager
   class << self; alias extract_save_contents_sync extract_save_contents; end
   def self.extract_save_contents(contents)
     extract_save_contents_sync(contents)
+    extract_effectus_content
     temps = [
       Game_System.new, Game_Timer.new, Game_Message.new, Game_Switches.new,
       Game_Variables.new, Game_SelfSwitches.new, Game_Actors.new, Game_Party.new,
@@ -238,4 +247,13 @@ module DataManager
       follower.sync_new_data(temp)
     end
   end
+  #--------------------------------------------------------------------------
+  def self.extract_effectus_content
+    return unless $game_map.effectus_party_pos
+    $game_map.effectus_party_pos.default_proc = proc { |h, k| h[k] = [] }
+    $game_map.effectus_event_pos.default_proc = proc { |h, k| h[k] = [] }
+    $game_map.effectus_etile_pos.default_proc = proc { |h, k| h[k] = [] }
+    $game_map.effectus_etriggers.default_proc = proc { |h, k| h[k] = [] }
+  end
+  #--------------------------------------------------------------------------
 end

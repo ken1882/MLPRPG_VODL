@@ -405,6 +405,7 @@ class Game_Event < Game_Character
     update_terminate if @terminate_cd > 0
     update_gvednd unless active
     if effectus_near_the_screen? || @effectus_wait_for_animation || @balloon_id > 0
+      update_gvednd
       update_effectus_sprite
     else
       update_effectus_route
@@ -413,6 +414,7 @@ class Game_Event < Game_Character
     update_position_registeration unless @effectus_position_registered
     update_position_moved if effectus_moved?
   end
+  alias effectus_original_update update_gvednd
   #--------------------------------------------------------------------------
   # * Overwrite: Update During Autonomous Movement
   #--------------------------------------------------------------------------

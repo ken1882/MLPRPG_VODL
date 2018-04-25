@@ -12,7 +12,6 @@ class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   attr_accessor :combat_timer       # lazy update timer
   attr_accessor :tactic_commands    # tactic commadns, unfinished
-  attr_accessor :visible
   attr_reader   :translucent
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
@@ -21,11 +20,16 @@ class Game_Character < Game_CharacterBase
   def init_public_members
     @combat_timer    = rand(20)
     @tactic_commands = []
-    @visible         = true
     @translucent     = false
     @chase_timer     = 0
     @chase_pathfinding_timer = 0
     init_public_combatdnd
+  end
+  #----------------------------------------------------------------------------
+  alias update_batgc update
+  def update
+    update_battler_situation_normal if battler != self && @current_target.nil?
+    update_batgc
   end
   #----------------------------------------------------------------------------
   def target_rate(target, modifier = 0)
@@ -115,8 +119,9 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def visible?
-    return @visible
+    return !battler.state?(PONY::StateID[:invisible])
   end
+  alias :visible :visible?
   #----------------------------------------------------------------------------
   def change_visibility(status = !@visible)
     @visible     =  status
@@ -190,6 +195,9 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def update_battler
+  end
+  #----------------------------------------------------------------------------
+  def update_battler_situation_normal
   end
   #----------------------------------------------------------------------------
   def process_target_dead

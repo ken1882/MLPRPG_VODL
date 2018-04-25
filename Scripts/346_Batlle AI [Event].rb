@@ -8,12 +8,18 @@
 # tag: AI
 class Game_Event < Game_Character
   #--------------------------------------------------------------------------
+  Sight_Angle = 75
+  #--------------------------------------------------------------------------
   # * Frame Update
   #--------------------------------------------------------------------------
   alias update_gaevdndai update
   def update
     update_timer
     update_gaevdndai
+  end
+  #----------------------------------------------------------------------------
+  def update_battler_situation_normal
+    update_sight
   end
   #----------------------------------------------------------------------------
   # * update enemies in sight
@@ -53,7 +59,7 @@ class Game_Event < Game_Character
     return false if !target.visible? && !true_sight
     offset  = target.body_size / 2
     tx, ty  = target.x + offset, target.y + offset
-    angle   = determind_sight_angles(75)
+    angle   = determind_sight_angles(Sight_Angle)
     result  = Math.in_arc?(tx, ty, @x, @y, angle[0], angle[1], dis - 1 + offset*3, @direction)
     result &= path_clear?(@x, @y, target.x, target.y)
     return result

@@ -85,7 +85,7 @@ module MakerSystems
     # If true, default Window objects on the map will be created on demand.
     # If false, default Window objects on the map will be handled as usual.
     #------------------------------------------------------------------------
-    MAP_SCENE_WINDOW_IMPROVEMENTS = true
+    MAP_SCENE_WINDOW_IMPROVEMENTS = false
     #------------------------------------------------------------------------
     # * Sprite_Character Full Update Rate.                              [OPT]
     #------------------------------------------------------------------------

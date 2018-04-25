@@ -304,6 +304,8 @@ class Spriteset_Map
       dispose_sprite(sprite)
     end
     @character_sprites.clear
+    $game_temp.effectus_sprites.each_value { |sprite| sprite.dispose }
+    $game_temp.effectus_sprites.clear
   end
   #--------------------------------------------------------------------------
   def dispose_huds

@@ -37,6 +37,7 @@ module PONY
     :true_sight       => 13,
     :hold_position    => 4,
     :free_movement    => 24,
+    :invisible        => 19,
   }
   #----------------------------------
   LightStateID = {

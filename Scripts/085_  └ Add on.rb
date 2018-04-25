@@ -188,6 +188,7 @@ class Game_Map
     SceneManager.update_loading while SceneManager.loading?
     SceneManager.destroy_loading_screen unless $game_temp.loading_destroy_delay
   end
+=begin
   #-----------------------------------------------------------------------------
   # * Overwrite method : Refresh
   # > Moved from Theo Anti-Lag
@@ -199,6 +200,21 @@ class Game_Map
     @events.each_value {|event| next if event.never_refresh; event.refresh }
     @common_events.each {|event| event.refresh }
     refresh_tile_events
+    @need_refresh = false
+  end
+=end
+  #--------------------------------------------------------------------------
+  # * Refresh.                                                          [REP]
+  #--------------------------------------------------------------------------
+  def refresh
+    BattleManager.refresh
+    SceneManager.spriteset.refresh rescue nil
+    @tile_events = []
+    @events.each_value do |event|
+      event.refresh
+      event.tile? && @tile_events << event
+    end
+    @common_events.each { |event| event.refresh }
     @need_refresh = false
   end
   #--------------------------------------------------------------------------
@@ -258,6 +274,16 @@ class Game_Map
     @timer += 1
     process_battler_regenerate if @timer % DND::BattlerSetting::RegenerateTime == 0
     process_timecycle_end      if @timer >= PONY::TimeCycle
+  end
+  #-----------------------------------------------------------------------------
+  # * Overwrite method : Update events
+  #-----------------------------------------------------------------------------
+  def update_events  
+    @events.each_value do |event|
+      event.update unless event.frozen?
+      terminate_event(event) if event.terminated?
+    end
+    @common_events.each {|event| event.update}
   end
   #--------------------------------------------------------------------------
   # * Update NPC battler

@@ -120,6 +120,23 @@ class Game_Map
     @parallax_y = y
     to_update_events.each { |event| event.update }
   end
+  #--------------------------------------------------------------------------
+  # * Setup Starting Map Event.                                         [REP]
+  #--------------------------------------------------------------------------
+  def setup_starting_map_event
+    return nil unless @effectus_event_starting
+    event = @effectus_event_starting
+    event.clear_starting_flag
+    @interpreter.setup(event.list, event.id)
+    @effectus_event_starting = nil
+    event
+  end
+  #--------------------------------------------------------------------------
+  # * Any Event Starting?                                               [REP]
+  #--------------------------------------------------------------------------
+  def any_event_starting?
+    @effectus_event_starting
+  end
 #--------------------------------------------------------------------------
 # Whether using effectus' pass table
 if Effectus::UsePassable

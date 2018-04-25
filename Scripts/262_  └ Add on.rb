@@ -40,20 +40,6 @@ class Scene_Map < Scene_Base
     set_handlers
   end
   #--------------------------------------------------------------------------
-  # * Create All Windows
-  #--------------------------------------------------------------------------
-  def create_all_windows
-    if @message_window
-      @message_window.dispose
-      @message_window = nil
-    end
-    if @scroll_text_window
-      @scroll_text_window.dispose
-      @scroll_text_window = nil
-    end
-    create_location_window unless $game_map.display_name.empty?
-  end
-  #--------------------------------------------------------------------------
   def set_handlers
     @command_window.set_handler(:move,      method(:command_move))
     @command_window.set_handler(:hold,      method(:command_hold))
