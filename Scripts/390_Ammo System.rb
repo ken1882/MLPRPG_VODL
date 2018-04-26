@@ -175,6 +175,7 @@ class RPG::Class < RPG::BaseItem
 	# ● Loads the note tags
 	#--------------------------------------------------------------------------
 	def load_ammo_notetags
+    @ammo_slot_name = Vocab::Equipment::Ammo # tag: modified
 		@note.split(/[\r\n]+/).each do |line|
 			case line
 			when KRX::REGEXP::AMMO_SLOT_ID
@@ -184,8 +185,8 @@ class RPG::Class < RPG::BaseItem
         else
           @weapon_slot_id = 0
         end
-			when KRX::REGEXP::AMMO_SLOT_NAME
-				@ammo_slot_name = $1
+      #when KRX::REGEXP::AMMO_SLOT_NAME
+			#	@ammo_slot_name = $1
 			end
 		end
 	end
@@ -360,7 +361,7 @@ class Game_Actor < Game_Battler
   def offhoof_equippable?(slot_id, item)
     return false  if !([0,1].include?(item.etype_id))
     return true   if item.etype_id == 1
-    return false  if actor && !actor.offhoof_skill_learned?
+    return false  if actor && !offhoof_skill_learned?
     return [1,2,4,9].include?(item.wtype_id)
   end
   #--------------------------------------------------------------------------

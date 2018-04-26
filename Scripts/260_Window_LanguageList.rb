@@ -5,6 +5,13 @@
 #==============================================================================
 class Window_LanguageList < Window_InstanceItemList
   #--------------------------------------------------------------------------
+  # * Object Initialization
+  #--------------------------------------------------------------------------
+  def initialize(x, y, width, height)
+    super
+    self.windowskin = Cache.system(WindowSkin::Celestia)
+  end
+  #--------------------------------------------------------------------------
   # * Create Item List
   #--------------------------------------------------------------------------
   def make_item_list
@@ -19,7 +26,7 @@ class Window_LanguageList < Window_InstanceItemList
       rect = item_rect(index)
       rect.width -= 4
       name = $supported_languages[item]
-      draw_text(rect, name)
+      draw_text(rect, name, 1)
     end
   end
 end

@@ -362,7 +362,7 @@ module Vocab
   #--------------------------------------------------------------------------
   def self.etype(etype)
     return $data_system.terms.etypes[etype] if [0,1,2,3,4].include?(etype)
-    return YEA::EQUIP::TYPES[etype][0] if YEA::EQUIP::TYPES.include?(etype)
+    return ::YEA::EQUIP::TYPES[etype][0] if ::YEA::EQUIP::TYPES.include?(etype)
     return ""
   end
   

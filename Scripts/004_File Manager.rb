@@ -66,16 +66,16 @@ module FileManager
   #--------------------------------------------------------------------------
   # * Load Game.ini index
   #--------------------------------------------------------------------------
-  def self.load_ini(group, target)
+  def self.load_ini(group, target, path = ".//Game.ini")
     buffer = '\0' * 256
-    PONY::API::GetPPString.call(group, target, '', buffer, 256, ".//Game.ini")
+    PONY::API::GetPPString.call(group, target, '', buffer, 256, path)
     return buffer.strip
   end
   #--------------------------------------------------------------------------
   # * Modify Game.ini index
   #--------------------------------------------------------------------------
-  def self.write_ini(group, target, goal)
-    PONY::API::WritePPString.call(group, target, goal, ".//Game.ini")
+  def self.write_ini(group, target, goal, path = ".//Game.ini")
+    PONY::API::WritePPString.call(group, target, goal, path)
   end # def change ini
   #--------------------------------------------------------------------------
   # * Replace

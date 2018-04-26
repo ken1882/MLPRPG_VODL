@@ -174,7 +174,8 @@ class Window_TacticList < Window_Selectable
       return text + ' ' + sprintf(ArgDec_Table[:has_state], name)
     else
       info = ArgDec_Table[args.first] if args.first.is_a?(Symbol)
-      info = args.first if info.nil?
+      info = Name_Table[args.first]   if info.nil?
+      info = args.first               if info.nil?
       return text + ' ' + sprintf(ArgDec_Table[symbol], info)
     end
   end

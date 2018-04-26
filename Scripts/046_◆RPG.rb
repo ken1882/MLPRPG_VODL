@@ -619,7 +619,7 @@ class RPG::Weapon < RPG::EquipItem
   # *) Load item infos for detailed inforamtion, located at "History/type/id"
   #---------------------------------------------------------------------------  
   def load_help_information
-    path = "History/Weapons/"
+    path = Vocab.GetDictPath(:weapon)
     DataManager.ensure_file_exist(path)
     filename = path + self.id_for_filename
     filename = Dir.glob(filename + '*').at(0)
@@ -641,7 +641,7 @@ class RPG::Armor < RPG::EquipItem
   # *) Load item infos for detailed inforamtion, located at "History/type/id"
   #---------------------------------------------------------------------------  
   def load_help_information
-    path = "History/Armors/"
+    path = Vocab.GetDictPath(:armor)
     DataManager.ensure_file_exist(path)
     filename = path + self.id_for_filename
     filename = Dir.glob(filename + '*').at(0)
@@ -663,7 +663,7 @@ class RPG::Item < RPG::UsableItem
   # *) Load item infos for detailed inforamtion, located at "History/type/id"
   #---------------------------------------------------------------------------  
   def load_help_information
-    path = "History/Items/"
+    path = Vocab.GetDictPath(:item)
     DataManager.ensure_file_exist(path)
     filename = path + self.id_for_filename
     filename = Dir.glob(filename + '*').at(0)
@@ -685,7 +685,7 @@ class RPG::Skill < RPG::UsableItem
   # *) Load item infos for detailed inforamtion, located at "History/type/id"
   #---------------------------------------------------------------------------  
   def load_help_information
-    path = "History/Skills/"
+    path = Vocab.GetDictPath(:skill)
     DataManager.ensure_file_exist(path)
     filename = path + self.id_for_filename
     filename = Dir.glob(filename + '*').at(0)

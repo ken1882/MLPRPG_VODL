@@ -194,7 +194,8 @@ class String
   # * Delete extra empty chars via Win32API
   #----------------------------------------------------------------------------
   def purify
-    self.gsub!("\u0000", '').delete!('\0').squeeze!('\\').tr!('\\','/').delete_at(length-1)
+    #self.gsub!("\u0000", '').delete!('\\0').squeeze!('\\').tr!('\\','/').delete_at(length-1)
+    self.gsub!(/(?:\u0000)(.+)/,'')
     self
   end
 end

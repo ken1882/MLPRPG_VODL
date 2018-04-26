@@ -104,7 +104,6 @@ class RPG::BaseItem
   #------------------------------------------------------------------------
   def hash_self
     base = (@id * 42).to_s(8)
-    base += @name ? @name : "nothingness"
     base += "Actor"  if self.is_a?(RPG::Actor)
     base += "Class"  if self.is_a?(RPG::Class)
     base += "Enemy"  if self.is_a?(RPG::Enemy)

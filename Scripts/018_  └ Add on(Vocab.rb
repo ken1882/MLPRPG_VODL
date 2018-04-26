@@ -65,6 +65,11 @@ module Vocab
   CritialHit      = "%s - 致命一擊"
   AttackImmune    = "%s: %s 免疫我的傷害"
   Ineffective     = "%s - 武器無效"
+  
+  MoreInfo        = "詳細資料"
+  
+  # path to database dict
+  DictPath        = "History/zh_tw"
 end
 #==============================================================================
 # ** Vocab::SaveLoad
@@ -362,7 +367,7 @@ module Vocab::TacticConfig
     :clustered              => "X名敵方聚集:",
     :hp_lower               => "生命少於:",
     :hp_higher              => "生命多於:",
-    :target_range           => "與目標的距離:",
+    :target_range           => "與自身的距離:",
     :target_atk_type        => "攻擊型態:",
     
     :ep_lower               => "能量少於:",

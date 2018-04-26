@@ -50,6 +50,26 @@ module Vocab
   Ineffective     = "%s - weapon ineffective"
   
   MoreInfo        = "Info"
+  
+  # path to database dict
+  DictPath        = "History/en_us"
+  CategoryPath = {
+    :weapon     => "/Weapons",
+    :item       => "/Items",
+    :armor      => "/Armors",
+    :skill      => "/Skills",
+    :actor      => "/Actors",
+    :class      => "/Classes",
+    :term       => "/Terms",
+    :state      => "/States",
+  }
+  #----------------------------------------------------------------------------
+  # * Return dictionary file of language
+  #----------------------------------------------------------------------------
+  def self.GetDictPath(category)
+    return DictPath + CategoryPath[category] + '/'
+  end
+  #----------------------------------------------------------------------------
 end
 #==============================================================================
 # ** Vocab::SaveLoad
@@ -305,7 +325,7 @@ module Vocab::Tactic
   DecGuard    = "Protect a character"
   DecPatrol   = "Guard an area"
   
-  Targeting   = 'Enemies'
+  Targeting   = 'Visible Enemies'
   Fighting    = 'Target fighting'
   Self        = 'Self and party'
   Item        = 'Items'
@@ -348,7 +368,7 @@ module Vocab::TacticConfig
     :clustered              => "Clustered:",
     :hp_lower               => "Hp lower than:",
     :hp_higher              => "Hp higher than:",
-    :target_range           => "At ragne:",
+    :target_range           => "At range:",
     :target_atk_type        => "Attack type:",
     
     :ep_lower               => "EP lower than:",
@@ -427,6 +447,9 @@ module Vocab::TacticConfig
     :allies_alive           => ">= %d",
     :allies_dead            => ">= %d",
     :surrounded_by_enemies  => ">= %d",
+    :short      => "Short",
+    :medium     => "Medium",
+    :long       => "Long",
   }
   
 end

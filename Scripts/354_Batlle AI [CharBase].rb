@@ -119,6 +119,7 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def visible?
+    return false if battler == self
     return !battler.state?(PONY::StateID[:invisible])
   end
   alias :visible :visible?
