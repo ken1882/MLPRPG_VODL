@@ -1,38 +1,63 @@
 #==============================================================================
-# ** Window_ItemList
+# ** Window_MenuCommand
 #------------------------------------------------------------------------------
-#  This window displays a list of party items on the item screen.
+#  This command window appears on the menu screen.
 #==============================================================================
-class Window_ItemList < Window_Selectable
+class Window_MenuCommand < Window_ImageCommand
   #--------------------------------------------------------------------------
-  # * Object Initialization
+  # * Get Window Width
   #--------------------------------------------------------------------------
-  alias init_dnd initialize
-  def initialize(x, y, width, height)
-    @actor = $game_player
-    init_dnd(x, y, width, height)
+  def window_width
+    return Graphics.width - 120
   end
   #--------------------------------------------------------------------------
-  # * Handling Processing for OK and Cancel Etc.
+  # * Get Window Height
   #--------------------------------------------------------------------------
-  def process_handling
-    super
-    return prev_actor if handle?(:prev_actor) && Input.trigger?(:R)
-    return next_actor if handle?(:next_actor) && Input.trigger?(:L)
+  def window_height
+    return 80
   end
   #--------------------------------------------------------------------------
-  def actor=(n_actor)
-    @actor = n_actor
+  # * Add Main Commands to List
+  #--------------------------------------------------------------------------
+  def add_main_commands
+    add_command(Vocab::item,   "Menu_Bag", :item,   main_commands_enabled, nil, Vocab::item)
+    add_command(Vocab::skill,  "Menu_Skill", :skill,  main_commands_enabled, nil, Vocab::skill)
+    add_command(Vocab::equip,  "Menu_Gears", :equip,  main_commands_enabled, nil, Vocab::equip)
+    add_command(Vocab::status, "Menu_Status", :status, main_commands_enabled, nil, Vocab::status)
+    add_command(Vocab::LevelUp, "Menu_Upgrade", :levelup, main_commands_enabled, nil, Vocab::LevelUp)
+    add_command(Vocab::Quest,  "Menu_Quest", :quest, main_commands_enabled, nil, Vocab::Quest)
   end
   #--------------------------------------------------------------------------
-  def prev_actor
-    Sound.play_cursor
-    call_handler(:prev_actor)
+  # * Add Formation to Command List
+  #--------------------------------------------------------------------------
+  def add_formation_command
+    add_command(Vocab::formation, "Menu_Party", :formation, main_commands_enabled, nil, Vocab::formation)
   end
   #--------------------------------------------------------------------------
-  def next_actor
-    Sound.play_cursor
-    call_handler(:next_actor)
+  # * For Adding Original Commands
+  #--------------------------------------------------------------------------
+  def add_original_commands
   end
   #--------------------------------------------------------------------------
+  # * Add Save to Command List
+  #--------------------------------------------------------------------------
+  def add_save_command
+    add_command(Vocab::save, "Menu_Save", :save, save_enabled?, nil, Vocab::SaveDec)
+  end
+  #--------------------------------------------------------------------------
+  # * Add Exit Game to Command List
+  #--------------------------------------------------------------------------
+  def add_game_end_command
+    add_command(Vocab::game_end, "Menu_System", :game_end, true, nil, Vocab::SystemDec)
+  end
+  #--------------------------------------------------------------------------
+  def save_enabled?
+    return false if @header.nil? && SceneManager.scene_is?(Scene_Load)
+    return false if SceneManager.scene_is?(Scene_Load)
+    return false if $game_system.save_disabled
+    #return false if at_special_slot?
+    return false if BattleManager.in_battle?
+    return true
+  end
+  
 end

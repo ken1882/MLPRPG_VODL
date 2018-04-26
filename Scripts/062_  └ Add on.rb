@@ -1,41 +1,28 @@
 #==============================================================================
-# ** Game_BaseItem
+# ** Game_SelfSwitches
 #------------------------------------------------------------------------------
-#  This class uniformly handles skills, items, weapons, and armor. References
-# to the database object itself are not retained to enable inclusion in save
-# data.
+#  This class handles self switches. It's a wrapper for the built-in class
+# "Hash." The instance of this class is referenced by $game_self_switches.
 #==============================================================================
-class Game_BaseItem
+#tag: effectus
+class Game_SelfSwitches
   
-  def effects
-    object.effects rescue []
-  end
-  
-  def nil?
-    return super || is_nil?
-  end
-  
-  alias :is_a_obj? :is_a?
-  def is_a?(cls)
-    return is_a_obj?(cls) || object.is_a?(cls)
-  end
-  
-  def hashid
-    return object.hashid
-  end
-  
-  #---------------------------------------------------------------------------
-  # * Method Missing
-  # ----------------------------------------------------------------------   
-  # DANGER ZONE: Redirect to Actor
-  #---------------------------------------------------------------------------
-  def method_missing(symbol, *args)
-    return nil if nil?
-    return object.method(symbol).call(*args) if object.methods.include?(symbol)
-    if object.instance_variables.include?(symbol)
-      return object.instance_variable_get(symbol)
+  #--------------------------------------------------------------------------
+  # * Set SelfSwitch.                                                   [REP]
+  #--------------------------------------------------------------------------
+  def []=(key, value)
+    @data[key] = value
+    unless $game_temp.effectus_triggers.include?(key)
+      $game_temp.effectus_triggers << key
     end
-    super(symbol, args)
+    $game_map.effectus_need_refresh = true
+    on_change
+  end
+  #--------------------------------------------------------------------------
+  # * On Change.                                                        [REP]
+  #--------------------------------------------------------------------------
+  def on_change
+    # Kept for compatibility purposes.
   end
   
 end

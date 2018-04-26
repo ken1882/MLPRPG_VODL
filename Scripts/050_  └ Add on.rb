@@ -1,28 +1,24 @@
 #==============================================================================
-# ** Game_Switches
+# ** Game_Temp
 #------------------------------------------------------------------------------
-#  This class handles switches. It's a wrapper for the built-in class "Array."
-# The instance of this class is referenced by $game_switches.
+#  This class handles temporary data that is not included with save data.
+# The instance of this class is referenced by $game_temp.
 #==============================================================================
-# tag: effectus
-class Game_Switches
+class Game_Temp
   #--------------------------------------------------------------------------
-  # * Set Switch.                                                       [REP]
+  # * Public Instance Variables
   #--------------------------------------------------------------------------
-  def []=(switch_id, value)
-    @data[switch_id] = value
-    trigger_symbol = :"switch_#{switch_id}"
-    unless $game_temp.effectus_triggers.include?(trigger_symbol)
-      $game_temp.effectus_triggers << trigger_symbol
-    end
-    $game_map.effectus_need_refresh = true
-    on_change
+  attr_accessor :loading_destroy_delay # Cancel loading screen destroy by map.setup
+  attr_accessor :effectus_sprites, :effectus_triggers # tag: effectus
+  #--------------------------------------------------------------------------
+  # * Object Initialization
+  #--------------------------------------------------------------------------
+  alias init_temp_dnd initialize
+  def initialize
+    @loading_destroy_delay = $game_temp ? $game_temp.loading_destroy_delay : false
+    @effectus_sprites  = {}
+    @effectus_triggers = []
+    init_temp_dnd
   end
   #--------------------------------------------------------------------------
-  # * On Change.                                                        [REP]
-  #--------------------------------------------------------------------------
-  def on_change
-    # Kept for compatibility purposes.
-  end
-  
 end
