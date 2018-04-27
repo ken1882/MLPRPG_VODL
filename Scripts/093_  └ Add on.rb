@@ -28,7 +28,7 @@ class Game_Map
   attr_accessor :action_battlers, :unit_table
   attr_accessor :timer, :timestop_timer
   attr_accessor :enemies
-  attr_accessor :accurate_event_positions
+  attr_accessor :accurate_character_info
   attr_accessor :event_battler_instance, :queued_actions
   attr_reader   :item_drops, :projectile_pool, :cache_projectile
   attr_accessor :fog_enabled                      # Light effect fog
@@ -41,7 +41,7 @@ class Game_Map
     @timer           = 0
     @timestop_timer  = 0
     @item_drops      = {}
-    @accurate_event_positions = {}
+    @accurate_character_info = {}
     @event_battler_instance   = {}
     @enemies            = []
     @queued_actions     = []
@@ -287,7 +287,7 @@ class Game_Map
   end
   #--------------------------------------------------------------------------
   # * Update NPC battler
-  #--------------------------------------------------------------------------
+  #-------------------------------------------------------------------------
   def update_enemies
     @active_enemy_count = [@active_enemy_count, 0].max
     return if @active_enemy_count == 0
@@ -299,6 +299,7 @@ class Game_Map
     else
       battler.update_battler
     end
+    return if @active_enemy_count == 0
     @enemy_update_index = (@enemy_update_index + 1) % @active_enemy_count
   end
   #--------------------------------------------------------------------------
@@ -445,8 +446,26 @@ class Game_Map
     dispose_lights
     dispose_item_drops
     @events.each do |key, event|
-      pos = [POS.new(event.real_x, event.real_y),POS.new(event.x, event.y), POS.new(event.px, event.py)]
-      @accurate_event_positions[key] = pos
+      hkey = "E" + key.to_s
+      pos  = [POS.new(event.real_x, event.real_y),
+              POS.new(event.x, event.y),
+              POS.new(event.px, event.py)]
+              
+      dir  = event.direction
+      info = {:pos => pos, :dir => dir}
+      @accurate_character_info[hkey] = info
+    end
+    key = 0
+    $game_player.followers.each do |follower|
+      hkey = "F" + key.to_s
+      pos  = [POS.new(follower.real_x, follower.real_y),
+              POS.new(follower.x, follower.y), 
+              POS.new(follower.px, follower.py)]
+              
+      dir  = follower.direction
+      info = {:pos => pos, :dir => dir}
+      @accurate_character_info[hkey] = info
+      key += 1
     end
     save_battler_instance
     super_dispose
@@ -481,11 +500,20 @@ class Game_Map
   end
   #--------------------------------------------------------------------------
   def relocate_events
-    @accurate_event_positions.each do |key, pos|
-      next if @events[key].nil?
-      @events[key].load_position(*pos)
+    @accurate_character_info.each do |key, info|
+      id = key.dup; id.slice!(0); id = id.to_i;
+      pos = info[:pos]
+      if key[0] == "E"
+        next if @events[id].nil?
+        @events[id].load_position(*pos)
+        @events[id].set_direction(info[:dir])
+      elsif key[0] == "F"
+        next if $game_player.followers[id].nil?
+        $game_player.followers[id].load_position(*pos)
+        $game_player.followers[id].set_direction(info[:dir])
+      end
     end
-    @accurate_event_positions.clear
+    @accurate_character_info.clear
   end
   #--------------------------------------------------------------------------
   def update_vehicles
@@ -606,6 +634,23 @@ class Game_Map
   def get_idle_proj
     re = @projectile_pool.find{|proj| !proj.active?}
     re
+  end
+  #--------------------------------------------------------------------------
+  def tile_proj_passable?(x, y)
+    return ($game_map.region_id(x, y) & PONY::Bitset[2]).to_bool
+  end
+  #--------------------------------------------------------------------------
+  def get_tile_altitude(x,y)
+    bits = PONY::Bitset[0] | PONY::Bitset[1]
+    return $game_map.region_id(x, y) & bits
+  end
+  #--------------------------------------------------------------------------
+  alias region_id_fixed region_id
+  def region_id(x, y)
+    rx = ((x * 4 % Pixel_Core::Pixel) > 1 ? x.to_i + 1 : x.to_i)
+    ry = ((y * 4 % Pixel_Core::Pixel) > 1 ? y.to_i + 1 : y.to_i)
+    rx = [[width-1,rx].min, 0].max; ry = [[height-1,ry].min, 0].max;
+    re = region_id_fixed(rx, ry)
   end
   #--------------------------------------------------------------------------
 end

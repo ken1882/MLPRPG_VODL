@@ -427,11 +427,12 @@ class Window_StatusCommand < Window_Command
     update
   end
   #--------------------------------------------------------------------------
-  # update_help
+  # update_help tag: 1
   #--------------------------------------------------------------------------
   def update_help
     return if @actor.nil?
-    @help_window.set_text(@actor.actor.description)
+    desc = FileManager.textwrap(@actor.actor.description, @help_window.width)
+    @help_window.set_text(desc)
   end
 end # Window_StatusCommand
 #==============================================================================
@@ -886,6 +887,7 @@ end
     contents.font.size = YEA::STATUS::BIOGRAPHY_NICKNAME_SIZE
     draw_text(0, 0, contents.width, line_height*2, text, 1)
     reset_font_settings
+    #desc = FileManager.textwrap(@actor.description, contents.width)
     draw_text_ex(24, line_height*2, @actor.description)
     unless @element_window.nil?
       @element_window.opacity = 0

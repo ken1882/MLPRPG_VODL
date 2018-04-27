@@ -418,7 +418,7 @@ class Game_Battler < Game_BattlerBase
     #------------------------------------------------
     states.compact.each do |state|
       state = $data_states[state] if state.is_a?(Fixnum)
-      value += (state_id.attack_bonus || 0)
+      value += (state.attack_bonus || 0)
     end
     # last work: effect params handling
     return @effect_param_cache[:ac] = value;

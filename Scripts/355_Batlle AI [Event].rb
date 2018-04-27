@@ -57,11 +57,12 @@ class Game_Event < Game_Character
   #----------------------------------------------------------------------------
   def in_sight?(target, dis)
     return false if !target.visible? && !true_sight
-    offset  = target.body_size / 2
-    tx, ty  = target.x + offset, target.y + offset
-    angle   = determind_sight_angles(Sight_Angle)
-    result  = Math.in_arc?(tx, ty, @x, @y, angle[0], angle[1], dis - 1 + offset*3, @direction)
-    result &= path_clear?(@x, @y, target.x, target.y)
+    offset = target.body_size / 2
+    tx, ty = target.x + offset, target.y + offset
+    angle  = determind_sight_angles(Sight_Angle)
+    result = Math.in_arc?(tx, ty, @x, @y, angle[0], angle[1], dis - 1 + offset*3, @direction)
+    return false unless result
+    result = can_see?(@x, @y, target.x, target.y)
     return result
   end
   #----------------------------------------------------------------------------
@@ -85,18 +86,19 @@ class Game_Event < Game_Character
       @sight_lost_timer -= 15 if @sight_lost_timer > 0
       process_target_missing if @sight_lost_timer == 0
     else
-      @sight_lost_timer = 180
+      @sight_lost_timer = 150
       @target_last_pos = @current_target.pos
-      new_target = find_nearest_enemy  
     end
+    new_target = find_nearest_enemy
     set_target(new_target) if change_target?(new_target)
   end
   #----------------------------------------------------------------------------
   def process_target_missing
     return if !@target_last_pos
-    puts "#{name}: Target Missing"
+    puts "#{name}: Target Missing, Last pos: #{[@target_last_pos.x, @target_last_pos.y]}"
     move_to_position(@target_last_pos.x, @target_last_pos.y, tool_range: 0) if aggressive_level > 3
     @target_last_pos = nil
+    set_target(nil)
   end
   #----------------------------------------------------------------------------
   def attack(target = @current_target)

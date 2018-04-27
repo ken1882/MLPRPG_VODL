@@ -191,7 +191,7 @@ class Game_Character < Game_CharacterBase
     tx, ty  = target.x + offset, target.y + offset
     angle   = determind_sight_angles(75)
     result  = Math.in_arc?(tx, ty, @x, @y, angle[0], angle[1], dis - 1 + offset*3, @direction)
-    result &= path_clear?(@x, @y, target.x, target.y)
+    result &= can_see?(@x, @y, target.x, target.y)
     return result
   end
   #----------------------------------------------------------------------------

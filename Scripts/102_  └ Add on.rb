@@ -25,7 +25,7 @@ class Game_Character < Game_CharacterBase
     @zoom_duration_x = @zoom_duration_y = 0
     @knockbacks = []
     @through_character = false
-    @altitude   = 1
+    @altitude   = 0
     init_public_memdnd
   end
   #----------------------------------------------------------------------------
@@ -98,25 +98,31 @@ class Game_Character < Game_CharacterBase
     y += Pixel_Core::Tile_Range[dir][1]
     px, py = (x*4).to_i, (y*4).to_i;
     return true  if !$game_map.pixel_valid?(px,py) || $game_map.over_edge?(x, y)
-    return false if @through
-    return true  if $game_map.pixel_table[px,py,0] == 0
-    return true  if collide_event_objects?(px, py)
+    return true  if $game_map.pixel_table[px,py,1] == 0
+    return true  if collide_event_objects?(x, y)
     return false
   end
   #----------------------------------------------------------------------------
-  def collide_event_objects?(px, py)
-    for event in $game_map.events.values
-      if (event.px - px).abs <= event.cx && (event.py - py).abs <= event.cy
-        next if event.through || event == self || event.enemy
-        return true if event.static_object?
-        return true if event.priority_type == 1
-      end
+  def seeable?(x, y, dir = @direction)
+    return true if !obstacle_touched?(x, y, dir)
+    case dir
+    when 6; x += 0.8;
+    when 2; y += 0.8;
+    end
+    return $game_map.get_tile_altitude(x,y) > 0
+  end
+  #----------------------------------------------------------------------------
+  def collide_event_objects?(x, y)
+    poshash = y * $game_map.width + x
+    for event in $game_map.effectus_event_pos[poshash]
+      next if event.through || event == self || event.enemy
+      return true if event.static_object?
+      return true if event.priority_type == 1
     end
     return false
   end
   #----------------------------------------------------------------------------
-  # *) check if straight line path is able to cross
-  #    a little hack of Bresenham's algorithm
+  # *) check if path between two dot is clear
   #----------------------------------------------------------------------------
   def path_clear?(x1, y1, x2, y2)
     dx = x2 - x1;
@@ -143,6 +149,51 @@ class Game_Character < Game_CharacterBase
       x += 0.25
     end # while x
     
+    return true
+  end
+  #----------------------------------------------------------------------------
+  # *) check if can see the location
+  #----------------------------------------------------------------------------
+  def can_see?(x1, y1, x2, y2)
+    dx = x2 - x1;
+    if(dx == 0)
+      return straight_path_seeable?(x1,y1,y2)
+    elsif(dx < 0)
+      return can_see?(x2,y2,x1,y1);
+    end
+    
+    dy    = y2 - y1;
+    sgny  = (dy >= 0 ? 1 : -1);
+    delta = (dy.to_f / dx.to_f).abs;
+    error = 0.0;
+    
+    x,y = x1, y1
+    while x <= x2
+      return false if !seeable?(x, y)
+      error += (delta / 4)
+      while error >= 0.5
+        return false if !seeable?(x, y)
+        y     += sgny
+        error -= 1.0
+      end # while
+      x += 0.25
+    end # while x
+    
+    return true
+  end
+  #----------------------------------------------------------------------------
+  # *) straight path seeable?
+  #----------------------------------------------------------------------------
+  def straight_path_seeable?(x1, y1, y2)
+    y = y1
+    while y <= y2
+      result = false
+      (1..4).each do |i|
+        result |= seeable?(x1 , y , i*2 )
+      end
+      return false if !result
+      y += 0.25
+    end # for y
     return true
   end
   #----------------------------------------------------------------------------
@@ -226,9 +277,15 @@ class Game_Character < Game_CharacterBase
     @through = @ori_through
     @character_name  = actor.character_name
     @character_index = actor.character_index
+    moveto($game_player.x, $game_player.y) if distance_to_player > 2
   end
   #----------------------------------------------------------------------------
   def distance_to_character(charactor)
+    return Math.hypot(@x - charactor.x, @y - charactor.y)
+  end
+  #----------------------------------------------------------------------------
+  def distance_to_player
+    charactor = $game_player
     return Math.hypot(@x - charactor.x, @y - charactor.y)
   end
   #----------------------------------------------------------------------------

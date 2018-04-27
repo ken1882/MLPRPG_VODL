@@ -40,15 +40,43 @@ module DataManager
   #--------------------------------------------------------------------------
   #tag: transalte
   def self.process_translation
-    #translate_actors
-    #translate_classes
+    translate_actors
+    translate_classes
     translate_items
     translate_weapons
     translate_armors
     translate_skills
     translate_terms
     translate_states
+    debug_print("Translate to #{$supported_languages[CurrentLanguage]} done")
   end
+  #--------------------------------------------------------------------------
+  def self.translate_actors
+    path = Vocab.GetDictPath(:actor)
+    path += "actors.ini"
+    return unless File.exist?(path)
+    n = $data_actors.size
+    n.times do |i|
+      name = FileManager.load_ini("Name", i.to_s, path).purify
+      desc = FileManager.load_ini("Desc", i.to_s, path).purify
+      $data_actors[i].name        = name if name.size > 0
+      $data_actors[i].description = desc if desc.size > 0
+    end
+  end
+  #--------------------------------------------------------------------------
+  def self.translate_classes
+    path = Vocab.GetDictPath(:class)
+    path += "classes.ini"
+    return unless File.exist?(path)
+    n = $data_classes.size
+    n.times do |i|
+      name = FileManager.load_ini("Name", i.to_s, path).purify
+      desc = FileManager.load_ini("Desc", i.to_s, path).purify
+      $data_classes[i].name        = name if name.size > 0
+      $data_classes[i].description = desc if desc.size > 0
+    end
+  end
+  
   #--------------------------------------------------------------------------
   def self.translate_items
     path = Vocab.GetDictPath(:item)

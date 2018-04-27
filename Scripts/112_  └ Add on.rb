@@ -49,7 +49,7 @@ class Game_Event < Game_Character
     @self_vars        = Array.new(4){|i| i = 0}
     @terminated       = false
     @static_object    = false
-    @sight_timer      = rand(20)
+    @sight_timer      = 5 + rand(20)
     @sight_lost_timer = 0
     @stuck_timer      = 0
     @code_conditions  = []

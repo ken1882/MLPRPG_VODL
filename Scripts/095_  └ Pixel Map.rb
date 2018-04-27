@@ -241,10 +241,10 @@ class Game_Map
     return false
   end
   #-------------------------------------------------------------------------------
-  #
+  # * pass table for projectile
   #------------------------------------------------------------------------------
   def table_ps(x,y)
-    return true if $game_map.region_id(x,y) == 1
+    return true if $game_map.tile_proj_passable?(x,y)
     id_cnt = 0
     layered_tiles(x,y).each do |tile_id|
       flag = tileset.flags[tile_id]
