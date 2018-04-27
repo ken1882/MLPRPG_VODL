@@ -4,8 +4,6 @@
 #  This class brings together map screen sprites, tilemaps, etc. It's used
 # within the Scene_Map class.
 #==============================================================================
-# tag: 1 (Spriteset_Map
-#tag: last work (merge effectus
 class Spriteset_Map
   #--------------------------------------------------------------------------
   TILESIZE = 32
@@ -192,7 +190,6 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   # * Attach sprite a unit circle
   #--------------------------------------------------------------------------
-  # tag: 1 ( Spriteset_Map
   def register_battle_unit(battler)
     if @unit_table[battler.hashid]
       debug_print "Battler has already registered: #{battler}"

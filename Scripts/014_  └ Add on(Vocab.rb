@@ -335,6 +335,16 @@ module Vocab::Tactic
   EdAction    = 'Edit Action'
   Delete      = "Delete"
   
+  Hints = [
+    "Press shift to toggle",
+    "enable/disable.",
+    "Red: invalid",
+    "Black/White: disable",
+    "/enable",
+  ]
+  
+  Help = "Click here for helps"
+  
   Name_Table  = {
     :attack_mainhoof      => "Use main-hoof attack",
     :attack_offhoof       => "Use off-hoof attack",
@@ -346,6 +356,8 @@ module Vocab::Tactic
     :ep_least_power       => "Use Ep potion: least powerful",
     :set_target           => "Set to primary target",
     :jump_to              => "Jump to tactic: ",
+    :move_away            => "Move away from target",
+    :move_close           => "Move close to target",
   }
 end
 #==============================================================================
@@ -390,6 +402,8 @@ module Vocab::TacticConfig
     
     :set_target             => "Set to primary target",
     :jump_to                => "Jump to tactic:",
+    :move_away            => "Move away from target",
+    :move_close           => "Move close to target",
     
     :enemies      => "Enemies:",
     :targeting    => "Enemies:",

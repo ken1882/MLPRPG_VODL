@@ -334,6 +334,16 @@ module Vocab::Tactic
   EdAction    = '更改動作'
   Delete      = "刪除"
   
+  Hints = [
+    "Press shift to toggle",
+    "enable/disable.",
+    "Red: invalid",
+    "Black/White: disable",
+    "/enable",
+  ]
+  
+  Help = "按下這裡取得幫助"
+  
   Name_Table  = {
     :attack_mainhoof      => "使用主武器",
     :attack_offhoof       => "使用副武器",
@@ -345,6 +355,8 @@ module Vocab::Tactic
     :ep_least_power       => "使用能量藥水: 最弱效",
     :set_target           => "設為主要攻擊目標",
     :jump_to              => "跳到戰術: ",
+    :move_away            => "遠離目標",
+    :move_close           => "接近目標",
   }
 end
 #==============================================================================
@@ -389,6 +401,8 @@ module Vocab::TacticConfig
     
     :set_target             => "設為主要攻擊目標",
     :jump_to                => "跳到戰術: ",
+    :move_away              => "遠離目標",
+    :move_close             => "接近目標",
     
     :enemies      => "所有敵人:",
     :targeting    => "所有敵人:",

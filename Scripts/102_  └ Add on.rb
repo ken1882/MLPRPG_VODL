@@ -353,6 +353,12 @@ class Game_Character < Game_CharacterBase
     return pos
   end
   #--------------------------------------------------------------------------
+  # * Don't do anything
+  #--------------------------------------------------------------------------
+  def halt?
+    return casting? || @casting_flag
+  end
+  #--------------------------------------------------------------------------
   def casting?
     return false if @action.nil?
     return !@action.cast_done?

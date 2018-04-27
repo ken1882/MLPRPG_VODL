@@ -20,6 +20,8 @@ class Game_Action
       :ep_least_power       => 2741,
       :set_target           => PONY::IconID[:aim],
       :jump_to              => 2103,
+      :move_away            => 8688,
+      :move_close           => 8683,
   }
   #--------------------------------------------------------------------------
   # * Public Instance Variables
@@ -217,9 +219,23 @@ class Game_Action
       potions = $game_party.items.select{|item| !item.hp_recover? && !item.mp_recover?}
       potion  = potions.min_by{|item| item.price}
       reassign_item(potion)
+    when :set_target
+      @user.map_char.set_target(@target)
+    when :move_away
+      @user.map_char.move_away_from_character(@target)
+    when :move_close
+      @user.map_char.move_toward_character(@target)
     else
       @item
     end
+  end
+  #--------------------------------------------------------------------------
+  # * Determination if Action is Valid or Not
+  #--------------------------------------------------------------------------
+  def valid?
+    return false if @item == :add_command
+    return false if @item.is_a?(Symbol) && !Vocab::Tactic::Name_Table.include?(@item)
+    return true
   end
   #---------------------------------------------------------------------------
 end

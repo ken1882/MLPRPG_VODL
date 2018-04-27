@@ -79,7 +79,15 @@ class Window_TacticList < Window_Selectable
     item = @data[index]
     if item
       rect = item_rect(index)
+      if !item.valid?
+        contents.font.color.set(DND::COLOR::Red)
+      elsif item.disabled?
+        contents.font.color.set(DND::COLOR::Black)
+      else
+        contents.font.color.set(DND::COLOR::Green)
+      end
       draw_order(index, rect)
+      contents.font.color.set(DND::COLOR::White)
       rect.width /= 2
       rect.width -= 4
       draw_command(item, rect)

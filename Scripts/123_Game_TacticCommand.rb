@@ -41,11 +41,29 @@ class Game_TacticCommand
   #--------------------------------------------------------------------------
   def check_condition(forced = false)
     return unless @enbaled && !forced
-    return eval(@condition) if condition_symbol == :code
+    #return eval(@condition) if condition_symbol == :code
     case @category
-    when :enemy
+    when :targeting
       return Tactic_Config::Enemy.start_check(@actor, condition_symbol, args)
+    when :fighting
+      return Tactic_Config::Target.start_check(@actor, condition_symbol, args)
+    when :self
+      return Tactic_Config::Players.start_check(@actor, condition_symbol, args)
     end
+  end
+  #--------------------------------------------------------------------------
+  def valid?
+    return false if !condition_symbol
+    return false if !action || !action.valid?
+    return true
+  end
+  #--------------------------------------------------------------------------
+  def disabled?
+    !@enabled
+  end
+  #--------------------------------------------------------------------------
+  def enabled?
+    @enabled
   end
   #--------------------------------------------------------------------------
 end
