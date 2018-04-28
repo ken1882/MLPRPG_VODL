@@ -14,6 +14,8 @@ class Game_TacticCommand
   attr_accessor :category
   attr_accessor :enabled
   attr_accessor :args
+  attr_accessor :target
+  attr_reader   :check_timer
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -21,8 +23,10 @@ class Game_TacticCommand
     @actor     = actor
     @action    = nil
     @args      = args
+    @target    = nil
     @condition = ""
     @condition_symbol = nil
+    @check_timer = 0
     @enabled   = true
   end
   #--------------------------------------------------------------------------
@@ -40,15 +44,33 @@ class Game_TacticCommand
   end
   #--------------------------------------------------------------------------
   def check_condition(forced = false)
-    return unless @enbaled && !forced
+    return unless (@enabled && @check_timer == 0) || forced
+    return false unless @actor.cooldown_ready?(@action.item)
     #return eval(@condition) if condition_symbol == :code
     case @category
     when :targeting
-      return Tactic_Config::Enemy.start_check(@actor, condition_symbol, args)
+      @target = Tactic_Config::Enemy.start_check(@actor, condition_symbol, args)
+      return @target ? true : false
     when :fighting
+      return false unless @actor.current_target
+      if @actor.current_target.dead?
+        @actor.process_target_dead
+        return false
+      end
       return Tactic_Config::Target.start_check(@actor, condition_symbol, args)
     when :self
       return Tactic_Config::Players.start_check(@actor, condition_symbol, args)
+    end
+  end
+  #--------------------------------------------------------------------------
+  def get_target
+    case @category
+    when :targeting
+      return @target
+    when :fighting
+      return @actor.current_target
+    when :self
+      return @actor
     end
   end
   #--------------------------------------------------------------------------

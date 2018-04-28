@@ -26,12 +26,6 @@ class Game_Character < Game_CharacterBase
     init_public_combatdnd
   end
   #----------------------------------------------------------------------------
-  alias update_batgc update
-  def update
-    update_battler_situation_normal if battler != self && @current_target.nil?
-    update_batgc
-  end
-  #----------------------------------------------------------------------------
   def target_rate(target, modifier = 0)
     sum  = 100
     sum  = apply_tactic_target(sum, target)
@@ -48,43 +42,48 @@ class Game_Character < Game_CharacterBase
   def update_combat
     return set_target(nil) if aggressive_level == 0
     start_timer(:combat)
-    # last work: tactic processing(real)
     process_tactic_commands
   end
   #----------------------------------------------------------------------------
-  def chase_target
-    return if @current_target.nil?
+  def chase_target(action = nil, impleable = nil)
+    target = action ? action.target : @current_target
+    return if target.nil?
     return if halt? || frozen?
-    return process_target_dead if @current_target.dead?
+    return process_target_dead if target.dead?
+    
     return if aggressive_level < 3 || @chase_timer > 0 || command_holding?
-    if primary_weapon
-      tx, ty = @current_target.x, @current_target.y
-      if @chase_pathfinding_timer == 0 && !path_clear?(@x, @y, tx, ty)
-        move_to_position(tx, ty, goal: @current_target, 
-                           tool_range: primary_weapon.tool_distance)
-        start_timer(:chase_pathfinding)
-        start_timer(:chse, 112)
+    
+    if !action
+      if primary_weapon
+        action = Game_Action.new(battler, target, primary_weapon)
       else
-        # if weapon is ranged and enemy too close, move away from
-        if primary_weapon.tool_distance > 2 && distance_to_character(@current_target) < 2
-          move_away_from_character(@current_target)
-        # move random when enemy in moderate range
-        elsif distance_to_character(@current_target) <= primary_weapon.tool_distance
-          unless @action && @action.acting?
-            movable_dir = [2,4,6,8]
-            movable_dir.delete(turn_toward_character(@current_target))
-            move_straight(movable_dir[rand(3)], false)
-            start_timer(:chase) if @chase_pathfinding_timer == 0
-          end
-        # when too fat, moev toward
-        else
-          move_toward_character(@current_target)
-          start_timer(:chase)
-        end
+        return move_away_from_character(target)
       end
-    else # run way, run away!
-      move_away_from_character(@current_target)
     end
+    
+    do_ok = impleable.nil? ? action.action_impleable? : impleable
+    if do_ok
+      # Impleaable, wondering around
+      movable_dir = [2,4,6,8]
+      movable_dir.delete(turn_toward_character(target))
+      move_straight(movable_dir[rand(3)], false)
+      start_timer(:chase) if @chase_pathfinding_timer == 0
+      puts "move random"
+    else
+      # If unimpleable, chase target
+      if @chase_pathfinding_timer == 0
+        tx, ty = target.x, target.y
+        move_to_position(tx, ty, goal: target, 
+                           tool_range: action.item.tool_distance)
+        start_timer(:chase_pathfinding)
+        start_timer(:chase, 112)
+        puts "chase pathfinding"
+      else
+        move_toward_character(target)
+        start_timer(:chase)
+        puts "chase normal"
+      end
+    end # do_ok
   end
   #----------------------------------------------------------------------------
   def determine_attack
@@ -106,7 +105,34 @@ class Game_Character < Game_CharacterBase
   # tag: last work (bloody AI
   def process_tactic_commands
     @tactic_commands.each do |command|
+      pas = command.check_condition
+      puts "CMD: #{command.category} #{command.condition_symbol} >> #{pas}"
       next unless command.check_condition
+      action = command.action.dup
+      interpret_tactic_action(action, command.get_target)
+    end
+  end
+  #----------------------------------------------------------------------------
+  def interpret_tactic_action(action, target)
+    item = action.get_symbol_item
+    return execute_symbol_action(item, target) if item.is_a?(Symbol)
+    use_tool(item, target)
+  end
+  #----------------------------------------------------------------------------
+  def execute_symbol_action(item, target)
+    case item
+    when :target_none
+      set_target(nil)
+    end
+    return unless target || (target != battler && target != self)
+    return if target.is_a?(Array) && target.empty?
+    case item
+    when :set_target
+      set_target(target) unless target.is_friend?(self) || !change_target?(target)
+    when :move_away
+      move_away_from_character(target) unless distance_to_character(target) > 5
+    when :move_close
+      move_toward_character(target) unless distance_to_character(target) < 2
     end
   end
   #----------------------------------------------------------------------------
@@ -198,11 +224,8 @@ class Game_Character < Game_CharacterBase
   def update_battler
   end
   #----------------------------------------------------------------------------
-  def update_battler_situation_normal
-  end
-  #----------------------------------------------------------------------------
   def process_target_dead
-    set_target(find_nearest_enemy)
+    set_target(nil)
   end
   #----------------------------------------------------------------------------
   def find_nearest_enemy

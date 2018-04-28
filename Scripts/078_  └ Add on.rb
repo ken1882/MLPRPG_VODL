@@ -41,10 +41,10 @@ class Game_Battler < Game_BattlerBase
   end
   #--------------------------------------------------------------------------
   def cooldown_ready?(item)
-    return @skill_cooldown[item.id] == 0  if @skill_cooldown[item.id]  && item.is_a?(RPG::Skill)
-    return @item_cooldown[item.id] == 0   if @item_cooldown[item.id]   && item.is_a?(RPG::Item)
-    return @weapon_cooldown[item.id] == 0 if @weapon_cooldown[item.id] && item.is_a?(RPG::Weapon)
-    return @armor_cooldown[item.id] == 0  if @armor_cooldown[item.id]  && item.is_a?(RPG::Armor)
+    return @skill_cooldown[item.id] == 0  if item.is_a?(RPG::Skill)  && @skill_cooldown[item.id]
+    return @item_cooldown[item.id] == 0   if item.is_a?(RPG::Item)   && @item_cooldown[item.id]
+    return @weapon_cooldown[item.id] == 0 if item.is_a?(RPG::Weapon) && @weapon_cooldown[item.id]
+    return @armor_cooldown[item.id] == 0  if item.is_a?(RPG::Armor)  && @armor_cooldown[item.id]
     return true
   end
   #--------------------------------------------------------------------------

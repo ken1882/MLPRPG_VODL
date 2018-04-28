@@ -114,7 +114,7 @@ class Window_TacticItemList < Window_ItemList
           @command.condition = item
         end
       when :action
-        @command.action.reassign_item(item, false)
+        @command.action.reassign_item(item)
       end
     end
     super

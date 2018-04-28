@@ -30,7 +30,9 @@ class Game_Action
   attr_accessor :interruptible              # Can be interrupted?
   attr_accessor :user                       # Battler who used, may be inverted
   attr_accessor :target                     # Target destiniation
+  attr_accessor :target_pos                 # Target position at first place
   attr_accessor :subject                    # Battlers affected
+  attr_reader   :started
   attr_reader   :casting                    # Casting flag
   attr_reader   :item                       # Item index
   attr_reader	  :acting                     # Performing flag
@@ -47,15 +49,16 @@ class Game_Action
     @forcing = forcing
     @item 	 = item
     @time    = user.item_casting_time(item) if @item.is_a?(RPG::BaseItem)
-    @time_needed = @time
+    @time_needed   = @time
+    @target_pos    = target.pos if @target
     @effect_delay  = item.tool_effectdelay rescue 0
     @interruptible = true
-    @casting       = true
+    @started       = false
+    @casting       = false
     @acting		     = false
     @done		       = false
     @casted        = false
     @symbol_item   = nil
-    get_symbol_item if item.is_a?(Symbol)
   end
   #---------------------------------------------------------------------------
   #  *) Start action
@@ -66,6 +69,8 @@ class Game_Action
       anim_id += 1 if anim_id == DND::BattlerSetting::CastingAnimation && @time > 120
       user.map_char.start_animation(anim_id) rescue nil
     end
+    @started = true
+    @casting = true
   end
   #--------------------------------------------------------------------------
   def initial_casting?
@@ -88,9 +93,11 @@ class Game_Action
   #  *) Return action can be executed effectivly
   #---------------------------------------------------------------------------
   def action_impleable?
-  	return false if @user.distance_to(@subject.x, @subject.y) > item.tool_range
-  	return false if !path_clear?(@user.x, @user.y, @subject.x, @subject.y)
-  	return true
+    real_item = get_symbol_item
+    return true  if real_item.is_a?(Symbol)
+  	return false if @user.distance_to(@target.x, @target.y) > item.tool_distance
+  	return @user.path_clear?(@user.x, @user.y, @target.x, @target.y) if real_item.melee?
+  	return @user.can_see?(@user.x, @user.y, @target.x, @target.y)
   end
   #---------------------------------------------------------------------------
   #  *) casting process
@@ -98,7 +105,6 @@ class Game_Action
   #---------------------------------------------------------------------------
   def do_casting
   	return if cast_done?
-    
   	@time -= user.csr if @time > 0
     if @time <= 0
       @casting = false
@@ -116,8 +122,22 @@ class Game_Action
   # * Frame update
   #---------------------------------------------------------------------------
   def update
-    do_acting  if @acting
-    do_casting unless cast_done?
+    if !@started
+      puts "imp: #{action_impleable?} #{need_chase?}"
+      if @target.nil? || @target.dead?
+        @done = true
+        puts "Action canceled"
+      elsif action_impleable?
+        self.start
+      elsif need_chase?
+        @user.chase_target(self, false)
+      end
+    end
+    puts "Target: #{@target.name}" if target
+    if @started
+      do_acting  if @acting
+      do_casting unless cast_done?
+    end
   end
   #---------------------------------------------------------------------------
   # * Set execution flas
@@ -140,7 +160,7 @@ class Game_Action
   end
   #---------------------------------------------------------------------------
   def cast_done?
-    return !@casting
+    return !@casting && @started
   end
   #---------------------------------------------------------------------------
   def casted?
@@ -165,10 +185,9 @@ class Game_Action
     execute
   end
   #---------------------------------------------------------------------------
-  def reassign_item(item, redect = true)
+  def reassign_item(item)
     @symbol_item  = item.is_a?(Symbol) ? item : nil
     @item         = item
-    get_symbol_item if @symbol_item && redect
     @time         = user.item_casting_time(item) if @item.is_a?(RPG::BaseItem)
     @time_needed  = @time
     @effect_delay = item.tool_effectdelay rescue 0
@@ -198,35 +217,27 @@ class Game_Action
   def get_symbol_item
     case @item
     when :attack_mainhoof
-      reassign_item(@user.primary_weapon)
+      return @user.primary_weapon
     when :attack_offhoof
-      reassign_item(@user.secondary_weapon)
-    when :target_none
-      @user.map_char.set_target(nil)
+      return @user.secondary_weapon
     when :hp_most_power
       potions = $game_party.items.select{|item| item.hp_recover? && !item.mp_recover?}
       potion  = potions.max_by{|item| item.price}
-      reassign_item(potion)
+      return potion
     when :hp_least_power
       potions = $game_party.items.select{|item| item.hp_recover? && !item.mp_recover?}
       potion  = potions.min_by{|item| item.price}
-      reassign_item(potion)
+      return potion
     when :ep_most_power
       potions = $game_party.items.select{|item| !item.hp_recover? && item.mp_recover?}
       potion  = potions.max_by{|item| item.price}
-      reassign_item(potion)
+      return potion
     when :ep_least_power
       potions = $game_party.items.select{|item| !item.hp_recover? && !item.mp_recover?}
       potion  = potions.min_by{|item| item.price}
-      reassign_item(potion)
-    when :set_target
-      @user.map_char.set_target(@target)
-    when :move_away
-      @user.map_char.move_away_from_character(@target)
-    when :move_close
-      @user.map_char.move_toward_character(@target)
+      return potion
     else
-      @item
+      return @item
     end
   end
   #--------------------------------------------------------------------------
@@ -236,6 +247,15 @@ class Game_Action
     return false if @item == :add_command
     return false if @item.is_a?(Symbol) && !Vocab::Tactic::Name_Table.include?(@item)
     return true
+  end
+  #---------------------------------------------------------------------------
+  def need_chase?
+    return @need_chase_flag unless @need_chase_flag.nil?
+    real_item = get_symbol_item
+    return @need_chase_flag = false if real_item.is_a?(Symbol)
+    return @need_chase_flag = false if @target == @user
+    return @need_chase_flag = false if real_item.is_a?(RPG::UsableItem) && real_item.for_user?
+    return @need_chase_flag = true
   end
   #---------------------------------------------------------------------------
 end

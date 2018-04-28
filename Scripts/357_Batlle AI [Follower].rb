@@ -24,17 +24,26 @@ class Game_Follower < Game_Character
   alias update_dnd_combat update
   def update
     update_dnd_combat
+    update_timer
     update_battler
+  end
+  #----------------------------------------------------------------------------
+  def update_timer
+    @chase_timer  -= 1 if @chase_timer > 0
+    @chase_pathfinding_timer -= 1 if @chase_pathfinding_timer > 0
   end
   #----------------------------------------------------------------------------
   def update_battler
     return if dead? || $game_system.story_mode?
     @combat_timer -= 1 if @combat_timer > 0
-    @chase_timer  -= 1 if @chase_timer > 0
-    @chase_pathfinding_timer -= 1 if @chase_pathfinding_timer > 0
-    return if @next_action || halt?
-    chase_target  if @current_target
-    update_combat if @current_target && @combat_timer == 0
+    update_combat if @combat_timer == 0 && !halt?
+  end
+  #----------------------------------------------------------------------------
+  def update_combat
+    return set_target(nil) if aggressive_level == 0
+    start_timer(:combat)
+    puts "AI: #{$game_player.followers.tactic_enabled?}"
+    process_tactic_commands if $game_player.followers.tactic_enabled?
   end
   #----------------------------------------------------------------------------
   # *) Determind sight angle
@@ -75,6 +84,17 @@ class Game_Follower < Game_Character
       best = [enemy, dis] if dis < best.last
     end
     return best.first
+  end
+  #----------------------------------------------------------------------------
+  def start_timer(sym, plus = 0)
+    case sym
+    when :combat
+      return @combat_timer = 20 + plus;
+    when :chase_pathfinding
+      return @chase_pathfinding_timer = 60 + plus;
+    when :chase
+      return @chase_timer = 0;
+    end
   end
   #----------------------------------------------------------------------------
 end

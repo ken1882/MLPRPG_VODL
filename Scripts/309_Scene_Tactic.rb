@@ -74,8 +74,8 @@ class Scene_Tactic < Scene_MenuBase
     wx, wy = @status_window.width, 0
     ww, wh = Graphics.width - wx, @status_window.height
     @hint_window = Window_Base.new(wx,wy,ww,wh)
-    ty = wh / 2 - @hint_window.contents.font.size
-    rect  = Rect.new(0, ty,ww, wh)
+    ty = wh / 2 - @hint_window.line_height
+    rect  = Rect.new(0, ty,ww, @hint_window.line_height)
     @hint_window.draw_text(rect, Vocab::Tactic::Help)
   end
   #--------------------------------------------------------------------------

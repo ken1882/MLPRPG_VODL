@@ -36,7 +36,6 @@ class Game_Follower < Game_Character
     @blend_type     = $game_player.blend_type
     update_movement
     @combat_mode_timer -= 1 if @combat_mode_timer > 0
-    update_combat_mode if $game_player.followers.combat_mode?
     super
     update_collision_pos
   end
@@ -71,13 +70,14 @@ class Game_Follower < Game_Character
   # * Combat mode on
   #--------------------------------------------------------------------------
   def process_combat_phase
-    set_target(find_nearest_enemy) unless aggressive_level < 2
+    @fighting = true
   end
   #--------------------------------------------------------------------------
   # * Combat mode off
   #--------------------------------------------------------------------------
   def retreat_combat
     set_target(nil)
+    @fighting = false
     chase_preceding_character
   end
   #---------------------------------------------------------------------------
@@ -158,7 +158,7 @@ class Game_Follower < Game_Character
     return if $game_system.story_mode?
     return if aggressive_level < 2 || @combat_mode_timer > 0
     @combat_mode_timer = 30
-    process_combat_phase if @current_target.nil?
+    process_combat_phase
   end
   #----------------------------------------------------------------------------
   # * Use item
@@ -195,10 +195,6 @@ class Game_Follower < Game_Character
     elsif (item.tool_itemcost || 0) > 0
       return $data_items[item.tool_itemcost]
     end
-  end
-  #--------------------------------------------------------------------------
-  def visible_sight
-    return 8
   end
   #----------------------------------------------------------------------------
   def battler

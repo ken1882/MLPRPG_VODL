@@ -218,8 +218,8 @@ module BattleManager
   end
   #--------------------------------------------------------------------------
   def self.apply_action_effect(action)
-    execute_subaction(action) if action.item.tool_invoke
-    return apply_subitem(action)      if action.item.item_required?
+    execute_subaction(action)    if action.item.tool_invoke
+    return apply_subitem(action) if action.item.item_required?
     action.subject = determine_effected_targets(action.user, action.item, action.target)
     action.user.use_item(action.item) if action.item.tool_animmoment == 0 # Directly use
     apply_skill(action)  if action.item.is_a?(RPG::Skill)
@@ -231,6 +231,7 @@ module BattleManager
   def self.apply_subitem(action)
     return if action.user.dead?
     action.item = action.user.get_ammo_item(action.item)
+    
     if action.target.is_a?(Game_Battler)
       action.target = BattleManager.autotarget(action.user, action.item)
     end
@@ -309,7 +310,7 @@ module BattleManager
     invoke_action(action)
   end
   #--------------------------------------------------------------------------
-  # * Apply 
+  # * Apply Weapon
   #--------------------------------------------------------------------------
   def self.apply_weapon(action)
     invoke_action(action)

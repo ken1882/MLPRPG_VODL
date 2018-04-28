@@ -57,11 +57,13 @@ module Tactic_Config
     end
     #--------------------------------------------------------------------------
     def pick_hp_lowest
-      return @candidates.min_by{|ch| ch.hp.to_f / ch.mhp}
+      re = @candidates.min_by{|ch| ch.hp.to_f / ch.mhp}
+      return re.empty? ? nil : re
     end
     #--------------------------------------------------------------------------
     def pick_hp_highest
-      return @candidates.max_by{|ch| ch.hp.to_f / ch.mhp}
+      re = @candidates.max_by{|ch| ch.hp.to_f / ch.mhp}
+      return re.empty? ? nil : re
     end
     #--------------------------------------------------------------------------
     def pick_state_included
@@ -69,19 +71,23 @@ module Tactic_Config
       @candidates.each do |ch|
         return ch if ch.state?(@args[0])
       end
+      return nil
     end
     #--------------------------------------------------------------------------
     def pick_nearest_visible
       cx, cy = @user.x, @user.y
       @candidates.each do |ch|
+        next if ch.dead?
         return ch if @user.can_see?(cx, cy, ch.x, ch.y)
       end
+      return nil
     end
     #--------------------------------------------------------------------------
     def pick_attacking_ally
       ally = @args[0]
       ally = ally.battler if ally
       @candidates.each do |ch|
+        next if ch.dead?
         if !ch.current_target.nil?
           return ch if ally.nil?
           return ch if ch.current_target.battler == ally.battler
@@ -93,16 +99,20 @@ module Tactic_Config
       ally = @args[0]
       return ally.map_char.current_target if ally
       $game_party.members.each do |ch|
+        next if ch.dead?
         next if ch.nil? || !ch.map_char
         return ch.map_char.current_target if ch.map_char.current_target
       end
+      return nil
     end
     #--------------------------------------------------------------------------
     def pick_rank
       return if @args[0].nil?
       @candidates.each do |ch|
+        next if ch.dead?
         return ch if ch.rank == ch.rank
       end
+      return nil
     end
     #--------------------------------------------------------------------------
   end
@@ -127,7 +137,7 @@ module Tactic_Config
       @user = user
       @target = user.current_target
       @args = args
-      return method(symbol).call if @target
+      return method(Condition_Table[symbol]).call if @target
     end
     #--------------------------------------------------------------------------
     def return_any
@@ -172,7 +182,7 @@ module Tactic_Config
     
   end # queued: tactic AI
   #--------------------------------------------------------------------------
-  # * Handling the conditions about player team
+  # * Handling the conditions about player itself
   #--------------------------------------------------------------------------
   module Players
      #--------------------------------------------------------------------------
@@ -194,7 +204,7 @@ module Tactic_Config
     def start_check(user, symbol, args)
       @user = @user
       @args = args
-      return method(symbol).call
+      return method(Condition_Table[symbol]).call
     end
     #--------------------------------------------------------------------------
     def return_any
@@ -250,7 +260,78 @@ module Tactic_Config
       return number >= @args[0]
     end
   end
-  
+  #--------------------------------------------------------------------------
+  # * Handling the conditions about other party member
+  #--------------------------------------------------------------------------
+  module Party
+     #--------------------------------------------------------------------------
+    Condition_Table = {
+      :has_state              => :state_included?,
+      :hp_lower               => :hp_lower,
+      :ep_lower               => :ep_lower,
+      :being_attacked_by_type => :last_attacked_type,
+      :using_attack_type      => :current_attack_type,
+      :surrounded_by_enemies  => :nearby_enemy_number
+    }
+    #--------------------------------------------------------------------------
+    module_function
+    #--------------------------------------------------------------------------
+    def start_check(user, symbol, args)
+      @user = @user
+      @args = args
+      @candidates = $game_party.members.select{|member| member.map_char}
+      return method(Condition_Table[symbol]).call
+    end
+    #--------------------------------------------------------------------------
+    def state_included?
+      @candidates.each do |member|
+        return member if member.state?(@args[0])
+      end
+      return false
+    end
+    #--------------------------------------------------------------------------
+    def hp_lower
+      @candidates.each do |member|
+        percent = @args[0] / 100.0
+        return member if (member.hp.to_f / member.mhp) <= percent
+      end
+      return false
+    end
+    #--------------------------------------------------------------------------
+    def ep_lower
+      @candidates.each do |member|
+        percent = @args[0] / 100.0
+        return member if (member.mp.to_f / member.mmp) <= percent
+      end
+      return false
+    end
+    #--------------------------------------------------------------------------
+    def last_attacked_type
+      @candidates.each do |member|
+        if member.last_attacked_action.collect{|a| a.item}.any?{|i| i.attack_type == @args[0]}
+          return member
+        end
+      end
+      return false
+    end
+    #--------------------------------------------------------------------------
+    def current_attack_type
+      @candidates.each do |member|
+        return member if member.primary_weapon.attack_type == @args[0]
+      end
+      return false
+    end
+    #--------------------------------------------------------------------------
+    def nearby_enemy_number
+      @candidates.each do |member|
+        number = BattleManager.opponent_battler(@user).select{|ch| ch.distance_to_character(member) < 3}
+        return member if number >= @args[0]
+      end
+      return false
+    end
+    #--------------------------------------------------------------------------
+  end
+  #--------------------------------------------------------------------------
 end
 #==============================================================================
 # ** Module: Tactic Condition

@@ -147,10 +147,9 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def update_action
     return if $game_system.story_mode?
-    if @next_action && battler.stiff == 0
+    if !@action && @next_action && battler.stiff == 0
       @ori_step_anime = @step_anime
-      @action      = @next_action.dup
-      @action.start
+      @action         = @next_action.dup
       @next_action = nil
       @step_anime = true unless static_object?
       unless @action.item.tool_castime < 10
@@ -171,7 +170,6 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def execute_action
     return if $game_system.story_mode?
-    @action.get_symbol_item unless @action.item_valid?
     return @action.execute  unless @action.item_valid?
     if @action.item.tool_castime > 5
       info = sprintf("%s: %s", @action.user.name, @action.item.name)

@@ -226,7 +226,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   # * Push new projectile sprite
   #--------------------------------------------------------------------------
-  def setup_projectile(obj)
+  def setup_projectile(obj) # final method
     @projectiles.push(obj)
   end
   #--------------------------------------------------------------------------
@@ -247,7 +247,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   # * Set up weapon graphic
   #--------------------------------------------------------------------------
-  def setup_weapon_use(action)
+  def setup_weapon_use(action) # final method
     @weapon_sprites[action.user.hashid].setup_action(action)
   end
   #--------------------------------------------------------------------------

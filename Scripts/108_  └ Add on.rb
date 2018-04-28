@@ -11,7 +11,7 @@ class Game_Followers
   #--------------------------------------------------------------------------
   alias init_dnd initialize
   def initialize(leader)
-    @fighting = false
+    @fighting = true
     init_dnd(leader)
   end
   #--------------------------------------------------------------------------
@@ -47,5 +47,6 @@ class Game_Followers
   def combat_mode?
     @fighting
   end
-  
+  alias :tactic_enabled? :combat_mode?
+  #--------------------------------------------------------------------------
 end

@@ -361,6 +361,7 @@ class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   def casting?
     return false if @action.nil?
+    return false unless @action.started
     return !@action.cast_done?
   end
   #--------------------------------------------------------------------------
@@ -384,6 +385,10 @@ class Game_Character < Game_CharacterBase
   #--------------------------------------------------------------------------
   def altitude=(_new)
     @altitude = _new
+  end
+  #--------------------------------------------------------------------------
+  def visible_sight
+    return 8
   end
   #--------------------------------------------------------------------------
 end

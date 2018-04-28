@@ -422,8 +422,8 @@ class Game_Event < Game_Character
     return if $game_system.story_mode?
     if !@pathfinding_moves.empty?
       process_pathfinding_movement
-    elsif BattleManager.valid_battler?(self) && @current_target
-      chase_target
+    #elsif BattleManager.valid_battler?(self) && @current_target
+    #  chase_target
     elsif near_the_screen? && @stop_count > stop_count_threshold
       case @move_type
       when 1;  move_type_random

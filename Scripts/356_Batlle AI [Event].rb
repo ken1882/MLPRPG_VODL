@@ -18,10 +18,6 @@ class Game_Event < Game_Character
     update_gaevdndai
   end
   #----------------------------------------------------------------------------
-  def update_battler_situation_normal
-    update_sight
-  end
-  #----------------------------------------------------------------------------
   # * update enemies in sight
   #----------------------------------------------------------------------------
   def update_sight
@@ -76,9 +72,8 @@ class Game_Event < Game_Character
   #----------------------------------------------------------------------------
   def update_battler
     return if dead? || $game_system.story_mode?
-    update_sight
     @combat_timer -= 1 if @combat_timer > 0
-    update_combat if @current_target && @combat_timer == 0 && !halt?
+    update_combat if @combat_timer == 0 && !halt?
   end
   #----------------------------------------------------------------------------
   def update_sighted
