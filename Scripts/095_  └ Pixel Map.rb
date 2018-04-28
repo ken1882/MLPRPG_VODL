@@ -105,10 +105,14 @@ class Game_Map
   def setup_pixel_collision(x, y, type)
     blocked     = []
     block_rects = [
-      Rect.new( 0, 1, 4, 3),
-      Rect.new(-3,-1, 3, 4),
-      Rect.new( 1,-3, 3, 6),
-      Rect.new( 0,-3, 4, 2)
+      #Rect.new( 0, 1, 4, 3), # 2
+      #Rect.new(-3,-1, 3, 4), # 4
+      #Rect.new( 1,-3, 3, 6), # 6
+      #Rect.new( 0,-3, 4, 2)  # 8
+      Rect.new( 0, 1, 4, 3), # 2
+      Rect.new(-3,-1, 3, 4), # 4
+      Rect.new( 1,-3, 3, 6), # 6
+      Rect.new( 0,-3, 4, 2)  # 8
     ]
     px = x * Pixel
     py = y * Pixel

@@ -75,10 +75,9 @@ module Tactic_Config
     end
     #--------------------------------------------------------------------------
     def pick_nearest_visible
-      cx, cy = @user.x, @user.y
       @candidates.each do |ch|
         next if ch.dead?
-        return ch if @user.can_see?(cx, cy, ch.x, ch.y)
+        return ch if @user.battler_in_sight?(ch)
       end
       return nil
     end

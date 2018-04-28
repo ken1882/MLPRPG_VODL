@@ -100,5 +100,9 @@ class Game_Enemy < Game_Battler
     
     return skill
   end
+  #---------------------------------------------------------------------------
+  def load_tactic_commands
+    @tactic_commands = TacticCommandModule.load_template(:basic, self)
+  end
   
 end

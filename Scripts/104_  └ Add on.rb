@@ -274,5 +274,10 @@ class Game_Player < Game_Character
     !@through && (pos?(x, y)  ||
     !$game_map.effectus_party_pos[y * $game_map.width + x].empty?)
   end
+  
+  def test_cond
+    return $game_player.path_clear?($game_player.x, $game_player.y, $game_map.events[3].x, $game_map.events[3].y)
+  end
+  
   #----------------------------------------------------------------------------
 end

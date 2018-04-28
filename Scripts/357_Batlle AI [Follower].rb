@@ -42,7 +42,7 @@ class Game_Follower < Game_Character
   def update_combat
     return set_target(nil) if aggressive_level == 0
     start_timer(:combat)
-    puts "AI: #{$game_player.followers.tactic_enabled?}"
+    #puts "AI: #{$game_player.followers.tactic_enabled?}"
     process_tactic_commands if $game_player.followers.tactic_enabled?
   end
   #----------------------------------------------------------------------------
@@ -64,13 +64,7 @@ class Game_Follower < Game_Character
   #----------------------------------------------------------------------------
   def in_sight?(target, dis)
     return false if !target.visible? && !true_sight
-    puts "#{target}"
-    offset  = target.body_size / 2
-    tx, ty  = target.x + offset, target.y + offset
-    angle   = determind_sight_angles(75)
-    result  = Math.in_arc?(tx, ty, @x, @y, angle[0], angle[1], dis - 1 + offset*3, @direction)
-    result &= can_see?(@x, @y, target.x, target.y)
-    return result
+    return can_see?(@x, @y, target.x, target.y)
   end
   #----------------------------------------------------------------------------
   def find_nearest_enemy

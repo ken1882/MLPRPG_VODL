@@ -348,6 +348,7 @@ class Game_Event < Game_Character
     debug_print "Spawn enemy #{@enemy.name} at event #{@id}"
     BattleManager.register_battler(self)
     $game_map.make_unique_names
+    @enemy.load_tactic_commands
   end
   #--------------------------------------------------------------------------
   # * Move Type : Random.                                               [REP]

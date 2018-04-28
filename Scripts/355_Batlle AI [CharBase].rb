@@ -11,7 +11,6 @@ class Game_Character < Game_CharacterBase
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor :combat_timer       # lazy update timer
-  attr_accessor :tactic_commands    # tactic commadns, unfinished
   attr_reader   :translucent
   #--------------------------------------------------------------------------
   # * Initialize Public Member Variables
@@ -57,18 +56,17 @@ class Game_Character < Game_CharacterBase
       if primary_weapon
         action = Game_Action.new(battler, target, primary_weapon)
       else
-        return move_away_from_character(target)
+        return escape_from_threat(target)
       end
     end
     
     do_ok = impleable.nil? ? action.action_impleable? : impleable
-    if do_ok
+    if do_ok && distance_to_chatacter(target) < 2
       # Impleaable, wondering around
       movable_dir = [2,4,6,8]
       movable_dir.delete(turn_toward_character(target))
       move_straight(movable_dir[rand(3)], false)
       start_timer(:chase) if @chase_pathfinding_timer == 0
-      puts "move random"
     else
       # If unimpleable, chase target
       if @chase_pathfinding_timer == 0
@@ -77,11 +75,9 @@ class Game_Character < Game_CharacterBase
                            tool_range: action.item.tool_distance)
         start_timer(:chase_pathfinding)
         start_timer(:chase, 112)
-        puts "chase pathfinding"
       else
         move_toward_character(target)
         start_timer(:chase)
-        puts "chase normal"
       end
     end # do_ok
   end
@@ -103,10 +99,12 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   # tag: last work (bloody AI
-  def process_tactic_commands
-    @tactic_commands.each do |command|
+  # fix the AI of crazy killing machine
+  def process_tactic_commands(spec_category = nil)
+    tactic_commands.each do |command|
+      next if spec_category && command.category != spec_category
       pas = command.check_condition
-      puts "CMD: #{command.category} #{command.condition_symbol} >> #{pas}"
+      puts "CMD: #{self.name} #{command.category} #{command.condition_symbol} >> #{pas}"
       next unless command.check_condition
       action = command.action.dup
       interpret_tactic_action(action, command.get_target)
@@ -114,6 +112,7 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def interpret_tactic_action(action, target)
+    return if @next_action
     item = action.get_symbol_item
     return execute_symbol_action(item, target) if item.is_a?(Symbol)
     use_tool(item, target)
@@ -130,7 +129,7 @@ class Game_Character < Game_CharacterBase
     when :set_target
       set_target(target) unless target.is_friend?(self) || !change_target?(target)
     when :move_away
-      move_away_from_character(target) unless distance_to_character(target) > 5
+      escape_from_threat(target)
     when :move_close
       move_toward_character(target) unless distance_to_character(target) < 2
     end
@@ -209,6 +208,15 @@ class Game_Character < Game_CharacterBase
     return value
   end
   #----------------------------------------------------------------------------
+  def battler_in_sight?(battler)
+    dis = distance_to_character(battler)
+    brange = (blind_sight rescue 0)
+    vrange = visible_sight;
+    return false if dis > vrange
+    return true  if dis <= brange
+    return in_sight?(battler, vrange)
+  end
+  #----------------------------------------------------------------------------
   # *) sight
   #----------------------------------------------------------------------------
   def in_sight?(target, dis)
@@ -232,6 +240,11 @@ class Game_Character < Game_CharacterBase
   end
   #---------------------------------------------------------------------------
   def update_sight
+  end
+  #----------------------------------------------------------------------------
+  def tactic_commands
+    return battler.tactic_commands if battler != self
+    return []
   end
   #----------------------------------------------------------------------------
   def start_timer(sym, plus = 0)

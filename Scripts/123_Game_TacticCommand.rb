@@ -7,7 +7,7 @@ class Game_TacticCommand
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_accessor :actor
+  attr_accessor :battler
   attr_accessor :action
   attr_accessor :condition
   attr_accessor :condition_symbol
@@ -19,8 +19,8 @@ class Game_TacticCommand
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  def initialize(actor, args = [])
-    @actor     = actor
+  def initialize(battler, args = [])
+    @battler   = battler
     @action    = nil
     @args      = args
     @target    = nil
@@ -45,21 +45,21 @@ class Game_TacticCommand
   #--------------------------------------------------------------------------
   def check_condition(forced = false)
     return unless (@enabled && @check_timer == 0) || forced
-    return false unless @actor.cooldown_ready?(@action.item)
+    return false unless @battler.cooldown_ready?(@action.item)
     #return eval(@condition) if condition_symbol == :code
     case @category
     when :targeting
-      @target = Tactic_Config::Enemy.start_check(@actor, condition_symbol, args)
+      @target = Tactic_Config::Enemy.start_check(@battler, @condition_symbol, @args)
       return @target ? true : false
     when :fighting
-      return false unless @actor.current_target
-      if @actor.current_target.dead?
-        @actor.process_target_dead
+      return false unless @battler.current_target
+      if @battler.current_target.dead?
+        @battler.process_target_dead
         return false
       end
-      return Tactic_Config::Target.start_check(@actor, condition_symbol, args)
+      return Tactic_Config::Target.start_check(@battler, @condition_symbol, @args)
     when :self
-      return Tactic_Config::Players.start_check(@actor, condition_symbol, args)
+      return Tactic_Config::Players.start_check(@battler, @condition_symbol, @args)
     end
   end
   #--------------------------------------------------------------------------
@@ -68,9 +68,9 @@ class Game_TacticCommand
     when :targeting
       return @target
     when :fighting
-      return @actor.current_target
+      return @battler.current_target
     when :self
-      return @actor
+      return @battler
     end
   end
   #--------------------------------------------------------------------------

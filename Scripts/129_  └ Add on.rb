@@ -86,7 +86,7 @@ class Sprite_Character < Sprite_Base
       else
         index = @character.character_index
       end
-      return unless index
+      
       pattern = @character.pattern < 3 ? @character.pattern : 1
       sx = (index % 4 * 3 + pattern) * @cw
       sy = (index / 4 * 4 + (@character.direction - 2) / 2) * @ch

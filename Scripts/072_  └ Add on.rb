@@ -95,6 +95,7 @@ class Game_Action
   def action_impleable?
     real_item = get_symbol_item
     return true  if real_item.is_a?(Symbol)
+    return true  if @target.battler == @user.battler
   	return false if @user.distance_to(@target.x, @target.y) > item.tool_distance
   	return @user.path_clear?(@user.x, @user.y, @target.x, @target.y) if real_item.melee?
   	return @user.can_see?(@user.x, @user.y, @target.x, @target.y)
@@ -123,17 +124,17 @@ class Game_Action
   #---------------------------------------------------------------------------
   def update
     if !@started
-      puts "imp: #{action_impleable?} #{need_chase?}"
+      #puts "imp: #{action_impleable?} #{need_chase?}"
       if @target.nil? || @target.dead?
         @done = true
-        puts "Action canceled"
+        #puts "Action canceled"
       elsif action_impleable?
         self.start
       elsif need_chase?
         @user.chase_target(self, false)
       end
     end
-    puts "Target: #{@target.name}" if target
+    #puts "Target: #{@target.name}" if target
     if @started
       do_acting  if @acting
       do_casting unless cast_done?

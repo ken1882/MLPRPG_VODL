@@ -14,7 +14,10 @@ class Game_Event < Game_Character
   #--------------------------------------------------------------------------
   alias update_gaevdndai update
   def update
-    update_timer
+    if @enemy
+      update_timer
+      update_sight if effectus_near_the_screen?
+    end
     update_gaevdndai
   end
   #----------------------------------------------------------------------------
@@ -24,10 +27,8 @@ class Game_Event < Game_Character
     return unless aggressive_level > 1 && !static_object? && !halt?
     @sight_timer -= 1 if @sight_timer > 0
     return if @sight_timer > 0
-    @sight_timer = 15
-    return update_sighted if @current_target
-    target = find_nearest_enemy
-    set_target(target) if change_target?(target)
+    @sight_timer = 15 + rand(15)
+    process_tactic_commands(:targeting)
   end
   #----------------------------------------------------------------------------
   def update_timer
@@ -60,14 +61,6 @@ class Game_Event < Game_Character
     return false unless result
     result = can_see?(@x, @y, target.x, target.y)
     return result
-  end
-  #----------------------------------------------------------------------------
-  def battler_in_sight?(battler)
-    dis = distance_to_character(battler)
-    brange = blind_sight; vrange = visible_sight;
-    return false if dis > vrange
-    return true  if dis <= brange
-    return in_sight?(battler, vrange)
   end
   #----------------------------------------------------------------------------
   def update_battler

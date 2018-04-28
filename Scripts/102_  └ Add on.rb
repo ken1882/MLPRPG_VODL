@@ -94,8 +94,8 @@ class Game_Character < Game_CharacterBase
   end
   #--------------------------------------------------------------------------
   def obstacle_touched?(x, y, dir = @direction)
-    x += Pixel_Core::Tile_Range[dir][0]
-    y += Pixel_Core::Tile_Range[dir][1]
+    #x += Pixel_Core::Tile_Range[dir][0]
+    #y += Pixel_Core::Tile_Range[dir][1]
     px, py = (x*4).to_i, (y*4).to_i;
     return true  if !$game_map.pixel_valid?(px,py) || $game_map.over_edge?(x, y)
     return true  if $game_map.pixel_table[px,py,1] == 0
@@ -239,6 +239,9 @@ class Game_Character < Game_CharacterBase
     @next_action, char.next_action = char.next_action, @next_action
     @casting_flag, char.casting_flag = char.casting_flag, @casting_flag
     @step_anime, char.step_anime = char.step_anime, @step_anime
+    #@next_action, char.next_action = nil, nil
+    #@action = nil     unless @action && @action.started
+    #char.action = nil unless char.action && char.action.started
     set_direction(dir2); char.set_direction(dir1);
   end
   #----------------------------------------------------------------------------
@@ -388,7 +391,14 @@ class Game_Character < Game_CharacterBase
   end
   #--------------------------------------------------------------------------
   def visible_sight
-    return 8
+    return 5
+  end
+  #--------------------------------------------------------------------------
+  # * Move away from character if given character can see self
+  #--------------------------------------------------------------------------
+  def escape_from_threat(threat)
+    return if distance_to_character(threat) > threat.visible_sight
+    move_away_from_character(threat)
   end
   #--------------------------------------------------------------------------
 end
