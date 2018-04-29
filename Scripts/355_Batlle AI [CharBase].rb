@@ -47,10 +47,10 @@ class Game_Character < Game_CharacterBase
   def chase_target(action = nil, impleable = nil)
     target = action ? action.target : @current_target
     return if target.nil?
-    return if halt? || frozen?
+    return if halt?
     return process_target_dead if target.dead?
-    
-    return if aggressive_level < 3 || @chase_timer > 0 || command_holding?
+    return if @chase_timer > 0 && @chase_timer < 20
+    return if aggressive_level < 3 || command_holding?
     
     if !action
       if primary_weapon
@@ -60,8 +60,8 @@ class Game_Character < Game_CharacterBase
       end
     end
     
-    do_ok = impleable.nil? ? action.action_impleable? : impleable
-    if do_ok && distance_to_chatacter(target) < 2
+    do_ok = impleable.nil? ? action.action_impleable?(false) : impleable
+    if do_ok
       # Impleaable, wondering around
       movable_dir = [2,4,6,8]
       movable_dir.delete(turn_toward_character(target))
@@ -70,12 +70,13 @@ class Game_Character < Game_CharacterBase
     else
       # If unimpleable, chase target
       if @chase_pathfinding_timer == 0
-        tx, ty = target.x, target.y
+        tpos = target.pos
+        tx, ty = tpos.x, tpos.y
         move_to_position(tx, ty, goal: target, 
                            tool_range: action.item.tool_distance)
         start_timer(:chase_pathfinding)
-        start_timer(:chase, 112)
-      else
+        start_timer(:chase, 104)
+      elsif @pathfinding_moves.empty?
         move_toward_character(target)
         start_timer(:chase)
       end
@@ -98,13 +99,11 @@ class Game_Character < Game_CharacterBase
   def determine_item_usage
   end
   #----------------------------------------------------------------------------
-  # tag: last work (bloody AI
-  # fix the AI of crazy killing machine
   def process_tactic_commands(spec_category = nil)
     tactic_commands.each do |command|
       next if spec_category && command.category != spec_category
       pas = command.check_condition
-      puts "CMD: #{self.name} #{command.category} #{command.condition_symbol} >> #{pas}"
+      #puts "CMD: #{self.name} #{command.category} #{command.condition_symbol} >> #{pas}"
       next unless command.check_condition
       action = command.action.dup
       interpret_tactic_action(action, command.get_target)
@@ -123,7 +122,7 @@ class Game_Character < Game_CharacterBase
     when :target_none
       set_target(nil)
     end
-    return unless target || (target != battler && target != self)
+    return unless target || target.hashid != self.hashid
     return if target.is_a?(Array) && target.empty?
     case item
     when :set_target
@@ -254,7 +253,7 @@ class Game_Character < Game_CharacterBase
     when :chase_pathfinding
       return @chase_pathfinding_timer = 120 + plus;
     when :chase
-      return @chase_timer = 8 + plus;
+      return @chase_timer = 12 + plus;
     end
   end
   

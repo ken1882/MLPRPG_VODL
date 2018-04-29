@@ -51,6 +51,7 @@ begin
       Mouse.init
       Mouse.cursor.visible = false
       #PONY.InitOpenAL
+      PONY.InitObjSpace
       $assist.eval
       SceneManager.run
     end

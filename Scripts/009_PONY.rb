@@ -17,6 +17,7 @@ module PONY
   
   TimeCycle               = 60  # Frame
   @hashid_table           = {}
+  @inhert_table           = {}
   
   # tag: icon
   #----------------------------------
@@ -45,7 +46,7 @@ module PONY
     14  =>  0, # Light_Core::Effects
   }
   #----------------------------------
-  Bitset = Array.new(20){|i| 1 << i}
+  Bitset = Array.new(500){|i| 1 << i}
   #-----------------------------------------------------------------------------
   # * Module functions
   #-----------------------------------------------------------------------------
@@ -157,4 +158,49 @@ module PONY
   def hashid_table
     return @hashid_table
   end
+  #-----------------------------------------------------------------------------
+  def inhert_table
+    @inhert_table
+  end
+  #-----------------------------------------------------------------------------
+  def self.InitObjSpace
+    return ;
+    superclasses = Set.new
+    ObjectSpace.each_object(Class) do |cls|
+      superclasses.merge(cls.ancestors)
+    end
+    ar = []
+    superclasses.each{|i| ar << i}
+    bitnum = {}; bitnum.default = 0
+    objs = {}
+    
+    ar.each do |cls|
+      n = cls.ancestors.select{|i| i != cls}.size
+      cls.const_set(:Ancestor_num, n)
+      objs[n] = Array.new if objs[n].nil?
+      objs[n] << [ cls, bitnum[n] ]
+      bitnum[n] += 1;
+    end
+    
+    objs.each do |n, ary|
+      ary.each do |obj|
+        n = obj.first::Ancestor_num
+        cls = obj.first
+        offset = 0
+        n.times{|i| offset += bitnum[i]}
+        bit = (1 << (obj.last + offset))
+        cls.const_set(:InhertID, bit)
+      end
+    end
+    
+    ar.each do |cls|
+      final_bit = cls::InhertID
+      cls.ancestors.each do |anc|
+        final_bit |= anc::InhertID
+      end
+      cls.const_set(:InhertID, final_bit)
+    end
+    
+  end
+  #-----------------------------------------------------------------------------
 end

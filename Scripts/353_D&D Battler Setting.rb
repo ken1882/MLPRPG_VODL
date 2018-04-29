@@ -92,16 +92,16 @@ class Game_CharacterBase
       pos.x -= 0.125; pos.y -= 0.125;
       return pos
     end
-    if item.is_a?(RPG::Item) && item.for_friend?
-      return battler
-    elsif item.is_a?(RPG::Weapon)
-      return battler
-    elsif item.for_all? && (!$game_system.autotarget_aoe || Input.press?(:kALT))
+    
+    #return battler if item.is_weapon? rescue false
+    #return battler if item.is_item? && item.for_friend? rescue false
+    
+    if item.for_all? && (!$game_system.autotarget_aoe || Input.press?(:kALT))
       return BattleManager.target_selection(self, item)
-    elsif item.scope == BattleManager::Scope_OneEnemy && 
-      (!$game_system.autotarget  || Input.press?(:kALT))
+    elsif item.scope == BattleManager::Scope_OneEnemy && (!$game_system.autotarget  || Input.press?(:kALT))
       return BattleManager.target_selection(self, item)
     end
+    
     return BattleManager.autotarget(battler, item)
   end
   #----------------------------------------------------------------------------
@@ -139,6 +139,7 @@ class Game_CharacterBase
     #puts "[Debug]: Use item: #{item}, target: #{target} #{target.x} #{target.y}"
     target = BattleManager.autotarget(self, item) if target.nil?
     name = target.name rescue nil
+    turn_toward_character(target) if target
     #puts "[Debug]: Item final target: #{target}(#{name}) at #{[target.x,target.y]}"
     @next_action = Game_Action.new(battler, target, item)
   end
@@ -152,18 +153,21 @@ class Game_CharacterBase
       @action         = @next_action.dup
       @next_action = nil
       @step_anime = true unless static_object?
-      unless @action.item.tool_castime < 10
+      if @action.item.is_a?(RPG::BaseItem) && @action.item.tool_castime > 10
         @casting_flag = true
         @chase_timer  = 30
         @combat_timer = 30
         clear_pathfinding_moves
       end
+      tx, ty = @action.target.x, @action.target.y
+      move_to_position(tx, ty, tool_range: @action.item.tool_distance) unless @action.action_impleable?
     end
-    return if @action.nil?
-    @action.update
+    @action.update if @action
     return interrupt_casting  if casting? && casting_interrupted?
+    return unless @action
+    chase_target(@action) if @action.need_chase?
     execute_action     if @action.cast_done? && !@action.casted?
-    @action = nil      if @action.done?
+    cancel_action_without_penalty if @action.done?
   end
   #----------------------------------------------------------------------------
   # * Execute action
@@ -175,19 +179,24 @@ class Game_CharacterBase
       info = sprintf("%s: %s", @action.user.name, @action.item.name)
       SceneManager.display_info(info)
     end
-    @casting_flag = false
-    @aggressive_level = @ori_agresilv
-    @aggressive_level = 4 if @aggressive_level.nil?
-    @step_anime = @ori_step_anime; @ori_step_anime = nil;
     @action.execute
     turn_toward_character(@action.target)
     #debug_print("#{self.name} execute action: #{@action.item.name}")
+    
     process_skill_action  if @action.item.is_a?(RPG::Skill)
     process_item_action   if @action.item.is_a?(RPG::Item)
     process_weapon_action if @action.item.is_a?(RPG::Weapon)
     process_armor_action  if @action.item.is_a?(RPG::Armor)
     clear_combo           if !@weapon_combo_stack.empty? && !combo_continue?(@action.item)
     apply_action_stiff
+  end
+  #----------------------------------------------------------------------------
+  def cancel_action_without_penalty
+    @action       = nil
+    @casting_flag = false
+    @aggressive_level = @ori_agresilv
+    @aggressive_level = 4 if @aggressive_level.nil?
+    @step_anime = @ori_step_anime; @ori_step_anime = nil;
   end
   #----------------------------------------------------------------------------
   def apply_action_stiff
@@ -334,7 +343,7 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def controlable?
     return true unless @action
-    return @action.acting?
+    return !@action.acting?
   end
   
 end

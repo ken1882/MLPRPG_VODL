@@ -29,6 +29,7 @@ class Game_Event < Game_Character
     return if @sight_timer > 0
     @sight_timer = 15 + rand(15)
     process_tactic_commands(:targeting)
+    update_sighted if @current_target
   end
   #----------------------------------------------------------------------------
   def update_timer
@@ -70,19 +71,19 @@ class Game_Event < Game_Character
   end
   #----------------------------------------------------------------------------
   def update_sighted
-    if !battler_in_sight?(@current_target)
-      @sight_lost_timer -= 15 if @sight_lost_timer > 0
-      process_target_missing if @sight_lost_timer == 0
-    else
+    if battler_in_sight?(@current_target)
       @sight_lost_timer = 150
       @target_last_pos = @current_target.pos
+    else
+      @sight_lost_timer -= 15 if @sight_lost_timer > 0
+      process_target_missing  if @sight_lost_timer == 0
     end
-    new_target = find_nearest_enemy
-    set_target(new_target) if change_target?(new_target)
   end
   #----------------------------------------------------------------------------
   def process_target_missing
     return if !@target_last_pos
+    cancel_action_without_penalty if @action && !@action.started
+    @next_action = nil if @next_action.target == @current_target
     puts "#{name}: Target Missing, Last pos: #{[@target_last_pos.x, @target_last_pos.y]}"
     move_to_position(@target_last_pos.x, @target_last_pos.y, tool_range: 0) if aggressive_level > 3
     @target_last_pos = nil

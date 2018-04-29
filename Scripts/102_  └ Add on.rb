@@ -226,6 +226,8 @@ class Game_Character < Game_CharacterBase
     #SceneManager.display_info("#{self.name} - knocked out")
     $game_map.need_refresh = true
     @ori_through = @through
+    cancel_action_without_penalty
+    @next_action = nil
     set_target(nil)
   end
   #----------------------------------------------------------------------------
@@ -281,6 +283,7 @@ class Game_Character < Game_CharacterBase
     @character_name  = actor.character_name
     @character_index = actor.character_index
     moveto($game_player.x, $game_player.y) if distance_to_player > 2
+    set_target(nil)
   end
   #----------------------------------------------------------------------------
   def distance_to_character(charactor)
@@ -329,14 +332,13 @@ class Game_Character < Game_CharacterBase
   # * Turn Toward Character
   #--------------------------------------------------------------------------
   def turn_toward_character(character)
+    return @direction if character.pos == pos
     sx = distance_x_from(character.x)
     sy = distance_y_from(character.y)
     if sx.abs > sy.abs
-      re = sx > 0 ? 4 : 6
-      set_direction(re)
+      re = set_direction(sx > 0 ? 4 : 6)
     elsif sy != 0
-      re = sy > 0 ? 8 : 2
-      set_direction(re)
+      re = set_direction(sy > 0 ? 8 : 2)
     end
     return re
   end
@@ -359,13 +361,16 @@ class Game_Character < Game_CharacterBase
   # * Don't do anything
   #--------------------------------------------------------------------------
   def halt?
-    return casting? || @casting_flag
+    return true if casting?
+    return true if frozen?
+    return false
   end
   #--------------------------------------------------------------------------
   def casting?
     return false if @action.nil?
-    return false unless @action.started
-    return !@action.cast_done?
+    return true  if @casting_flag
+    return true  if @action.casting?
+    return false
   end
   #--------------------------------------------------------------------------
   def casting_index
@@ -399,6 +404,10 @@ class Game_Character < Game_CharacterBase
   def escape_from_threat(threat)
     return if distance_to_character(threat) > threat.visible_sight
     move_away_from_character(threat)
+  end
+  #--------------------------------------------------------------------------
+  def effectus_near_the_screen?
+    true
   end
   #--------------------------------------------------------------------------
 end

@@ -15,7 +15,7 @@ class Game_Follower < Game_Character
   end
   #----------------------------------------------------------------------------
   def set_target(target)
-    return if gather?# || command_gathering?
+    return if gather? && target
     super
   end
   #--------------------------------------------------------------------------
@@ -87,7 +87,7 @@ class Game_Follower < Game_Character
     when :chase_pathfinding
       return @chase_pathfinding_timer = 60 + plus;
     when :chase
-      return @chase_timer = 0;
+      return @chase_timer = 8 + plus;
     end
   end
   #----------------------------------------------------------------------------

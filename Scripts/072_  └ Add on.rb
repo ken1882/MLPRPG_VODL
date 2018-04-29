@@ -37,6 +37,7 @@ class Game_Action
   attr_reader   :item                       # Item index
   attr_reader	  :acting                     # Performing flag
   attr_reader	  :done                       # Executed flag
+  attr_reader   :ignore_distance
   attr_accessor :effect_delay               # Exexute damage delay
   attr_accessor :item_symbol
   #--------------------------------------------------------------------------
@@ -48,6 +49,7 @@ class Game_Action
     @subject = []
     @forcing = forcing
     @item 	 = item
+    @time    = 0
     @time    = user.item_casting_time(item) if @item.is_a?(RPG::BaseItem)
     @time_needed   = @time
     @target_pos    = target.pos if @target
@@ -92,11 +94,13 @@ class Game_Action
   #---------------------------------------------------------------------------
   #  *) Return action can be executed effectivly
   #---------------------------------------------------------------------------
-  def action_impleable?
+  def action_impleable?(check_cooldown = true)
     real_item = get_symbol_item
+    return true  if real_item.nil?
     return true  if real_item.is_a?(Symbol)
-    return true  if @target.battler == @user.battler
-  	return false if @user.distance_to(@target.x, @target.y) > item.tool_distance
+    return true  if @traget.is_a?(Game_Battler) && @target.battler == @user.battler
+  	return false if @user.distance_to(@target.x, @target.y) > real_item.tool_distance
+    return false if check_cooldown && (!@user.usable?(real_item) || @user.battler.stiff > 0)
   	return @user.path_clear?(@user.x, @user.y, @target.x, @target.y) if real_item.melee?
   	return @user.can_see?(@user.x, @user.y, @target.x, @target.y)
   end
@@ -123,22 +127,21 @@ class Game_Action
   # * Frame update
   #---------------------------------------------------------------------------
   def update
-    if !@started
-      #puts "imp: #{action_impleable?} #{need_chase?}"
-      if @target.nil? || @target.dead?
-        @done = true
-        #puts "Action canceled"
-      elsif action_impleable?
-        self.start
-      elsif need_chase?
-        @user.chase_target(self, false)
-      end
-    end
-    #puts "Target: #{@target.name}" if target
+    return @user.cancel_action_without_penalty if cancel_action?
+    start if !@started && action_impleable?
     if @started
       do_acting  if @acting
       do_casting unless cast_done?
     end
+  end
+  #---------------------------------------------------------------------------
+  def cancel_action?
+    return true if @target.nil?
+    return true unless @user.effectus_near_the_screen?
+    return false if @target.is_a?(POS)
+    return true unless @target.effectus_near_the_screen?
+    return true if target.dead?
+    return false
   end
   #---------------------------------------------------------------------------
   # * Set execution flas
@@ -158,6 +161,11 @@ class Game_Action
   def terminate
     @acting = false
     @done   = true
+  end
+  #---------------------------------------------------------------------------
+  def casting?
+    return false unless @started
+    return @casting
   end
   #---------------------------------------------------------------------------
   def cast_done?

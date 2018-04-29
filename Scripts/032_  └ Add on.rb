@@ -154,7 +154,7 @@ module BattleManager
   # * Decide one random ally (nearset if not AOE)
   #--------------------------------------------------------------------------
   def self.one_random_ally(user, item, sensor)
-    allies = ally_battler(user)
+    allies = ally_battler(user).select{|e| e.effectus_near_the_screen?}
     return determine_best_position(user, allies, item) if item.for_all?
     
     target = nil
@@ -173,7 +173,7 @@ module BattleManager
   # * Decide one random enemy (nearset if not AOE)
   #--------------------------------------------------------------------------
   def self.one_random_enemy(user, item, sensor)
-    enemies = opponent_battler(user)
+    enemies = opponent_battler(user).select{|e| e.effectus_near_the_screen?}
     return determine_best_position(user, enemies, item) if item.for_all?
     
     target = nil
@@ -220,6 +220,7 @@ module BattleManager
   def self.apply_action_effect(action)
     execute_subaction(action)    if action.item.tool_invoke
     return apply_subitem(action) if action.item.item_required?
+    action.user.turn_toward_character(action.target)
     action.subject = determine_effected_targets(action.user, action.item, action.target)
     action.user.use_item(action.item) if action.item.tool_animmoment == 0 # Directly use
     apply_skill(action)  if action.item.is_a?(RPG::Skill)

@@ -16,6 +16,15 @@ class Game_CharacterBase
     @move_speed = 4
   end
   #--------------------------------------------------------------------------
+  # * Change Direction to Designated Direction
+  #     d : Direction (2,4,6,8)
+  #--------------------------------------------------------------------------
+  def set_direction(d)
+    @stop_count = 0
+    @direction = d if !@direction_fix && d != 0
+    @direction
+  end
+  #--------------------------------------------------------------------------
   # * Create sprites for multi-animation display, call from Spriteset_Map
   #--------------------------------------------------------------------------
   def create_animation_queue

@@ -28,6 +28,13 @@ class Game_Player < Game_Character
     update_follower_movement
   end
   #-------------------------------------------------------------------------
+  def update_cancel_action
+    @action_cancel_timer += 1
+    return unless @action_cancel_timer > 4
+    @action_cancel_timer = 0
+    cancel_action_without_penalty
+  end
+  #-------------------------------------------------------------------------
   def process_party_movement
     process_pathfinding_movement
     trigger_target_event if @target_event

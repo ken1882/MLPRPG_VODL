@@ -391,7 +391,7 @@ class Game_Battler < Game_BattlerBase
     # process state effect
     states.compact.each do |state|
       state = $data_states[state] if state.is_a?(Fixnum)
-      value += (state_id.attack_bonus || 0)
+      value += (state.id.attack_bonus || 0)
     end
     return @effect_param_cache[:thac0] = value;
   end

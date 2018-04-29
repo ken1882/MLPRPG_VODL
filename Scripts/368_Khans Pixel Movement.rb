@@ -513,16 +513,18 @@ class Game_Player < Game_Character
   #-------------------------------------------------------------------------------
   def move_by_input
     return if !movable? || $game_map.interpreter.running?
-    case Input.dir8
-      when 1; move_dpixel(4,2)
-      when 2; move_pixel(2,true)
-      when 3; move_dpixel(6,2)
-      when 4; move_pixel(4,true)
-      when 6; move_pixel(6,true)
-      when 7; move_dpixel(4,8)
-      when 8; move_pixel(8,true)
-      when 9; move_dpixel(6,8)
+    d = Input.dir8
+    case d
+    when 1; move_dpixel(4,2)
+    when 2; move_pixel(2,true)
+    when 3; move_dpixel(6,2)
+    when 4; move_pixel(4,true)
+    when 6; move_pixel(6,true)
+    when 7; move_dpixel(4,8)
+    when 8; move_pixel(8,true)
+    when 9; move_dpixel(6,8)
     end
+    update_cancel_action if d > 0
   end
   #-------------------------------------------------------------------------------
   # * Disable damage floor

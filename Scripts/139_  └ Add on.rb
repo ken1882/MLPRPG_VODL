@@ -324,6 +324,16 @@ class Spriteset_Map
     sprite.dispose
   end
   #--------------------------------------------------------------------------
+  def dispose_event(event)
+    return unless event
+    sprite = @character_sprites.find {|sp| sp.character == event}
+    return unless sprite
+    dispose_sprite(sprite)
+    @character_sprites.delete(sprite)
+    $game_temp.effectus_sprites[event.id].dispose if $game_temp.effectus_sprites[event.id]
+    $game_temp.effectus_sprites.delete(event.id)
+  end
+  #--------------------------------------------------------------------------
   # * Free
   #--------------------------------------------------------------------------
   alias dispose_spmap_opt dispose

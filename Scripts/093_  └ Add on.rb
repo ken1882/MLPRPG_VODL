@@ -296,8 +296,12 @@ class Game_Map
     if battler.nil?
       @active_enemies = @active_enemies.compact
       @active_enemy_count = @active_enemies.size
-    else
+    elsif battler.current_target && battler.current_target.dead?
+      battler.process_target_dead
+    elsif battler.effectus_near_the_screen?
       battler.update_battler
+    else
+      battler.process_target_missing
     end
     return if @active_enemy_count == 0
     @enemy_update_index = (@enemy_update_index + 1) % @active_enemy_count
@@ -327,9 +331,12 @@ class Game_Map
   def terminate_event(event)
     puts "Terminate event: #{event.id}"
     @events.delete(event.id)
-    @cached_events.delete(event) if @cached_events
-    @keep_update_events.delete(event) if @keep_update_events
-    @forced_update_events.delete(event) if @forced_update_events
+    SceneManager.spriteset.dispose_event(event)
+    
+    # Theo's anti-lag
+    #@cached_events.delete(event) if @cached_events
+    #@keep_update_events.delete(event) if @keep_update_events
+    #@forced_update_events.delete(event) if @forced_update_events
   end
   #--------------------------------------------------------------------------
   # * Push character into active battlers
@@ -490,6 +497,15 @@ class Game_Map
     end
     debug_print "Action battler count: #{all_battlers.size}"
     make_unique_names
+    $game_party.members.each do |member|
+      member.assigned_hotkey.each_with_index do |item, index|
+        next unless item
+        member.assigned_hotkey[index] = $data_weapons[item.id] if item.is_weapon?
+        member.assigned_hotkey[index] = $data_armors[item.id]  if item.is_armor?
+        member.assigned_hotkey[index] = $data_items[item.id]   if item.is_item?
+        member.assigned_hotkey[index] = $data_skills[item.id]  if item.is_skill?
+      end
+    end
   end
   #--------------------------------------------------------------------------
   def clear_battlers

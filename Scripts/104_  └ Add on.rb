@@ -10,7 +10,7 @@ class Game_Player < Game_Character
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_accessor :target_event   # Event auto trigger when touched
-  attr_reader   :new_x, :new_y
+  attr_reader   :new_x, :new_y, :action_cancel_timer
   attr_accessor :recurrence_delay
   attr_accessor :free_fire
   #--------------------------------------------------------------------------
@@ -20,6 +20,7 @@ class Game_Player < Game_Character
   def initialize
     @target_event     = nil
     @recurrence_delay = nil
+    @action_cancel_timer = 0
     @free_fire = false
     initialize_gapc_opt
   end
@@ -184,11 +185,23 @@ class Game_Player < Game_Character
   # * Use item
   #----------------------------------------------------------------------------
   def use_tool(item, target = nil)
-    if @free_fire && item.ranged?
-      pos = Mouse.true_grid_by_pos(false)
-      pos = POS.new(pos[0], pos[1])
-      pos.x -= 0.125; pos.y -= 0.125;
-      target = pos
+    if @free_fire
+      if item.ranged?
+        pos = Mouse.true_grid_by_pos(false)
+        pos = POS.new(pos[0], pos[1])
+        pos.x -= 0.125; pos.y -= 0.125;
+        target = pos
+      else
+        dir = toward_mouse_direction
+        pos = POS.new(@x, @y)
+        case dir
+        when 8; pos.y -= 1;
+        when 2; pos.y += 1;
+        when 4; pos.x -= 1;
+        when 6; pos.x += 1;
+        end
+        target = pos
+      end
     end
     super(item, target)
     SceneManager.spriteset.hud_sprite[actor.index].draw_action(@next_action)
@@ -237,7 +250,7 @@ class Game_Player < Game_Character
   end
   #--------------------------------------------------------------------------
   def process_weapon_action
-    toward_mouse_direction if @free_fire
+    toward_mouse_direction
     super
   end
   #--------------------------------------------------------------------------
@@ -245,9 +258,9 @@ class Game_Player < Game_Character
     mx, my = *Mouse.true_grid_by_pos
     dx = (@x - mx).abs; dy = (@y - my).abs;
     if dx > dy
-      set_direction(@x < mx ? 6 : 4)
+      return set_direction(@x < mx ? 6 : 4)
     else
-      set_direction(@y < my ? 2 : 8)
+      return set_direction(@y < my ? 2 : 8)
     end
   end
   #----------------------------------------------------------------------------
@@ -274,10 +287,15 @@ class Game_Player < Game_Character
     !@through && (pos?(x, y)  ||
     !$game_map.effectus_party_pos[y * $game_map.width + x].empty?)
   end
-  
-  def test_cond
-    return $game_player.path_clear?($game_player.x, $game_player.y, $game_map.events[3].x, $game_map.events[3].y)
+  #----------------------------------------------------------------------------
+  # * Execute action
+  #----------------------------------------------------------------------------
+  def execute_action
+    super
+    @action_cancel_timer = 0
   end
-  
+  #----------------------------------------------------------------------------
+  def chase_target(action = nil, impleable = nil)
+  end
   #----------------------------------------------------------------------------
 end

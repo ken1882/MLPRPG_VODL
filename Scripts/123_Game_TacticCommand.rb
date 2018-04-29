@@ -47,6 +47,7 @@ class Game_TacticCommand
     return unless (@enabled && @check_timer == 0) || forced
     return false unless @battler.cooldown_ready?(@action.item)
     #return eval(@condition) if condition_symbol == :code
+    @target = nil
     case @category
     when :targeting
       @target = Tactic_Config::Enemy.start_check(@battler, @condition_symbol, @args)
