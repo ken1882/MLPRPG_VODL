@@ -44,6 +44,8 @@ class Object
   #------------------------------------------------------------------------
   alias :dp_is_a? :is_a?
   def is_a?(cls)
+    return dp_is_a?(cls)
+    # maybe there's a quickher way to check
     hash = Marshal.dump([ruby_class, cls])
     return PONY.inhert_table[hash] if PONY.inhert_table[hash]
     return PONY.inhert_table[hash] = dp_is_a?(cls)

@@ -84,7 +84,11 @@ module BattleManager
   #--------------------------------------------------------------------------
   # * Return alive allied battlers
   #--------------------------------------------------------------------------
-  def self.ally_battler(battler = $game_palyer)
+  def self.ally_battler(battler = $game_palyer, collision_only = false)
+    if collision_only
+      candidates = $game_map.get_nearby_quadtree_value(battler.last_quadtree_index)
+      return candidates.select{|c| c.team_id == battler.team_id}
+    end
     return $game_map.action_battlers[battler.team_id].compact.select{|char| !char.dead?}
   end
   #--------------------------------------------------------------------------
@@ -96,8 +100,17 @@ module BattleManager
   #--------------------------------------------------------------------------
   # * Return alive hostile battlers
   #--------------------------------------------------------------------------
-  def self.opponent_battler(battler = $game_player)
-    return @cache_opponents[battler.team_id] if @cache_opponents[battler.team_id]
+  def self.opponent_battler(battler = $game_player, collision_only = true)
+    
+    if collision_only
+      candidates = $game_map.get_nearby_quadtree_value(battler.last_quadtree_index)
+      return candidates.select{|c| c.team_id != battler.team_id}
+    end
+    
+    if @cache_opponents[battler.team_id]
+      return @cache_opponents[battler.team_id]
+    end
+      
     opponents = []
     $game_map.action_battlers.each do |key, members|
       next if key == battler.team_id
@@ -426,9 +439,10 @@ module BattleManager
   def self.in_battle?
     return true if boss_fight?
     return false unless @flags
-    return @flags[:in_battle] if @flags[:in_battle]
+    return @flags[:in_battle] unless @flags[:in_battle].nil?
+    
     if @battle_end_delay == 0
-      @flags[:in_battle] = all_battlers.any?{ |battler| battler.current_target.is_a?(Game_Actor) }
+      @flags[:in_battle] = opponent_battler($game_player, false).any?{|e| e.current_target && e.current_target.battler.is_a?(Game_Actor)}
       @battle_end_delay  = BattleEndDelay if @flags[:in_battle] == true
     else
       @flags[:in_battle] = true
@@ -456,7 +470,7 @@ module BattleManager
   def self.send_flag(args = {})
     if args[:in_battle] == true
       clear_flag(:in_battle)
-      @battle_end_delay = BattleEndDelay
+      @battle_end_delay  = BattleEndDelay
     elsif args[:in_battle] == false
       clear_flag(:in_battle)
     end

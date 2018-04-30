@@ -72,15 +72,17 @@ class Game_Event < Game_Character
     $game_map.effectus_event_pos[@y * $game_map.width + @x] << self
     @effectus_last_x = @x
     @effectus_last_y = @y
-    @effectus_position_registered = true    
+    @effectus_position_registered = true
+    
   end
   #----------------------------------------------------------------------------
   # * Move to another position cache 
   #----------------------------------------------------------------------------
   def update_position_moved
-    events = $game_map.effectus_event_pos
+    events   = $game_map.effectus_event_pos
     width = $game_map.width
     events[@y * width + @x] << events[@effectus_last_y * width + @effectus_last_x].delete(self)
+    
     if @effectus_tile
       tiles = $game_map.effectus_etile_pos
       tiles[@y * width + @x] << 

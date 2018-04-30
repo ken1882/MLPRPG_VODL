@@ -49,8 +49,8 @@ module Tactic_Config
       @args = args
       @user = user
       @candidates = BattleManager.opponent_battler(@user)
-      range = @user.visible_sight
-      @candidates = @candidates.select{|ch| @user.distance_to_character(ch) <= range}
+      @range = @user.visible_sight
+      @candidates = @candidates.select{|ch| @user.distance_to_character(ch) <= @range}
       @candidates.select!{|ch| @user.path_clear?(@user.x, @user.y, ch.x, ch.y) }
       @candidates.sort!{|a,b| @user.distance_to_character(a) <=> @user.distance_to_character(b)}
       return method(func).call
@@ -203,6 +203,7 @@ module Tactic_Config
     def start_check(user, symbol, args)
       @user = @user
       @args = args
+      @range = 8
       return method(Condition_Table[symbol]).call
     end
     #--------------------------------------------------------------------------
@@ -234,7 +235,7 @@ module Tactic_Config
     #--------------------------------------------------------------------------
     def alive_enemy_number
       enemies = BattleManager.opponent_battler(@user)
-      enemies.select!{|ch| @user.distance_to_character(ch) <= range}
+      enemies.select!{|ch| @user.distance_to_character(ch) <= @range}
       enemies.select!{|ch| @user.path_clear?(@user.x, @user.y, ch.x, ch.y) }
       number = enemies.size
       return number >= @args[0]

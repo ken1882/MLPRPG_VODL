@@ -523,10 +523,12 @@ class Game_Map
         next if @events[id].nil?
         @events[id].load_position(*pos)
         @events[id].set_direction(info[:dir])
+        @events[id].setup_quadtree_index
       elsif key[0] == "F"
         next if $game_player.followers[id].nil?
         $game_player.followers[id].load_position(*pos)
         $game_player.followers[id].set_direction(info[:dir])
+        $game_player.followers[id].setup_quadtree_index
       end
     end
     @accurate_character_info.clear

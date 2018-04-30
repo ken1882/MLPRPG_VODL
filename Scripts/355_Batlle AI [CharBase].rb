@@ -87,7 +87,7 @@ class Game_Character < Game_CharacterBase
     return if !primary_weapon
     return unless battler.cooldown_ready?(primary_weapon)
     return if halt?
-    BattleManager.opponent_battler(self).each do |enemy|
+    BattleManager.opponent_battler(self, true).each do |enemy|
       next if distance_to_character(enemy) > primary_weapon.tool_distance
       attack(enemy)
     end

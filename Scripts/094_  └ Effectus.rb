@@ -9,6 +9,8 @@ module Effectus
 end
 class Game_Map
   #--------------------------------------------------------------------------
+  SpacePartitionRange = 5
+  #--------------------------------------------------------------------------
   # * Public Instance Variables.                                        [NEW]
   #--------------------------------------------------------------------------
   attr_accessor :effectus_event_pos, :effectus_party_pos,
@@ -16,6 +18,7 @@ class Game_Map
                 :effectus_events_to_update, :effectus_pass_table,
                 :effectus_event_starting, :effectus_etriggers,
                 :effectus_tile_events, :effectus_need_refresh
+  attr_accessor :collision_quadtree
   #--------------------------------------------------------------------------
   # * Setup.                                                            [REP]
   #--------------------------------------------------------------------------
@@ -36,6 +39,8 @@ class Game_Map
     @effectus_etriggers        = Hash.new { |hash, key| hash[key] = [] }
     @effectus_need_refresh     = false
     setup_effectus(map_id)
+    setup_collision_quadtree
+    setup_character_quadtree_index
     
     @effectus_pass_table = Table.new($game_map.width, $game_map.height, 4)
     $game_player.followers.each do |follower|
@@ -202,6 +207,48 @@ if Effectus::UsePassable
     @effectus_pass_table[x, y + 1, 2] = 0
     @effectus_pass_table[x, y + 1, 3] = 0
   end
+  #--------------------------------------------------------------------------
+  def setup_collision_quadtree
+    @partition_width  = (width  + SpacePartitionRange - 1).to_i / SpacePartitionRange
+    @partition_height = (height + SpacePartitionRange - 1).to_i / SpacePartitionRange
+    @partition_size   = @partition_width * @partition_height
+    @partition_size.times do |i|
+      @collision_quadtree[i] = Array.new
+    end
+  end
+  #--------------------------------------------------------------------------
+  def get_quadtree_index(x, y)
+    return (y.to_i / SpacePartitionRange * @partition_width).to_i + (x.to_i / SpacePartitionRange).to_i
+  end
+  #--------------------------------------------------------------------------
+  def get_nearby_quadtree_value(leaf_id)
+    d5 = leaf_id
+    d8 = leaf_id - @partition_width
+    d2 = leaf_id + @partition_width
+    d4 = leaf_id - 1
+    d6 = leaf_id + 1
+    d7, d9 = d8 - 1, d8 + 1
+    d1, d3 = d2 - 1, d8 + 1
+    valid = [d1,d2,d3,d4,d5,d6,d7,d8,d9].select{|id| 0 <= id && id < @partition_size}
+    re    = []
+    for id in valid
+      #@collision_quadtree[id].compact!
+      @collision_quadtree[id].each do |battler|
+        re << battler
+      end
+    end
+    return re
+  end
+  #--------------------------------------------------------------------------
+  def setup_character_quadtree_index
+    characters = @events.values
+    $game_player.followers.each{|ch| characters << ch}
+    characters << $game_player
+    characters.each do |ch|
+      ch.setup_quadtree_index
+    end
+  end
+  #--------------------------------------------------------------------------
 end # if Effectus::UsePassable
   #--------------------------------------------------------------------------
 end

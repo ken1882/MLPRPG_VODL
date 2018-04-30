@@ -30,7 +30,7 @@ class Game_Projectile < Game_Character
     @action        = action
     @move_formula  = move_formula
     @substitute    = nil
-    @enemies       = BattleManager.opponent_battler(@action.user)
+    @enemies       = BattleManager.opponent_battler(@action.user, true)
     moveto([@user.x, 0].max, [@user.y, 0].max)
     restore
     activate

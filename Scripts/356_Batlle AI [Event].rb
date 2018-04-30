@@ -83,7 +83,7 @@ class Game_Event < Game_Character
   def process_target_missing
     return if !@target_last_pos
     cancel_action_without_penalty if @action && !@action.started
-    @next_action = nil if @next_action.target == @current_target
+    @next_action = nil if @next_action && @next_action.target == @current_target
     puts "#{name}: Target Missing, Last pos: #{[@target_last_pos.x, @target_last_pos.y]}"
     move_to_position(@target_last_pos.x, @target_last_pos.y, tool_range: 0) if aggressive_level > 3
     @target_last_pos = nil
