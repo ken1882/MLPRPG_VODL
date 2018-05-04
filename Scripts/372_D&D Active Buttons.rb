@@ -94,9 +94,9 @@ class Scene_Map < Scene_Base
     #--------------------------------------------------------------------------
     # > Party concentrate fire on player's target
     #--------------------------------------------------------------------------
-    elsif Input.trigger?(:kV)
+    elsif Input.trigger?(:kV) && $game_player.current_target
       $game_player.followers.each do |follower|
-        follower.set_target($game_player.last_hit_target)
+        follower.set_target($game_player.current_target)
       end
       $game_map.interpreter.gab("Concentrate fire!",0,0)
       return true

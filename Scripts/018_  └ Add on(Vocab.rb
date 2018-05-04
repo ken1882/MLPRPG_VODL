@@ -357,6 +357,7 @@ module Vocab::Tactic
     :jump_to              => "跳到戰術: ",
     :move_away            => "遠離目標",
     :move_close           => "接近目標",
+    :player               => "玩家當前操作角色",
   }
 end
 #==============================================================================
@@ -424,6 +425,8 @@ module Vocab::TacticConfig
     :melee      => "物理攻擊",
     :ranged     => "遠程攻擊",
     :magic      => "魔法攻擊或詠唱",
+    
+    :player     => "玩家當前操作角色",
   }
   
   InputHelp = {
@@ -460,6 +463,7 @@ module Vocab::TacticConfig
     :allies_alive           => ">= %d",
     :allies_dead            => ">= %d",
     :surrounded_by_enemies  => ">= %d",
+    :player     => "當前操縱角色",
   }
   
 end

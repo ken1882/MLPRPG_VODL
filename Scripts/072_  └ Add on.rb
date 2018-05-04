@@ -98,7 +98,7 @@ class Game_Action
     real_item = get_symbol_item
     return true  if real_item.nil?
     return true  if real_item.is_a?(Symbol)
-    return true  if @traget.is_a?(Game_Battler) && @target.battler == @user.battler
+    return true  if @target.hashid == @user.hashid
   	return false if @user.distance_to(@target.x, @target.y) > real_item.tool_distance
     return false if check_cooldown && (!@user.usable?(real_item) || @user.battler.stiff > 0)
   	return @user.path_clear?(@user.x, @user.y, @target.x, @target.y) if real_item.melee?
@@ -261,8 +261,9 @@ class Game_Action
   def need_chase?
     return @need_chase_flag unless @need_chase_flag.nil?
     real_item = get_symbol_item
+    return @need_chase_flag = false if real_item.nil?
     return @need_chase_flag = false if real_item.is_a?(Symbol)
-    return @need_chase_flag = false if @target == @user
+    return @need_chase_flag = false if @target.hashid == @user.hashid
     return @need_chase_flag = false if real_item.is_a?(RPG::UsableItem) && real_item.for_user?
     return @need_chase_flag = true
   end

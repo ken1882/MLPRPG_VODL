@@ -49,5 +49,5 @@ class Sprite_Base < Sprite
   def change_viewport(vp)
     @viewport = vp
   end
-  
+  #--------------------------------------------------------------------------
 end # class SpBase

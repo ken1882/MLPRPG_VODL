@@ -156,7 +156,17 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   # *) check if can see the location
   #----------------------------------------------------------------------------
-  def can_see?(x1, y1, x2, y2)
+  def can_see?(*args)
+    case args.size
+    when 1
+      return can_see?(@x, @y, args[0].x, args[0].y)
+    when 4
+      x1, y1 = args[0], args[1]
+      x2, y2 = args[2], args[3]
+    else
+      raise ArgumentError
+    end
+    
     dx = x2 - x1;
     if(dx == 0)
       return straight_path_seeable?(x1,y1,y2)
@@ -421,7 +431,7 @@ class Game_Character < Game_CharacterBase
     quadtree = $game_map.collision_quadtree
     new_index = $game_map.get_quadtree_index(@x, @y)
     return if new_index == @last_quadtree_index
-    puts "#{name} #{@last_quadtree_index}" if self.is_a?(Game_Player) || distance_to_character($game_player) < 5
+    #puts "#{name} #{@last_quadtree_index}" if self.is_a?(Game_Player) || distance_to_character($game_player) < 5
     begin
       quadtree[new_index] << quadtree[@last_quadtree_index].delete(self)
     rescue Exception => e

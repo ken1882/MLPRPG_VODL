@@ -82,8 +82,8 @@ class Unit_Circle < Sprite_Base
   # * Draw sight limit, useless for now
   #----------------------------------------------------------------------------
   def draw_sight
-    return if @character.sensor.nil?
-    self.bitmap = load_bitmap("Graphics/Lights/", "RS5")
+    #return if @character.sensor.nil?
+    #self.bitmap = load_bitmap("Graphics/Lights/", "RS5")
   end
   #----------------------------------------------------------------------------
   def dead?

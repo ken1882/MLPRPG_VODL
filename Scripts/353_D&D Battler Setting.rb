@@ -151,8 +151,8 @@ class Game_CharacterBase
     if !@action && @next_action && battler.stiff == 0
       @ori_step_anime = @step_anime
       @action         = @next_action.dup
-      @next_action = nil
-      @step_anime = true unless static_object?
+      @next_action    = nil
+      @step_anime     = true unless static_object?
       if @action.item.is_a?(RPG::BaseItem) && @action.item.tool_castime > 10
         @casting_flag = true
         @chase_timer  = 30

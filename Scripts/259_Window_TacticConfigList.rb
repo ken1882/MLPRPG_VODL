@@ -14,8 +14,10 @@ class Window_TacticConfigList < Window_InstanceItemList
   #--------------------------------------------------------------------------
   def make_item_list
     temp  = Tactic_Config::Condition_Symbol[@category]
+    @data = []
+    @data = [:player] if [:player_party_members].include?(temp)
     temp  = Tactic_Config.call_function(temp) if temp.is_a?(Symbol)
-    @data = temp
+    @data += temp
   end # def make item list
   #--------------------------------------------------------------------------
   # * Draw Item
@@ -35,4 +37,5 @@ class Window_TacticConfigList < Window_InstanceItemList
     draw_icon(icon_id, rect.x, rect.y) if icon_id > 0
     draw_text(rect.x + 24, rect.y, item_width, line_height, name)
   end
+  #--------------------------------------------------------------------------
 end

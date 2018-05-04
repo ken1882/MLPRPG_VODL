@@ -731,13 +731,23 @@ class Scene_Title
     jet0019_start(*args, &block)
   end
 end
+#------------------------------------------------------------------------------
 class Scene_Map
+  #------------------------------------------------------------------------------
+  attr_reader :target_cancel_timer
+  #------------------------------------------------------------------------------
+  alias start_mouse start
+  def start
+    @target_cancel_timer = 0
+    start_mouse
+  end
   #------------------------------------------------------------------------------
   alias jet3745_update update
   def update(*args, &block)
     jet3745_update
     check_mouse_movement if $game_system.mouse_movement
     check_mouse_icon_change
+    @target_cancel_timer -= 1 if @target_cancel_timer > 0
   end
   #------------------------------------------------------------------------------
   alias jet5687_terminate terminate
@@ -758,11 +768,34 @@ class Scene_Map
   #------------------------------------------------------------------------------
   def check_mouse_icon_change
     changed_mouse = false
-    $game_map.events_xy(*Mouse.true_grid_by_pos).each {|event|
-      changed_mouse = changed_mouse || event.check_mouse_change
-      @mouse_hovered = event if event.trigger == 0
-      $game_player.target_event = event if Mouse.click?(2)
-    }
+    mouse_clicked = [Mouse.click?(1), Mouse.click?(2)]
+    player_target = nil
+    
+    mpos = POS.new(*Mouse.true_grid_by_pos(false))
+    events = $game_map.get_nearby_quadtree_value($game_map.get_quadtree_index(mpos.x,mpos.y))
+    target = [nil, 0xffff]
+    events.each do |event|
+      next unless event.is_a?(Game_Event)
+      dis = event.distance_to_character(mpos)
+      next if dis > 1.5
+      next if dis > target.last
+      target = [event, dis]
+    end
+    target = target.first
+    
+    if mouse_clicked[1]
+      $game_player.target_event = target
+      $game_player.cancel_action_without_penalty if $game_player.action
+      $game_player.set_target(nil)
+    elsif mouse_clicked[0]
+      $game_player.set_target(target) if target
+    end
+    
+    if target
+      changed_mouse  = changed_mouse || target.check_mouse_change
+      @mouse_hovered = target if target.trigger == 0
+    end
+    
     Mouse.revert_cursor unless changed_mouse
   end
   #------------------------------------------------------------------------------
@@ -770,6 +803,7 @@ class Scene_Map
   #------------------------------------------------------------------------------
   def check_mouse_movement
     return if $game_system.story_mode?
+    return unless $game_player.controlable?
     $game_temp.mouse_character ||= $game_player
     if Mouse.click?(2) && !SceneManager.tactic_enabled?
       tx, ty = *Mouse.true_grid_by_pos

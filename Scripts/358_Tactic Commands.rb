@@ -84,18 +84,25 @@ module Tactic_Config
     #--------------------------------------------------------------------------
     def pick_attacking_ally
       ally = @args[0]
-      ally = ally.battler if ally
+      return nil unless ally
+      ally = ally == :player ? $game_player : ally.battler
+      
       @candidates.each do |ch|
         next if ch.dead?
-        if !ch.current_target.nil?
-          return ch if ally.nil?
-          return ch if ch.current_target.battler == ally.battler
-        end
+        next if ch.current_target.nil?
+        return ch if ch.current_target.hashid == ally.hashid
       end
+      return nil
     end
     #--------------------------------------------------------------------------
     def pick_target_of_ally
       ally = @args[0]
+      if ally == :player
+        target = $game_player.current_target 
+        return nil unless target
+        return target if $game_player.can_see?(target)
+        return nil
+      end
       return ally.map_char.current_target if ally
       $game_party.members.each do |ch|
         next if ch.dead?

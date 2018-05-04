@@ -599,7 +599,8 @@ class Game_Event < Game_Character
   #----------------------------------------------------------------------------
   def team_id
     return @team_id = @enemy.team_id if @enemy
-    return DND::BattlerSetting::TeamID
+    return nil
+    #return DND::BattlerSetting::TeamID
   end
   #----------------------------------------------------------------------------
   def death_switch_self

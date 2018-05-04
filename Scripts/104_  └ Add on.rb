@@ -95,6 +95,7 @@ class Game_Player < Game_Character
                                                last_real_y != @real_y
     update_vehicle unless @followers.gathering?
     update_nonmoving(last_moving) unless moving?
+    update_target
     @recurrence_delay -= 1 if !@recurrence_delay.nil? && @recurrence_delay > 0
     $game_party.recurrence_leader if @recurrence_delay == 0 #tag: modified
     @followers.update unless SceneManager.time_stopped?
@@ -171,6 +172,11 @@ class Game_Player < Game_Character
   #--------------------------------------------------------------------------
   def update_encounter
   end
+  #--------------------------------------------------------------------------
+  def update_target
+    return unless @current_target
+    set_target(nil) if @current_target.dead? || !@current_target.effectus_near_the_screen?
+  end
   #----------------------------------------------------------------------------
   # * Allow character move freely between characters?
   #----------------------------------------------------------------------------
@@ -231,6 +237,9 @@ class Game_Player < Game_Character
   end
   #----------------------------------------------------------------------------
   def set_target(target)
+    return @current_target = nil if target.nil?
+    return unless target.enemy
+    @current_target = target
   end
   #----------------------------------------------------------------------------
   def get_ammo_item(item)

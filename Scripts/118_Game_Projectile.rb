@@ -137,6 +137,9 @@ class Game_Projectile < Game_Character
     execute_action
   end
   #--------------------------------------------------------------------------
+  def update_quadtree_index
+  end
+  #--------------------------------------------------------------------------
   def character_name; return item.tool_graphic; end
   def animation_id; return item.animation_id; end
   def update_realtime_action; end

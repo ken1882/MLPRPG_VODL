@@ -358,6 +358,7 @@ module Vocab::Tactic
     :jump_to              => "Jump to tactic: ",
     :move_away            => "Move away from target",
     :move_close           => "Move close to target",
+    :player               => "Player",
   }
 end
 #==============================================================================
@@ -425,6 +426,8 @@ module Vocab::TacticConfig
     :melee      => "Melee",
     :ranged     => "Ranged",
     :magic      => "Magic/Casting",
+    
+    :player => "Player"
   }
   
   InputHelp = {
@@ -464,6 +467,7 @@ module Vocab::TacticConfig
     :short      => "Short",
     :medium     => "Medium",
     :long       => "Long",
+    :player     => "Player",
   }
   
 end

@@ -13,6 +13,7 @@ class Spriteset_Map
   attr_reader :projectiles, :popups
   attr_reader :character_sprites, :unitcir_sprites
   attr_reader :hud_sprite, :tilemap, :tile_layer
+  attr_reader :player_target_sprite
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -24,6 +25,7 @@ class Spriteset_Map
     @drop_sprites = []
     create_huds
     create_tile_layer
+    create_player_target_sprite
     init_spsetmap_dnd
   end
   #--------------------------------------------------------------------------
@@ -51,6 +53,7 @@ class Spriteset_Map
     update_huds
     update_weapons
     update_tile_layer
+    update_player_target_sprite
     update_spsetmap_opt
   end
   #--------------------------------------------------------------------------
@@ -59,6 +62,11 @@ class Spriteset_Map
   def update_tileset
     load_tileset
     refresh_characters
+  end
+  #--------------------------------------------------------------------------
+  def create_player_target_sprite
+    @player_target_sprite = ::Sprite.new(@viewport)
+    @player_target_sprite.bitmap = Cache.target_sprite
   end
   #--------------------------------------------------------------------------
   def create_tile_layer
@@ -119,6 +127,14 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def effectus_vanilla_update_sprites
     @character_sprites.each { |sprite| sprite.effectus_vanilla_update }
+  end
+  #--------------------------------------------------------------------------
+  def update_player_target_sprite
+    target = $game_player.current_target
+    return @player_target_sprite.hide unless target
+    @player_target_sprite.show unless @player_target_sprite.visible?
+    cx, cy = target.screen_x - 16, target.screen_y - 28
+    @player_target_sprite.moveto(cx, cy)
   end
   #--------------------------------------------------------------------------
   def update_skillbar
@@ -344,6 +360,7 @@ class Spriteset_Map
     dispose_huds
     dispose_weapons
     dispose_drops
+    dispose_sprite(@player_target_sprite)
     dispose_sprite(@tile_layer)
     dispose_sprite(@tactic_cursor)
   end

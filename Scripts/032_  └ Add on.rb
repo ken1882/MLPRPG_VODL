@@ -104,7 +104,7 @@ module BattleManager
     
     if collision_only
       candidates = $game_map.get_nearby_quadtree_value(battler.last_quadtree_index)
-      return candidates.select{|c| c.team_id != battler.team_id}
+      return candidates.select{|c| c.team_id && c.team_id != battler.team_id}
     end
     
     if @cache_opponents[battler.team_id]

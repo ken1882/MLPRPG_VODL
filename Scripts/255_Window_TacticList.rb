@@ -174,7 +174,9 @@ class Window_TacticList < Window_Selectable
   #--------------------------------------------------------------------------
   def get_condition_args_name(symbol, args, text)
     return text + args.first.name if args.first.is_a?(RPG::BaseItem)
+    return text + Vocab::TacticConfig::Name_Table[:player] if args.first == :player
     return text if ArgDec_Table[symbol].nil?
+    
     case symbol
     when :has_state
       name = ""
