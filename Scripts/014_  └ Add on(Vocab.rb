@@ -343,7 +343,7 @@ module Vocab::Tactic
     "/enable",
   ]
   
-  Help = "Click here for helps"
+  Help = "No idea what's this? Press F4 for help"
   
   Name_Table  = {
     :attack_mainhoof      => "Use main-hoof attack",

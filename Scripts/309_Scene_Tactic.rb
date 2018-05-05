@@ -74,9 +74,13 @@ class Scene_Tactic < Scene_MenuBase
     wx, wy = @status_window.width, 0
     ww, wh = Graphics.width - wx, @status_window.height
     @hint_window = Window_Base.new(wx,wy,ww,wh)
-    ty = wh / 2 - @hint_window.line_height
+    lines = FileManager.textwrap(Vocab::Tactic::Help, ww * 0.8)
+    ty = (wh - @hint_window.line_height * (lines.size + 1)) / 2
     rect  = Rect.new(0, ty,ww, @hint_window.line_height)
-    @hint_window.draw_text(rect, Vocab::Tactic::Help)
+    lines.each do |line|
+      @hint_window.draw_text(rect, line, 0)
+      rect.y += @hint_window.line_height
+    end
   end
   #--------------------------------------------------------------------------
   def on_command_ok

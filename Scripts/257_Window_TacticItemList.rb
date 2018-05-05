@@ -1,7 +1,7 @@
 #==============================================================================
 # ** Window_TacticItemList
 #------------------------------------------------------------------------------
-#  List the available tactic commands
+#  List the valid item for tactic command
 #==============================================================================
 # tag: command ( Tactic Item List
 class Window_TacticItemList < Window_ItemList

@@ -342,7 +342,7 @@ module Vocab::Tactic
     "/enable",
   ]
   
-  Help = "按下這裡取得幫助"
+  Help = "霧煞煞? 按下F4取得幫助"
   
   Name_Table  = {
     :attack_mainhoof      => "使用主武器",

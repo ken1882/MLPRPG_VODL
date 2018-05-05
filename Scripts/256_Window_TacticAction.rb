@@ -1,7 +1,7 @@
 #==============================================================================
 # ** Window_TacticAction
 #------------------------------------------------------------------------------
-#  Displaying the actions tactic commands when selected
+#  Displaying the action for tactic commands when selected
 #==============================================================================
 # tag: command (Tactic Action
 class Window_TacticAction < Window_Command

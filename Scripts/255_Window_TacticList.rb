@@ -1,7 +1,7 @@
 #==============================================================================
 # ** Window_TacticList
 #------------------------------------------------------------------------------
-#  This window is for selecting New Game/Continue on the title screen.
+#  This window lists the battler's current tactics
 #==============================================================================
 # tag: command (Tactic List
 class Window_TacticList < Window_Selectable
@@ -24,6 +24,11 @@ class Window_TacticList < Window_Selectable
   #--------------------------------------------------------------------------
   def window_height
     return Graphics.height
+  end
+  #--------------------------------------------------------------------------
+  def update
+    super
+    update_keyboard_action
   end
   #--------------------------------------------------------------------------
   # * Refresh
@@ -202,6 +207,11 @@ class Window_TacticList < Window_Selectable
   def apply_tactic_change
     return if @data.nil?
     @actor.tactic_commands = @data.select{|cmd| cmd.category && cmd.category != :new}
+  end
+  #--------------------------------------------------------------------------
+  # last work: tactic command toggle help/enable/disable
+  def update_keyboard_action
+    
   end
   #--------------------------------------------------------------------------
 end

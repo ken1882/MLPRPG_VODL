@@ -5,6 +5,8 @@
 #==============================================================================
 class Window_Selectable < Window_Base
   #--------------------------------------------------------------------------
+  DefaultMouseTimer = 2
+  #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
   attr_reader   :overlayed
@@ -21,6 +23,7 @@ class Window_Selectable < Window_Base
     @stacked_args    = nil
     @scroll_enable   = false
     @help_text       = []             # selection help text
+    @mouse_timer     = 0
     initialize_overlay(x, y, width, height)
   end
   #--------------------------------------------------------------------------

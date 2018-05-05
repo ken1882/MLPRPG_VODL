@@ -103,7 +103,7 @@ module Jet
     CLIP_CURSOR = false
     
     # Allow the use of the mouse wheel to scroll selectable windows?
-    USE_WHEEL_DETECTION = true
+    USE_WHEEL_DETECTION = false
     
   end
   
@@ -218,14 +218,13 @@ module Mouse
   end
   
   def click?(button)
-    return false if @pos[0] == 0 || @pos[1] == 0
-    return true if @keys.include?(button)
-    return false
+    return false if (@pos[0] & @pos[1]) == 0
+    return (@keys & PONY::Bitset[button]).to_bool
   end
   
   def press?(button)
-    return true if @press.include?(button)
-    return false
+    return false if (@pos[0] & @pos[1]) == 0
+    return (@press & PONY::Bitset[button]).to_bool
   end
   
   def set_pos(x_pos = 0, y_pos = 0)
@@ -257,28 +256,28 @@ module Mouse
     ClipCursor.call(client_rect.pack('l4')) if Jet::MouseSystem::CLIP_CURSOR
     if !$game_switches.nil? 
       if $game_switches[Jet::MouseSystem::TURN_MOUSE_OFF_SWITCH]
-        @keys, @press = [], []
+        @keys, @press = 0, 0
         @pos = [-1, -1]
         @cursor.update
         return
       end
     end
     @old_pos = @pos.dup
-    @pos = Mouse.pos
-    @keys.clear
-    @press.clear
-    @keys.push(1) if GetAsyncKeyState.call(1) & 0x01 == 1
-    @keys.push(2) if GetAsyncKeyState.call(2) & 0x01 == 1
-    @keys.push(3) if GetAsyncKeyState.call(4) & 0x01 == 1
-    @press.push(1) if pressed?(1)
-    @press.push(2) if pressed?(2)
-    @press.push(3) if pressed?(4)
+    @pos     = Mouse.pos
+    @keys  = 0
+    @press = 0
+    @keys  |= PONY::Bitset[1] if GetAsyncKeyState.call(1) & 0x01 == 1
+    @keys  |= PONY::Bitset[2] if GetAsyncKeyState.call(2) & 0x01 == 1
+    @keys  |= PONY::Bitset[3] if GetAsyncKeyState.call(4) & 0x01 == 1
+    @press |= PONY::Bitset[1] if pressed?(1)
+    @press |= PONY::Bitset[2] if pressed?(2)
+    @press |= PONY::Bitset[3] if pressed?(4)
     @cursor.update rescue @cursor = Sprite_Cursor.new
   end
   
   def init
-    @keys = []
-    @press = []
+    @keys = 0
+    @press = 0
     @pos = Mouse.pos
     @cursor = Sprite_Cursor.new
   end
@@ -479,12 +478,13 @@ class Window_Selectable
     jet1084_update(*args, &block)
     @scrolled ||= false
     return if $game_switches[Jet::MouseSystem::TURN_MOUSE_OFF_SWITCH]
+    @mouse_timer -= 1 if @mouse_timer > 0
     update_scroll if self.active && self.visible && Jet::MouseSystem::USE_WHEEL_DETECTION
     update_mouse  if self.active && self.visible && (Mouse.moved? or @scrolled)
   end
   
   def update_scroll
-    return if !scrollable?
+    return unless scrollable?
     
     f = Mouse.scroll
     if !f.nil?
@@ -506,7 +506,15 @@ class Window_Selectable
     @scroll_enable
   end
   
+  def get_mouse_timer
+    return DefaultMouseTimer
+  end
+  
   def update_mouse
+    return unless @mouse_timer == 0
+    return unless Mouse.collide_sprite?(self)
+    @mouse_timer = get_mouse_timer
+    
     @scrolled = false
     orig_index = @index
     rects = []
