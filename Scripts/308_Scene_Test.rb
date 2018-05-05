@@ -24,7 +24,7 @@ class Scene_Test < Scene_Base
   end
   
   def create_all_window
-    @window_input = Window_Input.new(Graphics.center_width(480), Graphics.center_height(28) - 24, 480, autoscroll: true, number: true, dim_background: true, title: "Please enter something~")
+    @window_input = Window_Input.new(Graphics.center_width(480), Graphics.center_height(28) - 24, 480, autoscroll: true, number: false, dim_background: true, title: "Please enter something~")
     #@window_input = Window_Input.new(Graphics.center_width(480), Graphics.center_height(28) + 24, 480, autoscroll: true)
   end
   

@@ -24,7 +24,7 @@ class Window_Base < Window
   # * Draw text in static position
   #--------------------------------------------------------------------------
   def draw_code_text(x, y, text)
-    width = Font.default_size / 2
+    width = (Font.default_size * 0.5).to_i
     cnt = 0
     text = "" unless text
     text.each_char do |char|
@@ -76,5 +76,9 @@ class Window_Base < Window
     sprite.bitmap.blt(0, 0, Cache.iconset, rect)
     return sprite
   end
-  
+  #--------------------------------------------------------------------------
+  def text_width_for_rect(text)
+    return contents.text_size(text).width + contents.font.size
+  end
+  #--------------------------------------------------------------------------
 end

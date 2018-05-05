@@ -17,6 +17,8 @@ class Window_Input < Window_Base
   ES_MULTILINE    = 0x00000004
   EM_SETSEL       = 0xb1
   EM_GETSEL       = 0xb0
+  
+  AutoScroll_ChatLimit = 256
   #--------------------------------------------------------------------------
   Number_Full = {
     '０' => '0',
@@ -50,18 +52,11 @@ class Window_Input < Window_Base
   # * Object Initialization
   #--------------------------------------------------------------------------
   def initialize(x = 0, y = 0, width = Graphics.width - 40, attributes = {})
-    super(x, y, width, window_height)
-    self.windowskin = Cache.system(WindowSkin::InputBox)
-    wstyle  = get_windowstyle(attributes)
-    @hwnd = CreateWindowEx.call(1, "Edit", "", wstyle,
-                                x, y, width, height, Hwnd, 0, 
-                                GetModuleHandle.call(nil), 0)
     #-----------------------------------------------------------------------
     # > init vars
     @window_width    = width
     @viewport        = SceneManager.viewport
-    @display_width   = (window_width - spacing * 2) / item_width
-    @char_limit      = attributes[:autoscroll] ? 256 : @display_width
+    @char_limit      = attributes[:autoscroll] ? AutoScroll_ChatLimit : @display_width / item_width
     @char_limit      = attributes[:limit] if attributes[:limit]
     @last_str        = ""
     @last_len        = 0
@@ -81,9 +76,21 @@ class Window_Input < Window_Base
     @focus           = true
     @number_only     = attributes[:number]
     @entered         = false
-    
-    self.z = @viewport.z
-    
+    @need_refresh    = true
+    @display_bot_index = 0
+    @display_top_index = 0
+    #-----------------------------------------------------------------------
+    super(x, y, width, window_height)
+    self.windowskin = Cache.system(WindowSkin::InputBox)
+    wstyle  = get_windowstyle(attributes)
+    @hwnd = CreateWindowEx.call(1, "Edit", "", wstyle,
+                                x, y, width, height, Hwnd, 0, 
+                                GetModuleHandle.call(nil), 0)
+    #-----------------------------------------------------------------------
+    self.ox = 0
+    self.z  = @viewport.z
+    @display_width = contents.width - spacing * 2
+    #-----------------------------------------------------------------------
     create_sprites
     create_background if attributes[:dim_background]
     draw_title(attributes[:title])
@@ -107,6 +114,7 @@ class Window_Input < Window_Base
   end
   #--------------------------------------------------------------------------
   def create_sprites
+    self.arrows_visible = false
     create_second_viewport
     create_cursor(x, y)
     create_arrows
@@ -157,17 +165,13 @@ class Window_Input < Window_Base
       sprite.bitmap.blt(0, 0, self.windowskin, rect)
       sprite.y = self.y + (window_height - bh) - spacing * 4 
       sprite.x = i == 0 ? self.x + 2 : self.x + window_width - bw
-      @arrow_sprites.push(sprite)
+      @arrow_sprites.push(sprite.hide)
     end
   end
   #--------------------------------------------------------------------------
   def draw_title(title)
     return unless title
-    bsize = 0
-    title.each_char do |ch|
-      bsize += [ch.bytesize, 1.9].min
-    end
-    cw = [(bsize * Font.default_size * 0.35).to_i, Graphics.width].min
+    cw = [text_width_for_rect(title), Graphics.width].min
     cx = [[(Graphics.width - cw) / 2, 0].max, Graphics.width].min
     rect = Rect.new(cx, 0, cw, line_height)
     @text_sprite.bitmap.draw_text(rect, title)
@@ -181,6 +185,7 @@ class Window_Input < Window_Base
     update_keyboard
     sync_window
     return if disposed?
+    return if @index > @char_limit || (@index_width.size != @strlen+2)
     update_cursor
     update_selection
   end
@@ -211,6 +216,7 @@ class Window_Input < Window_Base
     return process_limited if @strlen > @char_limit + 1
     terminated = process_ok if @last_len == @strlen
     return if @last_str == @lpstr || terminated
+    @need_refresh = true
     clear_awaits
     update_contents
   end
@@ -230,14 +236,16 @@ class Window_Input < Window_Base
   #--------------------------------------------------------------------------
   def update_index
     @index += @strlen - @last_len
-    @last_str = @lpstr
     @last_len = @strlen
+    @last_str = @lpstr
   end
   #--------------------------------------------------------------------------
   # * Set Win32 edit window text to in-game text if max out numbercap
   #--------------------------------------------------------------------------
   def process_limited
-    @lpstr = @lpstr[0...@char_limit]
+    @lpstr  = @lpstr[0...@char_limit]
+    @strlen = @char_limit
+    @index  = @char_limit
     SetWindowText.call(@hwnd, EasyConv::u2s(@lpstr))
     SendMessage.call(@hwnd, EM_SETSEL, @strlen, @strlen)
   end
@@ -245,25 +253,24 @@ class Window_Input < Window_Base
   # * Refresh 
   #--------------------------------------------------------------------------
   def refresh
+    return unless @need_refresh
+    @need_refresh = false
     contents.clear
-    draw_code_text(spacing / 2, 0, @lpstr[@display_bot..@display_top])
-  end
-  #--------------------------------------------------------------------------
-  # * Get Char Byte size
-  #--------------------------------------------------------------------------
-  def index_bsize(index)
-    [2, @lpstr[index].bytesize].min rescue 1
+    rect = Rect.new(spacing / 2, 0, @index_width[@strlen], line_height)
+    rect.width += contents.font.size
+    draw_text(rect, @lpstr[@display_bot_index..@display_top_index])
   end
   #--------------------------------------------------------------------------
   # * DP the texts width for faster query
   #--------------------------------------------------------------------------
   def calc_index_width
+    @index_width = [0]
     sum = 0
-    @index_width[0] = 0
     for i in 0..@strlen
-      sum += item_width * index_bsize(i)
+      sum += self.contents.text_size(@lpstr[i]).width
       @index_width[i+1] = sum
-    end
+      @index = [@index, i+1].max
+    end 
   end
   #--------------------------------------------------------------------------
   # * Gets the texts width in range
@@ -290,28 +297,59 @@ class Window_Input < Window_Base
   def update_cursor_position
     ensure_cursor_visible
     update_padding
-    offset_x = index_width(@display_bot, @index)
-    @cursor.x = self.x + spacing * 2 + offset_x
+    offset_x = index_width(@display_bot_index, @index)
+    @cursor.x = self.x + spacing * 2 + offset_x + 2
+  end
+  #--------------------------------------------------------------------------
+  def get_display_selection_bot
+    offset = @display_width
+    cur    = @index
+    while offset > 0 && cur > 0
+      width   = @index_width[cur] - @index_width[cur - 1]
+      offset -= width
+      return cur + 1 if offset < 0
+      cur    -= 1
+    end
+    return cur
+  end
+  #--------------------------------------------------------------------------
+  def get_display_selection_top
+    offset = @display_width
+    cur    = @index
+    while offset > 0 && cur < @strlen
+      width   = @index_width[cur + 1] - @index_width[cur]
+      offset -= width
+      cur    += 1
+    end
+    return cur
   end
   #--------------------------------------------------------------------------
   # * Ensure cursor index is visible and auto sctoll
   #--------------------------------------------------------------------------
   def ensure_cursor_visible
-    @display_top = @display_bot + @display_width - 1
-    byte_index = index_width(0, @index) / item_width
-    @wchar_num = (index_width(0, @display_bot) - @display_bot * item_width) / item_width
-    if byte_index < @display_bot
-      @display_bot = byte_index
-    elsif byte_index > @display_top + @wchar_num
-      @display_bot = byte_index - @display_width - @wchar_num + 1
+    next_cursor_x = @index_width[@index]
+    return if next_cursor_x.nil?
+    
+    if next_cursor_x > @display_top
+      @display_bot = next_cursor_x - @display_width
+      @display_bot_index = get_display_selection_bot
+      @display_top_index = @index
+    elsif next_cursor_x < @display_bot
+      @display_bot = next_cursor_x
+      @display_bot_index = @index
+      @display_top_index = get_display_selection_top
+    else
+      @display_top_index = [@display_top_index, @index].max
+      @display_bot_index = [@display_bot_index, 0].max
     end
-    @display_top = @display_bot + @display_width - 1
+    @display_top = @display_bot + @display_width
   end
   #--------------------------------------------------------------------------
   def update_padding
-    return unless @display_bot
+    return unless @display_width && @index_width[@strlen]
+    
     @display_bot > 0 ? @arrow_sprites[0].show : @arrow_sprites[0].hide
-    @display_top < @strlen - @wchar_num - 1 ? @arrow_sprites[1].show : @arrow_sprites[1].hide
+    @display_top < @index_width[@strlen] ? @arrow_sprites[1].show : @arrow_sprites[1].hide
   end
   #--------------------------------------------------------------------------
   def unpack_message(msg)
@@ -319,9 +357,11 @@ class Window_Input < Window_Base
     @select_start = bt[[bt.length - 16, 0].max...bt.length].to_i(2)
     @select_end   = msg >> 16
     if @select_start == @select_end
+      @need_refresh = true if @index != @select_end
       @index      = @select_end
       @select_ori = @select_end if Input.press?(:kSHIFT)
     else
+      @need_refresh = true if @index != @select_end || @index != @select_end
       @index = @select_start < @select_ori ? @select_start : @select_end
     end
   end
@@ -343,8 +383,18 @@ class Window_Input < Window_Base
   #--------------------------------------------------------------------------
   def update_selection
     return cursor_rect.empty if @select_start == @select_end
-    width = index_width(@select_end, @select_start)
-    cx = @select_start > @display_bot ? index_width(@select_start, @display_bot) : 0
+    puts "#{[@select_end, @select_start]}"
+    if @select_end > @select_start && @select_start < @display_bot_index
+      width = [index_width(@select_end, @display_bot_index) + 2, contents.width].min
+    else
+      width = [index_width(@select_end, @select_start) + 2, contents.width].min
+    end
+    
+    if @select_start > @display_bot_index
+      cx  = index_width(@select_start, @display_bot_index)
+    else
+      cx  = 0
+    end
     cursor_rect.set(cx, 0, width, 24)
   end
   #--------------------------------------------------------------------------
