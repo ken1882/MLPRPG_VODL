@@ -1790,7 +1790,7 @@ class Window_QuestData < Window_Selectable
     when :description
       buff = description_x*2
       paragraph = mapf_format_paragraph(@quest.description, contents_width - buff)
-      line_num = FileManager.textwrap(paragraph, contents_width - buff).size
+      line_num = FileManager.textwrap(paragraph, contents_width - buff, contents).size
       line_num += (QuestData::DESCRIPTION_IN_BOX ? 2 : 
         !QuestData::VOCAB[:description].empty? ? 1 : 0)
       line_num * line_height
@@ -1801,7 +1801,7 @@ class Window_QuestData < Window_Selectable
       buff = (objective_x*2) + text_size(QuestData::VOCAB[:objective_bullet]).width
       objectives.each { |obj|
         paragraph = mapf_format_paragraph(obj, contents_width - buff)
-        lines = FileManager.textwrap(paragraph, contents_width - buff)
+        lines = FileManager.textwrap(paragraph, contents_width - buff, contents)
         line_num += lines.size + 1}
       line_num*line_height
     when :rewards
@@ -1956,7 +1956,7 @@ class Window_QuestData < Window_Selectable
     buff = description_x * 2
     paragraph = mapf_format_paragraph(@quest.description, contents_width - buff)
     y = @draw_y
-    paragraph = FileManager.textwrap(paragraph, contents_width - buff)
+    paragraph = FileManager.textwrap(paragraph, contents_width - buff, contents)
     # Draw Rect
     draw_box(paragraph.size) if QuestData::DESCRIPTION_IN_BOX
     # Draw Description Label
@@ -1992,7 +1992,7 @@ class Window_QuestData < Window_Selectable
     @maqj_objective_color = quest_objective_colour(@quest, obj_id)
     change_color(text_color(QuestData::COLOURS[:objective_bullet]))
     draw_text(objective_x, y, bullet_tw, line_height, sprintf(bullet, obj_id + 1))    
-    paragraph = FileManager.textwrap(paragraph, contents_width - buff - bullet_tw)
+    paragraph = FileManager.textwrap(paragraph, contents_width - buff - bullet_tw, contents)
     paragraph.each do |line|
       draw_text_ex(objective_x + bullet_tw, y, line)
       y += line_height

@@ -194,7 +194,7 @@ module Vocab::System
   AutoSaveStep      = "Steps"
   AutoSaveStepDec   = "Auto-save after you walked a certain steps, 0 = inactive"
   
-  Restart = "Options will be aplied after restart the game"
+  Restart = "Options will be applied after restart the game"
 end
 #==============================================================================
 # ** Vocab::Errno

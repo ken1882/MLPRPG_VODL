@@ -16,54 +16,68 @@ module FileManager
   #--------------------------------------------------------------------------
   # * Text wrap for window contents
   #--------------------------------------------------------------------------
-  def self.textwrap(full_text = "", line_width = 1)
+  def self.textwrap(full_text, line_width, sample_bitmap = nil)
     return [] if full_text.nil?
+    if sample_bitmap.nil?
+      using_sample = true
+      sample_bitmap = Bitmap.new(1,1)
+    else
+      using_sample  = false
+    end
     raise full_text unless full_text.is_a?(String)
-    line_width *= 1.3
-    text_width = Font.default_size / 2
-    text_limit = line_width / text_width
-    line_count = (full_text.size + text_limit - 1) / text_limit
-    clone_text  = []
     wraped_text = []
-    full_text.each_char { |ch| clone_text.push(ch)}
-    while clone_text.size > 0
-      text = ""
-      clone_text.shift if clone_text[0] == ' '
-      n = clone_text.size
-      curblen = 0
-      for i in 0...n
-        ch = clone_text[i]
-        text += ch
-        curblen += [ch.bytesize, 2].min
-        break if ch == 10.chr
-        break if curblen >= text_limit
+    cur_width   = 0 
+    line        = ""
+    strings     = full_text.gsub('　', ' ').split(/[\r\n ]+/i)
+    strs_n      = strings.size
+    space_width = sample_bitmap.text_size(' ').width
+    minus_width = sample_bitmap.text_size('-').width
+    while (str = strings.first)
+      next if str.length == 0
+      width = sample_bitmap.text_size(str).width
+      endl  = false
+      
+      if width >= line_width
+        line      = ""
+        cur_width = minus_width
+        strlen    = str.length
+        processed = false
+        last_i    = 0
+        
+        for i in 0...strlen
+          width = sample_bitmap.text_size(str[i]).width
+          last_i = i
+          if !processed && cur_width + width >= line_width
+            sample_bitmap.dispose if using_sample
+            return [full_text]
+          elsif cur_width + width < line_width
+            cur_width += width
+            line += str[i]
+            processed = true
+          else
+            break
+          end
+        end
+        
+        line += '-'
+        strings[0] = str[last_i...strlen]
+        endl = true
+      elsif cur_width + width < line_width
+        cur_width += width + space_width
+        line += strings.shift + ' '
+        endl = true if strings.size == 0
+      else
+        endl = true
       end
       
-      processed  = ensure_lines_connected(text, clone_text.drop(text.size))
-      clone_text = clone_text.drop(text.size + processed[0])
-      text = processed[1]
-      wraped_text.push(text)
+      if endl
+        wraped_text.push(line)
+        line = ""
+        cur_width = 0
+      end
     end
-    
+    sample_bitmap.dispose if using_sample
     return wraped_text
-  end
-  #--------------------------------------------------------------------------
-  # *  If line ended in the mid of word, add '-' connect two lines.
-  #--------------------------------------------------------------------------
-  def self.ensure_lines_connected(text, clone_text)
-    return [0, text] if !clone_text[0] || !text[-1]
-    return [0, text] if !clone_text[0].match(/^[[:alpha:]]$/)
-    return [0, text] if !text[-1].match(/^[[:alpha:]]$/)
-    return [0, text] if text[-1].bytesize > 1
-    endl_pos = 0
-    surplus = ""
-    3.times do |i|
-      break if clone_text[i].nil?
-      surplus += clone_text[i]
-      endl_pos = i if clone_text[i] == ' ' || clone_text[i] == 10.chr
-    end
-    proc_text = endl_pos > 0 ? text + surplus[0...endl_pos] : text + '-'
-    return [endl_pos, proc_text]
   end
   #--------------------------------------------------------------------------
   # * Load Game.ini index

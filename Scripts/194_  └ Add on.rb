@@ -8,7 +8,7 @@ class Window_Status < Window_Selectable
   # * Overwrite: Draw Description
   #--------------------------------------------------------------------------
   def draw_description(x, y)
-    desc = FileManager.textwrap(@actor.description, contents.width)
+    desc = FileManager.textwrap(@actor.description, contents.width, contents)
     draw_text_ex(x, y, desc)
   end
 end

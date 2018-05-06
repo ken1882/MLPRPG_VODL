@@ -325,7 +325,7 @@ class Scene_Base
     
     @item_help_text.bitmap.font.size = 20
     
-    lines = FileManager.textwrap(text, 120)
+    lines = FileManager.textwrap(text, 120, @item_help_text.bitmap)
     
     lines.each do |line|
       @item_help_text.bitmap.draw_text(rect, line, 1)

@@ -205,7 +205,7 @@ class Window_InformationLog < Window_Selectable
   # * Add Text
   #--------------------------------------------------------------------------
   def add_text(text)
-    lines = FileManager.textwrap(text, window_width * 1.5)
+    lines = FileManager.textwrap(text, contents_width, contents)
     lines.each do |line|
       @lines.shift      if item_max > item_limit
       @lines.push(line) if line.size > 0

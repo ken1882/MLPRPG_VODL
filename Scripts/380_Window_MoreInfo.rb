@@ -135,34 +135,10 @@ class Window_Moreinfo < Window_Base
   def update
     super
     process_cursor_move
-    @scrolled ||= false
-    update_scroll if self.active && self.visible
-    update_mouse  if self.active && self.visible && (Mouse.moved? or @scrolled)
+    update_mouse
   end 
   #--------------------------------------------------------------------------
-  # * Update mouse scroll
-  #--------------------------------------------------------------------------
-  def update_scroll
-    return 
-    f = Mouse.scroll
-    if !f.nil?
-      Mouse.flag_scroll = f[2]
-      if f[2] < 0
-        if contents.height > self.height && self.oy - contents.height < -self.height + 32
-          self.top_row = self.top_row + 1
-        end
-      else
-        self.top_row = self.top_row - 1 if contents.height > self.height
-      end
-      @scrolled = true
-    else
-      Mouse.flag_scroll = nil
-    end
-  end
-  #--------------------------------------------------------------------------
   def update_mouse
-    @scrolled = false
-    
   end
   #--------------------------------------------------------------------------
   # * Create Background
@@ -312,7 +288,7 @@ class Window_Moreinfo < Window_Base
     page_cnt = 0; cnt = @first_page_offset + 1;
     info = @item.information
     @pages[page_cnt] = []
-    texts = FileManager.textwrap(info, Graphics.width)
+    texts = FileManager.textwrap(info, contents_width, contents)
     texts.each do |line|
       if (self.y + (cnt + 2) * line_height) >= self.height
         page_cnt += 1; @pages[page_cnt] = []; cnt = 1;
