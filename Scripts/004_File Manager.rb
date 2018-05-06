@@ -24,7 +24,7 @@ module FileManager
     else
       using_sample  = false
     end
-    raise full_text unless full_text.is_a?(String)
+    raise TypeError unless full_text.is_a?(String)
     wraped_text = []
     cur_width   = 0 
     line        = ""
@@ -32,21 +32,24 @@ module FileManager
     strs_n      = strings.size
     space_width = sample_bitmap.text_size(' ').width
     minus_width = sample_bitmap.text_size('-').width
+    
+    # while any string segment unprocessed
     while (str = strings.first)
       next if str.length == 0
       width = sample_bitmap.text_size(str).width
       endl  = false
-      
+      # if the segment width larger than display width
       if width >= line_width
         line      = ""
         cur_width = minus_width
         strlen    = str.length
         processed = false
         last_i    = 0
-        
+        # process each character on by one
         for i in 0...strlen
           width = sample_bitmap.text_size(str[i]).width
           last_i = i
+          # unable to display character
           if !processed && cur_width + width >= line_width
             sample_bitmap.dispose if using_sample
             return [full_text]
@@ -58,14 +61,17 @@ module FileManager
             break
           end
         end
-        
+        # continue symbol character
         line += '-'
+        # replace with left unprocessed string
         strings[0] = str[last_i...strlen]
         endl = true
+      # + segment width smaller than line width, continue
       elsif cur_width + width < line_width
         cur_width += width + space_width
         line += strings.shift + ' '
         endl = true if strings.size == 0
+      # + segment width over the line width, process end of line
       else
         endl = true
       end
