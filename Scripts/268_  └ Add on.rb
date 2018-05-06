@@ -46,6 +46,7 @@ class Scene_Base
   #--------------------------------------------------------------------------
   def update_basic
     Graphics.update
+    $game_console.update_focus
     Input.update
     update_mutex
     update_errno
@@ -290,8 +291,7 @@ class Scene_Base
     return unless Input.press?(:kSPACE)
     @window_input = Window_Input.new(Graphics.center_width(480), Graphics.height - 80, 480, autoscroll: true)
     loop do
-      Graphics.update
-      Input.update
+      update_basic
       @window_input.update
       break if @input_string
     end
@@ -303,9 +303,6 @@ class Scene_Base
       puts err.backtrace
     end
     @input_string = nil
-  end
-  #--------------------------------------------------------------------------
-  def update_focus
   end
   #--------------------------------------------------------------------------
   def retrieve_input(string)

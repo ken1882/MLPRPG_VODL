@@ -327,7 +327,7 @@ module Vocab::Tactic
   
   Targeting   = 'Visible Enemies'
   Fighting    = 'Target fighting'
-  Self        = 'Self and party'
+  Self        = 'Self'
   Item        = 'Items'
   Skill       = 'Skills'
   General     = 'General'
@@ -343,7 +343,8 @@ module Vocab::Tactic
     "/enable",
   ]
   
-  Help = "No idea what's this? Press F4 for help"
+  Help     = "No idea what's this? Press F4 for help"
+  SwapHelp = "Negative the cursor to swap order"
   
   Name_Table  = {
     :attack_mainhoof      => "Use main-hoof attack",

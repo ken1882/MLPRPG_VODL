@@ -28,6 +28,7 @@ class Scene_Tactic < Scene_MenuBase
     create_action_window
     create_item_window
     create_hint_window
+    create_help_window
   end
   #--------------------------------------------------------------------------
   def create_status_window
@@ -44,6 +45,8 @@ class Scene_Tactic < Scene_MenuBase
     @command_list.set_handler(:cancel,  method(:return_scene))
     @command_list.set_handler(:pagedown, method(:next_actor))
     @command_list.set_handler(:pageup,   method(:prev_actor))
+    @command_list.set_handler(:on_dragging_ok, method(:dragging_start))
+    @command_list.set_handler(:on_dragging_cancel, method(:dragging_end))
     @command_list.refresh
     @command_list.select(0)
   end
@@ -68,6 +71,16 @@ class Scene_Tactic < Scene_MenuBase
     @item_window.x = @command_list.width - @item_window.width - 4  
     @item_window.y = @command_list.y
     @item_window.hide
+  end
+  #--------------------------------------------------------------------------
+  def create_help_window
+    @help_window = Window_Base.new(0,0, Graphics.width, @status_window.fitting_height(2))
+    @help_window.swap_skin(Cache.system(WindowSkin::Applejack))
+    @help_window.y = [(@status_window.height - @help_window.height), 0].max / 2
+    ry = (@help_window.height - @help_window.line_height*2) / 2
+    rect = Rect.new(0, ry, Graphics.width, @help_window.line_height)
+    @help_window.draw_text(rect, Vocab::Tactic::SwapHelp, 1)
+    @help_window.hide
   end
   #--------------------------------------------------------------------------
   def create_hint_window
@@ -130,6 +143,14 @@ class Scene_Tactic < Scene_MenuBase
     @item_window.hide
     @command_list.refresh
     @command_list.activate
+  end
+  #--------------------------------------------------------------------------
+  def dragging_start
+    @help_window.show
+  end
+  #--------------------------------------------------------------------------
+  def dragging_end
+    @help_window.hide
   end
   #--------------------------------------------------------------------------
   # * Termination Processing

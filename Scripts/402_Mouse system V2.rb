@@ -264,8 +264,8 @@ module Mouse
     end
     @old_pos = @pos.dup
     @pos     = Mouse.pos
-    @keys  = 0
-    @press = 0
+    @keys    = 0
+    @press   = 0
     @keys  |= PONY::Bitset[1] if GetAsyncKeyState.call(1) & 0x01 == 1
     @keys  |= PONY::Bitset[2] if GetAsyncKeyState.call(2) & 0x01 == 1
     @keys  |= PONY::Bitset[3] if GetAsyncKeyState.call(4) & 0x01 == 1
@@ -537,7 +537,7 @@ class Window_Selectable
       
       rects.each_with_index {|rect, i|
         if Mouse.area?(rect.x + add_x, rect.y + add_y, rect.width, rect.height)
-          @index = i
+          select(i)
         end
       }
     end # skip selecting if window is a popup info

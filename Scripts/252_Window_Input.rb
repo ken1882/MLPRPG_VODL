@@ -86,6 +86,8 @@ class Window_Input < Window_Base
     @hwnd = CreateWindowEx.call(1, "Edit", "", wstyle,
                                 x, y, width, height, Hwnd, 0, 
                                 GetModuleHandle.call(nil), 0)
+    $input_hwnd = @hwnd
+    ObjectSpace.define_finalizer(self, proc{on_object_destroy})
     #-----------------------------------------------------------------------
     self.ox = 0
     self.z  = @viewport.z
@@ -95,6 +97,10 @@ class Window_Input < Window_Base
     create_background if attributes[:dim_background]
     draw_title(attributes[:title])
     SetFocus.call(@hwnd) if focus
+  end
+  #--------------------------------------------------------------------------
+  def on_object_destroy
+    $input_hwnd = nil
   end
   #--------------------------------------------------------------------------
   def spacing
@@ -383,7 +389,6 @@ class Window_Input < Window_Base
   #--------------------------------------------------------------------------
   def update_selection
     return cursor_rect.empty if @select_start == @select_end
-    puts "#{[@select_end, @select_start]}"
     if @select_end > @select_start && @select_start < @display_bot_index
       width = [index_width(@select_end, @display_bot_index) + 2, contents.width].min
     else

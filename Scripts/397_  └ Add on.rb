@@ -170,6 +170,13 @@ class Scene_System < Scene_MenuBase
     create_language_window
   end
   #--------------------------------------------------------------------------
+  # * Create Background
+  #--------------------------------------------------------------------------
+  def create_background
+    @background_sprite = Sprite.new
+    @background_sprite.bitmap = Cache.background("canterlot_library")
+  end
+  #--------------------------------------------------------------------------
   # Alias: create_command_window
   #--------------------------------------------------------------------------
   alias create_command_lan_window create_command_window

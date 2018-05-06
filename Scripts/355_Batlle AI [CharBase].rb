@@ -102,8 +102,6 @@ class Game_Character < Game_CharacterBase
   def process_tactic_commands(spec_category = nil)
     tactic_commands.each do |command|
       next if spec_category && command.category != spec_category
-      pas = command.check_condition
-      #puts "CMD: #{self.name} #{command.category} #{command.condition_symbol} >> #{pas}"
       next unless command.check_condition
       action = command.action.dup
       interpret_tactic_action(action, command.get_target)

@@ -208,7 +208,7 @@ module Tactic_Config
     module_function
     #--------------------------------------------------------------------------
     def start_check(user, symbol, args)
-      @user = @user
+      @user = user
       @args = args
       @range = 8
       return method(Condition_Table[symbol]).call

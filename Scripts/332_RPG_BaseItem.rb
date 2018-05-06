@@ -63,14 +63,14 @@ class RPG::UsableItem < RPG::BaseItem
   #-----------------------------------------------------------------------
   def hp_recover?
     return true if @damage.recover? && @damage.to_hp?
-    return @effects.any?{|eff| eff.code == EFFECT_RECOVER_HP && (eff.value1 > 0 || effect.value2 > 0) }
+    return @effects.any?{|eff| eff.code == EFFECT_RECOVER_HP && (eff.value1 > 0 || eff.value2 > 0) }
   end
   #-----------------------------------------------------------------------
   # *) Check whether will recover ep
   #-----------------------------------------------------------------------
   def mp_recover?
     return true if @damage.recover? && @damage.to_mp?
-    return @effects.any?{|eff| eff.code == EFFECT_RECOVER_MP && (eff.value1 > 0 || effect.value2 > 0) }
+    return @effects.any?{|eff| eff.code == EFFECT_RECOVER_MP && (eff.value1 > 0 || eff.value2 > 0) }
   end
   alias :ep_recover? :mp_recover?
   #--------------------

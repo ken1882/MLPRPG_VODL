@@ -335,14 +335,15 @@ module Vocab::Tactic
   Delete      = "刪除"
   
   Hints = [
-    "Press shift to toggle",
-    "enable/disable.",
-    "Red: invalid",
-    "Black/White: disable",
-    "/enable",
+    "按下Shift以",
+    "開/關 指令",
+    "紅色: 指令無效",
+    "黑/白: 指令",
+    "開啟/關閉"
   ]
   
   Help = "霧煞煞? 按下F4取得幫助"
+  SwapHelp = "移動游標即可變更順序"
   
   Name_Table  = {
     :attack_mainhoof      => "使用主武器",

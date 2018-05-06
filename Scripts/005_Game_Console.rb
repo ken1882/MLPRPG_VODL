@@ -5,10 +5,11 @@
 class Game_Console
   #----------------------------------------------------------------------------
   attr_reader :show_roll_result, :debug_mode
-  attr_reader :skip_loading
+  attr_reader :skip_loading, :focus
   #----------------------------------------------------------------------------
   def initialize
     load_ini
+    @hwnd = PONY::API::Hwnd
   end
   #----------------------------------------------------------------------------
   def load_ini
@@ -40,6 +41,15 @@ class Game_Console
     raw = FileManager.load_ini('Option', 'Language').purify.downcase.to_sym
     puts "Language Changed: #{raw}"
     return $supported_languages.keys.include?(raw) ? raw : :en_us
+  end
+  #--------------------------------------------------------------------------
+  def update_focus
+    chwnd  = PONY::API::GetFocus.call(0)
+    @focus = chwnd == @hwnd || ($input_hwnd && $input_hwnd == chwnd)
+  end
+  #----------------------------------------------------------------------------
+  def focused?
+    @focus
   end
   #----------------------------------------------------------------------------
 end

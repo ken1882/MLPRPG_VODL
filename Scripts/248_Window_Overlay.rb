@@ -132,7 +132,7 @@ class Window_Overlay < Window_HorzCommand
   def draw_modified_text(rect)
     line_width = contents.width
     texts   = FileManager.textwrap(@info, line_width)
-    cy = [rect.y - line_height * (texts.size + 1), 0].max
+    cy = [rect.y - line_height * (texts.size + 1) - (line_height / 4).to_i, 0].max
     draw_text_lines(texts, 0, cy, line_width)
   end
   #--------------------------------------------------------------------------

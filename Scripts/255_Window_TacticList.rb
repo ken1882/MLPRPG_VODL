@@ -26,11 +26,6 @@ class Window_TacticList < Window_Selectable
     return Graphics.height
   end
   #--------------------------------------------------------------------------
-  def update
-    super
-    update_keyboard_action
-  end
-  #--------------------------------------------------------------------------
   # * Refresh
   #--------------------------------------------------------------------------
   def refresh
@@ -84,6 +79,11 @@ class Window_TacticList < Window_Selectable
     item = @data[index]
     if item
       rect = item_rect(index)
+      crect = rect.dup; crect.width = crect.width / 2 - 8;
+      contents.clear_rect(crect)
+      crect.x = rect.width / 2 + 15
+      contents.clear_rect(crect)
+      
       if !item.valid?
         contents.font.color.set(DND::COLOR::Red)
       elsif item.disabled?
@@ -209,9 +209,61 @@ class Window_TacticList < Window_Selectable
     @actor.tactic_commands = @data.select{|cmd| cmd.category && cmd.category != :new}
   end
   #--------------------------------------------------------------------------
-  # last work: tactic command toggle help/enable/disable
-  def update_keyboard_action
-    
+  # * Handling Processing for OK and Cancel Etc.
+  #--------------------------------------------------------------------------
+  def process_handling
+    super
+    return unless open? && active
+    process_dragging if Input.trigger?(:kSHIFT)
+    toggle_enable    if Input.trigger?(:kCTRL)
+  end
+  #--------------------------------------------------------------------------
+  def toggle_enable
+    @data[index].enabled ^= true
+    draw_item(index)
+    Sound.play_ok
+  end
+  #--------------------------------------------------------------------------
+  def process_dragging
+    if @dragging
+      call_handler(:on_dragging_cancel) if handle?(:on_dragging_cancel)
+      Sound.play_cancel
+      @dragging = false
+    elsif @data[index].category != :new
+      call_handler(:on_dragging_ok) if handle?(:on_dragging_ok)
+      Sound.play_ok
+      @dragging = true
+    else
+      Sound.play_buzzer
+    end
+    heatup_button
+  end
+  #--------------------------------------------------------------------------
+  # * Select Item
+  #--------------------------------------------------------------------------
+  def select(index)
+    last_index = self.index
+    new_index  = index
+    super(index)
+    return unless @dragging && new_index != last_index && new_index >= 0
+    return if @data[new_index].category == :new || @data[last_index].category == :new
+    @data[new_index], @data[last_index] = @data[last_index], @data[new_index] 
+    draw_item(new_index)
+    draw_item(last_index)
+  end
+  #--------------------------------------------------------------------------
+  # * Processing When OK Button Is Pressed
+  #--------------------------------------------------------------------------
+  def process_ok
+    return super unless @dragging
+    process_dragging
+  end
+  #--------------------------------------------------------------------------
+  # * Processing When Cancel Button Is Pressed
+  #--------------------------------------------------------------------------
+  def process_cancel
+    return super unless @dragging
+    process_dragging
   end
   #--------------------------------------------------------------------------
 end

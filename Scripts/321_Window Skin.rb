@@ -2,16 +2,17 @@ module WindowSkin
   
   # Main settings
   Skins = [
-  "Window",                  # 0
-  "Window _MenuCommand",     # 1
-  "Window_spellbook",        # 2
-  "Window_infos",            # 3 
-  "Window_itemmoreinfo",     # 4
-  "Rainbow dash5",           # 5
-  "Luna",                    # 6
-  "Pinkie pie4",             # 7
-  "Celestia",                # 8
-  "Fluttershy7",             # 9 
+  "Window",                  #  0
+  "Window _MenuCommand",     #  1
+  "Window_spellbook",        #  2
+  "Window_infos",            #  3 
+  "Window_itemmoreinfo",     #  4
+  "Rainbow dash5",           #  5
+  "Luna",                    #  6
+  "Pinkie pie4",             #  7
+  "Celestia",                #  8
+  "Fluttershy7",             #  9 
+  "Applejack2",              # 10
   ]
   
   Default = "Window"
@@ -38,5 +39,6 @@ module WindowSkin
   Celestia    = Skins[8]
   Fluttershy  = Skins[9]
   ItemAction  = Skins[6]
+  Applejack   = Skins[10]
   
 end
