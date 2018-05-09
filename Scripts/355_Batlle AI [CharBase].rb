@@ -100,22 +100,31 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def process_tactic_commands(spec_category = nil)
-    tactic_commands.each do |command|
+    usable_actions = []
+    tactic_commands.reverse_each do |command|
       next if spec_category && command.category != spec_category
       next unless command.check_condition
-      action = command.action.dup
-      interpret_tactic_action(action, command.get_target)
+      _action = command.action.dup; _action.target = command.get_target;
+      _action.reassign_item(_action.get_symbol_item)
+      if _action.item.is_a?(Symbol)
+        execute_symbol_action(_action)
+      else
+        usable_actions << _action
+      end
     end
+    return if usable_actions.empty?
+    _action = usable_actions.select{|a| a.action_impleable?}.first
+    _action = usable_actions.first if _action.nil?
+    interpret_tactic_action(_action)
   end
   #----------------------------------------------------------------------------
-  def interpret_tactic_action(action, target)
-    return if @next_action
-    item = action.get_symbol_item
-    return execute_symbol_action(item, target) if item.is_a?(Symbol)
-    use_tool(item, target)
+  def interpret_tactic_action(action)
+    return if action == @next_action
+    use_tool(action.item, action.target)
   end
   #----------------------------------------------------------------------------
-  def execute_symbol_action(item, target)
+  def execute_symbol_action(action)
+    item, target = action.item, action.target
     case item
     when :target_none
       set_target(nil)
@@ -184,7 +193,8 @@ class Game_Character < Game_CharacterBase
   # * Determine whether change current target
   #----------------------------------------------------------------------------
   def change_target?(target)
-    return false if casting?
+    debug = self.is_a?(Game_Follower)
+    return false if halt?    
     return false if target == @current_target
     return true  if @current_target.nil? || @current_target.dead?
     return true  if target && distance_to_character(target) < distance_to_character(@current_target)

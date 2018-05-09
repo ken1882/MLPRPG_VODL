@@ -793,7 +793,7 @@ class Scene_Map
     
     if mouse_clicked[1]
       $game_player.target_event = target
-      $game_player.cancel_action_without_penalty if $game_player.action
+      $game_player.cancel_action_without_penalty
       $game_player.set_target(nil)
     elsif mouse_clicked[0]
       $game_player.set_target(target) if target

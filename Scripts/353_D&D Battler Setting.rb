@@ -167,7 +167,7 @@ class Game_CharacterBase
     return unless @action
     chase_target(@action) if @action.need_chase?
     execute_action     if @action.cast_done? && !@action.casted?
-    cancel_action_without_penalty if @action.done?
+    cancel_action_without_penalty(true) if @action.done?
   end
   #----------------------------------------------------------------------------
   # * Execute action
@@ -191,7 +191,8 @@ class Game_CharacterBase
     apply_action_stiff
   end
   #----------------------------------------------------------------------------
-  def cancel_action_without_penalty
+  def cancel_action_without_penalty(forced = false)
+    return if !forced && @action && @action.started
     @action       = nil
     @casting_flag = false
     @aggressive_level = @ori_agresilv
@@ -222,7 +223,7 @@ class Game_CharacterBase
     cdt = @action.item.tool_cooldown
     if !@weapon_combo_stack.empty? && @action.item.id == @weapon_combo_stack.first
       prev_item = $data_weapons[@weapon_combo_stack.last]
-      @action.item = $data_weapons[prev_item.tool_combo]
+      @action.reassign_item_without_delay($data_weapons[prev_item.tool_combo])
     end
     
     if @action.item.tool_combo > 1

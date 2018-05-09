@@ -62,15 +62,19 @@ class Window_TacticList < Window_Selectable
     @data << command_add
   end
   #--------------------------------------------------------------------------
-  def draw_split_line
-    cx = self.width / 2
-    cy = 8
-    fy = self.height - 8
+  def draw_split_line(rect = nil)
+    cx    = self.width / 2
     color = DND::COLOR::White
-    exy = item_height
-    list_num = (self.height / exy)
-    extra_num = [item_max - list_num, 0].max
-    contents.draw_line(cx, cy, cx, fy + exy * extra_num, color)
+    if rect
+      contents.draw_line(cx, rect.y, cx, rect.y + rect.height, color)
+    else
+      cy = 8
+      fy = self.height - 8
+      exy = item_height
+      list_num = (self.height / exy)
+      extra_num = [item_max - list_num, 0].max
+      contents.draw_line(cx, cy, cx, fy + exy * extra_num, color)
+    end
   end
   #--------------------------------------------------------------------------
   # * Draw Item
@@ -79,10 +83,8 @@ class Window_TacticList < Window_Selectable
     item = @data[index]
     if item
       rect = item_rect(index)
-      crect = rect.dup; crect.width = crect.width / 2 - 8;
-      contents.clear_rect(crect)
-      crect.x = rect.width / 2 + 15
-      contents.clear_rect(crect)
+      contents.clear_rect(rect)
+      draw_split_line(rect)
       
       if !item.valid?
         contents.font.color.set(DND::COLOR::Red)

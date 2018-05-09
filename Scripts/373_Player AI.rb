@@ -30,7 +30,7 @@ class Game_Player < Game_Character
   #-------------------------------------------------------------------------
   def update_cancel_action
     @action_cancel_timer += 1
-    return unless @action_cancel_timer > 4
+    return unless @action_cancel_timer > 3
     @action_cancel_timer = 0
     cancel_action_without_penalty
   end

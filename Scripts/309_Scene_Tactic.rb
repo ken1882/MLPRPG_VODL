@@ -29,6 +29,7 @@ class Scene_Tactic < Scene_MenuBase
     create_item_window
     create_hint_window
     create_help_window
+    create_info_window
   end
   #--------------------------------------------------------------------------
   def create_status_window
@@ -97,6 +98,15 @@ class Scene_Tactic < Scene_MenuBase
     end
   end
   #--------------------------------------------------------------------------
+  def create_info_window
+    @info_window = Window_TacticInfo.new(0, 0)
+    @info_window.swap_skin(Cache.system(WindowSkin::Luna))
+    @info_window.set_handler(:ok, method(:on_info_return))
+    @info_window.set_handler(:cancel, method(:on_info_return))
+    @info_window.contents_opacity = 0xff
+    @info_window.refresh
+  end
+  #--------------------------------------------------------------------------
   def on_command_ok
     @action_window.activate(@command_list.item, @actor)
     rect = @command_list.item_rect(@command_list.index)
@@ -146,6 +156,23 @@ class Scene_Tactic < Scene_MenuBase
     @command_list.activate
   end
   #--------------------------------------------------------------------------
+  def call_info_window
+    p 'call info'
+    @last_active_window = find_current_active_window
+    @last_active_window.deactivate
+    @info_window.activate
+    @info_window.show
+  end
+  #--------------------------------------------------------------------------
+  def on_info_return
+    p 'info return'
+    puts "last window: #{@last_active_window}"
+    @info_window.deactivate
+    @info_window.hide
+    @last_active_window.activate
+    @last_active_window = nil
+  end
+  #--------------------------------------------------------------------------
   def dragging_start
     @help_window.show
   end
@@ -164,6 +191,15 @@ class Scene_Tactic < Scene_MenuBase
   #--------------------------------------------------------------------------
   def update
     super
+    update_hint_calling
+  end
+  #--------------------------------------------------------------------------
+  def update_hint_calling
+    return unless button_cooled?
+    if Input.trigger?(:kF4) && !Input.press?(:kALT)
+      @info_window.visible? ? on_info_return : call_info_window
+      heatup_button
+    end
   end
   #--------------------------------------------------------------------------
   # * Change Actors

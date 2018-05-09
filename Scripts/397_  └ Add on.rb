@@ -211,6 +211,10 @@ class Scene_System < Scene_MenuBase
     raise_overlay_window(:popinfo, Vocab::System::Restart)
     on_language_cancel
     FileManager.write_ini('Option', 'Language', symbol.to_s)
+    language_index = -1
+    data = @command_window.list
+    data.each_index{|i| language_index = i if data[i][:symbol] == :language}
+    @command_window.draw_item(language_index) if language_index > 0
   end
   #--------------------------------------------------------------------------
   def on_language_cancel

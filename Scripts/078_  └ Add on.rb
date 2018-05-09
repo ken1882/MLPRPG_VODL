@@ -22,6 +22,7 @@ class Game_Battler < Game_BattlerBase
   attr_accessor :team_id
   attr_accessor :last_attacked_action
   attr_accessor :tactic_commands    # tactic commadns
+  attr_accessor :action_list
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -33,6 +34,7 @@ class Game_Battler < Game_BattlerBase
     @armor_cooldown   = {}
     @skill_charges    = {}
     @tactic_commands  = []
+    @action_list      = []
     @map_char         = nil
     @stiff            = 0
     @move_limit       = DND::BattlerSetting::MoveLimit

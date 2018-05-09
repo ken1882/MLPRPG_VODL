@@ -6,7 +6,7 @@
 #==============================================================================
 module FileManager
   #---------------------------------------------------------------------------
-  #Text_Width = 
+  PaddingWidth = 6
   #---------------------------------------------------------------------------
   # *) Ensure the file or dictionary
   #---------------------------------------------------------------------------
@@ -26,7 +26,7 @@ module FileManager
     end
     raise TypeError unless full_text.is_a?(String)
     wraped_text = []
-    cur_width   = 0 
+    cur_width   = PaddingWidth
     line        = ""
     strings     = full_text.gsub('　', ' ').split(/[\r\n ]+/i)
     strs_n      = strings.size
@@ -79,7 +79,7 @@ module FileManager
       if endl
         wraped_text.push(line)
         line = ""
-        cur_width = 0
+        cur_width = PaddingWidth
       end
     end
     sample_bitmap.dispose if using_sample

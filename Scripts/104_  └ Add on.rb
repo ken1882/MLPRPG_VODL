@@ -240,6 +240,7 @@ class Game_Player < Game_Character
     return @current_target = nil if target.nil?
     return unless target.enemy
     @current_target = target
+    cancel_action_without_penalty
   end
   #----------------------------------------------------------------------------
   def get_ammo_item(item)

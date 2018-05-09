@@ -212,6 +212,7 @@ if Effectus::UsePassable
     @partition_width  = (width  + SpacePartitionRange - 1).to_i / SpacePartitionRange
     @partition_height = (height + SpacePartitionRange - 1).to_i / SpacePartitionRange
     @partition_size   = @partition_width * @partition_height
+    @collision_quadtree = {}
     @partition_size.times do |i|
       @collision_quadtree[i] = Array.new
     end

@@ -238,7 +238,7 @@ class Game_Character < Game_CharacterBase
     #SceneManager.display_info("#{self.name} - knocked out")
     $game_map.need_refresh = true
     @ori_through = @through
-    cancel_action_without_penalty
+    cancel_action_without_penalty(true)
     @next_action = nil
     set_target(nil)
   end
@@ -253,9 +253,6 @@ class Game_Character < Game_CharacterBase
     @next_action, char.next_action = char.next_action, @next_action
     @casting_flag, char.casting_flag = char.casting_flag, @casting_flag
     @step_anime, char.step_anime = char.step_anime, @step_anime
-    #@next_action, char.next_action = nil, nil
-    #@action = nil     unless @action && @action.started
-    #char.action = nil unless char.action && char.action.started
     set_direction(dir2); char.set_direction(dir1);
   end
   #----------------------------------------------------------------------------

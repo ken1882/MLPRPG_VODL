@@ -62,6 +62,11 @@ class Game_Action
     @casted        = false
     @symbol_item   = nil
   end
+  #------------------------------------------------------------------------
+  def ==(action)
+    return false if action.ruby_class != self.ruby_class
+    return @item == action.item && @user == action.user && @target == action.target
+  end
   #---------------------------------------------------------------------------
   #  *) Start action
   #---------------------------------------------------------------------------
@@ -136,11 +141,12 @@ class Game_Action
   end
   #---------------------------------------------------------------------------
   def cancel_action?
-    return true if @target.nil?
-    return true unless @user.effectus_near_the_screen?
+    return false if @started
+    return true  if @target.nil?
+    return true  unless @user.effectus_near_the_screen?
     return false if @target.is_a?(POS)
-    return true unless @target.effectus_near_the_screen?
-    return true if target.dead?
+    return true  unless @target.effectus_near_the_screen?
+    return true  if target.dead?
     return false
   end
   #---------------------------------------------------------------------------
@@ -188,18 +194,22 @@ class Game_Action
     @waiting = false
   end
   #---------------------------------------------------------------------------
-  def item=(subitem)
+  def reassign_item_without_delay(item)
     return if done?
-    @item = subitem
+    @item = item
     execute
   end
   #---------------------------------------------------------------------------
   def reassign_item(item)
     @symbol_item  = item.is_a?(Symbol) ? item : nil
     @item         = item
-    @time         = user.item_casting_time(item) if @item.is_a?(RPG::BaseItem)
+    if @item.is_a?(RPG::BaseItem)
+      @time = user.item_casting_time(item)
+      @effect_delay = item.tool_effectdelay
+    else
+      @time = @effect_delay = 0
+    end
     @time_needed  = @time
-    @effect_delay = item.tool_effectdelay rescue 0
   end
   #---------------------------------------------------------------------------
   def interrupt

@@ -18,6 +18,7 @@ class Window_TacticAction < Window_Command
     make_default_handler
     @actor    = nil
     @command  = nil
+    deactivate
     unselect
     hide
   end

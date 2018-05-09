@@ -234,7 +234,17 @@ class Scene_Base
     @@overlay_windows.each do |sym, window|
       @@overlay_windows[symbol].z = [window.z + 1, @@overlay_windows[symbol].z].max rescue nil
     end
-  end  
+  end
+  #--------------------------------------------------------------------------
+  def find_current_active_window
+    instance_variables.each do |varname|
+      ivar = instance_variable_get(varname)
+      if ivar.is_a?(Window_Selectable) && ivar.active?
+        return ivar
+      end
+    end
+    return nil
+  end
   #--------------------------------------------------------------------------
   # * Update overlay window
   #--------------------------------------------------------------------------

@@ -63,6 +63,7 @@ module Vocab
     :term       => "/Terms",
     :state      => "/States",
   }
+  
   #----------------------------------------------------------------------------
   # * Return dictionary file of language
   #----------------------------------------------------------------------------
@@ -336,11 +337,28 @@ module Vocab::Tactic
   Delete      = "Delete"
   
   Hints = [
-    "Press shift to toggle",
-    "enable/disable.",
-    "Red: invalid",
-    "Black/White: disable",
-    "/enable",
+    "Notice: Bot tactic will only works when the party AI is enabled [press 'C'",
+    "(default) in map scene to toggle it].",
+    "You can see the detailed information of all commands available in Player's",
+    "handbook",
+    "--------------------------------------------------------------------------",
+    "You can add up to 20 commands for each character, and the command will",
+    "works if and only if both condition and action is assigned.",
+    "If the command id is \\c[18]Red\\c[0], it's an invalid command, and \\c[29]Green\\c[0] is a valid one.",
+    "You can toggle enable/disable the command by press \\c[23]CTRL\\c[0], if the command",
+    "is disabled, the id color will be \\c[15]Black.",
+    "Conditions won't be checked if the command is invalid or disabled, but \\c[10]the",
+    "\\c[10]command accessed by 'Jump to Tactic' is not affected by disabling it.",
+    "",
+    "The priority of the command is from lower to higher according to its id.",
+    "So if multiple command condition is meet, the one with higher id will be",
+    "executed first; meanwhile AI will always prefer taking the action which",
+    "could causing effects to the target(including parties) instantly.",
+    "",
+    "To change the priority(id) of the command, press \\c[23]SHIFT\\c[0] then negative it",
+    "with cursor to the position you want; once you done, press \\c[23]shift/ok\\c[0] to",
+    "exit editing.",
+    "",
   ]
   
   Help     = "No idea what's this? Press F4 for help"

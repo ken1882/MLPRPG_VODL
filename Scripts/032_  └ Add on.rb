@@ -244,7 +244,7 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.apply_subitem(action)
     return if action.user.dead?
-    action.item = action.user.get_ammo_item(action.item)
+    action.reassign_item_without_delay(action.user.get_ammo_item(action.item))
     
     if action.target.is_a?(Game_Battler)
       action.target = BattleManager.autotarget(action.user, action.item)
@@ -262,7 +262,7 @@ module BattleManager
     subitem = $data_skills[sid]
     subaction = action.dup
     subaction.target = subaction.user.determine_targets(subitem)
-    subaction.item = subitem
+    subaction.reassign_item_without_delay(subitem) 
     return unless subaction.user.skill_cost_payable?(subitem)
     subaction.user.process_skill_action(subaction)
   end

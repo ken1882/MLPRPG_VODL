@@ -51,7 +51,7 @@ module Tactic_Config
       @candidates = BattleManager.opponent_battler(@user)
       @range = @user.visible_sight
       @candidates = @candidates.select{|ch| @user.distance_to_character(ch) <= @range}
-      @candidates.select!{|ch| @user.path_clear?(@user.x, @user.y, ch.x, ch.y) }
+      @candidates.select!{|ch| @user.battler_in_sight?(ch) }
       @candidates.sort!{|a,b| @user.distance_to_character(a) <=> @user.distance_to_character(b)}
       return method(func).call
     end
@@ -77,7 +77,7 @@ module Tactic_Config
     def pick_nearest_visible
       @candidates.each do |ch|
         next if ch.dead?
-        return ch if @user.battler_in_sight?(ch)
+        return ch
       end
       return nil
     end
