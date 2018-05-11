@@ -33,7 +33,7 @@ class Bitmap
   #-----------------------------------------------------------------------------
   alias init_source initialize
   def initialize(*args)
-    @source = args[0].is_a?(String) ? args[0] : "Nil"
+    @source = args[0].is_a?(String) ? args[0] : nil
     init_source(*args)
   end
   #-----------------------------------------------------------------------------
@@ -206,7 +206,12 @@ class Sprite
     self.x, self.y = sx, sy
   end
   #-----------------------------------------------------------------------------
-  
+  alias dispose_linker dispose
+  def dispose
+    Cache.unchain_linker(self)
+    dispose_linker
+  end
+  #-----------------------------------------------------------------------------
 end
 #==============================================================================
 # ** Plane
