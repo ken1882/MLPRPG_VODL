@@ -193,10 +193,7 @@ class Window_Selectable < Window_Base
   def cursor_down(wrap = false)
     mul = Input.press?(:kSHIFT) && item_max > 5 ? 5 : 1
     if index < item_max - col_max || (wrap && col_max == 1)
-      next_index = index + col_max * mul
-      next_index = [item_max - 1, next_index].min if index + 1 != item_max
-      next_index = 0                              if index + 1 == item_max
-      select(next_index % item_max)
+      cursor_next(index + col_max * mul)
     end
   end
   #--------------------------------------------------------------------------
@@ -205,10 +202,7 @@ class Window_Selectable < Window_Base
   def cursor_up(wrap = false)
     mul = Input.press?(:kSHIFT) && item_max > 5 ? 5 : 1
     if index >= col_max || (wrap && col_max == 1)
-      next_index = index - col_max * mul + item_max
-      next_index = [next_index, 0].max if index != 0
-      next_index = item_max - 1        if index == 0 && next_index > item_max
-      select(next_index % item_max)
+      cursor_last(index - col_max * mul + item_max)
     end
   end
   #--------------------------------------------------------------------------
@@ -217,10 +211,7 @@ class Window_Selectable < Window_Base
   def cursor_right(wrap = false)
     mul = Input.press?(:kSHIFT) && item_max > 5 ? 5 : 1
     if col_max >= 2 && (index < item_max - 1 || (wrap && horizontal?))
-      next_index = index + 1 * mul
-      next_index = [item_max - 1, next_index].min if index + 1 != item_max
-      next_index = 0                              if index + 1 == item_max
-      select(next_index % item_max)
+      cursor_next(next_index = index + 1 * mul)
     end
   end
   #--------------------------------------------------------------------------
@@ -229,11 +220,20 @@ class Window_Selectable < Window_Base
   def cursor_left(wrap = false)
     mul = Input.press?(:kSHIFT) && item_max > 5 ? 5 : 1
     if col_max >= 2 && (index > 0 || (wrap && horizontal?))
-      next_index = index - 1 * mul + item_max
-      next_index = [next_index, 0].max if index != 0
-      next_index = item_max - 1        if index == 0 && next_index > item_max
-      select(next_index % item_max)
+      cursor_last(index - 1 * mul + item_max)
     end
+  end
+  #--------------------------------------------------------------------------
+  def cursor_next(next_index)
+    next_index = [item_max - 1, next_index].min if index + 1 != item_max
+    next_index = 0                              if index + 1 == item_max
+    select(next_index % item_max)
+  end
+  #--------------------------------------------------------------------------
+  def cursor_last(next_index)
+    next_index = [next_index, item_max].max if index != 0
+    next_index = item_max - 1               if index == 0
+    select(next_index % item_max)
   end
   #--------------------------------------------------------------------------
   # * Draw Item

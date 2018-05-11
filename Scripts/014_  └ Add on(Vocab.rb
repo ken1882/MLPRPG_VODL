@@ -515,6 +515,18 @@ module Vocab::Skillbar
   SelSucc     = "You have assigned %s on hotkey '%s'"
 end
 #==============================================================================
+# ** Vocab::Debug
+#------------------------------------------------------------------------------
+#   Texts for Debug window
+#==============================================================================
+module Vocab::Debug
+  
+  Switch   = "C (Enter) : ON / OFF"
+  Variable = "← (Left)    :  -1\n"  + "→ (Right)   :  +1\n" +
+             "L (Pageup)   : -10\n" + "R (Pagedown) : +10"
+  Bitmap   = "Using WASD/↑←↓→ to negative the graph"
+end
+#==============================================================================
 # ** Vocab::Rescue
 #------------------------------------------------------------------------------
 #   Text info of the rescues
