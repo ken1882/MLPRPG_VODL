@@ -14,7 +14,7 @@ class Window_DebugPanel < Window_Base
   #--------------------------------------------------------------------------
   def initialize
     super(0, 0, Graphics.width, Graphics.height)
-    self.z = 1999
+    self.z = PONY::SpriteDepth::Table[:win_debug]
     @current_index = 0
     create_selecting_window
     create_content_window
@@ -145,8 +145,9 @@ class Window_DebugPanel < Window_Base
   end
   #--------------------------------------------------------------------------
   def hide
-    @help_window.hide
+    @help_window.hide if @help_window
     [@select_window, @content_window].each do |window|
+      next unless window
       window.unselect
       window.hide
       window.deactivate

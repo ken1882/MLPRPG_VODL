@@ -33,7 +33,7 @@ class Scene_Map < Scene_Base
     @command_window = Window_TacticCommand.new(0,@status_window.y + @status_window.height)
     @window_help    = Window_Help.new(1)
     @window_help.y  = Graphics.height - @window_help.height
-    @window_help.z  = 1200
+    @window_help.z  = PONY::SpriteDepth::Table[:win_info]
     @window_help.hide
     @command_window_name  = "@command_window".to_sym
     @status_window_name   = "@status_window".to_sym

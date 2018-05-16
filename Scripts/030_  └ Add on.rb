@@ -125,6 +125,10 @@ module SceneManager
     return scene.viewport
   end
   #--------------------------------------------------------------------------
+  def self.superviewport
+    return scene.superviewport
+  end
+  #--------------------------------------------------------------------------
   def self.viewport1
     return nil unless scene_is?(Scene_Map)
     return scene.spriteset.viewport1

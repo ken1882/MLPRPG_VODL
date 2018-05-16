@@ -71,14 +71,14 @@ class ForeGround_Loading
     else
       @background.bitmap = Cache.background("blank_black")
     end
-    @background.z = 10 ** 8
+    @background.z = PONY::SpriteDepth::Table[:foreground_ov]
   end
   #--------------------------------------------------------------------------
   # * Create Viewport
   #--------------------------------------------------------------------------
   def create_viewport
     @viewport = Viewport.new
-    @viewport.z = 10 ** 8 + 1
+    @viewport.z = PONY::SpriteDepth::Table[:foregroud_ov] + 1
   end
   #--------------------------------------------------------------------------
   # * Create Loading Sprites

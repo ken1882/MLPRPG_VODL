@@ -290,5 +290,9 @@ class Window_Selectable < Window_Base
     call_handler_dnd(symbol)
   end
   #--------------------------------------------------------------------------
+  def select_cursor_needed?
+    return item_max > 0
+  end
+  #--------------------------------------------------------------------------
   def overlayed?; @overlayed; end
 end

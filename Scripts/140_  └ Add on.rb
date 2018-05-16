@@ -424,8 +424,8 @@ class Spriteset_Map
   end
   #--------------------------------------------------------------------------
   def create_override_sprite(battler)
-    @override = Sprite_Character.new(nil, battler)
-    @override.z = 400
+    @override   = Sprite_Character.new(nil, battler)
+    @override.z = PONY::SpriteDepth::Table[:override]
   end
   #--------------------------------------------------------------------------
   def dispose_override_sprite(battler)

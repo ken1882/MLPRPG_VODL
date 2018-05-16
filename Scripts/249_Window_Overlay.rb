@@ -20,7 +20,7 @@ class Window_Overlay < Window_HorzCommand
     self.windowskin = Cache.system(WindowSkin::Pinkie) if WindowSkin::Enable
     assign_handler
     self.opacity = 255
-    self.z = 1000
+    self.z = PONY::SpriteDepth::Table[:overlays]
     refresh
     self_overlay if overlay_self
     deactivate

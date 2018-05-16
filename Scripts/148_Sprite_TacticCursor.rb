@@ -15,7 +15,7 @@ class Sprite_TacticCursor < Sprite_Base
     create_bitmap
     self.ox = self.bitmap.width / 2
     self.oy = self.bitmap.height
-    self.z  = 200
+    self.z  = PONY::SpriteDepth::Table[:character]
     update
     hide
   end

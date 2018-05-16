@@ -20,7 +20,7 @@ class Window_InformationLog < Window_Selectable
           Graphics.height - window_height - 50 , 
           window_width, window_height)
           
-    self.z = 100
+    self.z = PONY::SpriteDepth::Table[:viewport3]
     self.opacity = 255
     @lines = data ? data : []
     create_back_bitmap

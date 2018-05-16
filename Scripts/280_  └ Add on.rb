@@ -46,7 +46,7 @@ class Scene_Menu < Scene_MenuBase
     @foreground_sprite = Sprite.new
     @foreground_sprite.bitmap = Cache.UI("Menu_SplitLine")
     @foreground_sprite.y = @command_window.height - 4
-    @foreground_sprite.z = 100
+    @foreground_sprite.z = PONY::SpriteDepth.layers(1)
   end
   #--------------------------------------------------------------------------
   def dispose_foreground

@@ -55,7 +55,7 @@ class Window_Input < Window_Base
     #-----------------------------------------------------------------------
     # > init vars
     @window_width    = width
-    @viewport        = SceneManager.viewport
+    @viewport        = SceneManager.superviewport
     @char_limit      = attributes[:autoscroll] ? AutoScroll_ChatLimit : @display_width / item_width
     @char_limit      = attributes[:limit] if attributes[:limit]
     @last_str        = ""
@@ -128,8 +128,8 @@ class Window_Input < Window_Base
   end
   #--------------------------------------------------------------------------
   def create_second_viewport
-    @viewport2 = Viewport.new
-    @viewport2.z = 500
+    @viewport2   = Viewport.new
+    @viewport2.z = @viewport.z + PONY::SpriteDepth.layers(1)
   end
   #--------------------------------------------------------------------------
   def create_background

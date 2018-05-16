@@ -128,7 +128,8 @@ class Sprite_Character < Sprite_Base
       @effectus_old_sy = sy
       self.y = sy
     end
-    self.z = $game_system.time_stopper == @character ? 400 : @character.screen_z
+    ovz = PONY::SpriteDepth::Table[:override]
+    self.z = $game_system.time_stopper == @character ? ovz : @character.screen_z
   end
   #--------------------------------------------------------------------------
   # * Update Position
@@ -200,7 +201,7 @@ class Sprite_Character < Sprite_Base
     if @balloon_duration > 0
       @balloon_sprite.x = x
       @balloon_sprite.y = y - height
-      @balloon_sprite.z = z + 200
+      @balloon_sprite.z = z + PONY::SpriteDepth::Table[:ballon]
       sx = balloon_frame_index * 32
       sy = (@balloon_id - 1) * 32
       @balloon_sprite.src_rect.set(sx, sy, 32, 32)

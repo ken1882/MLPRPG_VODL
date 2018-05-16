@@ -111,7 +111,7 @@ module Mouse
   class Sprite_Cursor < Sprite
     #---------------------------------------------------------------------------
     # * Outline sprite
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     def create_outline
       @outline = Sprite.new(nil)
       @outline.bitmap = Bitmap.new(32, 32)
@@ -139,4 +139,61 @@ class Scene_Map
     check_mouse_movement_hover
   end
   
+end
+#==============================================================================
+# ** Window_Selectable
+#------------------------------------------------------------------------------
+#  This window class contains cursor movement and scroll functions.
+#==============================================================================
+class Window_Selectable < Window_Base
+  #---------------------------------------------------------------------------
+  alias refresh_mouse_selection refresh
+  def refresh
+    @selection_rects = nil
+    refresh_mouse_selection
+  end
+  #---------------------------------------------------------------------------
+  def selection_rects_for_mouse
+    return @selection_rects if @selection_rects
+    @selection_rects = []
+    item_max.times do |i|
+      @selection_rects << get_selection_rect(i)
+    end
+    return @selection_rects
+  end
+  #---------------------------------------------------------------------------
+  def get_selection_rect(index)
+    return Rect.new(0, 0, contents.width, row_max * item_height) if @cursor_all
+    return Rect.new(0,0,0,0) if index < 0
+    return item_rect(index)
+  end
+  #---------------------------------------------------------------------------
+  # * Update mouse movement
+  #---------------------------------------------------------------------------
+  def update_mouse
+    return unless @mouse_timer == 0
+    return unless Mouse.collide_sprite?(self)
+    @mouse_timer = get_mouse_timer
+    
+    last_index = @index
+    rects = []
+    add_x = self.x + 16 - self.ox
+    add_y = self.y + 16 - self.oy
+    
+    if !self.viewport.nil?
+      add_x += self.viewport.rect.x - self.viewport.ox
+      add_y += self.viewport.rect.y - self.viewport.oy
+    end
+    
+    if select_cursor_needed?
+      rects = selection_rects_for_mouse
+      rects.each_with_index do |rect, i|
+        select(i) if Mouse.area?(rect.x + add_x, rect.y + add_y, rect.width, rect.height)
+      end
+    end # skip selecting if window needn't to select anything
+    return if last_index == @index
+    update_cursor
+    call_update_help
+  end
+  #---------------------------------------------------------------------------
 end

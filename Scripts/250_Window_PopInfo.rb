@@ -68,4 +68,9 @@ class Window_PopInfo < Window_Overlay
   def index
     return -1
   end
+  #--------------------------------------------------------------------------
+  def select_cursor_needed?
+    return false
+  end
+  #--------------------------------------------------------------------------
 end

@@ -89,7 +89,7 @@ class Sprite_Skillbar < Sprite
   def create_dragging_sprite(viewport)
     @drag_sprite = Sprite.new(viewport)
     @drag_sprite.bitmap = Bitmap.new(32, 32)
-    @drag_sprite.z = 2000
+    @drag_sprite.z = PONY::SpriteDepth.layers(10)
   end
   #--------------------------------------------------------------------------
   def create_name_sprite(viewport)

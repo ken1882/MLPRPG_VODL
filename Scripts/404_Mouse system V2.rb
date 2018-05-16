@@ -367,7 +367,7 @@ module Mouse
     
     def initialize
       super(nil)
-      self.z = 50000
+      self.z = PONY::SpriteDepth::Table[:mouse]
       @bitmap_cache = initial_bitmap
       # tag: modified
       #if Jet::MouseSystem::DEV_OUTLINE

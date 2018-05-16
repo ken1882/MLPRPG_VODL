@@ -74,6 +74,7 @@ module WALLPAPER_EX
   def create_particles
     return unless PARTICLES
     dispose_menu_particles
+    debug_print("Create menu particles #{self.class}")
     @particle_viewport = Viewport.new(-32, -32, 576, 448)
     @particle_bitmap =[]
     for i in 0...NUMBER_OF_PARTICLES
@@ -95,6 +96,7 @@ module WALLPAPER_EX
  #--------------------------------------------------------------------------              
   def dispose_menu_particles
       return unless PARTICLES
+      debug_print "Dispose menu particle sprites #{self.class}"
       if @particle_bitmap != nil
          @particle_bitmap.each {|sprite| sprite.dispose} 
          @particle_viewport.dispose

@@ -40,7 +40,7 @@ class Sprite_Hud < Sprite_Base
     @viewport      = viewport
     self.x         = 4
     self.y         = 4 + HudSize.at(1) * party_index
-    self.z         = viewport ? viewport.z : 1000
+    self.z         = viewport ? viewport.z : PONY::SpriteDepth::Table[:huds]
     create_layout
   end
   #--------------------------------------------------------------------------

@@ -9,7 +9,7 @@ class Scene_Base
   #--------------------------------------------------------------------------
   attr_accessor   :overlay_windows
   attr_reader     :overlayed
-  attr_reader     :viewport
+  attr_reader     :viewport, :superviewport
   attr_reader     :item_help_window
   #--------------------------------------------------------------------------
   # * Main
@@ -111,7 +111,7 @@ class Scene_Base
   #--------------------------------------------------------------------------
   def create_superviewport
     @superviewport = Viewport.new
-    @superviewport.z = 10000
+    @superviewport.z = PONY::SpriteDepth::Table[:overlays]
   end
   #--------------------------------------------------------------------------
   # * Overlay Window
@@ -368,10 +368,11 @@ class Scene_Base
   end
   #-------------------------------------------------------------------------
   def hide_item_help_window
+    return unless @item_help_text && @item_help_window
     @cur_item_help_text = ""
     @help_window_timer = 0
-    @item_help_text.bitmap.clear
     @item_help_text.hide
+    @item_help_text.bitmap.clear
     @item_help_window.hide
   end
   #--------------------------------------------------------------------------

@@ -44,7 +44,7 @@ class Scene_Item < Scene_ItemBase
     @action_window.set_handler(:use_ok,     method(:action_use))
     @action_window.set_handler(:sel_hotkey, method(:action_hotkey))
     @action_window.set_handler(:cancel, method(:on_action_cancel))
-    @action_window.z = 200
+    @action_window.z = PONY::SpriteDepth.layers(3)
     @action_window.deactivate
   end
   #--------------------------------------------------------------------------
@@ -64,7 +64,7 @@ class Scene_Item < Scene_ItemBase
     cy = @skillbar.y - 2
     crect = Rect.new(cx, cy, 32 * HotKeys::HotKeys.size, 32)
     @foreground.bitmap.clear_rect(crect)
-    @foreground.z = 2000
+    @foreground.z = PONY::SpriteDepth::Table[:foreground]
     @foreground.opacity = 196
     @foreground.hide
   end

@@ -81,4 +81,8 @@ class Window_Base < Window
     return contents.text_size(text).width + contents.font.size
   end
   #--------------------------------------------------------------------------
+  def select_cursor_needed?
+    return false
+  end
+  #--------------------------------------------------------------------------
 end

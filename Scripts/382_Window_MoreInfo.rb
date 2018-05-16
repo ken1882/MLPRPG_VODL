@@ -113,7 +113,7 @@ class Window_Moreinfo < Window_Base
     self.windowskin = Cache.system(WindowSkin::MapInfo) if WindowSkin::Enable
     self.opacity = 255
     self.hide
-    self.z = 800
+    self.z = PONY::SpriteDepth::Table[:win_info]
     refresh
   end
   #--------------------------------------------------------------------------

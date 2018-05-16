@@ -94,7 +94,7 @@ class Scene_Status < Scene_MenuBase
     cy = @skillbar.y - 2
     crect = Rect.new(cx, cy, 32 * HotKeys::HotKeys.size, 32)
     @foreground.bitmap.clear_rect(crect)
-    @foreground.z = 2000
+    @foreground.z = PONY::SpriteDepth::Table[:foreground]
     @foreground.opacity = 196
     @foreground.hide
   end
