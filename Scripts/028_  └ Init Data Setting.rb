@@ -6,18 +6,17 @@ module DataManager
   #--------------------------------------------------------------------------
   # alias method: load_database
   #--------------------------------------------------------------------------
-  class <<self; alias load_database_dndsubs load_database; end
+  class <<self; alias load_database_dndattrs load_database; end
   def self.load_database
     $data_notetagged_items = []
-    load_database_dndsubs
-    load_notetags_dndsubs
+    load_database_dndattrs
+    load_notetags_dndattrs
     process_translation
   end
-  
   #--------------------------------------------------------------------------
-  # new method: load_notetags_war
+  # * Load item attributes form notes
   #--------------------------------------------------------------------------
-  def self.load_notetags_dndsubs
+  def self.load_notetags_dndattrs
     groups = [$data_items, $data_weapons, $data_armors, $data_skills,$data_states, $data_enemies, $data_actors]
     infos  = ["Load Items", "Load Weaopns", "Load Armors", "Load Skills", "Load States", "Load NPCs", "Prepare your ponies"]
     debug_print "load note tags"
@@ -31,7 +30,7 @@ module DataManager
         SceneManager.update_loading
         next if obj.nil?
         obj.hash_self
-        obj.load_notetags_dndsubs
+        obj.load_notetags_dndattrs
       end
     end
   end

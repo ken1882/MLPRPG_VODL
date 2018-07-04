@@ -10,15 +10,17 @@ module DND
     #-------------------------------------------------------------------------
     ARMOR_CLASS = /<(?:AC|ac):[ ]([\+\-]\d+)>/i
     #-------------------------------------------------------------------------
-    # <saving throw adjust x: +/-x>
+    # <saving throw adjust: (+/-x) * 8>
+    # <saving throw adjust: 0, 0, 0, 0, 0, 0>
+    # -> mhp, mmp, str, con, int, wis, dex, cha; first 2 should remain 0
     #-------------------------------------------------------------------------
     SAVING_THROW_ADJUST  = /<(?:SAVING_THROW_ADJUST|saving throw adjust):[ ](.+)>/i
     #-------------------------------------------------------------------------
-    # <dc adjust x: +/-x>
+    # <dc adjust: +/-x * 8>
     #-------------------------------------------------------------------------
     DC_ADJUST  = /<(?:DC_ADJUST|dc adjust):[ ](.+)>/i
     #-------------------------------------------------------------------------
-    # <param adjust x: +/-x>
+    # <param adjust: +/-x * 8>
     #-------------------------------------------------------------------------
     Param_Adjust = /<(?:PARAM_ADJUST|param adjust):[ ](.+)>/i
     #-------------------------------------------------------------------------
@@ -53,14 +55,6 @@ module DND
     # <item max: x>
     #-------------------------------------------------------------------------
     ITEM_MAX = /<(?:ITEM_MAX|item max):[ ](\d+)>/i
-    #-------------------------------------------------------------------------
-    # <physical damage modify: +/-x>
-    #-------------------------------------------------------------------------
-    PHY_DMG_MOD = /<(?:PHYSICAL_DAMAGE_MODIFY|physical damage modify):[ ]([\+\-]\d+)>/i
-    #-------------------------------------------------------------------------
-    # <magical damage modify: +/-x>
-    #-------------------------------------------------------------------------
-    MAG_DMG_MOD = /<(?:MAGICAL_DAMAGE_MODIFY|magical damage modify):[ ]([\+\-]\d+)>/i
     #-------------------------------------------------------------------------
     # <taem id: x>
     #-------------------------------------------------------------------------
@@ -183,7 +177,7 @@ module DND
     # it has double proficient
     # Pattern: <selectable: skillid0, skillid1, skillid2...>
     # Example: <selectable: 10,11,12>
-    Selectable     = /<(?:selectable:)[ ](\.+)>/i  
+    Selectable     = /<(?:selectable:)[ ](.+)>/i  
     
     # DND Class Settings
     LoadStart      = /<(?:DND)>/i
@@ -193,8 +187,15 @@ module DND
     Class          = /(?:class:)[ ](\d+)/i
     DualClass      = /(?:dualClass:)[ ](\d+)/i
     ClassParent    = /(?:parent:)[ ](\d+)/i  # parent class for advanced class
-    HP             = /(?:HP:)[ ](\d+)/i      # init hp
-    EP             = /(?:EP:)[ ](\d+)/i      # init ep
+    HP             = /(?:HP:)[ ](\d+)/i      # init hp/hit dide
+    EP             = /(?:EP:)[ ](\d+)/i      # init ep(plus for race)
+    Requirement    = /(?:REQ:)[ ](.+)/i      # Score ability needed to choose
+    Strength       = /(?:STR:)[ ](\d+)/i     # Score ability - str
+    Constitution   = /(?:CON:)[ ](\d+)/i     # Score ability - con
+    Intelligence   = /(?:INT:)[ ](\d+)/i     # Score ability - int
+    Wisdom         = /(?:WIS:)[ ](\d+)/i     # Score ability - wis
+    Dexterity      = /(?:DEX:)[ ](\d+)/i     # Score ability - dex
+    Charisma       = /(?:CHA:)[ ](\d+)/i     # Score ability - cha
   end
   
 end
