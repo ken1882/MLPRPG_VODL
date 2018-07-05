@@ -1,4 +1,3 @@
-
 #===============================================================================
 # * Superclass of almost database items
 #===============================================================================
@@ -16,12 +15,129 @@ class RPG::BaseItem
     dict = ''
     return sprintf("%s%s%s",dict, '0' * (3 - cnt), @id)
   end
+   #------------------------------------------------------------------------
+  # * Set hashid
+  #------------------------------------------------------------------------
+  def hash_self
+    base = (@id * 42).to_s(8)
+    base += "Actor"  if self.is_a?(RPG::Actor)
+    base += "Class"  if self.is_a?(RPG::Class)
+    base += "Enemy"  if self.is_a?(RPG::Enemy)
+    base += "Item"   if self.is_a?(RPG::Item)
+    base += "Weapon" if self.is_a?(RPG::Weapon)
+    base += "Armor"  if self.is_a?(RPG::Armor)
+    base += "State"  if self.is_a?(RPG::State)
+    @hashid = PONY.Sha256(base).to_i(16)
+    super
+  end
+  #-----------------------------------------------------------------------
+  # *) Get Attack Element
+  #-----------------------------------------------------------------------
+  def get_feat_attack_elemet
+    elements = []
+    @features.each do |feat|
+      elements.push(feat.data_id) if feat.code == 31
+    end
+    
+    return elements
+  end
+  #-----------------------------------------------------------------------
+  # *) Get Element Rate
+  #-----------------------------------------------------------------------
+  def get_element_rate(id)
+    @features.each do |feat|
+      if feat.code == 11
+        if id.is_a?(String)
+          return feat.value if id.upcase == $data_system.elements[feat.data_id].upcase
+        else
+          return feat.value if id == feat.data_id
+        end
+      end
+    end
+    return 1
+  end
   #---------------------------------------------------------------------------
   def is_skill?;  false; end
   def is_item?;   false; end
   def is_weapon?; false; end
   def is_armor?;  false; end
   #---------------------------------------------------------------------------  
+end
+#=======================================================================
+# *) RPG::UsableItem
+#-----------------------------------------------------------------------
+# Quicker way to check the effects
+#=======================================================================
+class RPG::UsableItem < RPG::BaseItem
+  #--------------------------------------------------------------------------
+  # * Constants (Effects)
+  #--------------------------------------------------------------------------
+  EFFECT_RECOVER_HP     = 11              # HP Recovery
+  EFFECT_RECOVER_MP     = 12              # MP Recovery
+  EFFECT_GAIN_TP        = 13              # TP Gain
+  EFFECT_ADD_STATE      = 21              # Add State
+  EFFECT_REMOVE_STATE   = 22              # Remove State
+  EFFECT_ADD_BUFF       = 31              # Add Buff
+  EFFECT_ADD_DEBUFF     = 32              # Add Debuff
+  EFFECT_REMOVE_BUFF    = 33              # Remove Buff
+  EFFECT_REMOVE_DEBUFF  = 34              # Remove Debuff
+  EFFECT_SPECIAL        = 41              # Special Effect
+  EFFECT_GROW           = 42              # Raise Parameter
+  EFFECT_LEARN_SKILL    = 43              # Learn Skill
+  EFFECT_COMMON_EVENT   = 44              # Common Events
+  #---------------------------------------------------------------------------
+  # * Load the attributes of the item form its notes in database
+  #---------------------------------------------------------------------------
+  def load_notetags_dndattrs
+    @effect_value = {}
+    super
+  end
+  #--------------------------------------------------------------------------
+  def effect_value(code, data_id)
+    key = code * 1000 + data_id
+    return @effect_value[key] unless @effect_value[key].nil?
+    eff = Struct.new(:value1, :value2).new(0,0)
+    @effects.each do |feat|
+      next unless feat.code == code && feat.data_id == data_id
+      eff.value1 += feat.value1
+      eff.value2 += feat.value2
+    end
+    return @effect_value[key] = eff
+  end
+  #-----------------------------------------------------------------------
+  # *) Check if state will be added
+  #-----------------------------------------------------------------------
+  def add_state?(id = 0)
+    # check if will add state
+    return @effects.any? {|eff| eff.code == EFFECT_ADD_STATE } if id == 0
+    # check if will add a specific state
+    return @effects.any? {|eff| eff.code == EFFECT_ADD_STATE && effect.data_id == id }
+  end
+  #-----------------------------------------------------------------------
+  # *) Check if state will be removed
+  #-----------------------------------------------------------------------
+  def remove_state?(id = 0)
+    # check if will remove state
+    return @effects.any? {|eff| eff.code == EFFECT_REMOVE_STATE } if id == 0
+    # check if will remove a specific state
+    return @effects.any? {|eff| eff.code == EFFECT_REMOVE_STATE && effect.data_id == id }
+  end
+  #-----------------------------------------------------------------------
+  # *) Check whether will recover hp
+  #-----------------------------------------------------------------------
+  def hp_recover?
+    return true if @damage.recover? && @damage.to_hp?
+    return @effects.any?{|eff| eff.code == EFFECT_RECOVER_HP && (eff.value1 > 0 || eff.value2 > 0) }
+  end
+  #-----------------------------------------------------------------------
+  # *) Check whether will recover ep
+  #-----------------------------------------------------------------------
+  def mp_recover?
+    return true if @damage.recover? && @damage.to_mp?
+    return @effects.any?{|eff| eff.code == EFFECT_RECOVER_MP && (eff.value1 > 0 || eff.value2 > 0) }
+  end
+  alias :ep_recover? :mp_recover?
+  #--------------------
 end
                       #===============================#
                       #  ▼ Beware of magic numbers ▼  #
@@ -68,6 +184,7 @@ class RPG::Enemy
   # * Attributes setup
   #--------------------------------------------------------------------------
   def load_character_attributes
+    super
     ensure_dndattr_correct
     self.note.split(/[\r\n]+/).each { |line|
       do_load_enemy_params(line)
@@ -164,11 +281,12 @@ class RPG::Actor < RPG::BaseItem
   attr_reader :icon_index
   attr_reader :parent_class
   attr_reader :dualclass_id, :race_id, :subrace_id
-  attr_reader :init_class_level
+  attr_reader :class_levelcap
   #--------------------------------------------------------------------------
   # * Attributes setup
   #--------------------------------------------------------------------------
   def load_character_attributes
+    super
     apply_default_attributes
     dnd_loading = false
     self.note.split(/[\r\n]+/).each do |line|
@@ -195,14 +313,11 @@ class RPG::Actor < RPG::BaseItem
     when DND::REGEX::Leveling::Race;      @race_id         = $1.to_i
     when DND::REGEX::Leveling::Subrace;   @subrace_id      = $1.to_i
     when DND::REGEX::Leveling::Class
-      info      = $1.split(',')
-      @class_id = info.first.to_i if info.first
-      @class_id = DND::BattlerSetting::DefaultClassID if !(@class_id || 0).to_bool
-      @init_class_level[@class_id] = [info.last.to_i, 1].max
+      # Primary Class selection is loaded from default RM database editor
     when DND::REGEX::Leveling::DualClass
       info          = $1.split(',')
       @dualclass_id = (info.first.to_i || 0)
-      @init_class_level[@dualclass_id] = [info.last.to_i, 1].max
+      @class_levelcap[@dualclass_id].first = [info.last.to_i, 1].max
     when DND::REGEX::Leveling::HP;           @param_adjust[0]   = $1.to_i
     when DND::REGEX::Leveling::EP;           @param_adjust[1]   = $1.to_i
     when DND::REGEX::Leveling::Strength;     @param_adjust[2]   = $1.to_i
@@ -221,9 +336,14 @@ class RPG::Actor < RPG::BaseItem
     @death_direction    = DND::BattlerSetting::KODirection
     @casting_animation  = DND::BattlerSetting::CastingAnimation
     @race_id            = DND::BattlerSetting::DefaultRaceID
+    
     @param_adjust = Array.new(8, 0)
-    @init_class_level  = Array.new($data_classes.size, 1)
     @subrace_id   = @dualclass_id = 0 
+    
+    # Initial element for classes' init level and level cap
+    init_lvl_ele = [0, DND::BattlerSetting::LevelCap]
+    @class_levelcap  = Array.new($data_classes.size, init_lvl_ele)
+    @class_levelcap[@class_id][0] = @initial_level
   end
   #--------------------------------------------------------------------------
 end
@@ -239,6 +359,7 @@ class RPG::Class < RPG::BaseItem
   # * Attributes setup
   #--------------------------------------------------------------------------
   def load_character_attributes
+    super
     apply_default_attributes
     dnd_loading = false
     self.note.split(/[\r\n]+/).each do |line|
@@ -271,7 +392,13 @@ class RPG::Class < RPG::BaseItem
   #------------------------------------------------------------------------
   def param(id)
     return $data_classes[@parant_class].param(id) if @parent_class > 0
-    return (@param_adjusta[id] || 0)
+    return (@param_adjust[id] || 0)
+  end
+  #--------------------------------------------------------------------------
+  # * Get Total EXP Required for Rising to Specified Level
+  #--------------------------------------------------------------------------
+  def exp_for_level(level)
+    return (DND::EXP_FOR_LEVEL[level] * 1000).to_i
   end
   #--------------------------------------------------------------------------
 end

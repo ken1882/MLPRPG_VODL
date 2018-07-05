@@ -67,7 +67,7 @@ class RPG::BaseItem
   # * Load the attributes of the item form its notes in database
   #---------------------------------------------------------------------------
   def load_notetags_dndattrs
-    
+    @feature_value = {}
     apply_default_tool_attrs
     
     self.note.split(/[\r\n]+/).each { |line|
@@ -213,6 +213,12 @@ class RPG::BaseItem
   def load_help_information
   end
   #------------------------------------------------------------------------
+  # * Super mehtod for characters initialization
+  #------------------------------------------------------------------------
+  def load_character_attributes
+    @feature_value = {}
+  end
+  #------------------------------------------------------------------------
   # *) Item need consume items
   #------------------------------------------------------------------------  
   def item_required?
@@ -281,30 +287,23 @@ class RPG::BaseItem
   end
   #--------------------------------------------------------------------------
   def feature_value(code, data_id)
+    key = code * 1000 + data_id
+    return @feature_value[key] unless @feature_value[key].nil?
     value = 0
     @features.each do |feat|
       next unless feat.code == code && feat.data_id == data_id
       value += feat.value
     end
-    return value
-  end
-  #--------------------------------------------------------------------------
-  def effect_value(code, data_id)
-    eff = Struct.new(:value1, :value2).new(0,0)
-    @features.each do |feat|
-      next unless feat.code == code && feat.data_id == data_id
-      eff.value1 += feat.value1
-      eff.value2 += feat.value2
-    end
-    return eff
+    return @feature_value[key] = value
   end
   #--------------------------------------------------------------------------
   def attack_bonus
-    return (feature_value(22, 0) * 20).to_i
+    puts "AB: #{self}"
+    return (self.feature_value(22, 0) * 20).to_i
   end
   #--------------------------------------------------------------------------
   def armor_class
-    return (feature_value(22, 1) * 20).to_i
+    return (self.feature_value(22, 1) * 20).to_i
   end
   #---------------------------------------------------------------------------
   def wield_speed

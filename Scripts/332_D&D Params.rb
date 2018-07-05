@@ -33,6 +33,7 @@ module DND
   
   EXP_FOR_LEVEL = {
   # lv    require xp(/1000)
+    0  =>  0,
     1  =>  0,
     2  =>  0.3,
     3  =>  0.9,
@@ -122,21 +123,6 @@ class Game_Battler < Game_BattlerBase
     return feature_objects.inject(0){|r,obj| r += (obj.attack_bonus | 0)}
   end
   #------------
-end
-#==============================================================================
-# ** Game_Actor
-#------------------------------------------------------------------------------
-#  This class handles actors. It is used within the Game_Actors class
-# ($game_actors) and is also referenced from the Game_Party class ($game_party).
-#==============================================================================
-class Game_Actor < Game_Battler
-  #--------------------------------------------------------------------------
-  # * Get Total EXP Required for Rising to Specified Level
-  #--------------------------------------------------------------------------
-  def exp_for_level(level)
-    return (DND::EXP_FOR_LEVEL[level] * 1000).to_i
-  end
-  #--------------------------------------------------------------------------
 end
   
 #==============================================================================

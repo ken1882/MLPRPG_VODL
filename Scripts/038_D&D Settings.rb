@@ -78,6 +78,7 @@ module DND
     CastingAnimation  = 162
     DefaultRaceID     = 119
     DefaultClassID    = 119
+    LevelCap          = 20
   end
   #=============================================================================
   # * Corresponding class and subclass to its original class

@@ -4,7 +4,7 @@
 class Object
   #------------------------------------------------------------------------
   InhertID = 0
-  alias :ruby_class :class
+  alias :ruby_class :class # Alias for class prevent misuse of Game_Actor
   #------------------------------------------------------------------------
   attr_reader :active
   #------------------------------------------------------------------------
@@ -54,13 +54,7 @@ class Object
   # * Synchronize instance variables with newer verison of object
   #------------------------------------------------------------------------
   def sync_new_data(newone)
-    
-    # Exception handle due to class method is used for database
-    if newone.is_a?(Game_Actor)
-      return unless self.is_a?(Game_Actor)
-    else
-      return unless newone.class == self.class
-    end
+    return unless newone.ruby_class == self.ruby_class
     
     vars    = self.instance_variables
     newvars = newone.instance_variables
@@ -92,12 +86,18 @@ end
 # ■ Numeric
 #==============================================================================
 class Numeric
-  
+  #----------------------------------------------------------------------------
+  # *) Convert to boolean
+  #----------------------------------------------------------------------------
+  def to_bool
+    return self != 0 # self == 0 ? false : true
+  end
 end
 #===============================================================================
 # * Basic Fixnum class
 #===============================================================================
 class Fixnum
+=begin
   #----------------------------------------------------------------------------
   alias plus +
   def +(*args)
@@ -133,17 +133,12 @@ class Fixnum
   def /(*args)
     divid(*args)
   end
+=end
   #----------------------------------------------------------------------------
   # *) Convert to radians
   #----------------------------------------------------------------------------
   def to_rad
     self * Math::PI / 180
-  end
-  #----------------------------------------------------------------------------
-  # *) Convert to boolean
-  #----------------------------------------------------------------------------
-  def to_bool
-    self == 0 ? false : true
   end
   #----------------------------------------------------------------------------
   # *) String for filename

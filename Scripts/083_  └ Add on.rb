@@ -12,6 +12,7 @@ class Game_Actor < Game_Battler
   attr_accessor :assigned_hotkey     # Instance item in hotkey bar
   attr_reader   :queued_levelings    # Feats waiting to be select & added
   attr_reader   :dualclass_id, :race_id, :subrace_id
+  attr_reader   :class_level
   #------------------------------------------------------------------------
   # * Set hashid
   #------------------------------------------------------------------------
@@ -38,17 +39,19 @@ class Game_Actor < Game_Battler
     @name = actor.name
     @nickname = actor.nickname
     init_graphics
-    @class_id = actor.class_id
-    @level = actor.initial_level
+    @class_id     = actor.class_id
+    @dualclass_id = actor.dualclass_id
     @exp = {}
     @equips = []
-    @dualclass_id = actor.dualclass_id
     @race_id      = actor.race_id
     @subrace_id   = actor.subrace_id
-    @class_level  = actor.init_class_level
+    @class_level  = actor.class_levelcap.collect{|lvl| lvl.first}
+    
+    @level  = (@class_level[@class_id] || 0)
+    @level += @class_level[@dualclass_id] if @dualclass_id > 0
     
     init_exp
-    init_skills
+    init_skills # last work here: init skills for race, subrace, etc.
     init_equips(actor.equips)
     clear_param_plus
     recover_all
@@ -191,7 +194,13 @@ class Game_Actor < Game_Battler
     refresh
   end
   #--------------------------------------------------------------------------
-  # * Change Experience
+  # * Get Total EXP Required for Rising to Specified Level
+  #--------------------------------------------------------------------------
+  def exp_for_level(level)
+    return (DND::EXP_FOR_LEVEL[level] * 1000).to_i
+  end
+  #--------------------------------------------------------------------------
+  # * Change Experience, player need to level up manually form Scene_LevelUp
   #     show : Level up display flag
   #--------------------------------------------------------------------------
   def change_exp(exp, show)
@@ -254,12 +263,6 @@ class Game_Actor < Game_Battler
         learn_skill(id)
       end # if for leveling
     end
-  end
-  #---------------------------------------------------------------------------
-  def class_level
-    # last work here
-    #lv_main = 
-    #return []
   end
   #---------------------------------------------------------------------------
   # * Method Missing
