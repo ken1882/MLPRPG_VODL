@@ -1,17 +1,17 @@
 #==============================================================================
-# ** Game_Variables
+# ** Game_Switches
 #------------------------------------------------------------------------------
-#  This class handles variables. It's a wrapper for the built-in class "Array."
-# The instance of this class is referenced by $game_variables.
+#  This class handles switches. It's a wrapper for the built-in class "Array."
+# The instance of this class is referenced by $game_switches.
 #==============================================================================
 # tag: effectus
-class Game_Variables
+class Game_Switches
   #--------------------------------------------------------------------------
-  # * Set Variable.                                                     [REP]
+  # * Set Switch.                                                       [REP]
   #--------------------------------------------------------------------------
-  def []=(variable_id, value)
-    @data[variable_id] = value
-    trigger_symbol = :"variable_#{variable_id}"
+  def []=(switch_id, value)
+    @data[switch_id] = value
+    trigger_symbol = :"switch_#{switch_id}"
     unless $game_temp.effectus_triggers.include?(trigger_symbol)
       $game_temp.effectus_triggers << trigger_symbol
     end
@@ -30,7 +30,7 @@ class Game_Variables
   end
   #--------------------------------------------------------------------------
   def item_max
-    return 1000
+    return 500
   end
   #--------------------------------------------------------------------------
 end

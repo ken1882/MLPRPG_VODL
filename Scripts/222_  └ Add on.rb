@@ -1,13 +1,12 @@
 #==============================================================================
-# ** Window_ScrollText
+# ** Window_Message
 #------------------------------------------------------------------------------
-#  This window is for displaying scrolling text. No frame is displayed, but it
-# is handled as a window for convenience.
+#  This message window is used to display text.
 #==============================================================================
-class Window_ScrollText < Window_Base
+class Window_Message < Window_Base
   #--------------------------------------------------------------------------
   # * Public instance variables
   #--------------------------------------------------------------------------
-  attr_reader :text
+  attr_reader :fiber
   
 end

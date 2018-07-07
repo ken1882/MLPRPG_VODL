@@ -1,114 +1,73 @@
 #==============================================================================
-# ** Window_DebugRight
+# ** Window_DebugLeft
 #------------------------------------------------------------------------------
-#  This window displays switches and variables separately on the debug screen.
+#  This window designates switch and variable blocks on the debug screen.
 #==============================================================================
-class Window_DebugRight < Window_Selectable
+class Window_DebugLeft < Window_Selectable
   #--------------------------------------------------------------------------
-  BitmapNegativeSpeed = 10
+  attr_reader :category, :content_data
   #--------------------------------------------------------------------------
-  attr_reader :category
-  attr_reader :data
+  # * Get Mode
   #--------------------------------------------------------------------------
-  # * Object Initialization
-  #-------------------------------------------------------------------------
-  alias init_debug initialize
-  def initialize(x, y, width)
-    init_debug(x, y, width)
-    self.arrows_visible = false
-  end
-  #--------------------------------------------------------------------------
-  alias :mode :category
-  #--------------------------------------------------------------------------
-  def contents_width
-    return Graphics.width
-  end
-  #--------------------------------------------------------------------------
-  def contents_right
-    return Gracphis.height
+  def mode
   end
   #--------------------------------------------------------------------------
   def refresh
-    unselect if @category == :sprite
-    super
+    create_contents
+    draw_all_items
   end
   #--------------------------------------------------------------------------
-  def set_category(_cat, data)
+  def set_category(_cat, content_data)
     @category = _cat
-    @data     = data
+    self.oy   = 0
+    @content_data = content_data
+    @item_max     = [get_content_size, 1].max
+    @right_window.set_category(_cat, content_data) if @right_window
     refresh
+    update
+  end
+  #--------------------------------------------------------------------------
+  def get_content_size
+    case @category
+    when :switch
+      bas = @content_data.size == 0 ? $game_switches.item_max : @content_data.size
+      return (bas + 9) / 10
+    when :variable
+      bas = @content_data.size == 0 ? $game_variables.item_max : @content_data.size
+      return (bas + 9) / 10
+    end
+    return @content_data.size
   end
   #--------------------------------------------------------------------------
   # * Draw Item
   #--------------------------------------------------------------------------
   def draw_item(index)
-    return unless @category
-    data_id = @top_id + index
-    id_text = sprintf("%04d:", data_id)
-    id_width = text_size(id_text).width
     case @category
-    when :sprite
-      return darw_bitmap_item((@top_id - 1) / 10)
-    when :switch
-      name   = $data_system.switches[data_id]
-      status = data[data_id] ? "[ON]" : "[OFF]"
     when :variable
-      name   = $data_system.variables[data_id]
-      status = data[data_id]
+      n = index * 10
+      text = sprintf("V [%04d-%04d]", n+1, n+10)
+    when :switch
+      n = index * 10
+      text = sprintf("S [%04d-%04d]", n+1, n+10)
+    when :sprite
+      text = @content_data[index].bitmap.source rescue nil
+      text = @content_data[index].inspect unless text
     end
-    name = "" unless name
-    rect = item_rect_for_text(index)
-    change_color(normal_color)
-    draw_text(rect, id_text)
-    rect.x += id_width
-    rect.width -= id_width + 60
-    draw_text(rect, name)
-    rect.width += 60
-    draw_text(rect, status, 2)
+    draw_text(item_rect_for_text(index), text)
   end
   #--------------------------------------------------------------------------
-  def darw_bitmap_item(index)
-    return unless @data[index]
-    data = @data[index].bitmap
-    if data.disposed?
-      contents.draw_text(0, 0, 240, line_height, "Disposed Bitmap")
-    else
-      rect = Rect.new(0, 0, data.width, data.height)
-      contents.blt(0, 0, data, rect)
-    end    
+  def cursor_pagedown
+    return call_handler(:pagedown) if handle?(:pagedown)
+    super
   end
   #--------------------------------------------------------------------------
-  # * Update Cursor
-  #--------------------------------------------------------------------------
-  def update_cursor
-    return cursor_rect.empty if @category == :sprite
-    return super
+  def cursor_pageup
+    return call_handler(:pageup) if handle?(:pageup)
+    super
   end
   #--------------------------------------------------------------------------
-  def display_bot
-    dx = [contents.width  - width  - standard_padding, 0].max
-    dy = [contents.height - height - standard_padding, 0].max
-    return POS.new(dx, dy)
-  end
-  #--------------------------------------------------------------------------
-  def cursor_right(wrap = false)
-    return super unless @category == :sprite
-    self.ox = [self.ox + BitmapNegativeSpeed, display_bot.x].min
-  end
-  #--------------------------------------------------------------------------
-  def cursor_left(wrap = false)
-    return super unless @category == :sprite
-    self.ox = [self.ox - BitmapNegativeSpeed, 0].max
-  end
-  #--------------------------------------------------------------------------
-  def cursor_up(wrap = false)
-    return super unless @category == :sprite
-    self.oy = [self.oy - BitmapNegativeSpeed, 0].max
-  end
-  #--------------------------------------------------------------------------
-  def cursor_down(wrap = false)
-    return super unless @category == :sprite
-    self.oy = [self.oy + BitmapNegativeSpeed, display_bot.y].min
+  def top_id
+    return index * 10 + 1
   end
   #--------------------------------------------------------------------------
 end

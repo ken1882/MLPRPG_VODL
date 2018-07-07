@@ -1,19 +1,19 @@
 #==============================================================================
-# ** Game_SelfSwitches
+# ** Game_Variables
 #------------------------------------------------------------------------------
-#  This class handles self switches. It's a wrapper for the built-in class
-# "Hash." The instance of this class is referenced by $game_self_switches.
+#  This class handles variables. It's a wrapper for the built-in class "Array."
+# The instance of this class is referenced by $game_variables.
 #==============================================================================
-#tag: effectus
-class Game_SelfSwitches
-  
+# tag: effectus
+class Game_Variables
   #--------------------------------------------------------------------------
-  # * Set SelfSwitch.                                                   [REP]
+  # * Set Variable.                                                     [REP]
   #--------------------------------------------------------------------------
-  def []=(key, value)
-    @data[key] = value
-    unless $game_temp.effectus_triggers.include?(key)
-      $game_temp.effectus_triggers << key
+  def []=(variable_id, value)
+    @data[variable_id] = value
+    trigger_symbol = :"variable_#{variable_id}"
+    unless $game_temp.effectus_triggers.include?(trigger_symbol)
+      $game_temp.effectus_triggers << trigger_symbol
     end
     $game_map.effectus_need_refresh = true
     on_change
@@ -24,5 +24,13 @@ class Game_SelfSwitches
   def on_change
     # Kept for compatibility purposes.
   end
-  
+  #--------------------------------------------------------------------------
+  def size
+    return @data.size
+  end
+  #--------------------------------------------------------------------------
+  def item_max
+    return 1000
+  end
+  #--------------------------------------------------------------------------
 end

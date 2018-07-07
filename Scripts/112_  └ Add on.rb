@@ -1,24 +1,52 @@
 #==============================================================================
-# ** Game_Vehicle
+# ** Game_Followers
 #------------------------------------------------------------------------------
-#  This class handles vehicles. It's used within the Game_Map class. If there
-# are no vehicles on the current map, the coordinates are set to (-1,-1).
+#  This is a wrapper for a follower array. This class is used internally for
+# the Game_Player class. 
 #==============================================================================
-class Game_Vehicle < Game_Character
+class Game_Followers
   #--------------------------------------------------------------------------
-  # * Determine if Docking/Landing Is Possible.                         [REP]
+  # * Object Initialization
+  #     leader:  Lead character
   #--------------------------------------------------------------------------
-  def land_ok?(x, y, d)
-    if @type == :airship
-      return false unless $game_map.airship_land_ok?(x, y)
-      return false unless $game_map.events_xy(x, y).empty?
-    else
-      x2 = d == 4 ? x - 1 : d == 6 ? x + 1 : x
-      y2 = d == 8 ? y - 1 : d == 2 ? y + 1 : y
-      return false unless $game_map.valid?(x2, y2) &&
-      $game_map.effectus_original_passable?(x2, y2, 10 - 1)
-      return false if collide_with_characters?(x2, y2)
-    end
-    return true
+  alias init_dnd initialize
+  def initialize(leader)
+    @fighting = true
+    init_dnd(leader)
   end
+  #--------------------------------------------------------------------------
+  # * Frame Update
+  #--------------------------------------------------------------------------
+  def update
+    if gathering?
+      move unless moving? || moving?
+      @gathering = false if gather?
+    end
+    each {|follower| follower.update unless follower.nil? || follower.actor.nil?}
+  end
+  #--------------------------------------------------------------------------
+  def toggle_combat
+    @fighting ? retreat_fray : into_fray
+    $game_party.skillbar.sprite.refresh
+  end
+  #--------------------------------------------------------------------------
+  # * Combat mode on
+  #--------------------------------------------------------------------------
+  def into_fray
+    @fighting = true
+    each {|follower| follower.process_combat_phase}
+  end
+  #--------------------------------------------------------------------------
+  # * Combat mode off
+  #--------------------------------------------------------------------------
+  def retreat_fray
+    @fighting = false
+    each {|follower| follower.retreat_combat}
+  end
+  #--------------------------------------------------------------------------
+  def combat_mode?
+    @fighting
+  end
+  alias :tactic_enabled? :combat_mode?
+  #--------------------------------------------------------------------------
 end

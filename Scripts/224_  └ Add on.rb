@@ -1,12 +1,13 @@
 #==============================================================================
-# ** Window_MapName
+# ** Window_ScrollText
 #------------------------------------------------------------------------------
-#  This window displays the map name.
+#  This window is for displaying scrolling text. No frame is displayed, but it
+# is handled as a window for convenience.
 #==============================================================================
-class Window_MapName < Window_Base
+class Window_ScrollText < Window_Base
   #--------------------------------------------------------------------------
   # * Public instance variables
   #--------------------------------------------------------------------------
-  attr_reader :show_count
+  attr_reader :text
   
 end

@@ -1,13 +1,9 @@
 #==============================================================================
-# ** Game_Unit
+# ** Game_Actors
 #------------------------------------------------------------------------------
-#  This class handles units. It's used as a superclass of the Game_Party and
-# and Game_Troop classes.
+#  This is a wrapper for an actor array. Instances of this class are referenced
+# by $game_actors.
 #==============================================================================
-class Game_Unit
-  
-  def in_combat?
-    return BattleManager.in_battle?
-  end
+class Game_Actors
   
 end

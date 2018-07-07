@@ -1,55 +1,31 @@
 #==============================================================================
-# ** Window_HorzCommand
+# ** Window_Command
 #------------------------------------------------------------------------------
-#  This is a command window for the horizontal selection format.
+#  This window deals with general command choices.
 #==============================================================================
-class Window_HorzCommand < Window_Command
-  
+class Window_Command < Window_Selectable
   #--------------------------------------------------------------------------
-  # * Alias: contents width
+  attr_reader :list
   #--------------------------------------------------------------------------
-  alias contents_width_cent contents_width
-  def contents_width
-    centralize? ? super : contents_width_cent
+  # * Add Command
+  #     name    : Command name
+  #     symbol  : Corresponding symbol
+  #     enabled : Activation state flag
+  #     ext     : Arbitrary extended data
+  #--------------------------------------------------------------------------
+  def add_command(name, symbol, enabled = true, ext = nil, help = nil)
+    @list.push({:name=>name, :symbol=>symbol, :enabled=>enabled, :ext=>ext, :help => help})
   end
   #--------------------------------------------------------------------------
-  # * Alias: contents height
+  # * Get Command Help
   #--------------------------------------------------------------------------
-  alias contents_height_cent contents_height
-  def contents_height
-    centralize? ? super : contents_height_cent
+  def command_help(index)
+    return @list[index][:help]
   end
   #--------------------------------------------------------------------------
-  # * Item alignment the center
+  # * Overwrite: Draw Item
   #--------------------------------------------------------------------------
-  def centralize?
-    false
+  def draw_item(index)
+    # got to tag: modified - ICON
   end
-  #--------------------------------------------------------------------------
-  # * Update Padding
-  #--------------------------------------------------------------------------
-  def update_padding
-    super unless centralize?
-  end
-  #--------------------------------------------------------------------------
-  # * Alias method: item_rect
-  #--------------------------------------------------------------------------
-  alias normal_item_rect item_rect
-  def item_rect(index)
-   centralize? ? central_item_rect(index) : normal_item_rect(index)
-  end
-  #--------------------------------------------------------------------------
-  # * Item align center
-  #--------------------------------------------------------------------------
-  def central_item_rect(index)
-    rect = Rect.new
-    rect.width = item_width
-    rect.height = item_height
-    pos = (index + 1) % col_max
-    
-    rect.x = ((window_width / [item_max, 1].max) * pos - item_width + 4 * spacing * pos) / 2
-    rect.y = (window_height / [item_max, 1].max / col_max * item_height * (index / col_max + 1)) / 8
-    rect
-  end
-  
 end
