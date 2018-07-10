@@ -213,7 +213,8 @@ module Vocab::Errno
   GiftCodeFailed  = "Gift code verify failed: %s"
   ProgramMissing  = "Program missing: "
   
-  PluginLoadErr   = "Failed to load following plugins:\n %s"
+  PluginInitErr   = "Failed to initialize plugins: #{PluginManager::LoaderFile}"
+  PluginLoadErr   = "Failed to load some plugins, please send 'PluginErr.txt' to developer to resolve this bug."
   
   APIErr          = "An error occurred while calling API:\n%s"
   

@@ -22,10 +22,9 @@ class Scene_Base
     create_debug_window if debug_mode?
     #-------------------------------
     start
-    post_start
-    #-------------------------------
     create_overlay_windows
     create_item_help_window
+    post_start
     #-------------------------------
     loop do
       break if scene_changing?

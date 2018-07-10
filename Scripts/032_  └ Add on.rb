@@ -291,4 +291,5 @@ module SceneManager
     return unless scene
     scene.update_basic
   end
+  #-------------------------------------------------------------------------
 end

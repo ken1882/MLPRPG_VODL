@@ -202,16 +202,17 @@ end
 #==============================================================================
 module Vocab::Errno
   
-  LoadErr          = "讀取檔案時發生錯誤! 請將 %s\n寄送給開發人員"
-  SaveErr         = "存檔時發生錯誤:\n%s, 請將 %s 寄送給開發人員並稍後再試"
+  LoadErr         = "讀取檔案時發生錯誤! 請將 %s\n寄送給開發團隊"
+  SaveErr         = "存檔時發生錯誤:\n%s, 請將 %s 寄送給開發團隊並稍後再試"
   
-  Exception       = "遊戲運行時發生錯誤! 請將檔案\"ErrorLog.txt\"寄送給開發人員以處理錯誤.\n"
+  Exception       = "遊戲運行時發生錯誤! 請將檔案\"ErrorLog.txt\"寄送給開發團隊以處理錯誤.\n"
   ScriptErr       = "事件腳本運行時期錯誤!: %s\n請寄送 %s 給開發人員"
   
   GiftCodeFailed  = "禮物碼驗證失敗: %s"
   ProgramMissing  = "遺失程式: "
   
-  PluginLoadErr   = "無法讀取下列擴充腳本:\n %s"
+  PluginInitErr   = "無法初始化擴充腳本: #{PluginManager::LoaderFile}"
+  PluginLoadErr   = "部分擴充腳本無法讀取, 請將'PluginErr.txt'寄送至開發團隊以解決問題"
   
   APIErr          = "呼叫API過程中發生錯誤:\n%s"
   

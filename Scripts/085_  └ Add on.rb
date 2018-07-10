@@ -135,7 +135,7 @@ class Game_Actor < Game_Battler
   #--------------------------------------------------------------------------
   # * Overwrite: Get Base Value of Parameter
   #--------------------------------------------------------------------------
-  def param_base(param_id) # last work: param include racr, subracr, etc.
+  def param_base(param_id) # last work: param include race, subrace, etc.
     value  = actor.param(param_id) + self.class.param(param_id)
     value += self.dualclass.param(param_id) if @dualclass_id > 0
     return value if (value || 0).to_bool

@@ -366,6 +366,7 @@ module BlockChain
   def self.record_transaction(trans)
     @trans_megadata.push(trans)
   end
+  
   # Nodes in Chain
   def self.chain_nodes; return @nodes; end
   def self.locked?; return @locked; end

@@ -257,6 +257,7 @@ class Game_Battler < Game_BattlerBase
   #---------------------------------------------------------------------------
   # * Abort if hash check failed
   #---------------------------------------------------------------------------
+  # tag: security
   def check_security
     update_security if @safe_hash.nil?
     v = @hp + @mp + exp
