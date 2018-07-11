@@ -11,6 +11,8 @@ class Game_BattlerBase
   attr_accessor :reg_time_count             # regeneration time counter
   attr_reader   :shp                        # HP
   attr_reader   :smp                        # MP
+  attr_reader   :class_id
+  attr_reader   :dualclass_id, :race_id, :subrace_id
   #--------------------------------------------------------------------------
   # * Access Method by Parameter Abbreviations
   #--------------------------------------------------------------------------
@@ -27,6 +29,8 @@ class Game_BattlerBase
     initialize_reg_dnd
     @shp = PONY.EncInt(@hp)
     @smp = PONY.EncInt(@mp)
+    @dualclass_id = 0
+    @race_id = @subrace_id = 0
   end
   #--------------------------------------------------------------------------
   # * Change HP
@@ -61,14 +65,64 @@ class Game_BattlerBase
     return self.skills.include?($data_skills[id])
   end
   #--------------------------------------------------------------------------
+  def setup_dnd_battler(instance)
+    @class_id     = instance.class_id
+    @dualclass_id = instance.dualclass_id
+    @race_id      = instance.race_id
+    @subrace_id   = instance.subrace_id
+    @class_level  = instance.class_levelcap.collect{|lvl| lvl.first}
+    
+    @level  = @level ? @level : (@class_level[@class_id] || 0)
+    @level += @class_level[@dualclass_id] if @dualclass_id > 0
+    @class_level[@race_id] = @class_level[@subrace_id] = @level
+  end
+  #--------------------------------------------------------------------------
+  def init_skills
+    @skills = []
+    [@class_id, @race_id, @subrace_id, @dualclass_id].each do |id|
+      next unless id > 0
+      learn_class_skills(id)
+    end
+  end
+  #--------------------------------------------------------------------------
+  def learn_class_skills(cid)
+    return unless cid.to_bool
+    $data_classes[cid].learnings.each do |learning|
+      next if learning.level > @class_level[cid]
+      learn_skill(learning.skill_id)
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Learn Skill
+  #--------------------------------------------------------------------------
+  def learn_skill(skill_id)
+    return if $data_skills[skill_id].for_leveling?
+    return if skill_learn?($data_skills[skill_id])
+    @skills.push(skill_id)
+    @skills.sort!
+  end
+  #--------------------------------------------------------------------------
+  # * Level Up
+  #--------------------------------------------------------------------------
+  def level_up
+    @level += 1
+    level_up_class(@race_id)
+    level_up_class(@subrace_id)
+    $game_map.need_refresh = true
+  end # last work: dnd leveling system
+  #--------------------------------------------------------------------------
+  def level_up_class(cid)
+    return unless cid.to_bool
+    @class_level[cid] += 1
+    learn_class_skills(cid)
+  end
+  #--------------------------------------------------------------------------
   # ● Posioned?
   #--------------------------------------------------------------------------   
   def poisoned?
-    
     for state in self.states
       return true if state.is_poison?
     end
-    
     return false
   end
   #--------------------------------------------------------------------------

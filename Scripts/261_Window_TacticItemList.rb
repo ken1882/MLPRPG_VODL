@@ -115,7 +115,12 @@ class Window_TacticItemList < Window_ItemList
         end
       when :action
         @command.action.reassign_item(item)
-      end
+        if item == :jump_to
+          @command.jump_id = call_subwindow(:jump_to)
+        else
+          @command.jump_id = nil
+        end
+      end # when is selecting an action
     end
     super
   end

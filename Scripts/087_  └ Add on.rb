@@ -34,8 +34,10 @@ class Game_Enemy < Game_Battler
       @rank = :minion
     end
     @level = enemy.note =~ /<Level = (\d+)>/i ? $1.to_i : 1.to_i unless enemy.nil?
+    setup_dnd_battler(enemy)
     @event = nil
-    @skills = get_learned_skills
+    init_skills
+    @skills << get_learned_skills
   end
   #--------------------------------------------------------------------------
   alias :is_a_obj? :is_a?
@@ -62,11 +64,6 @@ class Game_Enemy < Game_Battler
   #---------------------------------------------------------------------------
   def skills
     @skills
-  end
-  #--------------------------------------------------------------------------
-  def collect_passive_skills
-    @passive_skills = skills.select{|skill| skill.stype_id == DND::PASSIVE_STYPE_ID}.collect{|skill| skill.id}
-    @passive_skills ||= []
   end
   #---------------------------------------------------------------------------
   def weapon_ammo_ready?(weapon)

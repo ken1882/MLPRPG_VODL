@@ -1,9 +1,32 @@
 #==============================================================================
+# ** Pony
+#------------------------------------------------------------------------------
+#  Pony should poni pony
+#==============================================================================
+$imported = {} if $imported.nil?
+module PONY
+	module Menu_UI
+		First_Item_Position =  [168, 20]
+		Second_Item_Position = [10, 35]
+    
+    NAME_COLOR = {
+      1 => Color.new(215, 170, 225),
+      2 => Color.new(245, 140,  90),
+      4 => Color.new(255, 255, 255),
+      5 => Color.new( 60, 175, 230),
+      6 => Color.new(250, 145, 250),
+      7 => Color.new(235, 235, 140),
+    }
+    
+	end
+end
+#==============================================================================
 # ** Window_Base
 #------------------------------------------------------------------------------
 #  This is a super class of all windows within the game.
 #==============================================================================
 class Window_Base < Window
+  include PONY::Menu_UI
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -82,6 +105,25 @@ class Window_Base < Window
   end
   #--------------------------------------------------------------------------
   def select_cursor_needed?
+    return false
+  end
+  #--------------------------------------------------------------------------
+  # * Draw Name
+  #--------------------------------------------------------------------------
+  def draw_actor_name(actor, x, y, width = 112)
+    change_color(NAME_COLOR[actor.id])
+    draw_text(x, y, width, line_height, actor.name)
+  end
+  #--------------------------------------------------------------------------
+  # * Draw Class
+  #--------------------------------------------------------------------------
+  def draw_actor_class(actor, x, y, width = 112)
+    change_color(normal_color)
+    text = sprintf("%s %d", actor.class.name, actor.class_level[actor.class_id])
+    draw_text(x, y, width, line_height, text)
+    return false unless actor.dualclass
+    text = sprintf("%s %d",actor.dualclass.name, actor.class_level[actor.dualclass_id])
+    draw_text(x, y + line_height, width, line_height, text)
     return false
   end
   #--------------------------------------------------------------------------

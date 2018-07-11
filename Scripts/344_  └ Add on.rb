@@ -81,8 +81,9 @@ class Scene_Status < Scene_MenuBase
   alias update_scstat_skillbar update
   def update
     update_scstat_skillbar
-    @skillbar.update if @skillbar.edit_enabled
-    on_edit_end      if @skillbar.edit_enabled
+    return unless @skillbar.edit_enabled
+    @skillbar.update
+    on_edit_end
   end
   #--------------------------------------------------------------------------
   def create_foreground
@@ -102,6 +103,7 @@ class Scene_Status < Scene_MenuBase
   # * Activate edit mode of skillbar
   #--------------------------------------------------------------------------
   def edit_skillbar
+    return unless @skillbar
     @skillbar.edit_enabled = true
     @help_window.set_text(Vocab::Skillbar::MouseEdit)
     @foreground.show

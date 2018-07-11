@@ -11,7 +11,6 @@ class Game_Actor < Game_Battler
   attr_reader   :dualclass_id        # Second class ID
   attr_accessor :assigned_hotkey     # Instance item in hotkey bar
   attr_reader   :queued_levelings    # Feats waiting to be select & added
-  attr_reader   :dualclass_id, :race_id, :subrace_id
   attr_reader   :class_level
   #------------------------------------------------------------------------
   # * Set hashid
@@ -25,7 +24,6 @@ class Game_Actor < Game_Battler
   #--------------------------------------------------------------------------
   alias init_muticlass initialize
   def initialize(actor_id)
-    @dualclass_id = 0
     @team_id = 0
     @assigned_hotkey = Array.new(HotKeys::HotKeys.size){nil}
     @passsive_skills = nil
@@ -36,20 +34,13 @@ class Game_Actor < Game_Battler
   #--------------------------------------------------------------------------
   def setup(actor_id)
     @actor_id = actor_id
-    @name = actor.name
+    @name     = actor.name
     @nickname = actor.nickname
+    @level    = nil # will be set in setup_dnd_battler
     init_graphics
-    @class_id     = actor.class_id
-    @dualclass_id = actor.dualclass_id
     @exp = {}
     @equips = []
-    @race_id      = actor.race_id
-    @subrace_id   = actor.subrace_id
-    @class_level  = actor.class_levelcap.collect{|lvl| lvl.first}
-    
-    @level  = (@class_level[@class_id] || 0)
-    @level += @class_level[@dualclass_id] if @dualclass_id > 0
-    
+    setup_dnd_battler(actor)
     init_exp
     init_skills
     init_equips(actor.equips)
@@ -76,6 +67,13 @@ class Game_Actor < Game_Battler
   #--------------------------------------------------------------------------
   def setup_dualclass(class_id)
     @dualclass_id = class_id
+  end
+  #--------------------------------------------------------------------------
+  # * Learn Skill
+  #--------------------------------------------------------------------------
+  def learn_skill(skill_id)
+    return @queued_levelings.push(skill_id) if $data_skills[skill_id].for_leveling?
+    super
   end
   #--------------------------------------------------------------------------
   # * Get Array of All Objects Retaining Features
@@ -135,7 +133,7 @@ class Game_Actor < Game_Battler
   #--------------------------------------------------------------------------
   # * Overwrite: Get Base Value of Parameter
   #--------------------------------------------------------------------------
-  def param_base(param_id) # last work: param include race, subrace, etc.
+  def param_base(param_id)
     value  = actor.param(param_id) + self.class.param(param_id)
     value += self.dualclass.param(param_id) if @dualclass_id > 0
     return value if (value || 0).to_bool
@@ -221,48 +219,14 @@ class Game_Actor < Game_Battler
     return self.exp >= next_level_exp
   end
   #--------------------------------------------------------------------------
-  def collect_passive_skills
-    @passive_skills = skills.select{|skill| skill.stype_id == DND::PASSIVE_STYPE_ID}.collect{|skill| skill.id}
-    @passive_skills ||= []
-  end
-  #--------------------------------------------------------------------------
-  # * Initialize Skills
-  #--------------------------------------------------------------------------
-  alias init_skills_dnd init_skills
   def init_skills
-    init_skills_dnd
-    [@race_id, @subrace_id, @dualclass_id].each do |id|
-      learn_class_skills(id)
-    end
+    super
   end
   #--------------------------------------------------------------------------
   # * Overwrite method: Level Up
   #--------------------------------------------------------------------------
   def level_up
-    @level += 1
-    level_up_class(@race_id)
-    level_up_class(@subrace_id)
-    $game_map.need_refresh = true
-  end # last work: dnd leveling system
-  #--------------------------------------------------------------------------
-  def level_up_class(cid)
-    return unless cid.to_bool
-    @class_level[cid] += 1
-    learn_class_skills(cid)
-  end
-  #--------------------------------------------------------------------------
-  def learn_class_skills(cid)
-    return unless cid.to_bool
-    $data_classes[cid].learnings.each do |learning|
-      next unless learning.level == @level
-      id    = learning.skill_id
-      skill = $data_skills[id]
-      if skill.for_leveling?
-        @queued_levelings.push(id)
-      else
-        learn_skill(id)
-      end # if for leveling
-    end
+    super
   end
   #---------------------------------------------------------------------------
   # * Method Missing

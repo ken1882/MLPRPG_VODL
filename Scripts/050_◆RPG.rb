@@ -181,6 +181,9 @@ class RPG::Enemy
   
   attr_accessor :secondary_weapon
   #--------------------------------------------------------------------------
+  attr_reader :dualclass_id, :race_id, :subrace_id, :class_id
+  attr_reader :class_levelcap
+  #--------------------------------------------------------------------------
   # * Attributes setup
   #--------------------------------------------------------------------------
   def load_character_attributes
@@ -235,7 +238,31 @@ class RPG::Enemy
       @casting_animation = $1.to_i
     when DND::REGEX::Character::DefaultAmmo
       @default_ammo = $1.to_i
+    when DND::REGEX::Leveling::LoadStart; dnd_loading = true;
+    when DND::REGEX::Leveling::LoadEnd;   dnd_loading = false;
     end
+    load_dnd_attribute(line) if dnd_loading
+  end
+  #--------------------------------------------------------------------------
+  def load_dnd_attribute(line)
+    case line
+    when DND::REGEX::Leveling::Race;      @race_id         = $1.to_i
+    when DND::REGEX::Leveling::Subrace;   @subrace_id      = $1.to_i
+    when DND::REGEX::Leveling::Class
+      # Primary Class selection is loaded from default RM database editor
+    when DND::REGEX::Leveling::DualClass
+      info          = $1.split(',')
+      @dualclass_id = (info.first.to_i || 0)
+      @class_levelcap[@dualclass_id][0] = [info.last.to_i, 1].max
+    when DND::REGEX::Leveling::HP;           @param_adjust[0]   = $1.to_i
+    when DND::REGEX::Leveling::EP;           @param_adjust[1]   = $1.to_i
+    when DND::REGEX::Leveling::Strength;     @param_adjust[2]   = $1.to_i
+    when DND::REGEX::Leveling::Constitution; @param_adjust[3]   = $1.to_i
+    when DND::REGEX::Leveling::Intelligence; @param_adjust[4]   = $1.to_i
+    when DND::REGEX::Leveling::Wisdom;       @param_adjust[5]   = $1.to_i
+    when DND::REGEX::Leveling::Dexterity;    @param_adjust[6]   = $1.to_i
+    when DND::REGEX::Leveling::Charisma;     @param_adjust[7]   = $1.to_i
+    end # case
   end
   #--------------------------------------------------------------------------
   def ensure_dndattr_correct
@@ -258,6 +285,15 @@ class RPG::Enemy
     @body_size            = DND::BattlerSetting::BodySize
     @weapon_level_prof    = 0
     @default_ammo         = 0
+    
+    @param_adjust         = Array.new(8, 0)
+    @class_id             = @dualclass_id = 0
+    @race_id              = @subrace_id   = 0 
+    
+    # Initial element for classes' init level and level cap
+    init_lvl_ele = [0, DND::BattlerSetting::LevelCap]
+    @class_levelcap  = Array.new($data_classes.size, init_lvl_ele)
+    @class_levelcap[@class_id][0] = @initial_level
   end
   #------------------------------------------------------------------------
 end
@@ -338,7 +374,7 @@ class RPG::Actor < RPG::BaseItem
     @race_id            = DND::BattlerSetting::DefaultRaceID
     
     @param_adjust = Array.new(8, 0)
-    @subrace_id   = @dualclass_id = 0 
+    @subrace_id   = @dualclass_id = 0
     
     # Initial element for classes' init level and level cap
     init_lvl_ele = [0, DND::BattlerSetting::LevelCap]

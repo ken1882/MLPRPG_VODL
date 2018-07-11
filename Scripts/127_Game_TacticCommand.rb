@@ -15,7 +15,9 @@ class Game_TacticCommand
   attr_accessor :enabled
   attr_accessor :args
   attr_accessor :target
+  attr_accessor :circled
   attr_reader   :check_timer
+  attr_reader   :jump_id
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -28,6 +30,8 @@ class Game_TacticCommand
     @condition_symbol = nil
     @check_timer = 0
     @enabled   = true
+    @jump_id   = 0
+    @circled   = false
   end
   #--------------------------------------------------------------------------
   def condition_legel?
@@ -76,6 +80,7 @@ class Game_TacticCommand
   end
   #--------------------------------------------------------------------------
   def valid?
+    return false if @circled
     return false if !condition_symbol
     return false if !action || !action.valid?
     return true

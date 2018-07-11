@@ -33,6 +33,7 @@ class Window_TacticList < Window_Selectable
     create_contents
     draw_split_line
     draw_all_items
+    detect_jump_circle
   end
   #--------------------------------------------------------------------------
   # * Get Number of Items
@@ -266,6 +267,29 @@ class Window_TacticList < Window_Selectable
   def process_cancel
     return super unless @dragging
     process_dragging
+  end
+  #--------------------------------------------------------------------------
+  # * Check the jump to command formed a looping circle
+  #   Using Topological Sort algorithm
+  #--------------------------------------------------------------------------
+  def detect_jump_circle
+    node = {}
+    @data.each_with_index do |cmd, i|
+      @data[i].circled = false
+      node[i] = cmd.jump_id if cmd.jump_id
+    end
+    
+    while !node.empty?
+      start = node.keys.find{|k| !node.values.include?(k)}
+      node.delete(start) if start
+      break if start.nil?
+    end
+    
+    debug_print("Circled command id: #{node.keys}")
+    node.keys.each do |i|
+      @data[i].circled = true
+    end
+    
   end
   #--------------------------------------------------------------------------
 end

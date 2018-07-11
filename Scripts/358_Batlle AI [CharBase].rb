@@ -101,21 +101,31 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def process_tactic_commands(spec_category = nil)
     usable_actions = []
-    tactic_commands.reverse_each do |command|
+    n = usable_actions.size; i = 0;
+    commands = tactic_commands
+    while i < n
+      command = commands[i]
       next if spec_category && command.category != spec_category
       next unless command.check_condition
+      
+      if command.action.item == :jump_to
+        i = command.jump_id
+        next
+      end
+      
       _action = command.action.dup; _action.target = command.get_target;
       _action.reassign_item(_action.get_symbol_item)
       if _action.item.is_a?(Symbol)
         execute_symbol_action(_action)
       else
-        usable_actions << _action
+        usable_actions.unshift(_action)
       end
     end
     return if usable_actions.empty?
     _action = usable_actions.select{|a| a.action_impleable?}.first
     _action = usable_actions.first if _action.nil?
     interpret_tactic_action(_action)
+    i += 1
   end
   #----------------------------------------------------------------------------
   def interpret_tactic_action(action)

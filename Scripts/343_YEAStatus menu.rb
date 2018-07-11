@@ -994,6 +994,7 @@ end
 	  text = item.name
 	  draw_text(24, dy, contents.width-24, line_height, text)
 	  next if YEA::CLASS_SYSTEM::MAINTAIN_LEVELS
+    
 	  level = @actor.class_level[item.id]
     
 	  contents.font.size = YEA::CLASS_SYSTEM::LEVEL_FONT_SIZE
