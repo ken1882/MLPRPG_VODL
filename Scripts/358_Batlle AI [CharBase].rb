@@ -103,13 +103,16 @@ class Game_Character < Game_CharacterBase
     usable_actions = []
     n = usable_actions.size; i = 0;
     commands = tactic_commands
+    forced   = false
     while i < n
       command = commands[i]
       next if spec_category && command.category != spec_category
-      next unless command.check_condition
+      next unless command.check_condition(forced)
+      forced = false
       
       if command.action.item == :jump_to
-        i = command.jump_id
+        i = command.jump_command.index_id
+        forced = true
         next
       end
       

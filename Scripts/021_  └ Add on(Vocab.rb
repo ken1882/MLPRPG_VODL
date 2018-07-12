@@ -458,6 +458,7 @@ module Vocab::TacticConfig
     :allies_alive           => "請輸入數量, 條件門檻為大於等於這個數字",
     :allies_dead            => "請輸入數量, 條件門檻為大於等於這個數字",
     :surrounded_by_enemies  => "請輸入數量, 條件門檻為大於等於這個數字",
+    :jump_to                => "請選擇指令的編號"
   }
   
   ArgDec_Table = {

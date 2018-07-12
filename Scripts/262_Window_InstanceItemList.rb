@@ -21,7 +21,7 @@ class Window_InstanceItemList < Window_ItemList
   # * Get Activation State of Selection Item
   #--------------------------------------------------------------------------
   def current_item_enabled?
-    return true
+    return !@data[index].nil?
   end
   #--------------------------------------------------------------------------
   # * Create Item List

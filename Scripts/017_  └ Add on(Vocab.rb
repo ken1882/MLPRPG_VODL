@@ -376,7 +376,7 @@ module Vocab::Tactic
     :ep_most_power        => "Use Ep potion: most powerful",
     :ep_least_power       => "Use Ep potion: least powerful",
     :set_target           => "Set to primary target",
-    :jump_to              => "Jump to tactic: ",
+    :jump_to              => "Jump to tactic:",
     :move_away            => "Move away from target",
     :move_close           => "Move close to target",
     :player               => "Player",
@@ -468,6 +468,7 @@ module Vocab::TacticConfig
     :allies_alive           => "Enter a number, operator is greater or equal",
     :allies_dead            => "Enter a number, operator is greater or equal",
     :surrounded_by_enemies  => "Enter a number, operator is greater or equal",
+    :jump_to                => "Select the id of the command..."
   }
   
   ArgDec_Table = {

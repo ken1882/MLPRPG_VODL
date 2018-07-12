@@ -114,7 +114,7 @@ class Scene_Tactic < Scene_MenuBase
     @action_window.y = [[@command_list.y + rect.y - @command_list.oy + 2, 0].max, Graphics.height - @action_window.height - 2].min
     @action_window.show
     @action_window.select(0)
-    @item_window.init
+    @item_window.init(@command_list.data)
   end
   #--------------------------------------------------------------------------
   def on_action_delete
@@ -157,7 +157,6 @@ class Scene_Tactic < Scene_MenuBase
   end
   #--------------------------------------------------------------------------
   def call_info_window
-    p 'call info'
     @last_active_window = find_current_active_window
     @last_active_window.deactivate
     @info_window.activate
@@ -165,8 +164,6 @@ class Scene_Tactic < Scene_MenuBase
   end
   #--------------------------------------------------------------------------
   def on_info_return
-    p 'info return'
-    puts "last window: #{@last_active_window}"
     @info_window.deactivate
     @info_window.hide
     @last_active_window.activate

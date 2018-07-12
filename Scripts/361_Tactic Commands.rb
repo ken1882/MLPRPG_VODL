@@ -354,11 +354,14 @@ module Tactic_Config
     :target_atk_type        => DND::AttackType,
     :being_attacked_by_type => DND::AttackType,
     :using_attack_type      => DND::AttackType,
-    :jump_to                => :get_setting_actor,
     :target_range           => [:short, :medium, :long],
+    :jump_to                => :empty_function,
   }
   #--------------------------------------------------------------------------
   module_function
+  #--------------------------------------------------------------------------
+  def empty_function
+  end
   #--------------------------------------------------------------------------
   def call_function(symbol)
     return method(symbol).call
@@ -366,13 +369,6 @@ module Tactic_Config
   #--------------------------------------------------------------------------
   def player_party_members
     return $game_party.members
-  end
-  #--------------------------------------------------------------------------
-  def get_setting_actor
-    actor = SceneManager.scene.current_actor
-    return unless actor
-    n = actor.tactic_commands.size - 1
-    return Array.new(n){|i| i + 1}
   end
   #--------------------------------------------------------------------------
   def collect_valid_states

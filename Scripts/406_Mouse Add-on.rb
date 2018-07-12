@@ -154,10 +154,10 @@ class Window_Selectable < Window_Base
   end
   #---------------------------------------------------------------------------
   def selection_rects_for_mouse
-    return @selection_rects if @selection_rects
+    return @selection_rects if @selection_rects && item_max == @selection_rects.size
     @selection_rects = []
     item_max.times do |i|
-      @selection_rects << get_selection_rect(i)
+      @selection_rects.push(get_selection_rect(i))
     end
     return @selection_rects
   end

@@ -29,17 +29,17 @@ class Window_TacticList < Window_Selectable
   # * Refresh
   #--------------------------------------------------------------------------
   def refresh
+    detect_jump_circle
     make_item_list
     create_contents
     draw_split_line
     draw_all_items
-    detect_jump_circle
   end
   #--------------------------------------------------------------------------
   # * Get Number of Items
   #--------------------------------------------------------------------------
   def item_max
-    @data ? @data.size : 1
+    return @data ? @data.size : 1
   end
   #--------------------------------------------------------------------------
   def actor=(_actor)
@@ -60,6 +60,7 @@ class Window_TacticList < Window_Selectable
     command_add = Game_TacticCommand.new(@actor)
     command_add.action = Game_Action.new(@actor, nil, :add_command)
     command_add.category = :new
+    command_add.index_id = @data.size
     @data << command_add
   end
   #--------------------------------------------------------------------------
@@ -82,7 +83,9 @@ class Window_TacticList < Window_Selectable
   #--------------------------------------------------------------------------
   def draw_item(index)
     item = @data[index]
+    
     if item
+      item.index_id = index
       rect = item_rect(index)
       contents.clear_rect(rect)
       draw_split_line(rect)
@@ -133,23 +136,23 @@ class Window_TacticList < Window_Selectable
       contents.font.color.set(DND::COLOR::Orange)
       draw_condition(:targeting, rect, command)
       rect.x = self.width / 2 + 4
-      draw_action_item(rect, command.action)
+      draw_action_item(rect, command)
     when :fighting
       draw_condition(:fighting, rect, command)
       rect.x = self.width / 2 + 4
-      draw_action_item(rect, command.action)
+      draw_action_item(rect, command)
     when :self
       contents.font.color.set(DND::COLOR::Green)
       draw_condition(:self, rect, command)
       rect.x = self.width / 2 + 4
-      draw_action_item(rect, command.action)
+      draw_action_item(rect, command)
     when :new
       draw_icon(PONY::IconID[:plus], cx, cy)
       rect.x += 26
       contents.font.color.set(DND::COLOR::Yellow)
       name = Name_Table[:new_command]
       draw_text(rect, name)
-      draw_action_item(rect, command.action)
+      draw_action_item(rect, command)
     end
     change_color(normal_color)
   end
@@ -198,12 +201,16 @@ class Window_TacticList < Window_Selectable
     end
   end
   #--------------------------------------------------------------------------
-  def draw_action_item(rect, action)
+  def draw_action_item(rect, command)
+    action = command.action
     rect.x  = self.width / 2 + 4
     icon_id = action.get_icon_id
     draw_icon(icon_id, rect.x, rect.y) if icon_id > 0
     rect.x += 26
-    name    = action.get_item_name
+    name = action.get_item_name
+    if action.item == :jump_to
+      name += command.jump_command ? sprintf("%02d", command.jump_command.index_id) : " X"
+    end
     draw_text(rect, name)
   end
   #--------------------------------------------------------------------------
@@ -232,6 +239,8 @@ class Window_TacticList < Window_Selectable
       call_handler(:on_dragging_cancel) if handle?(:on_dragging_cancel)
       Sound.play_cancel
       @dragging = false
+      apply_tactic_change
+      refresh
     elsif @data[index].category != :new
       call_handler(:on_dragging_ok) if handle?(:on_dragging_ok)
       Sound.play_ok
@@ -250,7 +259,14 @@ class Window_TacticList < Window_Selectable
     super(index)
     return unless @dragging && new_index != last_index && new_index >= 0
     return if @data[new_index].category == :new || @data[last_index].category == :new
-    @data[new_index], @data[last_index] = @data[last_index], @data[new_index] 
+    swap_order(last_index, new_index)
+  end
+  #--------------------------------------------------------------------------
+  # * Swap command priority/order
+  #--------------------------------------------------------------------------
+  def swap_order(last_index, new_index)
+    @data[new_index], @data[last_index] = @data[last_index], @data[new_index]
+    @data[new_index].index_id, @data[last_index].index_id = new_index, last_index
     draw_item(new_index)
     draw_item(last_index)
   end
@@ -275,12 +291,15 @@ class Window_TacticList < Window_Selectable
   def detect_jump_circle
     node = {}
     @data.each_with_index do |cmd, i|
-      @data[i].circled = false
-      node[i] = cmd.jump_id if cmd.jump_id
+      cmd.circled = false
+      cmd.jump_command = nil unless @data.include?(cmd.jump_command)
+      node[i] = cmd.jump_command.index_id if cmd.jump_command
     end
     
     while !node.empty?
-      start = node.keys.find{|k| !node.values.include?(k)}
+      puts "#{node}"
+      start  = node.keys.find{|k| !node.values.include?(k)}
+      puts "delete #{start}"
       node.delete(start) if start
       break if start.nil?
     end

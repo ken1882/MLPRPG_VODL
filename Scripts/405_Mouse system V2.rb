@@ -528,8 +528,7 @@ class Window_Selectable
     
     unless self.is_a?(Window_PopInfo)
       self.item_max.times {|i|
-        @index = i
-        mouse_update_cursor
+        mouse_update_cursor(i)
         rects << cursor_rect.dup
       }
       
@@ -545,13 +544,13 @@ class Window_Selectable
     call_update_help
   end
   
-  def mouse_update_cursor
+  def mouse_update_cursor(_index = @index)
     if @cursor_all
       cursor_rect.set(0, 0, contents.width, row_max * item_height)
     elsif @index < 0
       cursor_rect.empty
     else
-      cursor_rect.set(item_rect(@index))
+      cursor_rect.set(item_rect(_index))
     end
   end
 end

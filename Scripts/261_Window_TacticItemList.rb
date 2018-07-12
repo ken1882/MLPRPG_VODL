@@ -7,7 +7,7 @@
 class Window_TacticItemList < Window_ItemList
   #--------------------------------------------------------------------------
   attr_accessor :symbol
-  attr_accessor :command
+  attr_reader   :command
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -17,14 +17,20 @@ class Window_TacticItemList < Window_ItemList
     @subwindow = nil
   end
   #--------------------------------------------------------------------------
-  def init
+  def init(_data)
     @ori_category = @command.category rescue nil
+    @tactic_data  = _data
   end
   #--------------------------------------------------------------------------
   # * Get Digit Count
   #--------------------------------------------------------------------------
   def col_max
     return 1
+  end
+  #--------------------------------------------------------------------------
+  def command=(new_cmd)
+    @last_command = @command.dup if @command
+    @command = new_cmd
   end
   #--------------------------------------------------------------------------
   # * Include in Item List?
@@ -116,9 +122,12 @@ class Window_TacticItemList < Window_ItemList
       when :action
         @command.action.reassign_item(item)
         if item == :jump_to
-          @command.jump_id = call_subwindow(:jump_to)
+          re = call_subwindow(:jump_to).first
+          re = @tactic_data.find{|c| c.index_id == re.index_id}
+          @command.jump_command = re ? re : nil
+          debug_print "jump command id: #{@command.jump_command.index_id}"
         else
-          @command.jump_id = nil
+          @command.jump_command = nil
         end
       end # when is selecting an action
     end
@@ -136,8 +145,9 @@ class Window_TacticItemList < Window_ItemList
     if Tactic_Config::Condition_Symbol[item]
       @subwindow = create_select_window
       @subwindow.category = item
+      set_jmp_command_item if item == :jump_to
       @subwindow.activate
-      @subwindow.select(0)
+      @subwindow.select(0) if @subwindow.data[0]
     else
       @subwindow = create_input_window(help_text)
       @subwindow.activate
@@ -148,6 +158,14 @@ class Window_TacticItemList < Window_ItemList
     @subwindow   = nil
     @subwin_flag = nil
     return re
+  end
+  #--------------------------------------------------------------------------
+  def set_jmp_command_item
+    subwindow_items = []
+    @tactic_data.each_with_index do |cmd|
+      subwindow_items.push(cmd) if cmd.valid?
+    end
+    @subwindow.set_data(subwindow_items)
   end
   #--------------------------------------------------------------------------
   def create_input_window(help_text)
@@ -197,9 +215,11 @@ class Window_TacticItemList < Window_ItemList
   end
   #--------------------------------------------------------------------------
   def on_select_ok
+    @last_command = @command.dup if @command
   end
   #--------------------------------------------------------------------------
   def on_subwindow_cancel
+    @command = @last_command ? @last_command.dup : nil
   end
   
 end

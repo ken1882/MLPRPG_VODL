@@ -16,8 +16,9 @@ class Game_TacticCommand
   attr_accessor :args
   attr_accessor :target
   attr_accessor :circled
+  attr_accessor :jump_command
+  attr_reader   :index_id
   attr_reader   :check_timer
-  attr_reader   :jump_id
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -30,8 +31,13 @@ class Game_TacticCommand
     @condition_symbol = nil
     @check_timer = 0
     @enabled   = true
-    @jump_id   = 0
+    @jump_command = nil
     @circled   = false
+    @index_id  = 0
+  end
+  #--------------------------------------------------------------------------
+  def index_id=(id)
+    @index_id = id
   end
   #--------------------------------------------------------------------------
   def condition_legel?
@@ -81,8 +87,9 @@ class Game_TacticCommand
   #--------------------------------------------------------------------------
   def valid?
     return false if @circled
-    return false if !condition_symbol
-    return false if !action || !action.valid?
+    return false if !@condition_symbol
+    return false if @action.item == :jump_to && !@jump_command
+    return false if !@action || !@action.valid?
     return true
   end
   #--------------------------------------------------------------------------
