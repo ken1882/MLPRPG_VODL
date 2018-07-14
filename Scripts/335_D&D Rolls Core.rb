@@ -45,8 +45,8 @@ class Game_BattlerBase
   # * new method: proficiency
   #--------------------------------------------------------------------------
   def param_modifier(param_id)
-    return 0 if param_id.nil? || param_id == 0
-    return (( param(param_id) - 9.5) / 2 ).to_i
+    return 0 if param_id.nil? || param_id < 3
+    return (( param(param_id) - 10) / 2 ).to_i
   end
   #--------------------------------------------------------------------------
   # * new method: rolld20

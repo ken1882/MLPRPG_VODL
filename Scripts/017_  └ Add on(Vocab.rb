@@ -34,6 +34,7 @@ module Vocab
   
   LevelUp         = "Level Up"
   Skilltree       = "Skill Tree"
+  Upgradeable     = "You can level-up now!"
   
   InitLoadingMsg  = "To ensure your best gameplay experience, please close the app that will consume your system resource, such as Flash, Youtube and other games."
   Unavailable     = "Not available yet"
@@ -51,7 +52,7 @@ module Vocab
   
   MoreInfo        = "Info"
   
-  # path to database dict
+  # path to database vocabulary dictionary
   DictPath        = "History/en_us"
   CategoryPath = {
     :weapon     => "/Weapons",
@@ -535,6 +536,23 @@ module Vocab::Debug
                  "L (Pageup)   : -10\n" + "R (Pagedown) : +10"
                  
   SpriteHelp   = "Using WASD/↑←↓→ to negative the graph"
+  
+end
+#==============================================================================
+# ** Vocab::Leveling
+#------------------------------------------------------------------------------
+#   Text info about level up
+#==============================================================================
+module Vocab::Leveling
+  
+  Helps = {
+    :level_up   => "Level up!",
+    :unique     => "Unique skills of this character",
+    :race       => "Race skills",
+    :class      => "Class skills",
+    :dualclass  => "Dual-class skills",
+    :skilltree  => "Open the skill tree and manager available skills"
+  }
   
 end
 #==============================================================================

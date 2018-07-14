@@ -180,14 +180,21 @@ module DND
     Selectable     = /<(?:selectable:)[ ](.+)>/i  
     
     # DND Class Settings
-    LoadStart      = /<(?:DND)>/i
-    LoadEnd        = /<\/(?:DND)>/i
-    Race           = /(?:race:)[ ](\d+)/i        # Race, next is race id in data_classes
+    LoadStart      = /<(?:DND)>/i   # <DND>
+    LoadEnd        = /<\/(?:DND)>/i # </DND>
+    
+    # (Sub)Race, next is the id in $data_classes
+    Race           = /(?:race:)[ ](\d+)/i
     Subrace        = /(?:subrace:)[ ](\d+)/i
+    
+    # (Dual)Class, next is the id in $data_classes
     Class          = /(?:class:)[ ](\d+)/i
     DualClass      = /(?:dualClass:)[ ](\d+)/i
-    ClassParent    = /(?:parent:)[ ](\d+)/i  # parent class for advanced class
-    HP             = /(?:HP:)[ ](\d+)/i      # init hp/hit dide
+    
+    # Parent class ID of the advanced class
+    ClassParent    = /(?:parent:)[ ](\d+)/i  
+    
+    HP             = /(?:HP:)[ ](\d+)/i      # init hp/hit dice
     EP             = /(?:EP:)[ ](\d+)/i      # init ep(plus for race)
     Requirement    = /(?:REQ:)[ ](.+)/i      # Score ability needed to choose
     Strength       = /(?:STR:)[ ](\d+)/i     # Score ability - str

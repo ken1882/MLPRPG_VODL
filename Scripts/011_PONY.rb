@@ -33,6 +33,7 @@ module PONY
     :plus           => 1143,
     :minus          => 1145,
     :player         => 556,
+    :level_up       => 8182,
   }
   #----------------------------------
   StateID = {

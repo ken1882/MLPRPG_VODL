@@ -6,17 +6,20 @@
 #==============================================================================
 module FileManager
   #---------------------------------------------------------------------------
-  PaddingWidth = 6
+  PaddingWidth  = 6
+  DebugFilePath = "Data/Debug/"
+  #---------------------------------------------------------------------------
+  module_function
   #---------------------------------------------------------------------------
   # *) Ensure the file or dictionary
   #---------------------------------------------------------------------------
-  def self.ensure_file_exist(filename)
+  def ensure_file_exist(filename)
     Dir.mkdir(filename) unless File.exist?(filename)
   end
   #--------------------------------------------------------------------------
   # * Text wrap for window contents
   #--------------------------------------------------------------------------
-  def self.textwrap(full_text, line_width, sample_bitmap = nil)
+  def textwrap(full_text, line_width, sample_bitmap = nil)
     return [] if full_text.nil?
     if sample_bitmap.nil?
       using_sample = true
@@ -88,7 +91,7 @@ module FileManager
   #--------------------------------------------------------------------------
   # * Load Game.ini index
   #--------------------------------------------------------------------------
-  def self.load_ini(group, target, path = ".//Game.ini")
+  def load_ini(group, target, path = ".//Game.ini")
     buffer = '\0' * 256
     PONY::API::GetPPString.call(group, target, '', buffer, 256, path)
     return buffer.strip
@@ -96,13 +99,13 @@ module FileManager
   #--------------------------------------------------------------------------
   # * Modify Game.ini index
   #--------------------------------------------------------------------------
-  def self.write_ini(group, target, goal, path = ".//Game.ini")
+  def write_ini(group, target, goal, path = ".//Game.ini")
     PONY::API::WritePPString.call(group, target, goal, path)
   end # def change ini
   #--------------------------------------------------------------------------
   # * Replace
   #--------------------------------------------------------------------------
-  def self.convert_eval_string(str)
+  def convert_eval_string(str)
     return if str.nil?
     cache = ""
     detect_flag = false
@@ -131,7 +134,7 @@ module FileManager
     return true_str
   end # def convert
   #--------------------------------------------------------------------------
-  def self.export_all_map_dialog
+  def export_all_map_dialog
     path = "Data/Map*.rvdata2"
     files = Dir.glob(path)
     files.each do |filename|
@@ -139,7 +142,7 @@ module FileManager
     end
   end
   #--------------------------------------------------------------------------
-  def self.export_map_dialog(map_sym)
+  def export_map_dialog(map_sym)
     map_sym =~ /(?:Map)[ ]\d+/i
     if map_sym.is_a?(Numeric)
       map_id = map_sym.to_fileid(3) 
@@ -179,19 +182,19 @@ module FileManager
     end
   end
   #--------------------------------------------------------------------------
-  def self.continue_message_string?
+  def continue_message_string?
     return true if next_event_code == 101 && Variable.message_rows > 4
     return next_event_code == 401
   end
   #--------------------------------------------------------------------------
-  def self.build_debug_file(filename, stat, &block)
+  def build_debug_file(filename, stat, &block)
     path = "Data/Debug"; ensure_file_exist(path); path += "/" + filename;
     File.open(path, stat) do |file|
       yield file if block_given?
     end
   end
   #--------------------------------------------------------------------------
-  def self.compress_source(file)
+  def compress_source(file)
     script = []
     script[0] = (file.hash + script.hash).abs
     script[1] = file.split(/[\/\\]+/).last
@@ -199,5 +202,14 @@ module FileManager
     script[2] = Zlib::Deflate.deflate(script[3])
     return script
   end
-  #--------------------------------------------------------------------------
+  #---------------------------------------------------------------------------
+  def export_debug_file(filename, index)
+    mkdir(DebugFilePath) unless File.exist?(DebugFilePath)
+    path = DebugFilePath + filename
+    File.open(path, 'w') do |file|
+      file.write(index)
+    end
+    return path
+  end
+  #---------------------------------------------------------------------------
 end

@@ -31,6 +31,7 @@ class Game_BattlerBase
     @smp = PONY.EncInt(@mp)
     @dualclass_id = 0
     @race_id = @subrace_id = 0
+    @class_objects = []
   end
   #--------------------------------------------------------------------------
   # * Change HP
@@ -66,6 +67,8 @@ class Game_BattlerBase
   end
   #--------------------------------------------------------------------------
   def setup_dnd_battler(instance)
+    @class_objects = []
+    
     @class_id     = instance.class_id
     @dualclass_id = instance.dualclass_id
     @race_id      = instance.race_id
@@ -77,11 +80,31 @@ class Game_BattlerBase
     @class_level[@race_id] = @class_level[@subrace_id] = @level
   end
   #--------------------------------------------------------------------------
+  def class_objects
+    return @class_objects unless @class_objects.empty?
+    re = []
+    
+    primary = $data_classes[@class_id]
+    re << primary
+    re << $data_classes[primary.parent_class] if primary.parent_class > 0
+    
+    if @dualclass_id > 0
+      dual     = $data_classes[@dualclass_id]
+      d_parent = $data_classes[primary.parent_class] if dual.parent_class > 0
+      re << dual << d_parent
+    end
+    
+    re << $data_classes[@race_id]     if @race_id > 0
+    re << $data_classes[@subrace_id]  if @subrace_id > 0
+    
+    return @class_objects = re
+  end
+  #--------------------------------------------------------------------------
   def init_skills
     @skills = []
-    [@class_id, @race_id, @subrace_id, @dualclass_id].each do |id|
-      next unless id > 0
-      learn_class_skills(id)
+    class_objects.each do |obj|
+      next unless obj.id > 0
+      learn_class_skills(obj.id)
     end
   end
   #--------------------------------------------------------------------------
@@ -109,33 +132,36 @@ class Game_BattlerBase
     level_up_class(@race_id)
     level_up_class(@subrace_id)
     $game_map.need_refresh = true
-  end # last work: dnd leveling system
+  end
   #--------------------------------------------------------------------------
   def level_up_class(cid)
     return unless cid.to_bool
     @class_level[cid] += 1
     learn_class_skills(cid)
   end
+  #---------------------------------------------------------------------------
+  def param_base(id)
+    return class_objects.inject(0){|sum, obj| sum + obj.param(id)}
+  end
+  #--------------------------------------------------------------------------
+  # * Get Maximum Value of Parameter
+  #--------------------------------------------------------------------------
+  def param_max(param_id)
+    return 9999 if (param_id >> 1) == 0  # MHP/MMP
+    return 99 
+  end
   #--------------------------------------------------------------------------
   # ● Posioned?
   #--------------------------------------------------------------------------   
   def poisoned?
-    for state in self.states
-      return true if state.is_poison?
-    end
-    return false
+    return self.states.any?{|state| state.is_poison?}
   end
   #--------------------------------------------------------------------------
   # ● Debuffed?
   #--------------------------------------------------------------------------   
   def debuffed?
-    for state in self.states
-      return true if state.is_debuff?
-    end
-    
-    return false
+    return self.states.any?{|state| state.is_poison?}
   end
-  
   #--------------------------------------------------------------------------
   # ● Dispel Magic
   #--------------------------------------------------------------------------   
@@ -143,8 +169,8 @@ class Game_BattlerBase
     animated = false
     for state in self.states
       next if state.nil?
-      animated = true if state.id == 271
-      
+      animated = true if state.id == 271 # original for animted dead, reservered
+                                         # for furture usage
       remove_state(state.id) if state.is_magic?
     end
     die if animated

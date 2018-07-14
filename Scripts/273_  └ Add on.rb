@@ -45,7 +45,7 @@ class Scene_Base
   # * Overwrite: Update Frame (Basic)
   #--------------------------------------------------------------------------
   def update_basic
-    sleep(0.1) until PONY::API::GetForegroundWindow.call == PONY::API::Hwnd
+    #sleep(0.1) until PONY::API::GetForegroundWindow.call == PONY::API::Hwnd
     @@button_cooldown -= 1 unless button_cooled?
     Graphics.update
     Input.update

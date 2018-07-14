@@ -2,8 +2,8 @@ if CurrentLanguage == :zh_tw
 #==============================================================================
 # ** Vocab
 #------------------------------------------------------------------------------
-#  This module defines terms and messages. It defines some data as constant
-# variables. Terms in the database are obtained from $data_system.
+#  這個模組包含部分遊戲內的顯示文字內容，資料庫內的顯示文字及物品詳細資料須在
+#  "History/zh_tw/"內
 #==============================================================================
 # tag: translate
 module Vocab
@@ -13,13 +13,19 @@ module Vocab
   ShopSell        = "售出"
   ShopCancel      = "取消"
   Possession      = "擁有"
+  
   # Status Screen
   ExpTotal        = "當前經驗"
   ExpNext         = "下級所需經驗 %s"
+  Upgradeable     = "已經可以升級!"
+  LevelUp         = "升級"
+  Skilltree       = "技能樹"
+  
   # Save/Load Screen
   SaveMessage     = "要儲存到哪個檔案呢?"
   LoadMessage     = "要讀取哪個檔案呢?"
   File            = "檔案"
+  
   # Display when there are multiple members
   PartyName       = "%s's 隊伍"
   
@@ -68,7 +74,7 @@ module Vocab
   
   MoreInfo        = "詳細資料"
   
-  # path to database dict
+  # path to database vocabulary dictionary
   DictPath        = "History/zh_tw"
 end
 #==============================================================================
@@ -503,6 +509,21 @@ module Vocab::Skillbar
   
   SelHelp     = "請用滑鼠點擊熱鍵欄位或按下對應按鍵來設定"
   SelSucc     = "您已經將%s指定在熱鍵%s上"
+end
+#==============================================================================
+# ** Vocab::Leveling
+#------------------------------------------------------------------------------
+#   Text info about level up
+#==============================================================================
+module Vocab::Leveling
+  Helps = {
+    :level_up   => "升級!",
+    :unique     => "屬於這個角色的獨特技能",
+    :race       => "種族技能",
+    :class      => "職業技能",
+    :dualclass  => "第二職業(兼職)技能",
+    :skilltree  => "開啟並管理技能樹"
+  }
 end
 #==============================================================================
 # ** Vocab::Rescue

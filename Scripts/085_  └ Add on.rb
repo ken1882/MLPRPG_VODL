@@ -12,6 +12,7 @@ class Game_Actor < Game_Battler
   attr_accessor :assigned_hotkey     # Instance item in hotkey bar
   attr_reader   :queued_levelings    # Feats waiting to be select & added
   attr_reader   :class_level
+  attr_reader   :mhp_plus, :mmp_plus # HP/EP gained through level up
   #------------------------------------------------------------------------
   # * Set hashid
   #------------------------------------------------------------------------
@@ -28,6 +29,7 @@ class Game_Actor < Game_Battler
     @assigned_hotkey = Array.new(HotKeys::HotKeys.size){nil}
     @passsive_skills = nil
     @queued_levelings = []
+    @mhp_plus = @mmp_plus = 0
     init_muticlass(actor_id)
     hash_self
   end
@@ -38,7 +40,7 @@ class Game_Actor < Game_Battler
     @nickname = actor.nickname
     @level    = nil # will be set in setup_dnd_battler
     init_graphics
-    @exp = {}
+    @exp = 0
     @equips = []
     setup_dnd_battler(actor)
     init_exp
@@ -51,6 +53,16 @@ class Game_Actor < Game_Battler
   alias :is_a_obj? :is_a?
   def is_a?(cls)
     return is_a_obj?(cls) || actor.is_a?(cls)
+  end
+  #--------------------------------------------------------------------------
+  # * Initialize EXP
+  #--------------------------------------------------------------------------
+  def init_exp
+    @exp = 0
+  end
+  #--------------------------------------------------------------------------
+  def exp
+    @exp
   end
   #--------------------------------------------------------------------------
   # * Get Class Object
@@ -131,11 +143,18 @@ class Game_Actor < Game_Battler
     equips.at(self.class.ammo_slot_id)
   end
   #--------------------------------------------------------------------------
+  def mhp
+    return (super + @mhp_plus).to_i
+  end
+  #--------------------------------------------------------------------------
+  def mmp
+    return (super + @mmp_plus).to_i
+  end
+  #--------------------------------------------------------------------------
   # * Overwrite: Get Base Value of Parameter
   #--------------------------------------------------------------------------
-  def param_base(param_id) # last work: param include race, subrace; enemy also.
-    value  = actor.param(param_id) + self.class.param(param_id)
-    value += self.dualclass.param(param_id) if @dualclass_id > 0
+  def param_base(param_id)
+    value  = actor.param(param_id) + super(param_id)
     return value if (value || 0).to_bool
     return DND::Base_Param[param_id]
   end
@@ -149,7 +168,9 @@ class Game_Actor < Game_Battler
   alias param_plus_dnd param_plus
   def param_plus(param_id)
     value  = param_plus_dnd(param_id)
-    value += ((self.def - 10) * @level / 4).to_i if param_id == 0 # mhp, +con bonus
+    
+    # mhp, +constitution bonus
+    value += [((self.def - 10) * @level / 4).to_i, 0].max if param_id == 0
     return value
   end
   #--------------------------------------------------------------------------
@@ -202,7 +223,7 @@ class Game_Actor < Game_Battler
   #     show : Level up display flag
   #--------------------------------------------------------------------------
   def change_exp(exp, show)
-    @exp[@class_id] = [exp, 0].max
+    @exp = [exp, 0].max
     refresh
   end
   #--------------------------------------------------------------------------
@@ -213,6 +234,26 @@ class Game_Actor < Game_Battler
     check_security
     change_exp_security(exp, show)
     update_security
+  end
+  #--------------------------------------------------------------------------
+  # * The real change class in dnd not exist, using for class advance
+  #--------------------------------------------------------------------------
+  def change_class(class_id, keep_exp = true)
+    advance_class(class_id)
+  end
+  #--------------------------------------------------------------------------
+  def advance_class(cid)
+    @class_objects.clear
+    @class_level[cid] = @class_level[@class_id]
+    @class_id = cid
+    refresh
+  end
+  #--------------------------------------------------------------------------
+  def advance_dualclass(cid)
+    @class_objects.clear
+    @class_level[cid] = @class_level[@dualclass_id]
+    @dualclass_id = cid
+    refresh
   end
   #--------------------------------------------------------------------------
   def upgradeable?
@@ -226,7 +267,20 @@ class Game_Actor < Game_Battler
   # * Overwrite method: Level Up
   #--------------------------------------------------------------------------
   def level_up
+    proportion = [@hp.to_f / self.mhp, @mp.to_f / self.mmp]
     super
+    @mmp_plus += Math.sqrt(self.class.param(1))
+    self.hp = (proportion[0] * self.mhp).to_i
+    self.mp = (proportion[1] * self.mmp).to_i
+  end
+  #--------------------------------------------------------------------------
+  def level_up_class(cid)
+    return unless cid > 0
+    proportion = @hp.to_f / self.mhp
+    super
+    @mhp_plus += self.class.param(0)     if cid == @class_id
+    @mhp_plus += self.dualclass.param(0) if cid == @dualclass_id
+    self.hp = (proportion * self.mhp).to_i
   end
   #---------------------------------------------------------------------------
   # * Method Missing

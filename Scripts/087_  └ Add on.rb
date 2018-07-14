@@ -18,12 +18,21 @@ class Game_Enemy < Game_Battler
     super
   end
   #--------------------------------------------------------------------------
-  # * Object Initialization
+  # * Overwrite: Object Initialization
   #--------------------------------------------------------------------------
-  alias init_dndlevel initialize
   def initialize(index, enemy_id)
+    super()
+    @index = index
+    @enemy_id = enemy_id
+    enemy = $data_enemies[@enemy_id]
+    @original_name = enemy.name
+    @letter = ""
+    @plural = false
+    @screen_x = 0
+    @screen_y = 0
+    @battler_name = enemy.battler_name
+    @battler_hue = enemy.battler_hue
     @level = 1
-    init_dndlevel(index, enemy_id)
     case enemy.note
     when /<Chief>/i;    @rank = :chief;
     when /<Captain>/i;  @rank = :captain;
@@ -34,10 +43,12 @@ class Game_Enemy < Game_Battler
       @rank = :minion
     end
     @level = enemy.note =~ /<Level = (\d+)>/i ? $1.to_i : 1.to_i unless enemy.nil?
-    setup_dnd_battler(enemy)
     @event = nil
+    setup_dnd_battler(enemy)
     init_skills
     @skills << get_learned_skills
+    @hp = mhp
+    @mp = mmp
   end
   #--------------------------------------------------------------------------
   alias :is_a_obj? :is_a?
@@ -76,6 +87,14 @@ class Game_Enemy < Game_Battler
   #---------------------------------------------------------------------------
   def secondary_weapon
     enemy.secondary_weapon
+  end
+  #--------------------------------------------------------------------------
+  # * Overwrite: Get Base Value of Parameter
+  #--------------------------------------------------------------------------
+  def param_base(param_id)
+    value  = enemy.params[param_id] + super(param_id)
+    return value if (value || 0).to_bool
+    return DND::Base_Param[param_id]
   end
   #---------------------------------------------------------------------------
   # * Method Missing

@@ -11,6 +11,7 @@ module DataManager
     $data_notetagged_items = []
     load_database_dndattrs
     load_notetags_dndattrs
+    load_character_attributes
     process_translation
   end
   #--------------------------------------------------------------------------
@@ -32,6 +33,15 @@ module DataManager
         obj.hash_self
         obj.load_notetags_dndattrs
       end
+    end
+  end
+  #--------------------------------------------------------------------------
+  # new method: load_character_attributes
+  #--------------------------------------------------------------------------
+  def self.load_character_attributes
+    groups = [$data_enemies, $data_actors, $data_classes]
+    groups.each do |group|
+      group.compact.each{|obj| obj.load_character_attributes}
     end
   end
   #--------------------------------------------------------------------------

@@ -676,7 +676,12 @@ end
       draw_text(28, dy, contents.width - 56, line_height, Vocab::param(i))
       dw = (contents.width - 48) * rate - 8
       change_color(normal_color)
-      draw_text(28, dy, dw, line_height, @actor.param(i).group, 2)
+      
+      value = @actor.param(i).group;
+      mod   = @actor.param_modifier(i)
+      info  = sprintf("%d(%c%d)", value, mod < 0 ? '-' : '+' , mod.abs)
+      draw_text(28, dy, dw, line_height, info, 2)
+      
       unless @element_window.nil?
         @element_window.opacity = 0
         @element_window.contents_opacity = 0

@@ -101,12 +101,16 @@ class Game_Character < Game_CharacterBase
   #----------------------------------------------------------------------------
   def process_tactic_commands(spec_category = nil)
     usable_actions = []
+    checked        = 0  # Bitset
     n = usable_actions.size; i = 0;
     commands = tactic_commands
     forced   = false
     while i < n
+      next if checked & PONY::Bitset[i]
       command = commands[i]
       next if spec_category && command.category != spec_category
+      
+      checked |= PONY::Bitset[i]
       next unless command.check_condition(forced)
       forced = false
       

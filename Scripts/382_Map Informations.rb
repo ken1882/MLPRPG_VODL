@@ -8,6 +8,8 @@
 class Window_InformationLog < Window_Selectable
   #--------------------------------------------------------------------------
   WatchLogIconID = 2141
+  Opacity_Min    = 55
+  Opacity_Max    = 0xff
   #--------------------------------------------------------------------------
   attr_reader :button_sprite
   attr_reader :visible_line_number
@@ -22,14 +24,27 @@ class Window_InformationLog < Window_Selectable
           
     self.z = PONY::SpriteDepth::Table[:viewport3]
     self.opacity = 255
+    @hovered = false
+    @ori_opacity = opacity
     @lines = data ? data : []
     create_back_bitmap
     create_back_sprite
     create_active_icons
+    create_evasion_rect
     deactivate
     self.windowskin = Cache.system(WindowSkin::MapInfo)  if WindowSkin::Enable
     contents.font.size = 16
     refresh
+  end
+  #--------------------------------------------------------------------------
+  # * The rect defines the area where won't collided by mouse
+  #--------------------------------------------------------------------------
+  def create_evasion_rect
+    rx = @icon_less.x
+    ry = @icon_less.y
+    rw = [@icon_less, @icon_more, @button_sprite].inject(0){|s, icon| s + icon.width}
+    rh = @icon_less.height
+    @evasion_rect = Rect.new(rx, ry, rw, rh)
   end
   #--------------------------------------------------------------------------
   # * Frame update
@@ -41,6 +56,7 @@ class Window_InformationLog < Window_Selectable
     elsif !hide_sprite && !visible?
       show
     end
+    update_mouse_hover if Mouse.moved?
     update_active_icon
     super if active?
   end
@@ -48,12 +64,12 @@ class Window_InformationLog < Window_Selectable
   # * Activate trigger detect
   #--------------------------------------------------------------------------
   def update_active_icon
-    update_deactivate if active?
+    update_deactivate     if active?
     return unless button_cooled?
     change_watch_activity if Mouse.trigger_sprite?(@button_sprite)
     return if active?
-    show_less_index       if Mouse.trigger_sprite?(@icon_less)
-    show_more_index       if Mouse.trigger_sprite?(@icon_more)
+    lesser_opacity        if Mouse.trigger_sprite?(@icon_less)
+    more_opacity          if Mouse.trigger_sprite?(@icon_more)
   end
   #--------------------------------------------------------------------------
   def update_deactivate
@@ -62,20 +78,32 @@ class Window_InformationLog < Window_Selectable
     return deactivate if Mouse.distance_to_sprite(self) > 50
   end
   #--------------------------------------------------------------------------
+  def update_mouse_hover
+    if Mouse.collide_sprite?(self) && !Mouse.collide_sprite?(@evasion_rect)
+      return if @hovered
+      @hovered = true
+      @ori_opacity = opacity
+      change_opacity(Opacity_Min)
+    elsif @hovered
+      @hovered = false
+      change_opacity(@ori_opacity)
+    end
+  end
+  #--------------------------------------------------------------------------
   def change_watch_activity
     heatup_button
     active? ? deactivate : activate
   end
   #--------------------------------------------------------------------------
-  def show_more_index
+  def more_opacity
     heatup_button
-    opa = [self.opacity + 50, 255].min
+    opa = [self.opacity + 50, Opacity_Max].min
     change_opacity(opa)
   end
   #--------------------------------------------------------------------------
-  def show_less_index
+  def lesser_opacity
     heatup_button
-    opa = [self.opacity - 50, 55].max
+    opa = [self.opacity - 50, Opacity_Min].max
     change_opacity(opa)
   end
   #--------------------------------------------------------------------------

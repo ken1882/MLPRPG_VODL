@@ -56,7 +56,7 @@ class Window_MultiCommand < Window_Command
       content = {
         :name     => args[:name],
         :symbol   => args[:symbol],
-        :enabled  => args[:enabled] ? args[:enabled] : true,
+        :enabled  => args[:enabled].nil? ? true : args[:enabled],
         :ext      => args[:ext],
         :help     => args[:help],
         :child    => args[:child],
@@ -64,11 +64,11 @@ class Window_MultiCommand < Window_Command
       @list[cat].push(content)
     else
       name    = args[0]; symbol = args[1]; 
-      enabled = args[2] ? args[2] : true;
-      ext     = args[3] ? args[3] : nil;
-      help    = args[4] ? args[4] : nil;
-      cat     = args[5] ? args[5] : :main;
-      child   = args[6] ? args[6] : nil;
+      enabled = args[2].nil? ? true  : args[2];
+      ext     = args[3]
+      help    = args[4]
+      cat     = args[5].nil? ? :main : args[5];
+      child   = args[6]
       @list[cat] = Array.new unless @list[cat]
       @list[cat].push( {:name=>name, :symbol=>symbol, :enabled => enabled,
                         :ext=>ext, :help => help, :child => child} )

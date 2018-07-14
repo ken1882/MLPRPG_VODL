@@ -65,6 +65,8 @@ module Vocab::YEA
       "Cancel"        => 119,      # Game End scene.
       "Spellbook"     => 4052,
       "Vancian"       => 10044,
+      "Vancians"      => 10044,
+      "Vancian Spell" => 10044,
       "Encyclopedia"  => 3734,
       "Codex"         => 2399, 
       "Bestiary"      => 3343,
@@ -89,7 +91,7 @@ module Vocab::YEA
       "Gamejolt"       => 570,
       "Life Skills"    => 8075,
       "Equip Skill"    => 117,
-      "Level Up"       => 990,
+      "Level Up"       => 8182,
       "Move to"        => 572,
       "Follow"         => 1117,
       "Patrol"         => 1114,
@@ -104,6 +106,7 @@ module Vocab::YEA
       ":Striking"      => 116,
       "Tactics"        => 2103,
       "Protect"        => 506,
+      "Skill Tree"     => 108,
     }
     #--------------------------------------------------------------------------
   end

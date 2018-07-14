@@ -257,6 +257,7 @@ class Window_ImageMenuStatus < Window_MenuStatus
     #draw_item_background(index)
     draw_actor_image(actor.id, index, index == 0)
     draw_actor_simple_status(actor, rect.x + 12, 0)
+    draw_upgradeable_hint(actor, rect)
   end
   
   #--------------------------------------------------------------------------
@@ -279,5 +280,11 @@ class Window_ImageMenuStatus < Window_MenuStatus
     draw_actor_hp(actor, x, y + line_height * 3)
     draw_actor_mp(actor, x, y + line_height * 4)
     draw_actor_icons(actor, x, window_height - fitting_height(2))
+  end
+  #--------------------------------------------------------------------------
+  def draw_upgradeable_hint(actor, rect)
+    return unless actor.upgradeable?
+    cx = rect.x + rect.width - 28; cy = rect.y + line_height / 2;
+    draw_icon(PONY::IconID[:level_up], cx, cy)
   end
 end

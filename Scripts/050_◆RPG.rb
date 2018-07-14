@@ -188,7 +188,7 @@ class RPG::Enemy
   #--------------------------------------------------------------------------
   def load_character_attributes
     super
-    ensure_dndattr_correct
+    apply_default_attributes
     self.note.split(/[\r\n]+/).each { |line|
       do_load_enemy_params(line)
     } # self.note.split
@@ -265,7 +265,7 @@ class RPG::Enemy
     end # case
   end
   #--------------------------------------------------------------------------
-  def ensure_dndattr_correct
+  def apply_default_attributes
     @defalut_weapon       = DND::BattlerSetting::DefaultWeapon
     @team_id              = DND::BattlerSetting::TeamID
     @visible_sight        = DND::BattlerSetting::VisibleSight
@@ -287,7 +287,8 @@ class RPG::Enemy
     @default_ammo         = 0
     
     @param_adjust         = Array.new(8, 0)
-    @class_id             = @dualclass_id = 0
+    @class_id             = DND::BattlerSetting::DefaultClassID
+    @dualclass_id         = 0
     @race_id              = @subrace_id   = 0 
     
     # Initial element for classes' init level and level cap
@@ -418,7 +419,7 @@ class RPG::Class < RPG::BaseItem
     when DND::REGEX::Leveling::Wisdom;       @param_adjust[5] = $1.to_i
     when DND::REGEX::Leveling::Dexterity;    @param_adjust[6] = $1.to_i
     when DND::REGEX::Leveling::Charisma;     @param_adjust[7] = $1.to_i
-    end # last work: dnd attribute class loading
+    end
   end
   #--------------------------------------------------------------------------
   def apply_default_attributes
@@ -427,8 +428,9 @@ class RPG::Class < RPG::BaseItem
   end
   #------------------------------------------------------------------------
   def param(id)
-    return $data_classes[@parant_class].param(id) if @parent_class > 0
-    return (@param_adjust[id] || 0)
+    re  = (@param_adjust[id] || 0)
+    re += $data_classes[@parant_class].param(id) if @parent_class > 0
+    return re
   end
   #--------------------------------------------------------------------------
   # * Get Total EXP Required for Rising to Specified Level

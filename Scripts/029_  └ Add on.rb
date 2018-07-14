@@ -191,23 +191,6 @@ module DataManager
     return "~Game.rvdata2"
   end
   #--------------------------------------------------------------------------
-  # alias method: load_database
-  #--------------------------------------------------------------------------
-  class << self; alias load_database_opt load_database; end
-  def self.load_database
-    load_database_opt
-    load_enemy_attributes
-  end
-  #--------------------------------------------------------------------------
-  # new method: load_character_attributes
-  #--------------------------------------------------------------------------
-  def self.load_enemy_attributes
-    groups = [$data_enemies, $data_actors, $data_classes]
-    groups.each do |group|
-      group.compact.each{|obj| obj.load_character_attributes}
-    end
-  end
-  #--------------------------------------------------------------------------
   def self.unpack_data
     File.delete($ScriptPath) rescue nil
     PONY::API::LoadGame.call($DefaultPath)

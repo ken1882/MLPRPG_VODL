@@ -301,7 +301,7 @@ class Game_Battler < Game_BattlerBase
   end
   #--------------------------------------------------------------------------
   def collect_passive_skills
-    @passive_skills = skills.select{|skill| skill.stype_id == DND::PASSIVE_STYPE_ID}.collect{|skill| skill.id}
+    @passive_skills = @skills.collect{|sid| $data_skills[sid].stype_id == DND::PASSIVE_STYPE_ID}
     @passive_skills ||= []
   end
   #--------------------------------------------------------------------------

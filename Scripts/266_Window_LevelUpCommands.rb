@@ -4,6 +4,7 @@
 #  This window is for selecting category of level up command or skill tree
 #==============================================================================
 class Window_LevelUpCommands < Window_MultiCommand
+  include Vocab::Leveling
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
@@ -45,8 +46,12 @@ class Window_LevelUpCommands < Window_MultiCommand
   # * Create Command List
   #--------------------------------------------------------------------------
   def make_command_list
-    add_command(Vocab::LevelUp,     :levelup, levelup_enabled?)
-    add_command(name: Vocab::Skilltree, symbol: :skilltree, child: :skilltree)
+    add_command(name: Vocab::LevelUp, symbol: :levelup, 
+                enabled: levelup_enabled?, help: Helps[:level_up])
+                
+    add_command(name: Vocab::Skilltree, symbol: :skilltree, child: :skilltree,
+                help: Helps[:skilltree])
+                
     make_skilltree_list if @actor
   end
   #--------------------------------------------------------------------------
@@ -54,11 +59,11 @@ class Window_LevelUpCommands < Window_MultiCommand
     cat = :skilltree
     names = [@actor.name, @actor.race.name, @actor.class.name]
     syms  = [:unique, :race, :class]
-    helps = ["Unique skills of this character", "Race skills", "Class skills"]
+    helps = [Helps[:unique], Helps[:race], Helps[:class]]
     if @actor.dualclass_id > 0
       names.push(@actor.dualclass.name)
       syms.push(:dualclass)
-      helps.push("Dualclass skills")
+      helps.push(Helps[:dualclass])
     end
     
     names.size.times do |i|

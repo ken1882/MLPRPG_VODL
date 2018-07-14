@@ -708,8 +708,9 @@ class Window_Base < Window
   # overwrite method: draw_current_and_max_values
   #--------------------------------------------------------------------------
   def draw_current_and_max_values(dx, dy, dw, current, max, color1, color2)
+    current = current.to_i; max = max.to_i;
     total = current.group + "/" + max.group
-    if dw < text_size(total).width + text_size(Vocab.hp).width
+    if dw < text_size(total).width + text_size(Vocab.hp_a).width
       change_color(color1)
       draw_text(dx, dy, dw, line_height, current.group, 2)
     else
@@ -807,6 +808,7 @@ class Window_Status < Window_Selectable
   def draw_exp_info(x, y)
     s1 = @actor.max_level? ? "-------" : @actor.exp
     s2 = @actor.max_level? ? "-------" : @actor.next_level_exp - @actor.exp
+    s2 = Vocab::Upgradeable if s2 <= 0
     s_next = sprintf(Vocab::ExpNext, Vocab::level)
     change_color(system_color)
     draw_text(x, y + line_height * 0, 180, line_height, Vocab::ExpTotal)
