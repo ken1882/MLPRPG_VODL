@@ -114,7 +114,7 @@ module DND
       nil             => nil
     }
   end
-  
+  #=============================================================================
   # Enemy rank
   Rank  = [
     :critter,
@@ -123,14 +123,14 @@ module DND
     :captain,
     :chief,
   ]
-  
+  #=============================================================================
   # Basic attack type
   AttackType = [
     :melee,
     :magic,
     :ranged,
   ]
-  
+  #=============================================================================
   # Detail info description of item
   ItemParamDec = {
     :weapon => [:wtype, :speed, :range, :damage],
@@ -138,5 +138,17 @@ module DND
     :skill  => [:stype, :cost, :casting, :range, :cooldown, :save, :damage],
     :item   => [:cooldown, :range, :save, :damage],
   }
+  #=============================================================================
+  # The race that can't perform arcane magic (cannot choose wizard class)
+  NoWizardry = [
+    81,   # Earth Pony
+    83,   # Pegasus
+    88,   # Zebra
+    89,   # Donkey
+    91,   # Buffalo
+    92,   # Diamond Dog
+    95,   # Yak
+    96,   # Deer
+  ]
   #----------------------------------------------------------------------------
 end

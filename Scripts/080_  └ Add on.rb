@@ -151,6 +151,34 @@ class Game_BattlerBase
     return 99 
   end
   #--------------------------------------------------------------------------
+  def change_class(cid, keep_lvl = true)
+    @class_objects.clear
+    @class_level[cid] = @class_level[@class_id] if keep_lvl
+    @class_id = cid
+    refresh
+  end
+  #--------------------------------------------------------------------------
+  def advance_dualclass(cid, keep_lvl = true)
+    @class_objects.clear
+    @class_level[cid] = @class_level[@dualclass_id] if keep_lvl
+    @dualclass_id = cid
+    refresh
+  end
+  #--------------------------------------------------------------------------
+  def change_race(cid, keep_lvl = true)
+    @class_objects.clear
+    @class_level[cid] = @class_level[@race_id] if keep_lvl
+    @race_id = cid
+    refresh
+  end
+  #--------------------------------------------------------------------------
+  def change_subrace(cid, keep_lvl = true)
+    @class_objects.clear
+    @class_level[cid] = @class_level[@subrace_id] if keep_lvl
+    @subrace_id = cid
+    refresh
+  end
+  #--------------------------------------------------------------------------
   # ● Posioned?
   #--------------------------------------------------------------------------   
   def poisoned?

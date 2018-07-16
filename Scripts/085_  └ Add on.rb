@@ -239,21 +239,7 @@ class Game_Actor < Game_Battler
   # * The real change class in dnd not exist, using for class advance
   #--------------------------------------------------------------------------
   def change_class(class_id, keep_exp = true)
-    advance_class(class_id)
-  end
-  #--------------------------------------------------------------------------
-  def advance_class(cid)
-    @class_objects.clear
-    @class_level[cid] = @class_level[@class_id]
-    @class_id = cid
-    refresh
-  end
-  #--------------------------------------------------------------------------
-  def advance_dualclass(cid)
-    @class_objects.clear
-    @class_level[cid] = @class_level[@dualclass_id]
-    @dualclass_id = cid
-    refresh
+    super
   end
   #--------------------------------------------------------------------------
   def upgradeable?

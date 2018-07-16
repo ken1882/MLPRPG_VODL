@@ -88,7 +88,9 @@ module DND
     end
     #--------------------------------------------------------------------------
     def get_param_id(string)
-      return string if string.is_a?(Numeric)
+      unless string.is_a?(String) || string.is_a?(Symbol)
+        raise TypeError, "Expect String or Symbol, but a #{string.class}"
+      end
       string = string.downcase.to_sym
       _id = 0
       if     string == :hp  then _id = 0

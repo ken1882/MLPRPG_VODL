@@ -10,7 +10,6 @@ class Window_LevelUpCommands < Window_MultiCommand
   #--------------------------------------------------------------------------
   attr_reader   :item_window
   attr_reader   :actor
-  attr_reader   :list_sec
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -37,7 +36,7 @@ class Window_LevelUpCommands < Window_MultiCommand
   end
   #--------------------------------------------------------------------------
   # * Frame Update
-  #--------------------------------------------------------------------------hel
+  #--------------------------------------------------------------------------
   def update
     super
     @item_window.category = current_symbol if @item_window
@@ -82,13 +81,6 @@ class Window_LevelUpCommands < Window_MultiCommand
   def levelup_enabled?
     return false if !@actor
     return @actor.upgradeable?
-  end
-  #--------------------------------------------------------------------------
-  # * Update Help Window
-  #--------------------------------------------------------------------------
-  def update_help
-    super
-    @help_window.set_text(current_data[:help]) rescue nil
   end
   #--------------------------------------------------------------------------
 end

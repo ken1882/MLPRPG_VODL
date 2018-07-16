@@ -6,6 +6,8 @@
 class Window_Selectable < Window_Base
   #--------------------------------------------------------------------------
   DefaultMouseTimer = 2
+  DefaultHandlers   = [:ok, :cancel, :DOWN, :UP, :LEFT, :RIGHT, :pagedown, 
+                       :pageup, :moreinfo]
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------

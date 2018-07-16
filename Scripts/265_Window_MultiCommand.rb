@@ -39,6 +39,15 @@ class Window_MultiCommand < Window_Command
   def make_command_list
   end
   #--------------------------------------------------------------------------
+  # * May overwrite the handler with same symbol but in different category
+  #--------------------------------------------------------------------------
+  def set_handler(symbol, method)
+    if @handler[symbol]
+      debug_print("Warning: #{symbol} in #{ruby_class} already has another existed handler")
+    end
+    super
+  end
+  #--------------------------------------------------------------------------
   # * Add Command
   #     name    : Command name
   #     symbol  : Corresponding symbol
@@ -164,6 +173,13 @@ class Window_MultiCommand < Window_Command
   def call_ok_handler
     return set_category(current_data[:child]) if current_data[:child]
     return super
+  end
+  #--------------------------------------------------------------------------
+  # * Update Help Window
+  #--------------------------------------------------------------------------
+  def update_help
+    super
+    @help_window.set_text(current_data[:help]) rescue nil
   end
   #--------------------------------------------------------------------------
 end
