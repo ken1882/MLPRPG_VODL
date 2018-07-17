@@ -21,6 +21,10 @@ class Window_MultiCommand < Window_Command
     @current_category
   end
   #--------------------------------------------------------------------------
+  def entry_categories
+    [:main]
+  end
+  #--------------------------------------------------------------------------
   # * Get Number of Items
   #--------------------------------------------------------------------------
   def item_max(cat = current_category)
@@ -39,15 +43,6 @@ class Window_MultiCommand < Window_Command
   def make_command_list
   end
   #--------------------------------------------------------------------------
-  # * May overwrite the handler with same symbol but in different category
-  #--------------------------------------------------------------------------
-  def set_handler(symbol, method)
-    if @handler[symbol]
-      debug_print("Warning: #{symbol} in #{ruby_class} already has another existed handler")
-    end
-    super
-  end
-  #--------------------------------------------------------------------------
   # * Add Command
   #     name    : Command name
   #     symbol  : Corresponding symbol
@@ -61,7 +56,6 @@ class Window_MultiCommand < Window_Command
     when 1 # Hash initializer
       args = args[0]
       cat = args[:category] ? args[:category] : :main
-      @list[cat] = Array.new unless @list[cat]
       content = {
         :name     => args[:name],
         :symbol   => args[:symbol],
@@ -70,7 +64,6 @@ class Window_MultiCommand < Window_Command
         :help     => args[:help],
         :child    => args[:child],
       }
-      @list[cat].push(content)
     else
       name    = args[0]; symbol = args[1]; 
       enabled = args[2].nil? ? true  : args[2];
@@ -78,10 +71,10 @@ class Window_MultiCommand < Window_Command
       help    = args[4]
       cat     = args[5].nil? ? :main : args[5];
       child   = args[6]
-      @list[cat] = Array.new unless @list[cat]
-      @list[cat].push( {:name=>name, :symbol=>symbol, :enabled => enabled,
-                        :ext=>ext, :help => help, :child => child} )
+      content = {:name=>name, :symbol=>symbol, :enabled => enabled,
+                        :ext=>ext, :help => help, :child => child}
     end
+    (@list[cat] ||= []) << content
   end
   #--------------------------------------------------------------------------
   # * Get Command Name
@@ -141,7 +134,7 @@ class Window_MultiCommand < Window_Command
   # * Call Cancel Handler
   #--------------------------------------------------------------------------
   def call_cancel_handler
-    return call_handler(:cancel) if @current_category == :main
+    return call_handler(:cancel) if entry_categories.include?(@current_category)
     return return_top_category
   end
   #--------------------------------------------------------------------------
@@ -160,12 +153,16 @@ class Window_MultiCommand < Window_Command
     @current_category = :main
     @category_stack   = []
     super
+    set_default_handlers
   end
   #--------------------------------------------------------------------------
   def refresh_item
     contents.clear
     draw_all_items
     select(0)
+  end
+  #--------------------------------------------------------------------------
+  def set_default_handlers
   end
   #--------------------------------------------------------------------------
   # * Call OK Handler

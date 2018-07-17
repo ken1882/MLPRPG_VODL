@@ -480,6 +480,35 @@ end
 #===============================================================================
 class RPG::Skill < RPG::UsableItem
   #--------------------------------------------------------------------------
+  attr_reader :selectable_skill
+  #--------------------------------------------------------------------------
+  def load_notetags_dndattrs
+    super
+    @selectable_skill = nil
+    on_leveling_load = false
+    self.note.split(/[\r\n]+/).each do |line|
+      case line
+      when DND::REGEX::Leveling::LevelingStart
+        @property |= PONY::Bitset[5]
+        on_leveling_load = true
+      when DND::REGEX::Leveling::LevelingEnd
+        on_leveling_load = false
+      else
+        load_leveling_property(line) if on_leveling_load
+      end
+    end
+  end
+  #--------------------------------------------------------------------------
+  def load_leveling_property(line)
+    case line
+    when DND::REGEX::Leveling::SelectSkill
+      sel = Struct.new(:number, :index).new(0, [])
+      sel.number = $2.to_i
+      $1.split(',').each{|sid| sel.index.push(sid.to_i)}
+      @selectable_skill = sel
+    end
+  end
+  #--------------------------------------------------------------------------
   def is_skill?
     @stype_id == DND::SKILL_STYPE_ID
   end

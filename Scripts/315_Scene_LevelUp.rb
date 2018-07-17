@@ -16,6 +16,7 @@ class Scene_LevelUp < Scene_MenuBase
     create_command_window
     create_status_window
     create_index_window
+    create_index_help_window
   end
   #--------------------------------------------------------------------------
   # * Create Command Window
@@ -29,6 +30,15 @@ class Scene_LevelUp < Scene_MenuBase
     @command_window.set_handler(:pagedown, method(:next_actor))
     @command_window.set_handler(:pageup,   method(:prev_actor))
     set_skilltree_handlers
+  end
+  #--------------------------------------------------------------------------
+  def create_index_help_window
+    @index_help = Window_Help.new(11, @index_window.width / 2)
+    @index_help.x, @index_help.y = @index_help.width, @index_window.y
+    @index_help.swap_skin(WindowSkin::Luna)
+    @index_help.hide
+    @index_window.help_window = @index_help
+    @index_window.refresh
   end
   #--------------------------------------------------------------------------
   def set_skilltree_handlers
@@ -52,14 +62,43 @@ class Scene_LevelUp < Scene_MenuBase
     cw = Graphics.width
     ch = Graphics.height - cy
     @index_window = Window_LevelUpIndex.new(0, cy, cw, ch, @actor)
+    @index_window.set_handler(:on_levelup_finish, method(:levelup_ok))
+    @index_window.set_handler(:cancel, method(:on_index_cancel))
+    @index_window.set_handler(:on_feat_ok, method(:on_index_cancel))
   end
   #--------------------------------------------------------------------------
   def command_levelup
-    @command_window.activate  # undefined
+    @index_window.set_category(:levelup)
+    @index_window.select(0)
+    @index_help.show
+  end
+  #--------------------------------------------------------------------------
+  def on_index_cancel
+    @index_window.set_category(:main)
+    @index_window.deactivate
+    @index_window.unselect
+    @index_help.hide
+    @command_window.activate
   end
   #--------------------------------------------------------------------------
   def command_skilltree
     @command_window.activate  # undefined
+  end
+  #--------------------------------------------------------------------------
+  def levelup_ok
+    [@command_window, @status_window].each{|w| w.refresh}
+    
+    if @actor.queued_levelings.empty?
+      on_index_cancel
+    else
+      @actor.queued_levelings.each do |sid|
+        info = Vocab::Leveling::SelectFeat + ' ' + $data_skills[sid].description
+        @help_window.set_text(info)
+        @index_window.make_feat_commands(sid)
+        @index_window.set_category(:select_feat)
+      end
+      @actor.queued_levelings.clear
+    end
   end
   #--------------------------------------------------------------------------
   # * Create Background
@@ -77,4 +116,5 @@ class Scene_LevelUp < Scene_MenuBase
     @index_window.actor = @actor
     @command_window.activate
   end
-end
+  #--------------------------------------------------------------------------
+end # last work: leveling >> add tags to each skill and score ability improve

@@ -41,7 +41,7 @@ class Window_Base < Window
   #--------------------------------------------------------------------------
   def swap_skin(skin = WindowSkin::Default)
     return unless WindowSkin::Enable
-    self.windowskin = skin
+    self.windowskin = skin.is_a?(String) ? Cache.system(skin) : skin
   end
   #--------------------------------------------------------------------------
   # * Draw text in static position
@@ -117,14 +117,18 @@ class Window_Base < Window
   #--------------------------------------------------------------------------
   # * Draw Class
   #--------------------------------------------------------------------------
-  def draw_actor_class(actor, x, y, width = 112)
+  def draw_actor_class(actor, x, y, width = 200, dualwrap = false)
     change_color(normal_color)
     text = sprintf("%s %d", actor.class.name, actor.class_level[actor.class_id])
+    if actor.dualclass_id > 0
+      dt = sprintf("%s %d",actor.dualclass.name, actor.class_level[actor.dualclass_id])
+      if dualwrap
+        draw_text(x, y + line_height, width, line_height, dt)
+      else
+        text += '/' + dt
+      end
+    end
     draw_text(x, y, width, line_height, text)
-    return false unless actor.dualclass
-    text = sprintf("%s %d",actor.dualclass.name, actor.class_level[actor.dualclass_id])
-    draw_text(x, y + line_height, width, line_height, text)
-    return false
   end
   #--------------------------------------------------------------------------
 end

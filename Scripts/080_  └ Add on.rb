@@ -38,11 +38,11 @@ class Game_BattlerBase
   #--------------------------------------------------------------------------
   def hp=(hp)
     hp = [[hp, mhp].min, 0].max
-    delta = hp - @hp
+    delta = hp.to_i - @hp.to_i
     return if delta == 0
     check_security
     popup_hp_change(delta) if delta != 0
-    @hp  = hp
+    @hp  = hp.to_i
     refresh
     update_security
   end
@@ -51,11 +51,11 @@ class Game_BattlerBase
   #--------------------------------------------------------------------------
   def mp=(mp)
     mp = [[mp, mmp].min, 0].max
-    delta = mp - @mp
+    delta = mp.to_i - @mp.to_i
     return if delta == 0
     check_security
     popup_ep_change(delta) if delta > 30
-    @mp  = mp
+    @mp  = mp.to_i
     refresh
     update_security
   end
@@ -89,14 +89,13 @@ class Game_BattlerBase
     re << $data_classes[primary.parent_class] if primary.parent_class > 0
     
     if @dualclass_id > 0
-      dual     = $data_classes[@dualclass_id]
-      d_parent = $data_classes[primary.parent_class] if dual.parent_class > 0
-      re << dual << d_parent
+      dual = $data_classes[@dualclass_id]
+      re << dual
+      re << $data_classes[dual.parent_class] if dual.parent_class > 0
     end
     
     re << $data_classes[@race_id]     if @race_id > 0
     re << $data_classes[@subrace_id]  if @subrace_id > 0
-    
     return @class_objects = re
   end
   #--------------------------------------------------------------------------
@@ -151,31 +150,60 @@ class Game_BattlerBase
     return 99 
   end
   #--------------------------------------------------------------------------
+  def init_class(cid)
+    @class_level[cid] = 0
+    level_up_class(cid)
+  end
+  #--------------------------------------------------------------------------
   def change_class(cid, keep_lvl = true)
     @class_objects.clear
-    @class_level[cid] = @class_level[@class_id] if keep_lvl
-    @class_id = cid
+    if keep_lvl
+      @class_level[cid] = @class_level[@class_id] if keep_lvl
+      @class_id = cid
+      learn_class_skills(cid)
+    else
+      @class_id = cid
+      init_class(cid)
+    end
     refresh
   end
   #--------------------------------------------------------------------------
-  def advance_dualclass(cid, keep_lvl = true)
+  def change_dualclass(cid, keep_lvl = true)
     @class_objects.clear
-    @class_level[cid] = @class_level[@dualclass_id] if keep_lvl
-    @dualclass_id = cid
+    if keep_lvl && @dualclass_id > 0
+      @class_level[cid] = @class_level[@dualclass_id]
+      @dualclass_id = cid
+      learn_class_skills(cid)
+    else
+      @dualclass_id = cid
+      init_class(cid)
+    end
     refresh
   end
   #--------------------------------------------------------------------------
   def change_race(cid, keep_lvl = true)
     @class_objects.clear
-    @class_level[cid] = @class_level[@race_id] if keep_lvl
-    @race_id = cid
+    if keep_lvl
+      @class_level[cid] = @class_level[@race_id] if keep_lvl
+      @race_id = cid
+      learn_class_skills(cid)
+    else
+      @race_id = cid
+      init_class(cid)
+    end
     refresh
   end
   #--------------------------------------------------------------------------
   def change_subrace(cid, keep_lvl = true)
     @class_objects.clear
-    @class_level[cid] = @class_level[@subrace_id] if keep_lvl
-    @subrace_id = cid
+    if keep_lvl
+      @class_level[cid] = @class_level[@subrace_id] if keep_lvl
+      @subrace_id = cid
+      learn_class_skills(cid)
+    else
+      @subrace_id = cid
+      init_class(cid)
+    end
     refresh
   end
   #--------------------------------------------------------------------------

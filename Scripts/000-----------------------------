@@ -12,7 +12,7 @@
 global search:
 Crtl + Shift + F
 Tags available:
-tag: queued       // work that may be done on later days
+tag: queued       //cork that may be done on later days
 tag: unfinished   // unfinished stuff
 tag: last work    // just like what it says
 tag: battler      // Combat stuff
@@ -66,4 +66,5 @@ $event => quick access to the event called Game_Interpreter's command 335(script
 =begin
 Game Window Size and UI fullscreen/window setting and perhaps boardless window
 Haste dialogue speed/skip to completed dialogue
+Improve circle/arc drawing algorithm
 =end

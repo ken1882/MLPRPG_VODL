@@ -101,6 +101,7 @@ class RPG::BaseItem
         puts "[BaseItem Damage]:#{self.name}: #{time}d#{face} + (#{$2.to_i}), element:#{$3}(#{element_id}) modifier: #{$4}(#{mod_id})"
       else
         load_item_property(line)
+        load_item_features(line)
       end
     } # self.note.split
     
@@ -124,10 +125,7 @@ class RPG::BaseItem
       @property |= PONY::Bitset[3]
     when DND::REGEX::IS_MAGICAL
       @property |= PONY::Bitset[4]
-    when DND::REGEX::Leveling::Leveling
-      @property |= PONY::Bitset[5]
     end
-    load_item_features(line)
   end
   #---------------------------------------------------------------------------
   # * Load core tool item feature

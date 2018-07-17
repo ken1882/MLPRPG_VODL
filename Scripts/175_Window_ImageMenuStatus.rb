@@ -276,7 +276,7 @@ class Window_ImageMenuStatus < Window_MenuStatus
   #--------------------------------------------------------------------------
   def draw_actor_simple_status(actor, x, y)
     draw_actor_name(actor, x, y)
-    draw_actor_class(actor, x, y + line_height, 168)
+    draw_actor_class(actor, x, y + line_height, 168, true)
     draw_actor_hp(actor, x, y + line_height * 3)
     draw_actor_mp(actor, x, y + line_height * 4)
     draw_actor_icons(actor, x, window_height - fitting_height(2))

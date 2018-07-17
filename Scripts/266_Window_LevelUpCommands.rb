@@ -8,7 +8,6 @@ class Window_LevelUpCommands < Window_MultiCommand
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_reader   :item_window
   attr_reader   :actor
   #--------------------------------------------------------------------------
   # * Object Initialization
@@ -33,13 +32,6 @@ class Window_LevelUpCommands < Window_MultiCommand
   #--------------------------------------------------------------------------
   def visible_line_number
     return 4
-  end
-  #--------------------------------------------------------------------------
-  # * Frame Update
-  #--------------------------------------------------------------------------
-  def update
-    super
-    @item_window.category = current_symbol if @item_window
   end
   #--------------------------------------------------------------------------
   # * Create Command List
@@ -69,13 +61,6 @@ class Window_LevelUpCommands < Window_MultiCommand
       add_command(name: names[i], symbol: syms[i], help: helps[i], category: cat)
     end
     
-  end
-  #--------------------------------------------------------------------------
-  # * Set Item Window
-  #--------------------------------------------------------------------------
-  def item_window=(item_window)
-    @item_window = item_window
-    update
   end
   #--------------------------------------------------------------------------
   def levelup_enabled?

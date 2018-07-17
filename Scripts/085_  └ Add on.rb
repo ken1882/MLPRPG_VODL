@@ -77,10 +77,6 @@ class Game_Actor < Game_Battler
     $data_classes[@race_id]
   end
   #--------------------------------------------------------------------------
-  def setup_dualclass(class_id)
-    @dualclass_id = class_id
-  end
-  #--------------------------------------------------------------------------
   # * Learn Skill
   #--------------------------------------------------------------------------
   def learn_skill(skill_id)
@@ -93,7 +89,7 @@ class Game_Actor < Game_Battler
   alias feature_objs feature_objects
   def feature_objects
     re  = feature_objs
-    re += self.dualclass if @dualclass_id > 0
+    re << self.dualclass if @dualclass_id > 0
     re
   end
   #--------------------------------------------------------------------------
@@ -255,18 +251,25 @@ class Game_Actor < Game_Battler
   def level_up
     proportion = [@hp.to_f / self.mhp, @mp.to_f / self.mmp]
     super
-    @mmp_plus += Math.sqrt(self.class.param(1))
+    @mhp_plus += self.race.param(0) / 5
+    @mmp_plus += Math.sqrt(self.race.param(1)) / 10
     self.hp = (proportion[0] * self.mhp).to_i
     self.mp = (proportion[1] * self.mmp).to_i
   end
   #--------------------------------------------------------------------------
   def level_up_class(cid)
     return unless cid > 0
-    proportion = @hp.to_f / self.mhp
+    proportion = [@hp.to_f / self.mhp, @mp.to_f / self.mmp]
     super
-    @mhp_plus += self.class.param(0)     if cid == @class_id
-    @mhp_plus += self.dualclass.param(0) if cid == @dualclass_id
-    self.hp = (proportion * self.mhp).to_i
+    if cid == @class_id && @class_level[cid] > 1
+      @mhp_plus += (self.class.param(0) * 0.7).to_i
+      @mmp_plus += Math.sqrt(self.class.param(1))
+    elsif cid == @dualclass_id && @class_level[cid] > 1
+      @mhp_plus += (self.dualclass.param(0) * 0.7).to_i
+      @mmp_plus += Math.sqrt(self.dualclass.param(1))
+    end
+    self.hp = (proportion[0] * self.mhp).to_i
+    self.mp = (proportion[1] * self.mmp).to_i
   end
   #---------------------------------------------------------------------------
   # * Method Missing

@@ -522,8 +522,14 @@ module Vocab::Leveling
     :race       => "種族技能",
     :class      => "職業技能",
     :dualclass  => "第二職業(兼職)技能",
-    :skilltree  => "開啟並管理技能樹"
+    :skilltree  => "開啟並管理技能樹",
+    :level_up_main => "升級主要職業",
+    :level_up_dual => "升級第二職業",
+    :set_dualclass => "角色兼職",
   }
+  
+  DualClass  = "兼職"
+  SelectFeat = "請選擇職業的新屬性"
 end
 #==============================================================================
 # ** Vocab::Rescue

@@ -7,8 +7,8 @@ class Window_Help < Window_Base
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  def initialize(line_number = 2)
-    super(0, 0, Graphics.width, fitting_height(line_number))
+  def initialize(line_number = 2, width = Graphics.width)
+    super(0, 0, width, fitting_height(line_number))
   end
   #--------------------------------------------------------------------------
   # * Set Text

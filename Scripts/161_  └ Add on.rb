@@ -296,5 +296,10 @@ class Window_Selectable < Window_Base
     return item_max > 0
   end
   #--------------------------------------------------------------------------
+  def dispose
+    @overlay_window.dispose if @overlay_window
+    super
+  end
+  #--------------------------------------------------------------------------
   def overlayed?; @overlayed; end
 end

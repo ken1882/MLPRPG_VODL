@@ -42,7 +42,7 @@ module FileManager
       width = sample_bitmap.text_size(str).width
       endl  = false
       # if the segment width larger than display width
-      if width >= line_width
+      if width + PaddingWidth >= line_width
         line      = ""
         cur_width = minus_width
         strlen    = str.length
