@@ -66,6 +66,7 @@ class Game_Event < Game_Character
   #----------------------------------------------------------------------------
   def update_battler
     return if dead? || $game_system.story_mode?
+    super
     @combat_timer -= 1 if @combat_timer > 0
     update_combat if @combat_timer == 0 && !halt?
   end

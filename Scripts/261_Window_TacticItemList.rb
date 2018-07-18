@@ -74,7 +74,7 @@ class Window_TacticItemList < Window_ItemList
     else
       @symbol = nil
     end
-  end # tag: queue: tactic processing(real)
+  end
   #--------------------------------------------------------------------------
   # * Display in Enabled State?
   #--------------------------------------------------------------------------

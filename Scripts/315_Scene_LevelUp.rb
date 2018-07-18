@@ -3,7 +3,6 @@
 #------------------------------------------------------------------------------
 #  Handles all advancing stuff when leveling
 #==============================================================================
-# tag: last work: leveling
 class Scene_LevelUp < Scene_MenuBase
   #--------------------------------------------------------------------------
   BackgroundFilename = "Tree_of_Harmony"

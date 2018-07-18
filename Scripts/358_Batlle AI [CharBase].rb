@@ -254,6 +254,7 @@ class Game_Character < Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def update_battler
+    battler.update_sequence
   end
   #----------------------------------------------------------------------------
   def process_target_dead

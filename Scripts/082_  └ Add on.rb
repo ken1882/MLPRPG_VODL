@@ -136,6 +136,7 @@ class Game_Battler < Game_BattlerBase
   alias die_dnd die
   def die
     die_dnd
+    clear_sequence
     @map_char.kill if @map_char
   end
   #--------------------------------------------------------------------------
