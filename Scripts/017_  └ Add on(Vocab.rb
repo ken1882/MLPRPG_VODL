@@ -551,14 +551,14 @@ module Vocab::Leveling
     :race       => "Race skills",
     :class      => "Class skills",
     :dualclass  => "Dual-class skills",
-    :skilltree  => "Open the skill tree and manager available skills",
+    :skilltree  => "Open the skill tree and manage available skills",
     :level_up_main => "Advance your main class to next level",
     :level_up_dual => "Advance your dual-class to next level",
     :set_dualclass => "Start a dual-class",
   }
   
   DualClass  = "Dual-Class"
-  SelectFeat = "Choose new class feature!"
+  SelectFeat = "New class feature available!"
   Confirm_Dualclass  = "Are you sure about becoming a %s?"
   Confirm_LearnSkill = "Do you really want to learn %s?"
 end

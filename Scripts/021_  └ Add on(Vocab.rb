@@ -529,7 +529,9 @@ module Vocab::Leveling
   }
   
   DualClass  = "兼職"
-  SelectFeat = "請選擇職業的新屬性"
+  SelectFeat = "有新的職業屬性可用!"
+  Confirm_Dualclass  = "確定要兼職'%s'嗎?"
+  Confirm_LearnSkill = "確定要學習'%s'嗎?"
 end
 #==============================================================================
 # ** Vocab::Rescue

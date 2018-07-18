@@ -174,7 +174,7 @@ class Window_TacticItemList < Window_ItemList
     cy = Graphics.center_height(48)
     attrs = {
       autoscroll: true,
-      limit: 3,
+      limit: 2,
       number: true,
       dim_background: true,
       title: help_text

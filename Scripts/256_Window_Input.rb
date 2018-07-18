@@ -229,6 +229,7 @@ class Window_Input < Window_Base
   end
   #--------------------------------------------------------------------------
   def get_window_text
+    @last_str = (@lpstr || '')
     @strlen = (GetWindowTextLength.call(@hwnd) + 1) | 0
     buffer  = '\0' * @strlen
     GetWindowText.call(@hwnd, buffer, @strlen)
@@ -271,12 +272,16 @@ class Window_Input < Window_Base
   # * DP the texts width for faster query
   #--------------------------------------------------------------------------
   def calc_index_width
+    @last_index_width = (@index_width || [0])
     @index_width = [0]
-    sum = 0
+    text = ""
     for i in 0..@strlen
-      sum += self.contents.text_size(@lpstr[i]).width
-      @index_width[i+1] = sum
-      @index = [@index, i+1].max
+      text += (@lpstr[i] || '')
+      if @last_str[i] == @lpstr[i]
+        @index_width[i+1] = @last_index_width[i+1]
+      else
+        @index_width[i+1] = self.contents.text_size(text).width
+      end
     end 
   end
   #--------------------------------------------------------------------------
@@ -346,8 +351,15 @@ class Window_Input < Window_Base
       @display_bot_index = @index
       @display_top_index = get_display_selection_top
     else
-      @display_top_index = [@display_top_index, @index].max
+      bt_width = index_width(@display_bot_index, @display_top_index)
+      bs_width = index_width(@display_bot_index, @strlen)
       @display_bot_index = [@display_bot_index, 0].max
+      @display_top_index = [@display_top_index, @index].max
+      if bt_width <= bs_width && bs_width < @display_width
+        prev_top_index = @display_top_index
+        @display_top_index = [@display_top_index, @strlen].max
+        @need_refresh ||= @display_top_index != prev_top_index
+      end
     end
     @display_top = @display_bot + @display_width
   end
