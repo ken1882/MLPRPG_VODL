@@ -160,7 +160,7 @@ class Game_Action
   end
   #---------------------------------------------------------------------------
   def get_item_acting_time
-    #tag: queue: skill action sequence
+    #tag: last work: skill action sequence
     return @user.action_stiff
   end
   #---------------------------------------------------------------------------

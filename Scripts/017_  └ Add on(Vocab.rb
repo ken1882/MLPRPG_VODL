@@ -246,6 +246,8 @@ module Vocab::Errno
     :secure_hash_failed => "Security hash match failed:\n",
   }
   
+  SequenceArgError = "%s has at least %d args, received %d\n"
+  
 end
 #==============================================================================
 # ** Vocab::Status

@@ -12,6 +12,7 @@ class Spriteset_Map
   attr_reader :viewport1, :viewport2, :viewport3
   attr_reader :projectiles, :popups
   attr_reader :character_sprites, :unitcir_sprites
+  attr_reader :battler_sprite_table
   attr_reader :hud_sprite, :tilemap, :tile_layer
   attr_reader :player_target_sprite
   #--------------------------------------------------------------------------
@@ -23,6 +24,7 @@ class Spriteset_Map
     @popups      = []
     @weapon_sprites = {}
     @drop_sprites = []
+    @battler_sprite_table = {}
     create_huds
     create_tile_layer
     create_player_target_sprite
@@ -119,6 +121,7 @@ class Spriteset_Map
   def create_character_sprite(character)
     sprite = Sprite_Character.new(@viewport1, character)
     @character_sprites.push(sprite)
+    @battler_sprite_table[character.hashid] = sprite
     character.create_animation_queue
     return sprite
   end
@@ -306,6 +309,7 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def dispose_temp_sprites
     $game_map.store_projectile(@projectiles)
+    $game_map.save_battler_fibers
     dispose_projectiles
     dispose_popups
   end
@@ -317,6 +321,7 @@ class Spriteset_Map
       dispose_sprite(sprite)
     end
     @character_sprites.clear
+    @battler_sprite_table.clear
     $game_temp.effectus_sprites.each_value { |sprite| sprite.dispose }
     $game_temp.effectus_sprites.clear
   end
@@ -336,7 +341,10 @@ class Spriteset_Map
   #--------------------------------------------------------------------------
   def dispose_sprite(sprite)
     return if sprite.nil?
-    sprite.character.dispose_sprites if sprite.is_a?(Sprite_Character)
+    if sprite.is_a?(Sprite_Character)
+      @battler_sprite_table[sprite.character.hashid] = nil
+      sprite.character.dispose_sprites
+    end
     sprite.dispose
   end
   #--------------------------------------------------------------------------
@@ -344,6 +352,7 @@ class Spriteset_Map
     return unless event
     sprite = @character_sprites.find {|sp| sp.character == event}
     return unless sprite
+    @battler_sprite_table[event.hashid] = nil
     dispose_sprite(sprite)
     @character_sprites.delete(sprite)
     $game_temp.effectus_sprites[event.id].dispose if $game_temp.effectus_sprites[event.id]

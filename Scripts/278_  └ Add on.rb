@@ -25,6 +25,7 @@ class Scene_Map < Scene_Base
     super
     spriteset.restore_projectile
     $game_map.deploy_map_item_drops
+    $game_map.restore_battler_fibers
   end
   #--------------------------------------------------------------------------
   def create_windows

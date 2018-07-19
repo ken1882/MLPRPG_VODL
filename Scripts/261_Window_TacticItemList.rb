@@ -123,9 +123,11 @@ class Window_TacticItemList < Window_ItemList
         @command.action.reassign_item(item)
         if item == :jump_to
           re = call_subwindow(:jump_to).first
-          re = @tactic_data.find{|c| c.index_id == re.index_id}
-          @command.jump_command = re ? re : nil
-          debug_print "jump command id: #{@command.jump_command.index_id}"
+          if re
+            re = @tactic_data.find{|c| c.index_id == re.index_id}
+            @command.jump_command = re ? re : nil
+            debug_print "jump command id: #{@command.jump_command.index_id}"
+          end
         else
           @command.jump_command = nil
         end

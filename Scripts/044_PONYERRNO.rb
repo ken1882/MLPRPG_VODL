@@ -55,5 +55,12 @@ module PONY::ERRNO
   def self.errno_occurred?
     @errno
   end
-  
+  #--------------------------------------------------------------------------
+  def self.sequence_error(type, *args)
+    case type
+    when :args
+      info = Vocab::Errno::SequenceArgError
+      raise ArgumentError, sprintf(info, args[0], args[1], args[2])
+    end
+  end
 end
