@@ -39,7 +39,7 @@ class Game_Action
   attr_reader	  :done                       # Executed flag
   attr_reader   :ignore_distance
   attr_accessor :effect_delay               # Exexute damage delay
-  attr_accessor :item_symbol
+  attr_reader   :symbol_item
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------

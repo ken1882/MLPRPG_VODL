@@ -8,7 +8,15 @@ module PONY::ERRNO
   # * ERRNO COLLECTION
   #--------------------------------------------------------------------------
   ERR_INFO = Vocab::Errno::RESymbol_Table
-  
+  SequenceArgTable = {
+    :pose           => 4,
+    :move           => 5,
+    :slide          => 5,
+    :move_to_target => 5,
+    :target_damage  => 1,
+    nil             => 1,
+  }
+  #--------------------------------------------------------------------------
   @raised = false
   #--------------------------------------------------------------------------
   # * Raise Error Overlay
@@ -56,11 +64,23 @@ module PONY::ERRNO
     @errno
   end
   #--------------------------------------------------------------------------
+  def self.check_sequence(seq)
+    exp_num = SequenceArgTable[seq.first]
+    if seq.size < exp_num
+      self.sequence_error(:args, seq.first, exp_num, seq.size - 1)
+      return false
+    else
+      return true
+    end
+  end
+  #--------------------------------------------------------------------------
   def self.sequence_error(type, *args)
     case type
     when :args
       info = Vocab::Errno::SequenceArgError
       raise ArgumentError, sprintf(info, args[0], args[1], args[2])
+    when :eval
+      raise args[0]
     end
   end
 end
