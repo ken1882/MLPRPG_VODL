@@ -32,6 +32,7 @@ class Game_Action
   attr_accessor :target                     # Target destiniation
   attr_accessor :target_pos                 # Target position at first place
   attr_accessor :subject                    # Battlers affected
+  attr_accessor :sequence_finished          # Flag of Action Sequence has finished
   attr_reader   :started
   attr_reader   :casting                    # Casting flag
   attr_reader   :item                       # Item index
@@ -61,6 +62,7 @@ class Game_Action
     @done		       = false
     @casted        = false
     @symbol_item   = nil
+    @sequence_finished = false
   end
   #------------------------------------------------------------------------
   def ==(action)
@@ -94,7 +96,7 @@ class Game_Action
   #  *) Return if action is undergoing
   #---------------------------------------------------------------------------
   def acting?
-  	return @acting
+  	return !@sequence_finished || @acting
   end
   #---------------------------------------------------------------------------
   #  *) Return action can be executed effectivly
@@ -125,7 +127,7 @@ class Game_Action
   # * Update 
   #---------------------------------------------------------------------------
   def do_acting
-    @time -= 1 if !@waiting && @time > 0
+    @time -= 1 if !@waiting && @sequence_finished && @time > 0
     terminate  if !@waiting && @time <= 0
   end
   #---------------------------------------------------------------------------
@@ -135,7 +137,7 @@ class Game_Action
     return @user.cancel_action_without_penalty if cancel_action?
     start if !@started && action_impleable?
     if @started
-      do_acting  if @acting
+      do_acting  if acting?
       do_casting unless cast_done?
     end
   end
@@ -156,6 +158,7 @@ class Game_Action
     @casting = false
     @casted  = true
     @acting  = true
+    @sequence_finished = (item.action_sequence == 0)
     @time    = get_item_acting_time
   end
   #---------------------------------------------------------------------------

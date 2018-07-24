@@ -33,7 +33,7 @@ class Game_CharacterBase
     @popup_timer        = 0
     @combo_timer        = 0
     @weapon_combo_stack = []
-    @queued_popups   = []
+    @queued_popups      = []
   end
   #----------------------------------------------------------------------------
   # * Update
@@ -175,6 +175,7 @@ class Game_CharacterBase
   def execute_action
     return if $game_system.story_mode?
     return @action.execute  unless @action.item_valid?
+    
     if @action.item.tool_castime > 5
       info = sprintf("%s: %s", @action.user.name, @action.item.name)
       SceneManager.display_info(info)
@@ -187,6 +188,7 @@ class Game_CharacterBase
     process_item_action   if @action.item.is_a?(RPG::Item)
     process_weapon_action if @action.item.is_a?(RPG::Weapon)
     process_armor_action  if @action.item.is_a?(RPG::Armor)
+    
     clear_combo           if !@weapon_combo_stack.empty? && !combo_continue?(@action.item)
     apply_action_stiff
   end
@@ -317,6 +319,7 @@ class Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def action; @action end
+  def current_action; @action end
   #----------------------------------------------------------------------------
   def casting_interrupted?
     return false if @action.initial_casting?
@@ -346,5 +349,9 @@ class Game_CharacterBase
     return true unless @action
     return !@action.acting?
   end
-  
+  #----------------------------------------------------------------------------
+  def finalize_acting
+    @action.sequence_finished = true if @action
+  end
+  #----------------------------------------------------------------------------
 end

@@ -363,7 +363,8 @@ module BattleManager
     end
   end
   #--------------------------------------------------------------------------
-  def self.invoke_action_sequence(action)
+  def self.invoke_action_sequence(action)    
+    action.user.setup_action_sequence(DND::SkillSequence::ACTS[asid])
   end
   #--------------------------------------------------------------------------
   # * Apply Substitute

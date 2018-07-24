@@ -314,6 +314,14 @@ class Game_Battler < Game_BattlerBase
     return movable?
   end
   #--------------------------------------------------------------------------
+  alias :opposite_teamid :opposite?
+  def opposite?(battler)
+    tid  = team_id rescue nil
+    tid2 = battler.team_id recue nil
+    return tid != tid2 if tid && tid2
+    return opposite_teamid
+  end
+  #--------------------------------------------------------------------------
   # * Overwrite: [Add State] Effect: Normal Attack
   #--------------------------------------------------------------------------
   def item_effect_add_state_attack(user, item, effect)

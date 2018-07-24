@@ -229,9 +229,9 @@ class Game_Battler < Game_BattlerBase
     slide_y = self.y + y
     goto(slide_x, slide_y, dur, jump, height) unless moving?
   end
-  # --------------------------------------------------------------------------
+  #---------------------------------------------------------------------------
   # Overwrite method : Smooth move (basic module)
-  # --------------------------------------------------------------------------
+  #---------------------------------------------------------------------------
   def smooth_move(x, y, dur, reverse = false)
     super(x,y,dur,reverse)
     @shadow_point.smooth_move(x,y,dur,reverse)
@@ -262,9 +262,10 @@ class Game_Battler < Game_BattlerBase
     @sequence_index = 0
     @proj_setup = []
     @action_sequence = nil
+    @map_char.finalize_acting if @map_char
   end
   #--------------------------------------------------------------------------
-  def setup_sequence(sequence)
+  def setup_action_sequence(sequence)
     @action_sequence = sequence
     @sequence_index = 0
     @fiber = Fiber.new{execute_sequence}
