@@ -565,6 +565,21 @@ module Vocab::Leveling
   Confirm_LearnSkill = "Do you really want to learn %s?"
 end
 #==============================================================================
+# ** Vocab::BlockChain
+#------------------------------------------------------------------------------
+#   Texts about block chain stuff
+#==============================================================================
+module Vocab::BlockChain
+  Info = {
+    :split_line => "-----------------------------",
+    :transinfo  => "Info: %s",
+    :payment    => "Payment is from %s to %s",
+    :currency   => "%s amount: %d",
+    :goods      => "Item: %s x%d",
+    :nogoods    => "No item was traded",
+  }
+end
+#==============================================================================
 # ** Vocab::Rescue
 #------------------------------------------------------------------------------
 #   Text info of the rescues

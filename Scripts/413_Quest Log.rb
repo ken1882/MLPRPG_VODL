@@ -327,6 +327,7 @@ module QuestData
     location:    231, # The icon for location data. If none wanted, set to 0
     reward_gold: 262, # The icon for gold rewards. If none wanted, set to 0
     reward_exp:  117, # The icon for exp rewards. If none wanted, set to 0
+    transaction: 230,
   } # <= Do not touch.
   #  VOCAB - This lets you choose some of the words used in the quest scene
   VOCAB = {
@@ -365,7 +366,7 @@ module QuestData
   # CATEGORY_VOCAB hash (if you are using SHOW_CATEGORY_LABEL). It is also 
   # advisable to give it a sort type, unless you are fine with it being sorted
   # by ID, as is default.
-  CATEGORIES = [:all, :active, :complete, :failed]
+  CATEGORIES = [:active, :complete, :failed, :transaction]
   #  SHOW_CATEGORY_LABEL - This allows you to choose whether to show the name
   # of the currently selected category. If true, it will choose the name out
   # of the CATEGORY_VOCAB hash.
@@ -384,6 +385,7 @@ module QuestData
     :active =>   "Active Quests",   # The label for the :active category
     :complete => "Complete Quests", # The label for the :complete category
     :failed =>   "Failed Quests",   # The label for the :failed category
+    :transaction => "Transaction History"
   } # <= Do not touch.
   #  SORT_TYPE - This hash allows you to choose how each category is sorted. 
   # For each category, default or custom, you can set a different sort method
@@ -1660,8 +1662,28 @@ class Window_QuestList < Window_Selectable
   def initialize(x, y, width, height)
     super
     @data = []
+    @player_transaction_data = player_transacions
     self.index = 0
     activate
+  end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # * Get player's transactions stored in blockchain, sorted by time stamp
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def player_transacions
+    trans = BlockChain.transaction_data(Vocab::Player)
+    re = {}
+    trans.each do |t|
+      (re[hash_date(t)] ||= []) << t
+    end
+    return re
+  end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def hash_date(date)
+    base  = date.timestamp.hour
+    base += date.timestamp.day   * 24
+    base += date.timestamp.month * 32
+    base += date.timestamp.year  * 12
+    return base
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Set Category
@@ -1674,9 +1696,17 @@ class Window_QuestList < Window_Selectable
     update_help if @help_window
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def transaction_entry(index)
+    hashid = @data.keys[index]
+    return @data[hashid]
+  end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Get Quest
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  def item; @data && index >= 0 ? @data[index] : nil; end
+  def item
+    return @data && index >= 0 ? @data[index] : nil unless @category == :transaction
+    return transaction_entry(index)
+  end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Column/Item Max
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1693,12 +1723,32 @@ class Window_QuestList < Window_Selectable
   # * Make Item List
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def make_item_list
-    @data = @category ? $game_party.quests.list(@category) : []
+    if @category == :transaction
+      @data = @player_transaction_data
+    else
+      @data = @category ? $game_party.quests.list(@category) : []
+    end
+    debug_print("Current category: #{@category}\nDataS: #{@data.size}")
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Draw Item
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def draw_item(index)
+    return draw_transaction_item(index) if @category == :transaction
+    draw_quest_item(index)
+  end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # * Draw transaction data
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def draw_transaction_item(index)
+    rect = item_rect_for_text(index)
+    text = transaction_entry(index).first.timestamp.strftime("%C-%m-%d:%H")
+    draw_text(rect, text)
+  end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # * Draw quest
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def draw_quest_item(index)
     quest = @data[index]
     if quest
       rect = item_rect_for_text(index)
@@ -1724,6 +1774,7 @@ class Window_QuestList < Window_Selectable
   # * Update Help
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def update_help
+    @help_window.category = @category
     @help_window.quest = item
   end
 end
@@ -1735,11 +1786,14 @@ end
 class Window_QuestData < Window_Selectable
   include MAQJ_Window_QuestBase
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  attr_accessor :category
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Object Initialization
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def initialize(x, y, w, h, layout = QuestData::DATA_LAYOUT)
     @dest_scroll_oy = 0
     super(x, y, w, h)
+    @category = nil
     @dest_scroll_oy = self.oy
     self.layout = layout
   end
@@ -1755,7 +1809,11 @@ class Window_QuestData < Window_Selectable
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def calc_contents_height
     @q_contents_height = 0
-    @layout.each { |dt| @q_contents_height += data_height(dt) } if @quest
+    if @category == :transaction && @quest
+      @q_contents_height = @quest.size * line_height * Vocab::BlockChain::Info.keys.size
+    else
+      @layout.each { |dt| @q_contents_height += data_height(dt) } if @quest
+    end
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Draw Data?
@@ -1817,7 +1875,9 @@ class Window_QuestData < Window_Selectable
   def quest=(value)
     return if @quest == value
     @quest = value
-    @layout = (@quest && @quest.layout) ? @quest.layout : @default_layout
+    unless @category == :transaction
+      @layout = (@quest && @quest.layout) ? @quest.layout : @default_layout
+    end
     refresh
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1843,10 +1903,44 @@ class Window_QuestData < Window_Selectable
     # the @draw_y variable. Where they are an array, the elements will be 
     # drawn at the same @draw_y.
     @draw_y = 0
-    @layout.each {|dt|
-      next unless draw_data?(dt)
-      dt.is_a?(Array) ? draw_data_array(dt) : draw_data(dt) 
-    }
+    if @category == :transaction
+      draw_transaction_data
+    else
+      @layout.each {|dt|
+        next unless draw_data?(dt)
+        dt.is_a?(Array) ? draw_data_array(dt) : draw_data(dt) 
+      }
+    end
+  end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # * Draw transaction info
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def draw_transaction_data
+    trans = @quest
+    trans.each do |t|
+      text = ""
+      5.times do |i|
+        case i
+        when 0
+          text = Vocab::BlockChain::Info[:split_line];
+        when 1
+          info = t.info.length > 0 ? t.info : "N/A"
+          text = sprintf(Vocab::BlockChain::Info[:transinfo], info);
+        when 2
+          text = sprintf(Vocab::BlockChain::Info[:payment], t.source.name, t.recipient.name);
+        when 3
+          text = sprintf(Vocab::BlockChain::Info[:currency], Vocab::currency_unit, t.value);
+        when 4
+          if t.goods
+            text = sprintf(Vocab::BlockChain::Info[:goods] ,t.goods.name, t.good_amount)
+          else
+            text = Vocab::BlockChain::Info[:nogoods]
+          end
+        end
+        clear_and_draw_text(0, @draw_y, contents_width, line_height, text, 1)
+        @draw_y += line_height
+      end
+    end
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Draw Data

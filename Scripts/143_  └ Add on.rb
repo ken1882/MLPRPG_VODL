@@ -308,8 +308,8 @@ class Spriteset_Map
   end
   #--------------------------------------------------------------------------
   def dispose_temp_sprites
-    $game_map.store_projectile(@projectiles)
     $game_map.save_battler_fibers
+    $game_map.store_projectile(@projectiles)
     dispose_projectiles
     dispose_popups
   end

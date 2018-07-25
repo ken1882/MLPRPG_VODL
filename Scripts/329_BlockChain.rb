@@ -4,6 +4,7 @@
 #  Block Chain module for process transactions, ultra secure!
 #==============================================================================
 $imported = {} if $imported.nil?
+$imported["COM_BlockChain"] = true
 module BlockChain
   #--------------------------------------------------------------------------
   # * Instance vars
@@ -366,7 +367,13 @@ module BlockChain
   def self.record_transaction(trans)
     @trans_megadata.push(trans)
   end
-  
+  #--------------------------------------------------------------------------
+  # * Return transaction data related to given account, all if nil given
+  #--------------------------------------------------------------------------
+  def self.transaction_data(accid = nil)
+    accid = PONY.MD5(accid).to_i(16) if accid.is_a?(String)
+    return @nodes[0].transaction_data(accid)
+  end
   # Nodes in Chain
   def self.chain_nodes; return @nodes; end
   def self.locked?; return @locked; end

@@ -269,10 +269,11 @@ class Game_Battler < Game_BattlerBase
     @action_sequence = sequence
     @sequence_index = 0
     @fiber = Fiber.new{execute_sequence}
+    debug_print("#{self}: Action Sequence set")
   end
   #--------------------------------------------------------------------------
   def current_act
-    @action_sequence[@sequence_index]
+    @acts
   end
   #--------------------------------------------------------------------------
   def execute_sequence
@@ -280,11 +281,12 @@ class Game_Battler < Game_BattlerBase
   end
   #--------------------------------------------------------------------------
   def save_fiber
+    @fiber_saved = !@fiber.nil?
     @fiber = nil
-    @fiber_saved = true
   end
   #--------------------------------------------------------------------------
   def restore_fiber
+    return unless @fiber_saved
     @fiber = Fiber.new{execute_sequence}
     @fiber_saved = false
   end
@@ -393,12 +395,14 @@ class Game_Map
     all_battlers.each do |battler|
       battler.save_fiber
     end
+    debug_print("Fiber saved")
   end
   #--------------------------------------------------------------------------
   def restore_battler_fibers
     all_battlers.each do |battler|
       battler.restore_fiber
     end
+    debug_print("Fiber restored")
   end
   #--------------------------------------------------------------------------
 end

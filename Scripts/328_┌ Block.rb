@@ -493,9 +493,8 @@ module BlockChain
         records = @blocks[cur_key].record
         cur_key = @blocks[cur_key].parent_hash
         records.reverse.each do |trans|
-          next if trans.info.size < 1
           puts SPLIT_LINE
-          puts "Info: #{trans.info} | from: #{trans.source.name} | to: #{trans.recipient.name}"
+          puts "Info: #{trans.info} | payment is from: #{trans.source.name} | to: #{trans.recipient.name}"
           puts "Bits Amount: #{trans.value}"
           puts "Item: #{trans.goods.name} x#{trans.good_amount}" if trans.goods
         end
@@ -515,8 +514,9 @@ module BlockChain
       @capacity -= outdated.record.size
       return outdated
     end
-    
-    # Verify if all transactions is still legal
+    #--------------------------------------------------------------------------
+    # * Verify if all transactions is still legal
+    #--------------------------------------------------------------------------
     def trans_legal?
       cur_key = @last_block.hashid
       while @blocks[cur_key] && cur_key
@@ -526,8 +526,9 @@ module BlockChain
       end
       return true
     end
-    
-    # Recover nodes to previous state
+    #--------------------------------------------------------------------------
+    # * Recover nodes to previous state
+    #--------------------------------------------------------------------------
     def recover
       cur_key = @last_block.hashid
       while @blocks[cur_key] && cur_key
@@ -536,7 +537,28 @@ module BlockChain
         records.each {|i| i.recover}
       end
     end
-    
+    #--------------------------------------------------------------------------
+    # * Return transaction data related to given account, all if nil given
+    #--------------------------------------------------------------------------
+    def transaction_data(accid)
+      cur_key = @last_block.hashid
+      data = []
+      while @blocks[cur_key] && cur_key
+        records = @blocks[cur_key].record
+        cur_key = @blocks[cur_key].parent_hash
+        records.each do |trans|
+          next unless trans.source.id == accid || trans.recipient.id == accid
+          data << trans
+          puts SPLIT_LINE
+          puts "Info: #{trans.info} | payment is from: #{trans.source.name} | to: #{trans.recipient.name}"
+          puts "Bits Amount: #{trans.value}"
+          puts "Item: #{trans.goods.name} x#{trans.good_amount}" if trans.goods
+        end
+      end
+      puts SPLIT_LINE
+      return data
+    end
+    #--------------------------------------------------------------------------
     def overload?; @capacity > 3000; end
     def drop_block; @corrupted = true; end
     def length; @corrupted ? -1 : (@blocks.size + @last_block.record.size); end

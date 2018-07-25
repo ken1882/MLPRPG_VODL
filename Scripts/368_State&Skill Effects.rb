@@ -102,7 +102,7 @@ class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
   def execute_sequence
     while @sequence_index < @action_sequence.size
-      @acts = current_act
+      @acts = @action_sequence[@sequence_index]
       execute_act
       @sequence_index += 1
       #Fiber.yield # consider uncomment this line
@@ -226,7 +226,7 @@ class Game_Battler < Game_BattlerBase
   # New method : Setup pose [:pose,]
   #---------------------------------------------------------------------------
   def setup_pose
-    return unless PONY::ERRNO.check_sequence(@acts)
+    return unless PONY::ERRNO.check_sequence(current_act)
     @battler_index = @acts[1]
     @anim_cell     = @acts[2]
     if @anim_cell.is_a?(Array)
@@ -244,7 +244,7 @@ class Game_Battler < Game_BattlerBase
   # New method : Setup movement [:move,]
   #---------------------------------------------------------------------------
   def setup_move
-    return unless PONY::ERRNO.check_sequence(@acts)
+    return unless PONY::ERRNO.check_sequence(current_act)
     stop_all_movements
     goto(@acts[1], @acts[2], @acts[3], @acts[4], @acts[5] || 0)
   end
@@ -252,7 +252,7 @@ class Game_Battler < Game_BattlerBase
   # New method : Setup slide [:slide,]
   #--------------------------------------------------------------------------
   def setup_slide
-    return unless PONY::ERRNO.check_sequence(@acts)
+    return unless PONY::ERRNO.check_sequence(current_act)
     stop_all_movements
     xpos = (flip && !@ignore_flip_point ? -@acts[1] : @acts[1])
     ypos = @acts[2]
@@ -269,18 +269,8 @@ class Game_Battler < Game_BattlerBase
   # New method : Setup move to target [:move_to_target,]
   #--------------------------------------------------------------------------
   def setup_move_to_target
-    return unless PONY::ERRNO.check_sequence(@acts)
+    return unless PONY::ERRNO.check_sequence(current_act)
     stop_all_movements
-    if area_flag
-      size = target_array.size
-      xpos = target_array.inject(0) {|r,battler| r + battler.x}/size
-      ypos = target_array.inject(0) {|r,battler| r + battler.y}/size
-      xpos += @acts[1]
-      xpos *= -1 if flip && !@ignore_flip_point
-      # Get the center coordinate of enemies
-      goto(xpos, ypos + @acts[2], @acts[3], @acts[4])
-      return
-    end
     xpos = target.x + (flip ? -@acts[1] : @acts[1])
     ypos = target.y + @acts[2]
     goto(xpos, ypos, @acts[3], @acts[4], @acts[5] || 0)
@@ -299,7 +289,7 @@ class Game_Battler < Game_BattlerBase
   # New method : Setup damage [:target_damage,]
   #--------------------------------------------------------------------------
   def setup_damage
-    return unless PONY::ERRNO.check_sequence(@acts)
+    return unless PONY::ERRNO.check_sequence(current_act)
     return if @map_char.nil?
     target = @map_char.current_target
     target = BattleManager.autotarget(@map_char, item)
@@ -320,14 +310,14 @@ class Game_Battler < Game_BattlerBase
   # --------------------------------------------------------------------------
   def setup_anim
     return unless @map_char
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     @map_char.start_animation(@acts[1])
   end
   #--------------------------------------------------------------------------
   # New method : Setup battler flip [:flip,]
   # -------------------------------------------------------------------------
   def setup_flip
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     if @acts[1] == :toggle
       @flip = !@flip 
     elsif @acts[1] == :ori
@@ -340,7 +330,7 @@ class Game_Battler < Game_BattlerBase
   # New method : Setup actions [:action,]
   # -------------------------------------------------------------------------
   def setup_action
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     new_sequence = @action_sequence[@sequence_index+1...@action_sequence.size]
     @sequence_index = 0
     new_sequence = DND::SkillSequence::ACTS[@acts[1]] + new_sequence
@@ -350,7 +340,7 @@ class Game_Battler < Game_BattlerBase
   # New method : Setup projectile [:proj_setup,]
   # --------------------------------------------------------------------------
   def setup_projectile
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     skill_id = @acts[1]
     source   = @acts[2]
     target   = @acts[3]
@@ -360,7 +350,7 @@ class Game_Battler < Game_BattlerBase
   # New method : Setup weapon icon [:icon,]
   # -------------------------------------------------------------------------
   def setup_icon
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     @icon_key = @acts[1]
     @icon_key = @acts[2] if @acts[2] && flip
   end
@@ -368,7 +358,7 @@ class Game_Battler < Game_BattlerBase
   # New method : Setup sound [:sound,]
   #--------------------------------------------------------------------------
   def setup_sound
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     name  = @acts[1]
     vol   = @acts[2] || 100
     pitch = @acts[3] || 100
@@ -378,7 +368,7 @@ class Game_Battler < Game_BattlerBase
   # New method : Setup conditional branch [:if,]
   # -------------------------------------------------------------------------
   def setup_branch
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     act_true = @acts[2]
     act_false = @acts[3]
     bool = false
@@ -409,12 +399,12 @@ class Game_Battler < Game_BattlerBase
   end
   #--------------------------------------------------------------------------
   def setup_timed_hit
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     # perhaps not needed
   end
   #--------------------------------------------------------------------------
   def setup_screen
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     screen = $game_map.screen
     argse = @acts.size - 1
     case @acts[1]
@@ -443,7 +433,7 @@ class Game_Battler < Game_BattlerBase
   end
   #--------------------------------------------------------------------------
   def setup_add_state
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     
     state_id = @acts[1]
     chance = @acts[2] || 100
@@ -453,237 +443,237 @@ class Game_Battler < Game_BattlerBase
   end
   #--------------------------------------------------------------------------
   def setup_rem_state
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_change_target
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_target_move
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_target_slide
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_target_reset
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_focus
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_unfocus
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_target_z
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_anim_top
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_cutin
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_cutin_fade
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_cutin_slide
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_targets_flip
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_add_plane
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_del_plane
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_balloon_icon
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_log_message
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_aftinfo
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_smooth_move
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_smooth_slide
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_smooth_move_target
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_smooth_return
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_loop
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_while
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_force_act
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_anim_bottom
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_switch_case
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_instant_reset
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_anim_follow
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_change_skill
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_check_collapse
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_slow_motion
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_timestop
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_proj_scale
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_tsbs_common_event
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_transition
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_backdrop
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_backdrop_transition
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_screen_fadeout
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_screen_fadein
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_check_cover
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_rotation
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_fadein
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_fadeout
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_immortaling
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_end_action
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #--------------------------------------------------------------------------
   def setup_autopose
-    return unless PONY::ERRNO::check_sequence(@acts)
+    return unless PONY::ERRNO::check_sequence(current_act)
     #reserved
   end
   #---------------------------------------------------------------------------
