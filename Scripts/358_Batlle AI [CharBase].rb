@@ -99,19 +99,33 @@ class Game_Character < Game_CharacterBase
   def determine_item_usage
   end
   #----------------------------------------------------------------------------
+  def battler_debug_print(*args)
+    return unless self == $game_map.events[8]
+    puts *args
+  end
+  #----------------------------------------------------------------------------
   def process_tactic_commands(spec_category = nil)
     usable_actions = []
     checked        = 0  # Bitset
-    n = usable_actions.size; i = 0;
     commands = tactic_commands
+    n = commands.size; i = 0;
     forced   = false
     while i < n
-      next if checked & PONY::Bitset[i]
+      #battler_debug_print("Check status of #{i}: #{(checked & PONY::Bitset[i]).to_bool}")
+      if (checked & PONY::Bitset[i]).to_bool
+        i += 1; next;
+      end
       command = commands[i]
-      next if spec_category && command.category != spec_category
-      
       checked |= PONY::Bitset[i]
-      next unless command.check_condition(forced)
+      #battler_debug_print("cmd index: #{command.condition_symbol} #{command.action.item}")
+      if spec_category && command.category != spec_category
+        i += 1; next;
+      end
+      
+      #battler_debug_print(command.check_condition(forced))
+      unless command.check_condition(forced)
+        i += 1; next;
+      end
       forced = false
       
       if command.action.item == :jump_to
@@ -119,7 +133,7 @@ class Game_Character < Game_CharacterBase
         forced = true
         next
       end
-      
+      i += 1
       _action = command.action.dup; _action.target = command.get_target;
       _action.reassign_item(_action.get_symbol_item)
       if _action.item.is_a?(Symbol)
@@ -132,7 +146,6 @@ class Game_Character < Game_CharacterBase
     _action = usable_actions.select{|a| a.action_impleable?}.first
     _action = usable_actions.first if _action.nil?
     interpret_tactic_action(_action)
-    i += 1
   end
   #----------------------------------------------------------------------------
   def interpret_tactic_action(action)

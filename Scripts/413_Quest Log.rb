@@ -1657,6 +1657,8 @@ end
 class Window_QuestList < Window_Selectable
   include MAQJ_Window_QuestBase
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  attr_reader :category
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Object Initialization
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def initialize(x, y, width, height)
@@ -1678,12 +1680,8 @@ class Window_QuestList < Window_Selectable
     return re
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  def hash_date(date)
-    base  = date.timestamp.hour
-    base += date.timestamp.day   * 24
-    base += date.timestamp.month * 32
-    base += date.timestamp.year  * 12
-    return base
+  def hash_date(trans)
+    return (trans.timestamp.to_i / 3600).to_i
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Set Category
@@ -1742,7 +1740,7 @@ class Window_QuestList < Window_Selectable
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def draw_transaction_item(index)
     rect = item_rect_for_text(index)
-    text = transaction_entry(index).first.timestamp.strftime("%C-%m-%d:%H")
+    text = transaction_entry(index).first.timestamp.strftime("%Y-%m-%d:%H")
     draw_text(rect, text)
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1810,7 +1808,7 @@ class Window_QuestData < Window_Selectable
   def calc_contents_height
     @q_contents_height = 0
     if @category == :transaction && @quest
-      @q_contents_height = @quest.size * line_height * Vocab::BlockChain::Info.keys.size
+      @q_contents_height = @quest.size * line_height * (Vocab::BlockChain::Info.keys.size - 1)
     else
       @layout.each { |dt| @q_contents_height += data_height(dt) } if @quest
     end
@@ -1902,42 +1900,58 @@ class Window_QuestData < Window_Selectable
     #  The basic idea here is that each draw_ method will rely on and advance 
     # the @draw_y variable. Where they are an array, the elements will be 
     # drawn at the same @draw_y.
+    draw_index_data(false)
+  end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def draw_index_data(draw_all = false)
     @draw_y = 0
     if @category == :transaction
-      draw_transaction_data
+      draw_transaction_data(draw_all)
     else
       @layout.each {|dt|
         next unless draw_data?(dt)
-        dt.is_a?(Array) ? draw_data_array(dt) : draw_data(dt) 
+        dt.is_a?(Array) ? draw_data_array(dt, draw_all) : draw_data(dt)
+        break if !draw_all && @draw_y > maqj_visible_height
       }
     end
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Draw transaction info
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  def draw_transaction_data
+  def draw_transaction_data(draw_all = false)
     trans = @quest
     trans.each do |t|
+      break if !draw_all && @draw_y > maqj_visible_height
       text = ""
       5.times do |i|
+        rect = Rect.new(0, @draw_y, contents_width, line_height)
+        cx   = standard_padding
+        contents.clear_rect(rect)
         case i
         when 0
-          text = Vocab::BlockChain::Info[:split_line];
+          contents.draw_line(cx, @draw_y + 4, contents_width - cx, @draw_y + 4)
         when 1
           info = t.info.length > 0 ? t.info : "N/A"
           text = sprintf(Vocab::BlockChain::Info[:transinfo], info);
         when 2
           text = sprintf(Vocab::BlockChain::Info[:payment], t.source.name, t.recipient.name);
         when 3
+          draw_icon(PONY::IconID[:bit], cx, @draw_y)
+          cx += 26
           text = sprintf(Vocab::BlockChain::Info[:currency], Vocab::currency_unit, t.value);
         when 4
           if t.goods
+            icon_id = (t.goods.icon_index || 0) rescue 0
+            if icon_id > 0
+              draw_icon(icon_id, cx, @draw_y)
+              cx += 26
+            end
             text = sprintf(Vocab::BlockChain::Info[:goods] ,t.goods.name, t.good_amount)
           else
             text = Vocab::BlockChain::Info[:nogoods]
           end
         end
-        clear_and_draw_text(0, @draw_y, contents_width, line_height, text, 1)
+        draw_text_ex(cx, @draw_y, text) unless text.empty?
         @draw_y += line_height
       end
     end
@@ -1955,12 +1969,13 @@ class Window_QuestData < Window_Selectable
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Draw Data Array
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  def draw_data_array(layout_array)
+  def draw_data_array(layout_array, draw_all = true)
     y, max_y = @draw_y, @draw_y
     # Draw each data aspect at the same starting @draw_y
     layout_array.each { |dt|
       @draw_y = y
-      draw_data(dt)
+      draw_data(dt, draw_all)
+      break if !draw_all && @draw_y > maqj_visible_height
       max_y = @draw_y if @draw_y > max_y
     }
     @draw_y = max_y
@@ -2303,7 +2318,9 @@ class Scene_Quest < Scene_MenuBase
   def terminate
     $game_system.quest_categories = QuestData::CATEGORIES
     $game_system.quest_scene_label = QuestData::VOCAB[:scene_label]
-    $game_system.last_quest_id = @quest_list_window.item ? @quest_list_window.item.id : 0
+    unless @quest_list_window.category == :transaction
+      $game_system.last_quest_id = @quest_list_window.item ? @quest_list_window.item.id : 0
+    end
     $game_system.last_quest_cat = @quest_category_window ? 
       @quest_category_window.item : $game_system.quest_categories[0]
     super
@@ -2330,6 +2347,24 @@ class Scene_Quest < Scene_MenuBase
       @quest_category_window && @quest_category_label_window
     create_quest_list_window
     create_quest_data_window
+    create_hint_window
+  end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # * Hint window that activated when on quest item ok
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def create_hint_window
+    ww = @quest_list_window.width
+    wh = @quest_list_window.line_height * 3 + @quest_list_window.standard_padding * 2
+    wy = @quest_list_window.y + @quest_list_window.height - wh
+    @hint_window = Window_Base.new(0, wy, ww, wh)
+    @hint_window.swap_skin(WindowSkin::Applejack)
+    rect = Rect.new(0, 0, @hint_window.contents_width, @hint_window.line_height)
+    texts = FileManager.textwrap(Vocab::QuestHint, rect.width)
+    texts.each do |line|
+      @hint_window.draw_text(rect, line)
+      rect.y += @hint_window.line_height
+    end
+    @hint_window.hide
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Create QuestLabel Window
@@ -2452,7 +2487,9 @@ class Scene_Quest < Scene_MenuBase
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def on_list_ok
     @quest_category_window.deactivate if @quest_category_window
+    @quest_data_window.draw_index_data(true)
     @quest_data_window.activate
+    @hint_window.show
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * List Cancel
@@ -2468,6 +2505,7 @@ class Scene_Quest < Scene_MenuBase
   # * Data Cancel
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def on_data_cancel
+    @hint_window.hide
     @quest_list_window.activate
     @quest_category_window.activate if @quest_category_window && QuestData::CONCURRENT_ACTIVITY
   end

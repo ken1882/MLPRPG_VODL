@@ -14,7 +14,7 @@ class Game_Character < Game_CharacterBase
   attr_reader     :knockbacks
   attr_reader     :through_character
   attr_reader     :altitude
-  attr_reader     :last_quadtree_index
+  attr_reader     :last_quadtree_index, :quadtree_index
   attr_accessor   :through                  # pass-through
   attr_accessor   :step_anime               # stepping animation
   #--------------------------------------------------------------------------
@@ -428,6 +428,7 @@ class Game_Character < Game_CharacterBase
     quadtree = $game_map.collision_quadtree
     new_index = $game_map.get_quadtree_index(@x, @y)
     return if new_index == @last_quadtree_index
+    @quadtree_index = new_index
     #puts "#{name} #{@last_quadtree_index}" if self.is_a?(Game_Player) || distance_to_character($game_player) < 5
     begin
       quadtree[new_index] << quadtree[@last_quadtree_index].delete(self)

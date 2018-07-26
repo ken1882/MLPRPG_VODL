@@ -49,9 +49,9 @@ class Game_DroppedItem
   def process_pickup
     @loots.each do |loot|
       if loot.is_a?(Fixnum)
-        $game_party.gain_gold(loot)
+        $game_party.gain_gold(loot, Vocab::Coinbase, Vocab::BlockChain::DropLoot)
       else
-        $game_party.gain_item(loot, 1)
+        $game_party.gain_item(loot, 1, Vocab::Coinbase, Vocab::BlockChain::DropLoot)
       end
     end
     Audio.se_play('Audio/SE/coin01', 80 * $game_system.volume(:sfx) * 0.01, 100)

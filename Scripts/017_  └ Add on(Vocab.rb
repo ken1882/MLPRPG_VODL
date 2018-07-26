@@ -31,6 +31,7 @@ module Vocab
   
   Quest           = "Quest Journal"
   QuestUpdated    = "Your journal has been updated: %s"
+  QuestHint       = "Use Up/Down to negative the information"
   
   LevelUp         = "Level Up"
   Skilltree       = "Skill Tree"
@@ -572,12 +573,14 @@ end
 module Vocab::BlockChain
   Info = {
     :split_line => "-----------------------------",
-    :transinfo  => "Info: %s",
-    :payment    => "Payment is from %s to %s",
-    :currency   => "%s amount: %d",
+    :transinfo  => "\\c[1]Info:\\c[0] %s",
+    :payment    => "Payment is from \\c[1]%s \\c[0]to\\c[1] %s",
+    :currency   => "%s amount:\\c[6] %d",
     :goods      => "Item: %s x%d",
     :nogoods    => "No item was traded",
   }
+  DropLoot = "Received via dropped loot"
+  
 end
 #==============================================================================
 # ** Vocab::Rescue
