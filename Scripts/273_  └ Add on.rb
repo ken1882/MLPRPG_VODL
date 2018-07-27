@@ -24,6 +24,7 @@ class Scene_Base
     start
     create_overlay_windows
     create_item_help_window
+    create_dim_background
     post_start
     #-------------------------------
     loop do
@@ -118,9 +119,10 @@ class Scene_Base
   #--------------------------------------------------------------------------
   def create_overlay_windows
     if self.is_a?(SceneManager.first_scene_class)
-      $confirm_exit_win = Window_Confirm.new(160, 180, Vocab::ExitConfirm, true)
-      $confirm_win = Window_Confirm.new(160, 180, '', true)
-      $popup_win = Window_PopInfo.new(160, 180, "", 300, true)
+      $confirm_exit_win = Window_Confirm.new(nil, nil, nil, nil, Vocab::ExitConfirm, true)
+      $confirm_win = Window_Confirm.new(nil, nil, nil, nil, '', true)
+      t = sec_to_frame(5)
+      $popup_win = Window_PopInfo.new(nil, nil, nil, nil, "", t, true)
     end
     @@overlay_windows[:exit_confirm] = $confirm_exit_win
     @@overlay_windows[:confirm] = $confirm_win
@@ -140,6 +142,16 @@ class Scene_Base
     @item_help_text.hide
   end
   #----------------------------------------------------------------------------
+  def create_dim_background
+    @dim_background = Sprite.new(@superviewport)
+    @dim_background.bitmap = Bitmap.new(Graphics.width, Graphics.height)
+    @dim_background.opacity = 128
+    @dim_background.z = @superviewport.z - 0x10
+    color = Color.new(16,16,16)
+    @dim_background.bitmap.fill_rect(0, 0, Graphics.width, Graphics.height, color)
+    @dim_background.hide
+  end
+  #----------------------------------------------------------------------------
   def create_debug_window
     $debug_window = Window_DebugPanel.new
     @@overlay_windows[:debug] = $debug_window
@@ -156,7 +168,8 @@ class Scene_Base
   #--------------------------------------------------------------------------
   alias dispose_all_viewports dispose_main_viewport
   def dispose_main_viewport
-    @superviewport.dispose
+    @dim_background.dispose
+    @superviewport.dispose    
     dispose_all_viewports
   end
   #--------------------------------------------------------------------------
@@ -226,10 +239,20 @@ class Scene_Base
   #--------------------------------------------------------------------------
   # * Raise overlay window
   #--------------------------------------------------------------------------
-  def raise_overlay_window(symbol, info = nil, method = nil, args = nil, forced = false)
+  def raise_overlay_window(symbol, *args)
     deactivate_all_windows(symbol)
-    $on_exit = true if method == :exit
-    @@overlay_windows[symbol].raise_overlay(info, method, args, forced)
+    
+    if args.size == 1 && args[0].is_a?(Hash)
+      $on_exit = true if args[0][:method] == :exit
+      @@overlay_windows[symbol].raise_overlay(args[0])
+    else
+      info      = args[0]
+      method    = args[1]
+      call_args = args[2]
+      forced    = (args[3] || false)
+      $on_exit = true if method == :exit
+      @@overlay_windows[symbol].raise_overlay(info, method, call_args, forced)
+    end
     SceneManager.process_tactic(true) unless SceneManager.tactic_enabled?
   end
   #--------------------------------------------------------------------------
@@ -271,8 +294,9 @@ class Scene_Base
   def update_overlay
     @@overlayed = false
     @@overlay_windows.each do |sym, window|
-      @@overlayed = true if window.visible?
-      window.update      if @@overlayed
+      next unless window.visible?
+      @@overlayed = true
+      window.update
     end
   end
   #--------------------------------------------------------------------------
@@ -325,8 +349,22 @@ class Scene_Base
       @window_input.update
       break if @input_string
     end
+    #--
     begin
-      eval @input_string
+      eval("$game_console." + @input_string)
+    rescue NoMethodError
+      eval_standard(@input_string)
+    rescue Exception => err
+      puts SPLIT_LINE
+      debug_print err
+      puts err.backtrace
+    end
+    @input_string = nil
+  end
+  #--------------------------------------------------------------------------
+  def eval_standard(code)
+    begin
+      eval(code)
     rescue Exception => err
       puts SPLIT_LINE
       debug_print err
@@ -384,4 +422,13 @@ class Scene_Base
     return SceneManager.goto(Scene_Gameover) if $game_system.allow_gameover?
     SceneManager.call_all_dead_rescue
   end
+  #--------------------------------------------------------------------------
+  def show_dim_background
+    @dim_background.show if @dim_background
+  end
+  #--------------------------------------------------------------------------
+  def hide_dim_background
+    @dim_background.hide if @dim_background
+  end
+  #--------------------------------------------------------------------------
 end

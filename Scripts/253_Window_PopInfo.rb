@@ -11,10 +11,11 @@ class Window_PopInfo < Window_Overlay
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  def initialize(x, y, information, exist_time, overlay_self = false)
+  def initialize(x = nil, y = nil, width = 300, ln = 5, information = '', 
+                  exist_time = sec_to_frame(5), overlay_self = false)
     @exist_time = exist_time
     @countdown  = exist_time
-    super(x, y, information, overlay_self)
+    super(x, y, width, ln, information, overlay_self)
   end
   #--------------------------------------------------------------------------
   # * Frame Update
@@ -53,11 +54,24 @@ class Window_PopInfo < Window_Overlay
   #--------------------------------------------------------------------------
   # * Raise ovrelay window
   #--------------------------------------------------------------------------
-  def raise_overlay(info = nil, stack_commandname = nil, args = nil, forced = false)
+  def raise_overlay(*args)
     @countdown = @exist_time
+    
+    if args.size == 1 && args[0].is_a?(Hash)# hash initializer
+      args = args[0]
+      info = args[:info]; stack_commandname = args[:method];
+      call_args = args[:args]; forced = (args[:forced] || false);
+      @countdown = args[:time]
+    else
+      info = args[0]
+      stack_commandname = args[1]
+      call_args = args[2]
+      forced = (args[3] || false)
+    end
+    
     unselect
     SceneManager.process_tactic(true) unless SceneManager.tactic_enabled?
-    super(info, stack_commandname, args, forced)
+    super(info, stack_commandname, call_args, forced)
   end
   #--------------------------------------------------------------------------
   # * Update Cursor

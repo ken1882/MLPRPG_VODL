@@ -145,7 +145,7 @@ class Window_SystemOptions < Window_Command
   #--------------------------------------------------------------------------
   def create_overlay_window
     info = Vocab::System::UnsavedInfo
-    @overlay_window = Window_Confirm.new(160, 180, info)
+    @overlay_window = Window_Confirm.new(nil, nil, nil, nil, info)
   end
   #--------------------------------------------------------------------------
   def call_ok_handler

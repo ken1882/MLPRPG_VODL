@@ -66,6 +66,12 @@ module Vocab
     :state      => "/States",
   }
   
+  Offline = "Unable connect to internet, some features won't be available," +
+            " such as Gamejolt achievement." + " If you have connected, " +
+            "please re-launch the game."
+            
+  OfflineMode = "This feature is unavailable in offline mode. You cannot " +
+                "access it until connected to internet and re-launch the game"
   #----------------------------------------------------------------------------
   # * Return dictionary file of language
   #----------------------------------------------------------------------------
@@ -580,7 +586,8 @@ module Vocab::BlockChain
     :nogoods    => "No item was traded",
   }
   DropLoot = "Received via dropped loot"
-  
+  LargeHistory = "You're going to view a large transaction history." +
+                 " This will take a while to display all item. Continue anyway?"
 end
 #==============================================================================
 # ** Vocab::Rescue

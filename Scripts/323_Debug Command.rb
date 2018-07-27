@@ -186,4 +186,15 @@ class Game_Console
       SceneManager.display_info(info)
     end
   end
+  #----------------------------------------------------------------------------
+  def PickupAllDrops
+    $game_map.item_drops[$game_map.map_id].each do |loot|
+      loot.process_pickup
+    end
+  end
+  #----------------------------------------------------------------------------
+  def SuperDuperKillingParty
+    $game_map.enemies.each{|e| e.die} until $game_map.enemies.size == 0
+  end
+  #----------------------------------------------------------------------------
 end

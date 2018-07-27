@@ -12,10 +12,11 @@ class Window_Confirm < Window_Overlay
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  def initialize(x, y, information = "Sure?", overlay_self = false)
+  def initialize(x = nil, y = nil, width = 300, ln = 5,
+                information = "Sure?", overlay_self = false)
     @confirm_status = nil
     @static = false
-    super(x, y, information, overlay_self)
+    super(x, y, width, ln, information, overlay_self)
   end
   #--------------------------------------------------------------------------
   # * Determine if Cursor is Moveable
@@ -79,18 +80,15 @@ class Window_Confirm < Window_Overlay
     set_handler(:cancel,   method(:block_action) )
   end
   #--------------------------------------------------------------------------
+  def get_text_y(rect, tsize)
+    draw_height = contents.height - item_height - 12
+    return [(draw_height - line_height * (tsize + 1)) / 2, 0].max
+  end
+  #--------------------------------------------------------------------------
   # * Item align center
   #--------------------------------------------------------------------------
   def central_item_rect(index)
     rect = super(index)
-    rect.y = contents_height - item_height - 12
-    rect
-  end
-  #--------------------------------------------------------------------------
-  # * Item rect for choice (Yes/No)
-  #--------------------------------------------------------------------------
-  def choice_item_rect(index)
-    rect = central_item_rect(index)
     rect.y = contents_height - item_height - 12
     rect
   end

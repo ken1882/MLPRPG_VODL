@@ -1663,10 +1663,17 @@ class Window_QuestList < Window_Selectable
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def initialize(x, y, width, height)
     super
+    create_overlay
     @data = []
     @player_transaction_data = player_transacions
     self.index = 0
     activate
+  end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # * Overlay confirm window
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def create_overlay
+    @overlay_window = Window_Confirm.new(nil, nil, 380, 7)
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Get player's transactions stored in blockchain, sorted by time stamp
@@ -1774,6 +1781,16 @@ class Window_QuestList < Window_Selectable
   def update_help
     @help_window.category = @category
     @help_window.quest = item
+  end
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  def call_ok_handler
+    if @category == :transaction
+      return super if item.size < 10
+      info = Vocab::BlockChain::LargeHistory
+      raise_overlay(info, :call_handler, :ok)
+    else
+      super
+    end
   end
 end
 #==============================================================================
@@ -2258,8 +2275,12 @@ class Window_QuestData < Window_Selectable
     end
     if self.oy != @dest_scroll_oy
       mod = (@dest_scroll_oy <=> self.oy)
-      self.oy += 3*mod
+      factor = Input.press?(:kSHIFT) ? 12 : 3
+      factor = 24 if @quick_scrolling
+      self.oy += factor * mod
       self.oy = @dest_scroll_oy if (@dest_scroll_oy <=> self.oy) != mod
+    else
+      @quick_scrolling = false
     end
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2267,7 +2288,7 @@ class Window_QuestData < Window_Selectable
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def scroll_down(*args, &block)
     max_oy = contents_height - maqj_visible_height
-    dest = ((@dest_scroll_oy / line_height) + 1)*line_height
+    dest = ((@dest_scroll_oy / line_height) + 1) * line_height
     @dest_scroll_oy = [dest, max_oy].min
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2281,18 +2302,24 @@ class Window_QuestData < Window_Selectable
   # * Page Down
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def scroll_pagedown(*args, &block)
-    Audio.se_play("Audio/SE/Book2", 80, 100)
+    return if @quick_scrolling
+    Audio.se_play("Audio/SE/Book2", 60, 100)
     max_oy = contents_height - maqj_visible_height
     dest = ((@dest_scroll_oy / line_height) + 20) * line_height 
-    self.oy = @dest_scroll_oy = [dest, max_oy].min
+    #self.oy = @dest_scroll_oy = [dest, max_oy].min
+    @dest_scroll_oy = [dest, max_oy].min
+    @quick_scrolling = true
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # * Scroll Up
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   def scroll_pageup(*args, &block)
-    Audio.se_play("Audio/SE/Book2", 80, 100)
+    return if @quick_scrolling
+    Audio.se_play("Audio/SE/Book2", 60, 100)
     dest = ((@dest_scroll_oy / line_height) - 20) * line_height
-    self.oy = @dest_scroll_oy = [dest, 0].max 
+    #self.oy = @dest_scroll_oy = [dest, 0].max
+    @dest_scroll_oy = [dest, 0].max
+    @quick_scrolling = true
   end
   
 end
@@ -2489,6 +2516,7 @@ class Scene_Quest < Scene_MenuBase
     @quest_category_window.deactivate if @quest_category_window
     @quest_data_window.draw_index_data(true)
     @quest_data_window.activate
+    @quest_list_window.deactivate
     @hint_window.show
   end
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

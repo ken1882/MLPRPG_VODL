@@ -292,4 +292,14 @@ module SceneManager
     scene.update_basic
   end
   #-------------------------------------------------------------------------
+  def self.show_dim_background
+    return unless scene
+    scene.show_dim_background
+  end
+  #-------------------------------------------------------------------------
+  def self.hide_dim_background
+    return unless scene
+    scene.hide_dim_background
+  end
+  #-------------------------------------------------------------------------
 end

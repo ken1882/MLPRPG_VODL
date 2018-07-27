@@ -24,7 +24,7 @@ class Window_LevelUpIndex < Window_MultiCommand
   end
   #--------------------------------------------------------------------------
   def create_confirm_window
-    @overlay_window = Window_Confirm.new(160, 180)
+    @overlay_window = Window_Confirm.new
   end
   #--------------------------------------------------------------------------
   def actor=(actor)

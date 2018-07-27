@@ -45,9 +45,11 @@ class Window_HorzCommand < Window_Command
     rect = Rect.new
     rect.width = item_width
     rect.height = item_height
-    pos = (index + 1) % col_max
-    
-    rect.x = ((window_width / [item_max, 1].max) * pos - item_width + 4 * spacing * pos) / 2
+    row_item_num = [col_max, item_max].min
+    pos = index % row_item_num
+    pos += 1
+    spac_width = (contents_width - row_item_num * item_width) / (row_item_num + 1)
+    rect.x = ((window_width / [item_max, 1].max + spac_width) * pos - item_width) / 2
     rect.y = (window_height / [item_max, 1].max / col_max * item_height * (index / col_max + 1)) / 8
     rect
   end

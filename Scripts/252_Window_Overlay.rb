@@ -13,9 +13,14 @@ class Window_Overlay < Window_HorzCommand
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  def initialize(x, y, information, overlay_self = false)
+  def initialize(x, y, width, line_number, information, overlay_self)
     @info = information
     @force_execute = false
+    @width = width ? width : 300
+    line_number = line_number ? line_number : 5
+    @height = fitting_height(line_number)
+    x = Graphics.center_width(window_width) unless x
+    y = Graphics.center_height(window_height) unless y
     super(x, y)
     self.windowskin = Cache.system(WindowSkin::Pinkie) if WindowSkin::Enable
     assign_handler
@@ -29,13 +34,13 @@ class Window_Overlay < Window_HorzCommand
   # * Get Window Width
   #--------------------------------------------------------------------------
   def window_width
-    return 300
+    return @width
   end
   #--------------------------------------------------------------------------
   # * Get Window Height
   #--------------------------------------------------------------------------
   def window_height
-    fitting_height(5)
+    return @height
   end
   #--------------------------------------------------------------------------
   # * Item alignment the center
@@ -47,6 +52,7 @@ class Window_Overlay < Window_HorzCommand
   # * Activate Window
   #--------------------------------------------------------------------------
   def activate
+    SceneManager.show_dim_background
     self.show
     refresh
     super
@@ -61,6 +67,7 @@ class Window_Overlay < Window_HorzCommand
   # * Deactivate Window
   #--------------------------------------------------------------------------
   def deactivate
+    SceneManager.hide_dim_background
     self.hide
     @overlayed = false if @self_overlay
     process_terminate
@@ -127,12 +134,16 @@ class Window_Overlay < Window_HorzCommand
     draw_modified_text(rect)
   end
   #--------------------------------------------------------------------------
+  def get_text_y(rect, tsize)
+    return [rect.y - line_height * (tsize + 1) - (line_height / 4).to_i, 0].max
+  end
+  #--------------------------------------------------------------------------
   # * Modified Texts
   #--------------------------------------------------------------------------
   def draw_modified_text(rect)
     line_width = contents.width
-    texts   = FileManager.textwrap(@info, line_width - 4, contents)
-    cy = [rect.y - line_height * (texts.size + 1) - (line_height / 4).to_i, 0].max
+    texts   = FileManager.textwrap(@info, line_width - 4, contents)    
+    cy = get_text_y(rect, texts.size)
     draw_text_lines(texts, 4, cy, line_width)
   end
   #--------------------------------------------------------------------------

@@ -496,7 +496,7 @@ class Window_FileAction < Window_HorzCommand
   def initialize(dx, dy, file_window)
     @file_window = file_window
     super(dx, dy)
-    @overlay_window = Window_Confirm.new(160, 180)
+    @overlay_window = Window_Confirm.new
     deactivate
     unselect
   end

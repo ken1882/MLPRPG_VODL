@@ -98,3 +98,7 @@ def exit(stat = true)
   Cache.release
   SceneManager.exit
 end
+#--------------------------------------------------------------------------
+def sec_to_frame(t)
+  return (t * Graphics.frame_rate).to_i
+end

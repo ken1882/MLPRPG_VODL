@@ -8,10 +8,11 @@ class Scene_Title < Scene_Base
   alias post_start_msg post_start
   def post_start
     post_start_msg
-    display_init_message
+    display_plugin_message
+    display_connection_message
   end
   #-------------------------------------------------------------------------
-  def display_init_message
+  def display_plugin_message
     if !$plugin_loaded
       info = Vocab::Errno::PluginInitErr
     elsif PluginManager.load_error.size > 1
@@ -29,7 +30,18 @@ class Scene_Title < Scene_Base
     raise_overlay_window(:popinfo, info)
     loop do
       update_basic
-       @@overlay_windows[:popinfo].update
+      @@overlay_windows[:popinfo].update
+      break unless @@overlay_windows[:popinfo].visible?
+    end
+  end
+  #-------------------------------------------------------------------------
+  def display_connection_message
+    return if PONY.online?
+    info = Vocab::Offline
+    raise_overlay_window(:popinfo, info: info, time: sec_to_frame(15))
+    loop do
+      update_basic
+      @@overlay_windows[:popinfo].update
       break unless @@overlay_windows[:popinfo].visible?
     end
   end

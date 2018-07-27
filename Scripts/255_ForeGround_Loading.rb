@@ -78,7 +78,7 @@ class ForeGround_Loading
   #--------------------------------------------------------------------------
   def create_viewport
     @viewport = Viewport.new
-    @viewport.z = PONY::SpriteDepth::Table[:foregroud_ov] + 1
+    @viewport.z = PONY::SpriteDepth::Table[:foreground_ov] + 1
   end
   #--------------------------------------------------------------------------
   # * Create Loading Sprites
