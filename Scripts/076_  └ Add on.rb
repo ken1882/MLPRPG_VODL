@@ -96,6 +96,7 @@ class Game_Action
   #  *) Return if action is undergoing
   #---------------------------------------------------------------------------
   def acting?
+    return false unless casted?
   	return !@sequence_finished || @acting
   end
   #---------------------------------------------------------------------------
@@ -127,6 +128,7 @@ class Game_Action
   # * Update 
   #---------------------------------------------------------------------------
   def do_acting
+    #puts "acting time: #{@time}"
     @time -= 1 if !@waiting && @sequence_finished && @time > 0
     terminate  if !@waiting && @time <= 0
   end
@@ -152,7 +154,7 @@ class Game_Action
     return false
   end
   #---------------------------------------------------------------------------
-  # * Set execution flas
+  # * Set execution flags
   #---------------------------------------------------------------------------
   def execute
     @casting = false
@@ -160,6 +162,13 @@ class Game_Action
     @acting  = true
     @sequence_finished = (item.action_sequence == 0)
     @time    = get_item_acting_time
+    execute_sequence if !@sequence_finished
+  end
+  #---------------------------------------------------------------------------
+  def execute_sequence
+    asid = @item.action_sequence
+    puts "#{@user.name} setup action sequence #{asid}"
+    @user.setup_action_sequence(DND::SkillSequence::ACTS[asid])
   end
   #---------------------------------------------------------------------------
   def get_item_acting_time

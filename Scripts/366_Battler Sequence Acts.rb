@@ -90,6 +90,7 @@ class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
   attr_reader :sequence_index
   attr_reader :action_sequence
+  attr_reader :move_obj, :fiber
   # --------------------------------------------------------------------------
   # Alias method : initialize
   # --------------------------------------------------------------------------
@@ -133,7 +134,7 @@ class Game_Battler < Game_BattlerBase
   # New method : finish
   # --------------------------------------------------------------------------
   def finish
-    @finish || @break_action
+    @finish || @break_sequence
   end
   # --------------------------------------------------------------------------
   # New method : sprite
@@ -206,7 +207,7 @@ class Game_Battler < Game_BattlerBase
     @shadow_point.x = @shadow_point.y = 0
     @angle = 0.0
     @immortal = false
-    @break_action = false
+    @break_sequence = false
     @autopose = []
     @icon_file = ''
     reset_force_result
@@ -262,14 +263,15 @@ class Game_Battler < Game_BattlerBase
     @sequence_index = 0
     @proj_setup = []
     @action_sequence = nil
+    @break_sequence = true
     @map_char.finalize_acting if @map_char
   end
   #--------------------------------------------------------------------------
   def setup_action_sequence(sequence)
     @action_sequence = sequence
     @sequence_index = 0
+    @break_sequence = false
     @fiber = Fiber.new{execute_sequence}
-    debug_print("#{self}: Action Sequence set")
   end
   #--------------------------------------------------------------------------
   def current_act

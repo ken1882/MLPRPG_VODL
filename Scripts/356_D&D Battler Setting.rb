@@ -208,7 +208,14 @@ class Game_CharacterBase
   #----------------------------------------------------------------------------
   def process_skill_action(action = @action)
     play_item_soundeffect(action.item)
-    use_item(action.item) if action.item.tool_animmoment == 1 # Projectile
+    
+    if action.item.tool_animmoment == 1 # Projectile
+      use_item(action.item)
+    else
+      use_item(action.item)
+      BattleManager.execute_action(@action)
+    end
+    
     if action.item.tool_graphic
       proj = $game_map.get_idle_proj.send(:initialize, action)
       SceneManager.setup_projectile(proj)
@@ -307,8 +314,6 @@ class Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def valid_battler?
-    return true if self.is_a?(Game_Event) && @enemy
-    return true if (self.is_a?(Game_Follower) || self.is_a?(Game_Player)) && actor
     return false
   end
   #----------------------------------------------------------------------------
@@ -346,7 +351,7 @@ class Game_CharacterBase
   end
   #----------------------------------------------------------------------------
   def controlable?
-    return true unless @action
+    return true if @action.nil?
     return !@action.acting?
   end
   #----------------------------------------------------------------------------

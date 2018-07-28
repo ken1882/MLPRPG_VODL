@@ -180,8 +180,7 @@ class Game_Console
   def Performance
     ch_sp  = "Character Sprites: #{SceneManager.spriteset.character_sprites.size}"
     ev_num = "Events Avaliable: #{$game_map.events.size}" 
-    fps    = "Frame Count: #{Graphics.frame_count}"
-    infos = [ch_sp, ev_num, fps]
+    infos = [ch_sp, ev_num]
     for info in infos
       SceneManager.display_info(info)
     end

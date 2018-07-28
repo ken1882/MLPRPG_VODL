@@ -1035,8 +1035,9 @@ module THEO
           move_to(target.x, target.y, y, jump)
           return
         end
-        @to_x = x.to_i
-        @to_y = y.to_i
+        @to_x = x
+        @to_y = y
+        puts "To: #{[@to_x, @to_y]}"
         @real_x = @obj.x.to_f
         @real_y = @obj.y.to_f
         determine_speed(duration,jump)
@@ -1062,12 +1063,19 @@ module THEO
       # -----------------------------------------------------------------------
       # *) Update movement
       # -----------------------------------------------------------------------
-      def update_move
+      def update_move # last work: fix sequence movement bugs
         @duration -= 1
         @real_x += @x_speed
         @real_y += @y_speed
-        @obj.x = @real_x.round
-        @obj.y = @real_y.round + @offset.round
+        @obj.x = @real_x
+        @obj.y = @real_y + @offset
+        if (@obj.px rescue nil)
+          @obj.px = @obj.x * Pixel_Core::Pixel
+          @obj.py = @obj.y * Pixel_Core::Pixel
+        end
+        if obj.is_a?(Game_Character)
+          puts "OBJ POS:#{[@obj.x, @obj.y]} #{[@obj.real_x, @obj.real_y]}"
+        end
         @jump -= @jump_interval
         @offset -= @jump
         clear_move_info unless moving?

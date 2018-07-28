@@ -76,7 +76,6 @@ module Tactic_Config
     #--------------------------------------------------------------------------
     def pick_nearest_visible
       @candidates.each do |ch|
-        p ch.name
         next if ch.dead?
         return ch
       end

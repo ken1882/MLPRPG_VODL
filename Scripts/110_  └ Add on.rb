@@ -121,6 +121,10 @@ class Game_Follower < Game_Character
     return true if actor.nil?
     return actor.dead?
   end
+  #----------------------------------------------------------------------------
+  def alive?
+    return !dead?
+  end
   #--------------------------------------------------------------------------
   def aggressive_level
     return 0 if actor.nil?

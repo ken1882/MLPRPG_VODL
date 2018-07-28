@@ -13,7 +13,32 @@ module PONY::ERRNO
     :move           => 5,
     :slide          => 5,
     :move_to_target => 5,
-    :target_damage  => 1,
+    :target_damage  => 2,
+    :show_anim      => 2,
+    :cast           => 2,
+    :flip           => 2,
+    :action         => 2,
+    :icon           => 2,
+    :sound          => 2,
+    :if             => 3,
+    :add_state      => 2,
+    :rem_state      => 2,
+    :change_target  => 2,
+    :target_move    => 5,
+    :target_slide   => 5,
+    :target_reset   => 3,
+    :target_lock_z  => 2,
+    :target_flip    => 2,
+    :ballon         => 2,
+    :log            => 2,
+    :loop           => 3,
+    :while          => 3,
+    :slow_motion    => 3,
+    :timestop       => 2,
+    :com_event      => 2,
+    :rotate         => 4,
+    :autopose       => 4,
+    
     nil             => 1,
   }
   #--------------------------------------------------------------------------
@@ -65,7 +90,7 @@ module PONY::ERRNO
   end
   #--------------------------------------------------------------------------
   def self.check_sequence(seq)
-    exp_num = SequenceArgTable[seq.first]
+    exp_num = (SequenceArgTable[seq.first] || 0)
     if seq.size < exp_num
       self.sequence_error(:args, seq.first, exp_num, seq.size - 1)
       return false

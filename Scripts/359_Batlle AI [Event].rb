@@ -130,6 +130,11 @@ class Game_Event < Game_Character
       clear_pathfinding_moves
     end
   end
+  
+  def valid_battler?
+    return true if @enemy
+    return super
+  end
   #----------------------------------------------------------------------------
   def set_target(target)
     super

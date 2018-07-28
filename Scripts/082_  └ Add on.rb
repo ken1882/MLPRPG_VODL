@@ -14,7 +14,7 @@ class Game_Battler < Game_BattlerBase
   attr_reader   :state_steps
   attr_reader   :safe_hash
   attr_reader   :skill_charges
-  attr_accessor :map_char     # character on the map
+  attr_reader   :map_char     # character on the map
   attr_accessor :stiff        # Stiff time
   attr_accessor :skill_cooldown, :item_cooldown, :weapon_cooldown, :armor_cooldown
   attr_accessor :move_limit
@@ -351,6 +351,16 @@ class Game_Battler < Game_BattlerBase
   #--------------------------------------------------------------------------
   def battler
     self
+  end
+  #--------------------------------------------------------------------------
+  def current_target
+    return nil if @map_char.nil?
+    return @map_char.current_target
+  end
+  #--------------------------------------------------------------------------
+  def map_char=(ch)
+    @map_char = ch
+    set_obj(ch)
   end
   #--------------------------------------------------------------------------
 end

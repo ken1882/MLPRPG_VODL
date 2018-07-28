@@ -98,6 +98,7 @@ class Game_Player < Game_Character
     update_target
     @recurrence_delay -= 1 if !@recurrence_delay.nil? && @recurrence_delay > 0
     $game_party.recurrence_leader if @recurrence_delay == 0 #tag: modified
+    update_battler
     @followers.update unless SceneManager.time_stopped?
   end
   #--------------------------------------------------------------------------
@@ -165,6 +166,10 @@ class Game_Player < Game_Character
   #----------------------------------------------------------------------------
   def dead?
     return actor.dead?
+  end
+  #----------------------------------------------------------------------------
+  def alive?
+    return !dead?
   end
   #--------------------------------------------------------------------------
   def update_vehicle
@@ -306,6 +311,10 @@ class Game_Player < Game_Character
   end
   #----------------------------------------------------------------------------
   def chase_target(action = nil, impleable = nil)
+  end
+  #----------------------------------------------------------------------------
+  def valid_battler?
+    return true
   end
   #----------------------------------------------------------------------------
 end

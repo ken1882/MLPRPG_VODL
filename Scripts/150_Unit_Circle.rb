@@ -91,6 +91,10 @@ class Unit_Circle < Sprite_Base
     return @character.dead?
   end
   #----------------------------------------------------------------------------
+  def alive?
+    return !dead?
+  end
+  #----------------------------------------------------------------------------
   def adjacent?(sx, sy)
     return (sx - self.x).abs <= 4 && (sy - self.y).abs <= 4
   end

@@ -223,6 +223,7 @@ module BattleManager
   #--------------------------------------------------------------------------
   def self.execute_action(action)
     return if $game_system.story_mode?
+    puts "#{action.user.name} executed action #{action.item.name}"
     if action.effect_delay < 20
       apply_action_effect(action)
     else
@@ -236,6 +237,7 @@ module BattleManager
     action.user.turn_toward_character(action.target)
     action.subject = determine_effected_targets(action.user, action.item, action.target)
     action.user.use_item(action.item) if action.item.tool_animmoment == 0 # Directly use
+    
     apply_skill(action)  if action.item.is_a?(RPG::Skill)
     apply_item(action)   if action.item.is_a?(RPG::Item)
     apply_weapon(action) if action.item.is_a?(RPG::Weapon)
@@ -364,7 +366,7 @@ module BattleManager
   end
   #--------------------------------------------------------------------------
   def self.invoke_action_sequence(action)    
-    action.user.setup_action_sequence(DND::SkillSequence::ACTS[asid])
+    # sequence is set in Game_Action: def start
   end
   #--------------------------------------------------------------------------
   # * Apply Substitute

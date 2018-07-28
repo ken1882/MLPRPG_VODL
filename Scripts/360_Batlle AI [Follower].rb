@@ -92,4 +92,9 @@ class Game_Follower < Game_Character
     end
   end
   #----------------------------------------------------------------------------
+  def valid_battler?
+    return true if actor
+    return super
+  end
+  #----------------------------------------------------------------------------
 end

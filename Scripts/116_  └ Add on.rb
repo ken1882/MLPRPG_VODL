@@ -465,6 +465,10 @@ class Game_Event < Game_Character
     return @enemy.dead?
   end
   #----------------------------------------------------------------------------
+  def alive?
+    return !dead?
+  end
+  #----------------------------------------------------------------------------
   def name(original_event = false)
     return @enemy.name if !original_event && @enemy
     return event.name

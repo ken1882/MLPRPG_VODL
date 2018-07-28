@@ -433,10 +433,14 @@ class Game_Character < Game_CharacterBase
     begin
       quadtree[new_index] << quadtree[@last_quadtree_index].delete(self)
     rescue Exception => e
-      msgbox [name, @last_quadtree_index]
+      msgbox [name, @last_quadtree_index, new_index]
       raise e
     end
     @last_quadtree_index = new_index
+  end
+  #--------------------------------------------------------------------------
+  def valid_battler?
+    return !@map_char.nil?
   end
   #--------------------------------------------------------------------------
 end

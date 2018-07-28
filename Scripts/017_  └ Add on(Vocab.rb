@@ -24,7 +24,7 @@ module Vocab
   Connection      = "Connecting...Your game will have no response for few minutes, please wait..."
   
   # Exit Info
-  ExitConfirm     = "Are you really want to leave? Ponies will miss you..."
+  ExitConfirm     = "Do you really want to leave? Ponies will miss you..."
   
   None            = "<None>"  
   Type            = "Type"
@@ -193,7 +193,7 @@ module Vocab::System
   UnsavedInfo   = "Unsaved progress will be lost, continue?"
   
   Overwrite     = "Selected file will be overwritten, continue?"
-  Delete        = "Are you reaaly wanna delete this file?"
+  Delete        = "Do you really wanna delete this file?"
   
   AutoSave          = "Auto-Save"
   AutoSaveDec       = "Auto save file if it's allowed. Save location is at the buttom\n" +

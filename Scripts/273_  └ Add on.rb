@@ -349,10 +349,13 @@ class Scene_Base
       @window_input.update
       break if @input_string
     end
+    return if @input_string.strip.empty?
     #--
     begin
       eval("$game_console." + @input_string)
     rescue NoMethodError
+      eval_standard(@input_string)
+    rescue SyntaxError
       eval_standard(@input_string)
     rescue Exception => err
       puts SPLIT_LINE
