@@ -4,6 +4,15 @@
 #  This class performs the title screen processing.
 #==============================================================================
 class Scene_Title < Scene_Base
+  #--------------------------------------------------------------------------
+  # * Start Processing
+  #--------------------------------------------------------------------------
+  alias start_gamemode start
+  def start
+    start_gamemode
+    create_mode_menu
+    #@mode_menu = 
+  end
   #-------------------------------------------------------------------------
   alias post_start_msg post_start
   def post_start
@@ -45,6 +54,16 @@ class Scene_Title < Scene_Base
       break unless @@overlay_windows[:popinfo].visible?
     end
   end
+  #-------------------------------------------------------------------------
+  # * Overwrite: Re-arrange command order
+  #-------------------------------------------------------------------------
+  def create_command_window
+    @command_window = Window_TitleCommand.new
+    @command_window.set_handler(:start_game, method(:command_start_game))
+    @command_window.set_handler(:option,     method(:command_option))
+    @command_window.set_handler(:credit,     method(:command_credit))
+    @command_window.set_handler(:shutdown,   method(:command_shutdown))
+  end
   #--------------------------------------------------------------------------
   # * [New Game] Command
   #--------------------------------------------------------------------------
@@ -56,4 +75,17 @@ class Scene_Title < Scene_Base
     $game_map.autoplay
     SceneManager.goto(Scene_Map)
   end
+  #--------------------------------------------------------------------------
+  def command_start_game
+    # last work: title option and other stuff
+  end
+  #--------------------------------------------------------------------------
+  def command_option
+    
+  end
+  #--------------------------------------------------------------------------
+  def command_credit
+    
+  end
+  #--------------------------------------------------------------------------
 end
