@@ -320,6 +320,6 @@ module DataManager
       re = cur.dup
     end
     return re.mode.nil? ? nil : re
-  end # last work: game mode & scene processing stuff
+  end
   #--------------------------------------------------------------------------
 end

@@ -1,106 +1,114 @@
 #==============================================================================
-# ** Window_MenuCommand
+# ** Window_ImageHorzCommand
 #------------------------------------------------------------------------------
-#  This command window appears on the menu screen.
+#  This window deals with graphic command choices.
 #==============================================================================
-                          # tag: modified (the parent)
-class Window_MenuCommand < Window_ImageHorzCommand
-  #--------------------------------------------------------------------------
-  # * Initialize Command Selection Position (Class Method)
-  #--------------------------------------------------------------------------
-  def self.init_command_position
-    @@last_command_symbol = nil
-  end
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
-  def initialize
-    super(0, 0)
-    select_last
-  end
-  #--------------------------------------------------------------------------
-  # * Get Window Width
-  #--------------------------------------------------------------------------
-  def window_width
-    return 160
-  end
+class Window_ImageHorzCommand < Window_ImageCommand
   #--------------------------------------------------------------------------
   # * Get Number of Lines to Show
   #--------------------------------------------------------------------------
   def visible_line_number
-    item_max
+    return 1
   end
   #--------------------------------------------------------------------------
-  # * Create Command List
+  # * Get Digit Count
   #--------------------------------------------------------------------------
-  def make_command_list
-    add_main_commands
-    add_formation_command
-    add_original_commands
-    add_save_command
-    add_game_end_command
+  def col_max
+    return 4
   end
   #--------------------------------------------------------------------------
-  # * Add Main Commands to List
+  # * Get Spacing for Items Arranged Side by Side
   #--------------------------------------------------------------------------
-  def add_main_commands
-    add_command(Vocab::item,   :item,   main_commands_enabled)
-    add_command(Vocab::skill,  :skill,  main_commands_enabled)
-    add_command(Vocab::equip,  :equip,  main_commands_enabled)
-    add_command(Vocab::status, :status, main_commands_enabled)
+  def spacing
+    return 8
   end
   #--------------------------------------------------------------------------
-  # * Add Formation to Command List
+  # * Get Leading Digits
   #--------------------------------------------------------------------------
-  def add_formation_command
-    add_command(Vocab::formation, :formation, formation_enabled)
+  def top_col
+    ox / (item_width + spacing)
   end
   #--------------------------------------------------------------------------
-  # * For Adding Original Commands
+  # * Set Leading Digits
   #--------------------------------------------------------------------------
-  def add_original_commands
+  def top_col=(col)
+    col = 0 if col < 0
+    col = col_max - 1 if col > col_max - 1
+    self.ox = col * (item_width + spacing)
   end
   #--------------------------------------------------------------------------
-  # * Add Save to Command List
+  # * Get Trailing Digits
   #--------------------------------------------------------------------------
-  def add_save_command
-    add_command(Vocab::save, :save, save_enabled)
+  def bottom_col
+    top_col + col_max - 1
   end
   #--------------------------------------------------------------------------
-  # * Add Exit Game to Command List
+  # * Set Trailing Digits
   #--------------------------------------------------------------------------
-  def add_game_end_command
-    add_command(Vocab::game_end, :game_end)
+  def bottom_col=(col)
+    self.top_col = col - (col_max - 1)
+  end
+   #--------------------------------------------------------------------------
+  # * Get Rectangle for Displaying Items
+  #--------------------------------------------------------------------------
+  def item_rect(index)
+    rect = super
+    rect.x = index * (item_width + spacing)
+    rect.y = 0
+    rect
   end
   #--------------------------------------------------------------------------
-  # * Get Activation State of Main Commands
+  # * Get Alignment
   #--------------------------------------------------------------------------
-  def main_commands_enabled
-    $game_party.exists
+  def alignment
+    return 1
   end
   #--------------------------------------------------------------------------
-  # * Get Activation State of Formation
+  # * Move Cursor Down
   #--------------------------------------------------------------------------
-  def formation_enabled
-    $game_party.members.size >= 2 && !$game_system.formation_disabled
+  def cursor_down(wrap = false)
   end
   #--------------------------------------------------------------------------
-  # * Get Activation State of Save
+  # * Move Cursor Up
   #--------------------------------------------------------------------------
-  def save_enabled
-    !$game_system.save_disabled
+  def cursor_up(wrap = false)
   end
   #--------------------------------------------------------------------------
-  # * Processing When OK Button Is Pressed
+  # * Move Cursor One Page Down
   #--------------------------------------------------------------------------
-  def process_ok
-    @@last_command_symbol = current_symbol
-    super
+  def cursor_pagedown
   end
   #--------------------------------------------------------------------------
-  # * Restore Previous Selection Position
+  # * Move Cursor One Page Up
   #--------------------------------------------------------------------------
-  def select_last
-    select_symbol(@@last_command_symbol)
+  def cursor_pageup
+  end
+  #--------------------------------------------------------------------------
+  # * Calculate Width of Window Contents
+  #--------------------------------------------------------------------------
+  def contents_width
+    (item_width + spacing) * item_max - spacing
+  end
+  #--------------------------------------------------------------------------
+  # * Calculate Height of Window Contents
+  #--------------------------------------------------------------------------
+  def contents_height
+    item_height
+  end
+  #--------------------------------------------------------------------------
+  # * Draw Image
+  #--------------------------------------------------------------------------
+  def draw_command_image(index, bitmap, enabled = true)
+    dx   = index * (item_width + spacing)
+    rect = Rect.new(0 , 0, item_width, iten_height)
+    contents.blt(dx, 0, bitmap, rect, enabled ? 255 : 155)
+    bitmap.dispose
+  end
+  #--------------------------------------------------------------------------
+  # * Scroll Cursor to Position Within Screen
+  #--------------------------------------------------------------------------
+  def ensure_cursor_visible
+    self.top_col    = index if index < top_col
+    self.bottom_col = index if index > bottom_col
   end
 end

@@ -76,6 +76,9 @@ module Vocab
   OfflineMode = "This feature is unavailable in offline mode. You cannot " +
                 "access it until connected to internet and re-launch the game"
   #----------------------------------------------------------------------------
+  VODL      = "Vengeance of Dark Lord"
+  Tutorial  = "Tutorial"
+  #----------------------------------------------------------------------------
   # * Return dictionary file of language
   #----------------------------------------------------------------------------
   def self.GetDictPath(category)

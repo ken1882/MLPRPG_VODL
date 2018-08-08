@@ -3,12 +3,14 @@
 #------------------------------------------------------------------------------
 #  This command window appears on the menu screen.
 #==============================================================================
-class Window_MenuCommand < Window_ImageCommand
+class Window_MenuCommand < Window_ImageHorzCommand
+  MENU_ICON_WIDTH  = 50
+  MENU_ICON_HEIGHT = 50
   #--------------------------------------------------------------------------
   # * Get Window Width
   #--------------------------------------------------------------------------
   def window_width
-    return Graphics.width - 120
+    return Graphics.width - 120 # gold window width
   end
   #--------------------------------------------------------------------------
   # * Get Window Height
@@ -17,15 +19,28 @@ class Window_MenuCommand < Window_ImageCommand
     return 80
   end
   #--------------------------------------------------------------------------
+  # * Get Item Height
+  #--------------------------------------------------------------------------
+  def item_height
+    MENU_ICON_HEIGHT
+  end
+  #--------------------------------------------------------------------------
+  def item_width
+    MENU_ICON_WIDTH
+  end
+  #--------------------------------------------------------------------------
   # * Add Main Commands to List
   #--------------------------------------------------------------------------
   def add_main_commands
-    add_command(Vocab::item,   "Menu_Bag", :item,   main_commands_enabled, nil, Vocab::item)
-    add_command(Vocab::skill,  "Menu_Skill", :skill,  main_commands_enabled, nil, Vocab::skill)
-    add_command(Vocab::equip,  "Menu_Gears", :equip,  main_commands_enabled, nil, Vocab::equip)
-    add_command(Vocab::status, "Menu_Status", :status, main_commands_enabled, nil, Vocab::status)
-    add_command(Vocab::LevelUp, "Menu_Upgrade", :levelup, main_commands_enabled, nil, Vocab::LevelUp)
-    add_command(Vocab::Quest,  "Menu_Quest", :quest, main_commands_enabled, nil, Vocab::Quest)
+    names   = [Vocab::item, Vocab::skill, Vocab::equip, Vocab::status,
+               Vocab::Levelup, Vocab::Quest]
+    symbols = [:item, :skill, :equip, :status, :levelup, :quest]
+    image   = ["Menu_Bag", "Menu_Skill", "Menu_Gears", "Menu_Status", 
+               "Menu_Upgrade", "Menu_Quest"]
+             
+    names.size.times do |i|
+      add_command(names[i], symbols[i], image[i], main_commands_enabled, nil, names[i])
+    end
   end
   #--------------------------------------------------------------------------
   # * Add Formation to Command List
