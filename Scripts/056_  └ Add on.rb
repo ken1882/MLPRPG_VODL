@@ -12,6 +12,7 @@ class Game_System
   attr_accessor :autotarget, :autotarget_aoe
   attr_accessor :loading_pressure
   attr_accessor :time_stopper, :timestop_duration
+  attr_reader   :game_mode
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
@@ -21,6 +22,7 @@ class Game_System
     @autotarget     = true
     @autotarget_aoe = true
     @time_stopper   = nil
+    @game_mode      = :main
     @loading_pressure = 0
     @timestop_duration = 0
     initialize_system_opt
@@ -95,6 +97,10 @@ class Game_System
     debug_print "Time resume"
     SceneManager.resume_time
     $game_map.screen.start_tone_change(@ori_tone, 0)
+  end
+  #--------------------------------------------------------------------------
+  def game_mode=(mode)
+    @game_mode = mode
   end
   #--------------------------------------------------------------------------
 end

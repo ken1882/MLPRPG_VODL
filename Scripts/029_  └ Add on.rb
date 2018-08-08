@@ -6,6 +6,15 @@
 #==============================================================================
 module DataManager
   #---------------------------------------------------------------------------
+  SaveFilePathes = {
+    :main     => "Save/main/",
+    :tutorial => "Save/tutorial/",
+  }
+  #---------------------------------------------------------------------------
+  FileLocInfo = Struct.new(:mode, :index, :time_stamp)
+  #---------------------------------------------------------------------------
+  @last_savefile_index = {}
+  #---------------------------------------------------------------------------
   # *) Ensure the file or dictionary
   #---------------------------------------------------------------------------
   def self.ensure_file_exist(filename)
@@ -23,39 +32,60 @@ module DataManager
   # *) Crash Dump
   #---------------------------------------------------------------------------
   def self.save_on_crash
-    #file_name = sprintf("CrashSave_%s.rvdata2",Time.now.to_s.tr('<>/\*?!:','-'))
-    #File.open(file_name, "wb") do |file|
-    #  $game_map.dispose_sprites
-    #  $game_system.on_before_save
-    #  Marshal.dump(make_save_header, file)
-    #  Marshal.dump(make_save_contents, file)
-    #  @last_savefile_index = index
-    #end
     return true
+    # dunno whether useful
+    file_name = sprintf("CrashSave_%s.rvdata2",Time.now.to_s.tr('<>/\*?!:','-'))
+    File.open(file_name, "wb") do |file|
+      $game_map.dispose_sprites
+      $game_system.on_before_save
+      Marshal.dump(make_save_header, file)
+      Marshal.dump(make_save_contents, file)
+      @last_savefile_index = index
+    end
+    return true
+  end
+  #--------------------------------------------------------------------------
+  # * Execute Save
+  #--------------------------------------------------------------------------
+  def self.save_game(index, game_mode = $game_system.game_mode)
+    begin
+      save_game_without_rescue(index, game_mode)
+    rescue Exception => e
+      SceneManager.scene.raise_overlay_window(:popinfo, e)
+      delete_save_file(index)
+      false
+    end
   end
   #--------------------------------------------------------------------------
   # * Execute Load
   #--------------------------------------------------------------------------
-  def self.load_game(index)
-    result = load_game_without_rescue(index)# rescue false
+  def self.load_game(index, game_mode = $game_system.game_mode)
+    result = load_game_without_rescue(index, game_mode)# rescue false
     return result
+  end
+  #--------------------------------------------------------------------------
+  def self.get_gamemode_path(game_mode)
+    path = SaveFilePathes[game_mode]
+    raise TypeError, "Invalid game mode symbol (#{game_mode})" unless path
+    self.ensure_file_exist(path)
+    return path
   end
   #--------------------------------------------------------------------------
   # * Execute Save (No Exception Processing)
   #--------------------------------------------------------------------------
-  def self.save_game_without_rescue(index)
+  def self.save_game_without_rescue(index, game_mode)
     $game_map.effectus_party_pos.default = nil
     $game_map.effectus_event_pos.default = nil
     $game_map.effectus_etile_pos.default = nil
     $game_map.effectus_etriggers.default = nil
-    File.open(make_filename(index), "wb") do |file|
+    File.open(make_filename(index, game_mode), "wb") do |file|
       $game_system.on_before_save
       header   = make_save_header
       contents = make_save_contents
       return false unless header && contents
       Marshal.dump(header, file)
       Marshal.dump(contents, file)
-      @last_savefile_index = index
+      @last_savefile_index[game_mode] = index
     end
     $game_map.effectus_party_pos.default_proc = proc { |h, k| h[k] = [] }
     $game_map.effectus_event_pos.default_proc = proc { |h, k| h[k] = [] }
@@ -67,14 +97,14 @@ module DataManager
   # * Execute Save (No Exception Processing)
   #--------------------------------------------------------------------------
   class << self; alias save_game_without_rescue_chain save_game_without_rescue; end
-  def self.save_game_without_rescue(index)
+  def self.save_game_without_rescue(index, game_mode)
     begin
-      File.open(make_chainfilename(index), "wb") do |file|
-        Marshal.dump(make_chain_content(index), file)
+      File.open(make_chainfilename(index, game_mode), "wb") do |file|
+        Marshal.dump(make_chain_content(index, game_mode), file)
       end
       $game_map.on_game_save
-      save_game_without_rescue_chain(index)
-      build_checksum_file(index)
+      save_game_without_rescue_chain(index, game_mode)
+      build_checksum_file(index, game_mode)
     rescue Exception => e
       errfilename = "SaveErr.txt"
       info = sprintf(Vocab::Errno::SaveErr, e, errfilename)
@@ -90,37 +120,58 @@ module DataManager
   #--------------------------------------------------------------------------
   # * Execute Load (No Exception Processing)
   #--------------------------------------------------------------------------
+  def self.load_game_without_rescue(index, game_mode)
+    File.open(make_filename(index, game_mode), "rb") do |file|
+      begin
+        Marshal.load(file)
+        extract_save_contents(Marshal.load(file))
+        reload_map_if_updated
+        @last_savefile_index[game_mode] = index
+      rescue Exception => e
+        errfilename = "LoadGameErr.txt"
+        info = sprintf(Vocab::Errno::LoadErr, e, errfilename)
+        SceneManager.scene.raise_overlay_window(:popinfo, info)
+        info = sprintf("%s\n%s\n%s\n", SPLIT_LINE, Time.now.to_s, e)
+        e.backtrace.each{|line| info += line + 10.chr}
+        File.open(errfilename, 'a') do |file|
+          file.write(info)
+        end
+      end
+    end
+    return true
+  end
+  #--------------------------------------------------------------------------
   class << self; alias load_game_without_rescue_chain load_game_without_rescue; end
-  def self.load_game_without_rescue(index)
-    return :chainfile_missing if !File.exist?(make_chainfilename(index))
-    return :checksum_missing  if !File.exist?(make_hashfilename(index))
-    return :checksum_failed   unless verify_file_checksum(index)
-    File.open(make_chainfilename(index), "rb") do |file|
+  def self.load_game_without_rescue(index, game_mode)
+    return :chainfile_missing if !File.exist?(make_chainfilename(index, game_mode))
+    return :checksum_missing  if !File.exist?(make_hashfilename(index, game_mode))
+    return :checksum_failed   unless verify_file_checksum(index, game_mode)
+    File.open(make_chainfilename(index, game_mode), "rb") do |file|
       BlockChain.load_chain_data( Marshal.load(file) )
     end
     return :bits_incorrect  unless PONY::CHAIN.verify_totalbalance
-    succed = load_game_without_rescue_chain(index)
+    succed = load_game_without_rescue_chain(index, game_mode)
     $game_map.after_game_load
     return succed
   end
   #--------------------------------------------------------------------------
   # * Build Check Sum verify for file
   #--------------------------------------------------------------------------
-  def self.build_checksum_file(index)
-    rpg_filename   = make_filename(index)
-    chain_filename = make_chainfilename(index) 
-    File.open(make_hashfilename(index), 'wb') do |file|
+  def self.build_checksum_file(index, game_mode)
+    rpg_filename   = make_filename(index, game_mode)
+    chain_filename = make_chainfilename(index, game_mode) 
+    File.open(make_hashfilename(index, game_mode), 'wb') do |file|
       Marshal.dump(make_hash_contents(rpg_filename, chain_filename), file)
     end
   end
   #--------------------------------------------------------------------------
   # * Verify File CheckSum is correspond to last save
   #--------------------------------------------------------------------------
-  def self.verify_file_checksum(index)
+  def self.verify_file_checksum(index, game_mode)
     hash_contents = make_hash_contents(make_filename(index), make_chainfilename(index))
     checksum = hash_contents[:checksum]
     result = false
-    File.open(make_hashfilename(index), 'rb') do |file|
+    File.open(make_hashfilename(index, game_mode), 'rb') do |file|
       prev_contents = Marshal.load(file)
       result = (prev_contents[:checksum] == checksum)
       puts "[System]: File Index: #{index}"
@@ -132,25 +183,25 @@ module DataManager
   # * Create Filename
   #     index : File Index
   #--------------------------------------------------------------------------
-  def self.make_filename(index)
-    self.ensure_file_exist("Save/")
-    sprintf("Save/Save%02d.rvdata2", index + 1)
+  def self.make_filename(index, game_mode = $game_system.game_mode)
+    path = get_gamemode_path(game_mode)
+    sprintf(path + "Save%02d.rvdata2", index + 1)
   end
   #--------------------------------------------------------------------------
   # * Create blockchain Filename
   #     index : File Index
   #--------------------------------------------------------------------------
-  def self.make_chainfilename(index)
-    self.ensure_file_exist("Save/")
-    sprintf("Save/Chain%02d.rvdata2", index + 1)
+  def self.make_chainfilename(index, game_mode = $game_system.game_mode)
+    path = get_gamemode_path(game_mode)
+    sprintf(path + "Chain%02d.rvdata2", index + 1)
   end
   #--------------------------------------------------------------------------
   # * Create Hash Verify Filename
   #     index : File Index
   #--------------------------------------------------------------------------
-  def self.make_hashfilename(index)
-    self.ensure_file_exist("Save/")
-    sprintf("Save/CheckSum%02d.rvdata2", index + 1)
+  def self.make_hashfilename(index, game_mode = $game_system.game_mode)
+    path = get_gamemode_path(game_mode)
+    sprintf(path + "CheckSum%02d.rvdata2", index + 1)
   end
   #--------------------------------------------------------------------------
   # * Create Hash Verify Contents
@@ -163,26 +214,26 @@ module DataManager
   #--------------------------------------------------------------------------
   # * Block Chain Save contents
   #--------------------------------------------------------------------------
-  def self.make_chain_content(index)
-    BlockChain.item_for_save(make_chainfilename(index))
+  def self.make_chain_content(index, game_mode = $game_system.game_mode)
+    BlockChain.item_for_save(make_chainfilename(index, game_mode))
   end
   #--------------------------------------------------------------------------
   # * Determine Existence of Save File
   #--------------------------------------------------------------------------
-  def self.save_file_exists?(slot = nil)
-    self.ensure_file_exist("Save/")
-    files = Dir.glob('Save/Save*.rvdata2')
-    return slot.nil? ? !files.empty? :
-    files.any? {|name| name == 'Save/Save' + slot.to_fileid(2) + '.rvdata2'}
+  def self.save_file_exists?(game_mode = $game_system.game_mode, slot = nil)
+    path = get_gamemode_path(game_mode)
+    files = Dir.glob(path + 'Save*.rvdata2')
+    return !files.empty? if slot.nil?
+    return files.any? {|name| name == 'Save/Save' + slot.to_fileid(2) + '.rvdata2'}
   end
   #--------------------------------------------------------------------------
   # * Delete Save File
   #--------------------------------------------------------------------------
   class << self; alias delete_save_file_chain delete_save_file; end
-  def self.delete_save_file(index)
-    File.delete(make_chainfilename(index)) rescue nil
-    File.delete(make_hashfilename(index))  rescue nil
-    delete_save_file_chain(index)
+  def self.delete_save_file(index, game_mode = $game_system.game_mode)
+    File.delete(make_chainfilename(index, game_mode)) rescue nil
+    File.delete(make_hashfilename(index, game_mode))  rescue nil
+    delete_save_file_chain(index, game_mode)
   end
   #--------------------------------------------------------------------------
   # * Map cache file name
@@ -238,5 +289,37 @@ module DataManager
     $game_map.effectus_etile_pos.default_proc = proc { |h, k| h[k] = [] }
     $game_map.effectus_etriggers.default_proc = proc { |h, k| h[k] = [] }
   end
+  #--------------------------------------------------------------------------
+  # * Get Update Date of Save File
+  #--------------------------------------------------------------------------
+  def self.savefile_time_stamp(index, game_mode)
+    File.mtime(make_filename(index, game_mode)) rescue Time.at(0)
+  end
+  #--------------------------------------------------------------------------
+  # * Get File Index with Latest Update Date
+  #--------------------------------------------------------------------------
+  def self.latest_savefile_index(game_mode)
+    savefile_max.times.max_by {|i| savefile_time_stamp(i, game_mode) }
+  end
+  #--------------------------------------------------------------------------
+  # * Get Index of File Most Recently Accessed
+  #--------------------------------------------------------------------------
+  def self.last_savefile_index(game_mode)
+    @last_savefile_index[game_mode]
+  end
+  #--------------------------------------------------------------------------
+  # * Get mode and index of file most recently accessed
+  #--------------------------------------------------------------------------
+  def self.lastest_savefile
+    re = FileLocInfo.new(nil, nil, Time.at(0))
+    SaveFilePathes.keys.each do |mode|
+      next unless save_file_exists?(mode)
+      index = latest_savefile_index(mode)
+      cur = FileLocInfo.new(mode, index, savefile_time_stamp(index, mode))
+      next if re.time_stamp > cur.time_stamp
+      re = cur.dup
+    end
+    return re.mode.nil? ? nil : re
+  end # last work: game mode & scene processing stuff
   #--------------------------------------------------------------------------
 end

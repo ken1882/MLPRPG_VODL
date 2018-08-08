@@ -52,6 +52,9 @@ module Vocab
   Ineffective     = "%s - weapon ineffective"
   
   MoreInfo        = "Info"
+  Option          = "Option"
+  Credits         = "Credits"
+  StartGame       = "Start"
   
   # path to database vocabulary dictionary
   DictPath        = "History/en_us"

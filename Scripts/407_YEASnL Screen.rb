@@ -56,7 +56,8 @@ module YEA
     # screen. This also adjusts the maximum number of saves a player can make,
     # the way the slot names appear, and the icons used.
     #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-    MAX_FILES = 55         # Maximum saves a player can make. Default: 16
+    NormalFiles = 50
+    MAX_FILES   = 55         # Maximum saves a player can make. Default: 16
     SLOT_NAME = Vocab::SaveLoad::Slot # How the file slots will be named.
     
     # These are the icons

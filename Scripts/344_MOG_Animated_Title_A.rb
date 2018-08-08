@@ -385,10 +385,11 @@ class Scene_Title < Scene_Base
     for com in 0...@command_window.item_max
       sprite = Sprite.new
       case index
-        when 0; com_name = "New_Game"
-        when 1; com_name = "Continue"
-        when 2; com_name = "Shutdown"
+        when 0; com_name = "Continue"
+        when 1; com_name = "New_Game"
+        when 2; com_name = "Option"
         when 3; com_name = "Credits"
+        when 4; com_name = "Shutdown"
       end
       sprite.bitmap = Cache.title2(com_name.to_s) rescue nil
       if sprite.bitmap == nil

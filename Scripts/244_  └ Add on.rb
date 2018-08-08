@@ -5,11 +5,20 @@
 #==============================================================================
 class Window_TitleCommand < Window_Command
   #--------------------------------------------------------------------------
-  # * Create Command List
+  # * Overwrite: Change order and new commands
   #--------------------------------------------------------------------------
   def make_command_list
-    add_command(Vocab::new_game, :new_game, true, nil, Vocab::NewGame)
-    add_command(Vocab::continue, :continue, continue_enabled, nil, Vocab::LoadGame)
-    add_command(Vocab::shutdown, :shutdown, true, nil, Vocab::ShutDown)
+    add_command(Vocab::continue, :start_game, continue_enabled, nil, Vocab::continue)
+    add_command(Vocab::new_game, :start_game, true, nil, Vocab::StartGame)
+    add_command(Vocab::Option,   :option,     true, nil, Vocab::Option)
+    add_command(Vocab::Credits,  :credits,    true, nil, Vocab::Credits)
+    add_command(Vocab::shutdown, :shutdown,   true, nil, Vocab::ShutDown)
   end
+  #--------------------------------------------------------------------------
+  # * Get Activation State of Continue
+  #--------------------------------------------------------------------------
+  def continue_enabled
+    return !DataManager.lastest_savefile.nil?
+  end
+  #--------------------------------------------------------------------------
 end
