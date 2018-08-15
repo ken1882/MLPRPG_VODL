@@ -77,7 +77,12 @@ module Vocab
                 "access it until connected to internet and re-launch the game"
   #----------------------------------------------------------------------------
   VODL      = "Vengeance of Dark Lord"
+  VODLHelp  = "Play the main story, help Equestria fight against the invasion " +
+              "of King Sombra!"
+              
   Tutorial  = "Tutorial"
+  TutorialHelp = "Help you understand core features of the game and learn how " +
+                 "to play & use them."
   #----------------------------------------------------------------------------
   # * Return dictionary file of language
   #----------------------------------------------------------------------------
@@ -257,10 +262,10 @@ module Vocab::Errno
     :file_missing     => "File missing:\n",
     :tactic_sym_missing => "Tactic command symbol unavailable:\n",
     :secure_hash_failed => "Security hash match failed:\n",
+    :config_error       => "Script configuration error:\n",
   }
   
   SequenceArgError = "%s has at least %d args, received %d\n"
-  
 end
 #==============================================================================
 # ** Vocab::Status

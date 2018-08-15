@@ -6,6 +6,7 @@
 #==============================================================================
 module DataManager
   #---------------------------------------------------------------------------
+  # tag: game_mode
   SaveFilePathes = {
     :main     => "Save/main/",
     :tutorial => "Save/tutorial/",
@@ -14,6 +15,18 @@ module DataManager
   FileLocInfo = Struct.new(:mode, :index, :time_stamp)
   #---------------------------------------------------------------------------
   @last_savefile_index = {}
+  #--------------------------------------------------------------------------
+  # * Overwrite: Initialize Module
+  #--------------------------------------------------------------------------
+  def self.init
+    @last_savefile_index = {}
+    SaveFilePathes.keys.each do |mode|
+      @last_savefile_index[mode] = 0
+    end
+    load_database
+    create_game_objects
+    setup_battle_test if $BTEST
+  end
   #---------------------------------------------------------------------------
   # *) Ensure the file or dictionary
   #---------------------------------------------------------------------------
@@ -21,12 +34,26 @@ module DataManager
     Dir.mkdir(filename) unless File.exist?(filename)
   end
   #--------------------------------------------------------------------------
+  # * Overwrite: Set Up New Game
+  #--------------------------------------------------------------------------
+  def self.setup_new_game(mode)
+    map_id = mode.init_map_id.nil? ? $data_system.start_map_id : mode.init_map_id
+    sx     = mode.sx.nil? ? $data_system.start_x : mode.sx
+    sy     = mode.sy.nil? ? $data_system.start_y : mode.sy
+    create_game_objects
+    $game_party.setup_starting_members(mode)
+    $game_map.setup(map_id)
+    $game_player.moveto(sx, sy)
+    $game_player.refresh
+    Graphics.frame_count = 0
+  end
+  #--------------------------------------------------------------------------
   # * Alias: Set Up New Game
   #--------------------------------------------------------------------------
   class << self; alias setup_new_game_bc setup_new_game; end
-  def self.setup_new_game
+  def self.setup_new_game(mode)
     BlockChain.init_chain
-    self.setup_new_game_bc
+    self.setup_new_game_bc(mode)
   end
   #---------------------------------------------------------------------------
   # *) Crash Dump
@@ -40,7 +67,7 @@ module DataManager
       $game_system.on_before_save
       Marshal.dump(make_save_header, file)
       Marshal.dump(make_save_contents, file)
-      @last_savefile_index = index
+      @last_savefile_index[$game_system.game_mode] = index
     end
     return true
   end
@@ -304,13 +331,13 @@ module DataManager
   #--------------------------------------------------------------------------
   # * Get Index of File Most Recently Accessed
   #--------------------------------------------------------------------------
-  def self.last_savefile_index(game_mode)
-    @last_savefile_index[game_mode]
+  def self.last_savefile_index(game_mode = $game_system.game_mode)
+    (@last_savefile_index[game_mode] || 0)
   end
   #--------------------------------------------------------------------------
   # * Get mode and index of file most recently accessed
   #--------------------------------------------------------------------------
-  def self.lastest_savefile
+  def self.latest_savefile
     re = FileLocInfo.new(nil, nil, Time.at(0))
     SaveFilePathes.keys.each do |mode|
       next unless save_file_exists?(mode)

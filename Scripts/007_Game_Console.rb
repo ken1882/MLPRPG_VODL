@@ -34,7 +34,7 @@ class Game_Console
   end
   #----------------------------------------------------------------------------
   def skip_loading?
-    return @skip_loading
+    return @skip_loading || ($game_system.game_mode == :credits)
   end
   #----------------------------------------------------------------------------
   def get_language_setting
