@@ -14,7 +14,7 @@ class Window_ImageHorzCommand < Window_ImageCommand
   # * Get Digit Count
   #--------------------------------------------------------------------------
   def col_max
-    return 4
+    return ((window_width - standard_padding * 2) / (item_width + spacing)).to_i
   end
   #--------------------------------------------------------------------------
   # * Get Spacing for Items Arranged Side by Side
@@ -87,22 +87,13 @@ class Window_ImageHorzCommand < Window_ImageCommand
   # * Calculate Width of Window Contents
   #--------------------------------------------------------------------------
   def contents_width
-    (item_width + spacing) * item_max - spacing
+    (item_width + spacing) * item_max + spacing
   end
   #--------------------------------------------------------------------------
   # * Calculate Height of Window Contents
   #--------------------------------------------------------------------------
   def contents_height
     item_height
-  end
-  #--------------------------------------------------------------------------
-  # * Draw Image
-  #--------------------------------------------------------------------------
-  def draw_command_image(index, bitmap, enabled = true)
-    dx   = index * (item_width + spacing)
-    rect = Rect.new(0 , 0, item_width, item_height)
-    contents.blt(dx, 0, bitmap, rect, enabled ? 255 : 155)
-    bitmap.dispose
   end
   #--------------------------------------------------------------------------
   # * Scroll Cursor to Position Within Screen

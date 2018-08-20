@@ -22,8 +22,8 @@ class Window_ImageCommand < Window_Command
     rect = Rect.new
     rect.width = item_width
     rect.height = item_height
-    rect.x = index % col_max * item_width
-    rect.y = index / col_max * item_height
+    rect.x = (index % col_max) * (item_width + spacing)
+    rect.y = (index / col_max) * (item_height + spacing)
     rect
   end
   #--------------------------------------------------------------------------
@@ -36,7 +36,7 @@ class Window_ImageCommand < Window_Command
   # * Calculate Height of Window Contents
   #--------------------------------------------------------------------------
   def contents_height
-    (item_width + spacing) * row_max + spacing
+    (item_width + spacing) * item_max + spacing
   end
   #--------------------------------------------------------------------------
   # * Add Command
@@ -100,9 +100,11 @@ class Window_ImageCommand < Window_Command
   # * Draw Image
   #--------------------------------------------------------------------------
   def draw_command_image(index, bitmap, enabled = true)
-    rect = Rect.new(0 , 0, bitmap.width, bitmap.height)
+    irect = item_rect(index)
+    brect = Rect.new(0, 0, item_width, item_height)
     dy   = index * (item_height + spacing)
-    contents.blt(0, dy, bitmap, rect, enabled ? 255 : 155)
+    contents.blt(irect.x, irect.y, bitmap, brect, enabled ? 255 : 155)
+    debug_print("Draw command image #{index}: #{irect}")
     bitmap.dispose
   end
   #--------------------------------------------------------------------------

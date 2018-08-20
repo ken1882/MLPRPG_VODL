@@ -33,7 +33,7 @@ class Window_MenuCommand < Window_ImageHorzCommand
     rect = super
     rect.x += 4
     rect
-  end
+  end # last work: fix the selection icon rect
   #--------------------------------------------------------------------------
   # * Add Main Commands to List
   #--------------------------------------------------------------------------
