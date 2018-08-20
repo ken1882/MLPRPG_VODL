@@ -19,6 +19,9 @@ module Vocab
   NewGame         = "Start a new story"
   LoadGame        = "Continue your journey"
   ShutDown        = "Crashing back to your OS"
+  Option          = "Option"
+  Credits         = "Credits"
+  StartGame       = "Start"
   
   # Connections
   Connection      = "Connecting...Your game will have no response for few minutes, please wait..."
@@ -52,9 +55,6 @@ module Vocab
   Ineffective     = "%s - weapon ineffective"
   
   MoreInfo        = "Info"
-  Option          = "Option"
-  Credits         = "Credits"
-  StartGame       = "Start"
   
   # path to database vocabulary dictionary
   DictPath        = "History/en_us"

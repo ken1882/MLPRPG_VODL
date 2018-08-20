@@ -14,6 +14,12 @@ class Object
     init_rbobj(*args)
   end
   #------------------------------------------------------------------------
+  def eigenclass
+    class << self
+      self
+    end
+  end
+  #------------------------------------------------------------------------
   def deactivate
     @active = false
   end

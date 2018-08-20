@@ -16,16 +16,16 @@ module PONY::GameMode
   CreditMapID   = 26
   
   ModeConfig = {
-    :main => 
+    :main => # Mode Symbol
     {
-      :name         => Vocab::VODL,
-      :image        => "Mode_VODL",
-      :enabled      => true,
-      :help         => Vocab::VODLHelp,
-      :init_map_id  => nil,
-      :sx           => nil,
-      :sy           => nil,
-      :init_party   => nil,
+      :name         => Vocab::VODL,       # Mode name
+      :image        => "Mode_VODL",       # Path to display image file
+      :enabled      => true,              # Enabled?
+      :help         => Vocab::VODLHelp,   # Help text
+      :init_map_id  => nil,               # Starting map id, nil for default
+      :sx           => nil,               # Starting x corrd, nil for default
+      :sy           => nil,               # Starting y coord, nil for default
+      :init_party   => nil,               # Starting party member id, nil for deafult
     },
     #-----------
     :tutorial => 

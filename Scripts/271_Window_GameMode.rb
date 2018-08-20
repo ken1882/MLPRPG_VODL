@@ -18,7 +18,7 @@ class Window_GameMode < Window_ImageCommand
   end
   #------------------------------------------------------------------------------
   def contents_height
-    return (item_height + standard_padding) * item_max
+    return (item_height + standard_padding) * item_max + spacing
   end
   #------------------------------------------------------------------------------
   def window_height
