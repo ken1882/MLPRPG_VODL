@@ -13,7 +13,8 @@ module WindowSkin
   "Celestia",                #  8
   "Fluttershy7",             #  9 
   "Applejack2",              # 10
-  "ModeWindow"               # 11
+  "ModeWindow",              # 11
+  "BoarderlessBlack",        # 12
   ]
   
   Default = "Window"
@@ -43,5 +44,5 @@ module WindowSkin
   ItemAction  = Skins[6]
   Applejack   = Skins[10]
   ModeWindow  = Skins[11]
-  
+  BBoarder    = Skins[12]
 end

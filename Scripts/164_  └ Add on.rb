@@ -7,6 +7,8 @@ class Window_Command < Window_Selectable
   #--------------------------------------------------------------------------
   attr_reader :list
   #--------------------------------------------------------------------------
+  alias :current_item :current_data
+  #--------------------------------------------------------------------------
   # * Add Command
   #     name    : Command name
   #     symbol  : Corresponding symbol

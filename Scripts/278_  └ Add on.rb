@@ -16,7 +16,8 @@ class Scene_Title < Scene_Base
     create_mode_window
     create_option_window
     create_language_window
-    # function calls added in MOG's animtaed title script
+    create_progress_window
+    # function calls supposed to add in MOG's animtaed title script
   end
   #-------------------------------------------------------------------------
   alias post_start_msg post_start
@@ -98,6 +99,17 @@ class Scene_Title < Scene_Base
     @command_window.set_handler(:option,     method(:command_option))
     @command_window.set_handler(:credits,     method(:command_credits))
     @command_window.set_handler(:shutdown,   method(:command_shutdown))
+  end
+  #---------------------------------------------------------------------------
+  def create_progress_window
+    @progress_window = Window_ProgressSelection.new(0, 0)
+    @progress_window.set_handler(:new_game, method(:on_start_ok))
+    @progress_window.set_handler(:load_game, method(:command_load))
+    @progress_window.set_handler(:cancel, method(:on_progress_cancel))
+    @progress_window.set_z(PONY::SpriteDepth::Table[:override] + 2)
+    @progress_window.unselect
+    @progress_window.hide
+    @progress_window.deactivate
   end
   #--------------------------------------------------------------------------
   def create_language_window
@@ -199,14 +211,41 @@ class Scene_Title < Scene_Base
     $game_map.autoplay
     SceneManager.goto(Scene_Map)
   end
+  #--------------------------------------------------------------------------
+  def command_load
+    close_command_window
+    SceneManager.call(Scene_Load)
+  end
   #-------------------------------------------------------------------------
-  def on_mode_ok
+  def on_start_ok
     fadeout_all(1000)
     $game_temp.loading_destroy_delay = true
     init_gamemode(@mode_window.current_data[:symbol])
     close_command_window
     $game_map.autoplay
     SceneManager.goto(Scene_Map)
+  end
+  #--------------------------------------------------------------------------
+  def on_mode_ok
+    $game_system.game_mode = @mode_window.current_item[:symbol]
+    debug_print("Game mode selected: #{$game_system.game_mode}")
+    @mode_window.cursor_sprite.x = 0
+    @mode_window.cursor_sprite.y = 0
+    @mode_window.cursor_sprite.z = @progress_window.z + 1
+    @progress_window.open
+    @progress_window.activate
+    @progress_window.select(0)
+    @help_window.clear
+  end
+  #--------------------------------------------------------------------------
+  def on_progress_cancel
+    @progress_window.deactivate
+    @progress_window.close
+    @progress_window.unselect
+    @mode_window.cursor_sprite.z = @mode_window.z + 1
+    @mode_window.update_cursor(true)
+    @mode_window.activate
+    @mode_window.update_help
   end
   #--------------------------------------------------------------------------
   def on_mode_cancel

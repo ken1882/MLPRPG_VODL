@@ -427,11 +427,11 @@ class Scene_Base
   end
   #--------------------------------------------------------------------------
   def show_dim_background
-    @dim_background.show if @dim_background
+    @dim_background.show if @dim_background && !@dim_background.disposed?
   end
   #--------------------------------------------------------------------------
   def hide_dim_background
-    @dim_background.hide if @dim_background
+    @dim_background.hide if @dim_background && !@dim_background.disposed?
   end
   #--------------------------------------------------------------------------
 end

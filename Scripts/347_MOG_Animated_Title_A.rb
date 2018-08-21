@@ -289,6 +289,7 @@ class Scene_Title < Scene_Base
      create_mode_window
      create_option_window
      create_language_window
+     create_progress_window
      RPG::BGM.fade(2000)
      @logo_active = LOGO
      SceneManager.clear
@@ -745,6 +746,7 @@ class Scene_Title < Scene_Base
      if @phase_time == 0
         @phase = 2
         @phase_time = 30
+        @command_window.ready = true
      end   
      for i in @commands
         index = 0

@@ -41,6 +41,24 @@ class Window_Selectable < Window_Base
     else
       update_overlayed
     end
+    
+    if @last_index != @index
+      if @index_flag
+        @index_flag = false
+      else
+        @last_index = @index
+      end
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Set Cursor Position
+  #--------------------------------------------------------------------------
+  def index=(index)
+    @index_flag = true
+    @last_index = @index
+    @index = index
+    update_cursor
+    call_update_help
   end
   #--------------------------------------------------------------------------
   # * Item alignment the center
@@ -190,15 +208,6 @@ class Window_Selectable < Window_Base
       @index = [@index, self.top_row].min
       select(@index)
     end
-  end
-  #--------------------------------------------------------------------------
-  # * Overwrite: Set Cursor Position
-  #--------------------------------------------------------------------------
-  def index=(index)
-    @last_index = @index
-    @index = index
-    update_cursor
-    call_update_help
   end
   #--------------------------------------------------------------------------
   def index_changed?

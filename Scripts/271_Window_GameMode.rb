@@ -71,8 +71,8 @@ class Window_GameMode < Window_ImageCommand
     refresh
   end
   #------------------------------------------------------------------------------
-  def update_cursor
-    return unless index_changed? && @cursor_sprite
+  def update_cursor(forced = false)
+    return unless @cursor_sprite && (index_changed? || forced)
     rect = item_rect(@index)
     @cursor_sprite.x = self.x + rect.x + standard_padding
     @cursor_sprite.y = self.y + rect.y + standard_padding - self.oy
@@ -101,6 +101,10 @@ class Window_GameMode < Window_ImageCommand
     return unless nz
     super
     @cursor_sprite.z = nz + 1
+  end
+  #------------------------------------------------------------------------------
+  def cursor_sprite
+    @cursor_sprite
   end
   #------------------------------------------------------------------------------  
 end # last work: title scene game mode stuff

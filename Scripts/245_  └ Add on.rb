@@ -5,6 +5,8 @@
 #==============================================================================
 class Window_TitleCommand < Window_Command
   #--------------------------------------------------------------------------
+  attr_accessor :ready
+  #--------------------------------------------------------------------------
   # * Overwrite: Object Initialization
   #--------------------------------------------------------------------------
   def initialize
@@ -13,6 +15,7 @@ class Window_TitleCommand < Window_Command
     select_symbol(:continue) if continue_enabled
     self.openness = 0xff
     self.visible = false
+    @ready = false
   end
   #--------------------------------------------------------------------------
   # * Overwrite: Change order and new commands
@@ -29,6 +32,10 @@ class Window_TitleCommand < Window_Command
   #--------------------------------------------------------------------------
   def continue_enabled
     return !DataManager.latest_savefile.nil?
+  end
+  #--------------------------------------------------------------------------
+  def current_item_enabled?
+    return super && @ready
   end
   #--------------------------------------------------------------------------
 end
