@@ -466,7 +466,7 @@ class Game_Skillbar
   end
   #--------------------------------------------------------------------------
   def sprite_valid?
-    return @sprite && !@sprite.disposed?
+    return Kernel.send(:sprite_valid?, @sprite)
   end
   #--------------------------------------------------------------------------
   def show_item_help(index)

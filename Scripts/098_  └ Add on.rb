@@ -230,6 +230,7 @@ class Game_Map
   # * Overwrite : Update, moved from effectus for compatible
   #--------------------------------------------------------------------------
   def update(main = false)
+    @last_pa = [@parallax_x, @parallax_y]
     refresh                  if @need_refresh
     effectus_trigger_refresh if @effectus_need_refresh
     if main

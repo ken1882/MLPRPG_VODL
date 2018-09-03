@@ -38,3 +38,8 @@ def flag_error(error)
   $error_activated = true
   raise error.class, error.message, [error.backtrace.first]
 end
+#--------------------------------------------------------------------------
+def sprite_valid?(sprite)
+  return sprite && !sprite.disposed? rescue false
+end
+#--------------------------------------------------------------------------
