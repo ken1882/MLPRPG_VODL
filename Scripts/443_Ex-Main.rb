@@ -17,19 +17,3 @@ end
 $rgss   = self
 $assist = RubyVM::InstructionSequence.compile("$thassist=Thread.new{Thread_Assist.assist_main}.run")
 $mutex  = Mutex.new
-def say(str)
-  puts ("Global: #{str}")
-end
-class Per
-  def initialize(str = "Hi")
-    @str = str
-    say
-  end
-  
-  def say
-    puts "#{@str}"
-    Kernel.send(:say, @str)
-  end
-  
-end
-$per = Per.new

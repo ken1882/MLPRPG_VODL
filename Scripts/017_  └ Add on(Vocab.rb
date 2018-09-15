@@ -263,6 +263,7 @@ module Vocab::Errno
     :tactic_sym_missing => "Tactic command symbol unavailable:\n",
     :secure_hash_failed => "Security hash match failed:\n",
     :config_error       => "Script configuration error:\n",
+    :gib_nil_handler    => "InteractiveButton nil handler called\n",
   }
   
   SequenceArgError = "%s has at least %d args, received %d\n"

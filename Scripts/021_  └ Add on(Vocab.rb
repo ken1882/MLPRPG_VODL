@@ -247,8 +247,11 @@ module Vocab::Errno
     :file_missing     => "遺失檔案:\n",
     :tactic_sym_missing => "無效的戰術指令符號:\n",
     :secure_hash_failed => "安全性雜湊驗證失敗:\n",
+    :config_error       => "腳本設定錯誤:\n",
+    :gib_nil_handler    => "InteractiveButton nil handler called\n",
   }
   
+  SequenceArgError = "%s has at least %d args, received %d\n"
 end
 #==============================================================================
 # ** Vocab::Status
