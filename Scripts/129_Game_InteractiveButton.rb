@@ -47,14 +47,6 @@ class Game_InteractiveButton
     end
   end
   #------------------------------------------------------------------------------
-  def update
-    return unless active?
-    return unless sprite_valid?(@sprite)
-    return unfocus unless Mouse.collide_sprite?(@sprite)
-    on_mouse_hover
-    on_mouse_trigger if Mouse.click?(1)
-  end
-  #------------------------------------------------------------------------------
   def refresh
     return unless @image
     @sprite.bitmap.clear
@@ -75,23 +67,16 @@ class Game_InteractiveButton
     self
   end
   #------------------------------------------------------------------------------
-  def unfocus
+  def unfocus_sprite
     return unless @hovered
+    @hovered = false
     @sprite.opacity = active? ? translucent_alpha : translucent_beta
   end
   #------------------------------------------------------------------------------
-  def on_mouse_hover
+  def focus_sprite
+    return if @hovered
+    @hovered = true
     @sprite.opacity = 0xff
-  end
-  #------------------------------------------------------------------------------
-  def on_mouse_trigger
-    if @triggered
-      @trigger_timer -= 1 if @trigger_timer > 0
-      @triggered = false  if @trigger_timer == 0
-    else
-      @triggered = true
-      @trigger_timer = TriggerTimer
-    end
   end
   #------------------------------------------------------------------------------
   def call_handler(*args)

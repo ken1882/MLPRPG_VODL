@@ -16,9 +16,8 @@ class Window_MouseUIBase < Window_Base
     super
     @index_changed = false
     @buttons = []
-    @groups  = []
+    @groups  = {}
     @button_symbol_table = {}
-    @group_symbol_table  = {}
     @mouse_hovered = Mouse.collide_sprite?(self)
     unselect
   end
@@ -31,10 +30,19 @@ class Window_MouseUIBase < Window_Base
     select(-1)
   end
   #-----------------------------------------------------------------------------
-  def select(_index)
+  def select(sig)
+    return select_index(sig)  if sig.is_a?(Numeric)
+    return select_symbol(sig) if sig.is_a?(Symbol)
+  end
+  #-----------------------------------------------------------------------------
+  def select_index(_index)
     return if _index == @index
     @index = _index
     @index_changed = true
+  end
+  #-----------------------------------------------------------------------------
+  def select_symbol(sym)
+    
   end
   #-----------------------------------------------------------------------------
   def index_changed?
@@ -45,22 +53,29 @@ class Window_MouseUIBase < Window_Base
     @index_changed = false
     super
     return unless visible?
+    update_buttons
     update_mouse
     update_keyboard if active?
   end
+  #------------------------------------------------------------------------------
+  def update_buttons
+    @buttons.each_with_index do |but, i|
+      next unless but.active? && but.sprite_valid?(but.sprite)
+      if Mouse.collide_sprite?(but.sprite) || @index == i 
+        @index = i
+        but.focus_sprite
+        process_trigger(but) if button_cooled? && Input.trigger?(:C)
+      else
+        but.unfocusite_sprite
+      end
+    end
+  end
   #-----------------------------------------------------------------------------
   def update_mouse
-    update_mouse_selection
-    update_mouse_activation
     update_mouse_dragging
   end
   #-----------------------------------------------------------------------------
-  def update_mouse_activation
-    
-  end
-  #-----------------------------------------------------------------------------
-  def update_mouse_selection
-    
+  def update_mouse_dragging
   end
   #-----------------------------------------------------------------------------
   def update_keyboard
@@ -68,12 +83,16 @@ class Window_MouseUIBase < Window_Base
   end
   #-----------------------------------------------------------------------------
   def update_navigate
-    
+    # last work
   end
   #-----------------------------------------------------------------------------
   def refresh
     contents.clear
     draw_all_items
+  end
+  #-----------------------------------------------------------------------------
+  def item_max
+    @buttons.size
   end
   #-----------------------------------------------------------------------------
   def draw_all_items
@@ -82,53 +101,39 @@ class Window_MouseUIBase < Window_Base
     end
   end
   #-----------------------------------------------------------------------------
-  def draw_item(inx)
-    @buttons[i]
+  def draw_item(i)
+    @buttons[i].refresh
+  end
+  #-----------------------------------------------------------------------------
+  def process_trigger(button)
+    return if button.handler.nil?
+    heatup_button
+    button.handler.call(get_button_args(button))
   end
   #-----------------------------------------------------------------------------
   def add_button(*args)
-    @buttons.push(Game_InteractiveButton.new(args))
+    button = Game_InteractiveButton.new(args)
+    button.create_sprite
+    @button_symbol_table[button.symbol] = @buttons.size
+    add_group(button) if button.group
+    @buttons.push(button)
   end
-  #--------------------------------------------------------------------------
-  # * Add Command
-  #     name    : Command name
-  #     symbol  : Corresponding symbol
-  #     image   : Path to the image
-  #     enabled : Activation state flag
-  #     ext     : Arbitrary extended data
-  #     help    : Text displayed in tab-help window
-  #--------------------------------------------------------------------------
-  #def add_command(name, symbol, image, enabled = true, ext = nil, help = nil)
-  def add_command(*args)
-    case args.size
-    when 1 # Hash initializer
-      args = args[0]
-      content = {
-        :name     => args[:name],
-        :symbol   => args[:symbol],
-        :enabled  => args[:enabled].nil? ? true : args[:enabled],
-        :ext      => args[:ext],
-        :help     => args[:help],
-        :image    => args[:image],
-      }
-    else
-      name    = args[0]; symbol = args[1]; 
-      image   = args[2];
-      enabled = args[3].nil? ? true  : args[3];
-      ext     = args[4]
-      help    = args[5]
-      content = {:name=>name, :symbol=>symbol, :enabled => enabled,
-                 :ext=>ext, :help => help, :image => image}
-      #----
-    end
-                      
-    if !content[:symbol] || !content[:name] || !content[:image]
-      errinfo = "Invalid parameter given:\nName: %s\nSymbol: %s\nImage: %s\n"
-      errinfo = sprintf(errinfo, content[:name], content[:symbol], content[:image])
-      raise ArgumentError, errinfo
-    end
-    
-    @list.push(content)
+  #-----------------------------------------------------------------------------
+  def add_group(button)
+    (@groups[button.group] ||= []) << button
+    @groups[button.group].sort_by!{|but| but.x + but.y}
+  end
+  #-----------------------------------------------------------------------------
+  def dispose
+    dispose_all_buttons
+    super
+  end
+  #-----------------------------------------------------------------------------
+  def dispose_all_buttons
+    @buttons.each do |but| but.dispose end
+  end
+  #-----------------------------------------------------------------------------
+  def get_button_args(button)
   end
   #-----------------------------------------------------------------------------
 end
