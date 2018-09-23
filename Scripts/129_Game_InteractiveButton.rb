@@ -6,6 +6,7 @@
 class Game_InteractiveButton
   #------------------------------------------------------------------------------
   TriggerTimer = 4
+  Node = Struct.new(:left, :right, :up, :down)
   #------------------------------------------------------------------------------
   attr_reader :symbol, :image
   attr_reader :x, :y, :z
@@ -17,10 +18,14 @@ class Game_InteractiveButton
   attr_reader :viewport
   attr_reader :show_text
   attr_reader :hovered, :triggered
+  attr_accessor :index, :group_index, :node
   #------------------------------------------------------------------------------
   def initialize(*args)
-    @hovered = false
+    @hovered       = false
     @trigger_timer = 0
+    @index         = nil
+    @group_index   = nil
+    @node          = Node.new(self, self, self, self)
     if args.size == 1 # hash initializer
       inf = args[0]
       @symbol   = inf.symbol
