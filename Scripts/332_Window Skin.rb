@@ -15,6 +15,7 @@ module WindowSkin
   "Applejack2",              # 10
   "ModeWindow",              # 11
   "BoarderlessBlack",        # 12
+  "Empty",                   # 13
   ]
   
   Default = "Window"
@@ -45,4 +46,5 @@ module WindowSkin
   Applejack   = Skins[10]
   ModeWindow  = Skins[11]
   BBoarder    = Skins[12]
+  Empty       = Skins[13]
 end
