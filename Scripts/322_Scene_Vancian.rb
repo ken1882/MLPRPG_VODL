@@ -30,14 +30,17 @@ class Scene_Vancian < Scene_MenuBase
   #--------------------------------------------------------------------------
   def create_help_window
     @help_window = Window_Help.new
+    @help_window.swap_skin(WindowSkin::Spellbook)
   end
   #--------------------------------------------------------------------------
   def create_spellbook
     @layout    = ::Sprite.new
     @layout.bitmap = Cache.UI(SpellbookImage)
     ww, wh = @layout.bitmap.width, @layout.bitmap.height
-    wx, wy = Graphics.center_width(ww), Graphics.height - wh
+    wx, wy = Graphics.center_width(ww), Graphics.height - wh + @help_window.height
     @spellbook = Window_MouseUIBase.new(wx, wy, ww, wh)
+    @spellbook.swap_skin(WindowSkin::Empty)
+    @spellbook.help_window = @help_window
   end
   #--------------------------------------------------------------------------
 end

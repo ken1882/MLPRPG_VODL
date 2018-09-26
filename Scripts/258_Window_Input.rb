@@ -220,6 +220,7 @@ class Window_Input < Window_Base
   def sync_window
     buffer = get_window_text
     @lpstr = EasyConv::s2u(buffer)
+    @strlen = @lpstr.length
     return process_limited if @strlen > @char_limit + 1
     terminated = process_ok if @last_len == @strlen
     return if @last_str == @lpstr || terminated

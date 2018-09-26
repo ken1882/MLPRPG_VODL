@@ -9,11 +9,13 @@ class Window_MouseUIBase < Window_Base
   attr_reader :currnent_index, :current_group
   attr_reader :index
   attr_reader :groups
+  attr_reader :help_window
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
   def initialize(x, y, width, height)
     super
+    @index = 0
     @index_changed = false
     @buttons = []
     @groups  = {}
@@ -39,9 +41,10 @@ class Window_MouseUIBase < Window_Base
   #-----------------------------------------------------------------------------
   def select_index(_index)
     return if _index && _index == @index
-    unfocus_item(@index)
+    unfocus_item(buttons[@index])
     @index = _index
-    hilight_item(@index)
+    hilight_item(buttons[@index])
+    update_help_window
     @index_changed = true
   end
   #-----------------------------------------------------------------------------
@@ -50,11 +53,11 @@ class Window_MouseUIBase < Window_Base
   end
   #-----------------------------------------------------------------------------
   def hilight_item(item)
-    item.focus_sprite
+    item.focus_sprite if item
   end
   #-----------------------------------------------------------------------------
   def unfocus_item(item)
-    item.unfocus_sprite
+    item.unfocus_sprite if item
   end
   #-----------------------------------------------------------------------------
   def current_item
@@ -75,6 +78,11 @@ class Window_MouseUIBase < Window_Base
     return unless visible?
     update_mouse
     update_keyboard if active?
+  end
+  #------------------------------------------------------------------------------
+  def update_help_window
+    return unless @help_window
+    @help_window.set_text(current_item.help || '')
   end
   #------------------------------------------------------------------------------
   def update_mouse_selection
@@ -229,4 +237,8 @@ class Window_MouseUIBase < Window_Base
   def get_button_args(button)
   end
   #-----------------------------------------------------------------------------
+  def help_window=(win)
+    debug_print("#{self} already has a help window #{@help_window}") if @help_window
+    @help_window = win
+  end
 end

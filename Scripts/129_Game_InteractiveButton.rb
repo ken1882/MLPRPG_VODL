@@ -19,12 +19,14 @@ class Game_InteractiveButton
   attr_reader :show_text
   attr_reader :hovered, :triggered
   attr_accessor :index, :group_index, :node
+  attr_reader :icon_id
   #------------------------------------------------------------------------------
   def initialize(*args)
     @hovered       = false
     @trigger_timer = 0
     @index         = nil
     @group_index   = nil
+    @icon_id       = 0
     @node          = Node.new(self, self, self, self)
     if args.size == 1 # hash initializer
       inf = args[0]
@@ -49,6 +51,9 @@ class Game_InteractiveButton
       @group    = args[8]
       @help     = args[9] || ''
       @show_text = args[10] || false
+    end
+    if @image.is_a?(Symbol) && @image =~ /(?:icon)_(\d+)/i
+      @icon_id = $1.to_i
     end
   end
   #------------------------------------------------------------------------------
@@ -118,9 +123,10 @@ class Game_InteractiveButton
   end
   #------------------------------------------------------------------------------
   def draw_bitmap
-    if @image
+    if @icon_id
+      draw_icon(@icon_id)
+    elsif @image
       @sprite.bitmap = Cache.UI(image)
-      @sprite.bitmap.font.size = 16
       @width  = @sprite.bitmap.width
       @height = @sprite.bitmap.height
     else
