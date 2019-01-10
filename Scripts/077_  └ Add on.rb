@@ -4,7 +4,6 @@
 #  This class handles battle actions. This class is used within the
 # Game_Battler class.
 #==============================================================================
-# tag: action
 class Game_Action
   #--------------------------------------------------------------------------
   Symbol_Name = Vocab::Tactic::Name_Table
@@ -162,9 +161,9 @@ class Game_Action
     @acting  = true
     @sequence_finished = (item.action_sequence == 0)
     @time    = get_item_acting_time
-    execute_sequence if !@sequence_finished
   end
   #---------------------------------------------------------------------------
+  # tag: action
   def execute_sequence
     asid = @item.action_sequence
     puts "#{@user.name} setup action sequence #{asid}"

@@ -4,6 +4,7 @@
 #  Sequence of action defined of the skill when performed
 #==============================================================================
 #tag: skill
+#tag: sequence
 module DND::SkillSequence
   
   ACTS = {
@@ -16,8 +17,8 @@ module DND::SkillSequence
             [:move,  1,  0, 4, 0], [:wait, 4],
             [:move, -1,  1, 4, 0], [:wait, 4],
             [:move, -1, -1, 4, 0], [:wait, 4],
-            [:move,  1,  1, 4, 0], [:wait, 4],
-            [:move,  0, -1, 4, 0], [:wait, 4],
+            [:move,  1, -1, 4, 0], [:wait, 4],
+            [:move,  0,  1, 4, 0], [:wait, 4],
          ],
          
   }

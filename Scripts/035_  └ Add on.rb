@@ -365,8 +365,10 @@ module BattleManager
     end
   end
   #--------------------------------------------------------------------------
+  # tag: action
   def self.invoke_action_sequence(action)    
-    # sequence is set in Game_Action: def start
+    return if action.sequence_finished
+    action.execute_sequence
   end
   #--------------------------------------------------------------------------
   # * Apply Substitute

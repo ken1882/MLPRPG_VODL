@@ -438,6 +438,16 @@ class Game_Character < Game_CharacterBase
     end
     @last_quadtree_index = new_index
   end
+  #----------------------------------------------------------------------------
+  def set_pos(nx, ny)
+    @x = nx
+    @y = ny
+    @real_x = nx
+    @real_y = ny
+    @px = nx * Pixel_Core::Pixel
+    @py = ny * Pixel_Core::Pixel
+    update_bush_depth
+  end
   #--------------------------------------------------------------------------
   def valid_battler?
     return !@map_char.nil?

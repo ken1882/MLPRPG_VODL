@@ -1067,12 +1067,8 @@ module THEO
         @duration -= 1
         @real_x += @x_speed
         @real_y += @y_speed
-        @obj.x = @real_x
-        @obj.y = @real_y + @offset
-        if (@obj.px rescue nil)
-          @obj.px = @obj.x * Pixel_Core::Pixel
-          @obj.py = @obj.y * Pixel_Core::Pixel
-        end
+        
+        @obj.set_pos(@real_x, @real_y)
         if obj.is_a?(Game_Character)
           puts "OBJ POS:#{[@obj.x, @obj.y]} #{[@obj.real_x, @obj.real_y]}"
         end
@@ -1080,7 +1076,7 @@ module THEO
         @offset -= @jump
         clear_move_info unless moving?
       end
-    end
+    end # Move_Object
     #==========================================================================
     # -------------------------------------------------------------------------
     # *) Set the movement object
@@ -1089,9 +1085,9 @@ module THEO
       # I just added only one instance variable
       @move_obj = Move_Object.new(obj) 
     end
-    # -------------------------------------------------------------------------
+    #-------------------------------------------------------------------------
     # *) Tells the object to move
-    # -------------------------------------------------------------------------
+    #-------------------------------------------------------------------------
     def goto(x,y,duration = Graphics.frame_rate,jump = 0.0)
       @move_obj.move_to(x,y,jump,duration)
     end
@@ -2417,6 +2413,7 @@ module TSBS
       @x = x
       @y = y
     end
+    alias :set_pos :set
     #--------------------------
     # Update move
     #--------------------------

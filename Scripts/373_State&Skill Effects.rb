@@ -209,6 +209,8 @@ class Game_Battler < Game_BattlerBase
     when SEQUENCE_AUTOPOSE;           setup_autopose
     when SEQUENCE_ICONFILE;           @icon_file = @acts[1] || ''
     when SEQUENCE_IGNOREFLIP;         @ignore_flip_point = default_true
+    when SEQUENCE_SAVE_POSITION;      setup_save_position
+    when SEQUENCE_RESTORE_POSITION;   setup_restore_position
     else
       # reserved
     end
@@ -243,6 +245,31 @@ class Game_Battler < Game_BattlerBase
     end
     @icon_key = @acts[4] if @acts[4]  # Icon call
     @icon_key = @acts[5] if @acts[5] && flip  # Icon call
+  end
+  #---------------------------------------------------------------------------
+  # New method : Save current position [:save_pos, speed]
+  # speed: the move speed in restoring
+  #---------------------------------------------------------------------------
+  def setup_save_position(_speed = 0)
+    @saved_position = [@map_char.real_x, @map_char.real_y, _speed]
+  end
+  #---------------------------------------------------------------------------
+  # New method : Setup movement [:restore_pos, :method]
+  # method: movement method
+  #---------------------------------------------------------------------------
+  def setup_restore_position
+    if !@saved_position
+      debug_print("Warning: #{self} has no saved position but restore called")
+      return
+    end
+    nx, ny = @saved_position[0], @saved_position[1]
+    @acts.shift
+    @acts[1] = :move if @acts[1].nil?
+    @acts[2] = @saved_position[0]
+    @acts[3] = @saved_position[1]
+    @acts[4] = @saved_position[2]
+    execute_act
+    @saved_position = nil
   end
   #---------------------------------------------------------------------------
   # New method : Setup movement [:move,]
