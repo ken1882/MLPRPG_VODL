@@ -5,23 +5,18 @@ def report_exception(error)
   scripts_name = $RGSS_SCRIPTS.collect{|script|  script[1]  }
   backtrace = []
 
-  # Flag to find the error location in externel files
-  translate_flag = false
-  if $LoaderMethodNames
-    translate_flag = $LoaderMethodNames.any?{|method_name|
-      error.backtrace.any?{|line| line.include?(method_name)}
-    }
-  end
-  
   error.backtrace.each_with_index {|line,i|
+    if line =~ /:(\d+):/
+      line_number = $1.to_i
+    end
+
     if line =~ /{(.*)}(.*)/
       backtrace << (scripts_name[$1.to_i] + $2)
     elsif line.start_with?(':1:')
       break
     else
-      backtrace << (translate_flag ? translate_debug_message(line) : line)
+      backtrace << translate_debug_message(line)
     end
-    translate_flag = false if $LoaderMethodNames.any?{|name| line.include?(name)}
   }
   
   error_line = backtrace.first
@@ -57,11 +52,13 @@ end
 #--------------------------------------------------------------------------
 def translate_debug_message(line)
   return line unless Plugins
-  return line unless (line =~ /:(\d+):/)
+  return line unless (line =~ /:(\d+)/)
   line_number = $1.to_i
   info = Plugins.find_file_by_line(line_number)
   line_number = line_number - info[4] + 1
-  return sprintf("%s:%s:%s", info[1], line_number, line.split(':').last)
+  msg = line.split(':'+$1.to_s)
+  msg = msg.size > 1 ? msg.last : ''
+  return sprintf("%s:%s%s", info[1], line_number, msg)
 end
 #--------------------------------------------------------------------------
 def sprite_valid?(sprite)
