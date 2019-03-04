@@ -47,6 +47,23 @@ class Window_Base < Window
     self.windowskin = skin.is_a?(String) ? Cache.system(skin) : skin
   end
   #--------------------------------------------------------------------------
+  alias draw_text_encoding draw_text
+  def draw_text(*args)
+    args.each_with_index do |arg, i|
+      if arg.is_a?(String)
+        args[i] = arg.dup.force_encoding($default_encoding)
+      end
+    end
+    draw_text_encoding(*args)
+  end
+  #--------------------------------------------------------------------------
+  # * Draw Text with Control Characters
+  #--------------------------------------------------------------------------
+  alias draw_text_ex_encoding draw_text_ex
+  def draw_text_ex(x, y, text)
+    draw_text_ex_encoding(x, y, text.force_encoding($default_encoding))
+  end
+  #--------------------------------------------------------------------------
   # * Draw text in static position
   #--------------------------------------------------------------------------
   def draw_code_text(x, y, text)

@@ -1,858 +1,319 @@
 begin
-#==============================================================================
-# ** Vocab::Dungeons and Dragons
-#------------------------------------------------------------------------------
-#  The collection of words that belong to D&D terms
-#==============================================================================
-# tag: translate
-module Vocab::DND
-  
-  PARAM_NAME = [
-    "None",
-    "None",
-    "Str",
-    "Con",
-    "Int",
-    "Wis",
-    "Dex",
-    "Cha",
-  ]
-  
-  WEAPON_TYPE_NAME = [
-    "",
-    "Hoof Axe",
-    "Horseshoe",
-    "Polearm",
-    "1H Sword",
-    "2H Sword",
-    "Bow",
-    "Crossbow",
-    "Hammer",
-    "Mace",
-    "Firearm",
-    "Arrow",
-    "Bolt",
-    "Bullet",
-    "Mage Staff"
-  ]
-  
-  ARMOR_TYPE_NAME = [
-  "",
-  "Light Armor",
-  "Medium Armor",
-  "Heavy Armor",
-  "Clothing",
-  "Shield",
-  "Great Shield",
-  "Hooves",
-  "Belt",
-  "Necklace",
-  "Cloak",
-  "Ring",
-  "Greave",
-  "Rune",
-  "Gem",
-  ]
-  
-  SKILL_TYPE_NAME = [
-  "",
-  "Skill",
-  "Spell",
-  "Vancian",
-  "Passive",
-  ]
-  
-  ELEMENT_NAME = [
-    "",
-    "Bludgeoning",
-    "Piercing",
-    "Slashing",
-    "Acid",
-    "Cold",
-    "Fire",
-    "Force",
-    "Lightning",
-    "Necrotic",
-    "Poison",
-    "Psychic",
-    "Radiant",
-    "Thunder",
-  ]
-  
-  RankName = {
-    :critter  => "Critter",
-    :minion   => "Minion",
-    :elite    => "Elite",
-    :captain  => "Captain",
-    :chief    => "Chief",
-  }
-  
-end
+#===============================================================================
+# * Global variables
+#===============================================================================
 
-#==============================================================================
-# ** Vocab
-#------------------------------------------------------------------------------
-#  This module defines terms and messages. It defines some data as constant
-# variables. Terms in the database are obtained from $data_system.
-#==============================================================================
-module Vocab::YEA
-  ICON_HASH = {
-    # Matching Text   => Icon ID,
-      "New story"            => 125,    # Title scene.
-      "Continue story"       => 126,    # Title scene.
-      "Leave"                => 127,    # Title scene. Game End scene.
-      
-      "Battle"        => 386,     # Battle scene.
-      "Gallop"        => 328,     # Battle scene.
-      "Strike"        => 116,     # Battle scene.
-      "Guard"         => 506,     # Battle scene.
-      "Relic"         => 9299,
-      "Relics"        => 9299,
-      "Skill"         => 8175,    # Skill scene. Battle scene.
-      "Skills"        => 8175,
-      "Ability"       => 106,     # Skill scene. Battle scene.
-      "Spells"        => 106,     # Skill scene. Battle scene.
-      "Passive"       => 3193,
-      "Friendship"    => 8056,
-      "Learn Skills"  => 2437,
-      "Songs"         => 6470,
-      "Pet"           => 3316,
-      "Talent"        => 10662,
-      "Bio"           => 233,
-      "Brew"          => 3814,
-      "Science"       => 8249,
-      "Summon"        => 3761,
-      "Parameters"    => 228,
-      "Quest"         => 1334,
-      "Overview"      => 1354,
-      "Saddlebag"     => 1528,     # Menu scene. Item scene. Battle scene.
-      "Items"         => 1528,     # Menu scene. Item scene. Battle scene.
-      "Talk"          => 4,
-      "Actions"       => 143,
-      "Cook"          => 2580,
-      "Crafting"       => 125,
-      "Skills"        => 104,      # Menu scene.
-      "Log"           => 2441,
-      "Books"         => 2384,
-      "History"       => 2435,
-      "Execute"       => 125,
-      "Run"           => 172,
-      "Gear"          => 524,      # Menu scene.
-      "Stats"         => 1204,     # Menu scene.
-      "Party"         =>  11,      # Menu scene.
-      "Special"       => 775,
-      "Save"          => 10675,      # Menu scene.
-      "Load"          => 10674,
-      "Delete"        => 10676,
-      "System"        => 2144,
-      "End"           => 1020,      # Menu scene.
-      "Craft"         => 2059,  
-      "Weapons"       => 386,      # Item scene.
-      "Armors"        => 436,      # Item scene.
-      "Key Items"     => 243,      # Item scene.
-      "Special Items" => 243,      # Item scene.
-      "Special Item"  => 243,      # Item scene.
-      "To Title"      => 224,      # Game End scene.
-      "Cancel"        => 119,      # Game End scene.
-      "Spellbook"     => 4052,
-      "Vancian"       => 10044,
-      "Vancians"      => 10044,
-      "Vancian Spell" => 10044,
-      "Encyclopedia"  => 3734,
-      "Codex"         => 2399, 
-      "Bestiary"      => 3343,
-      "Music Room"    => 118,
-      "Talent Tree"   => 117,
-      "Equip"         => 3786,
-      "Add Point"     => 6476,
-      "Special stuff" => 1646,
-      "Buy"           => 555,
-      "Sell"          => 554,
-      "Properties"    => 2375,
-      "General"       => 556,
-      "Healings"      => 3958,
-      "Ingredient"    => 200,
-      "All"            => 1140,
-      "Hidden Weapons" => 159,
-      "Music Sheet"    => 118,
-      "Book"           => 2384,
-      "Scroll"         => 3733,
-      "Save/Load"      => 2431,
-      "Dismantle"      => 8175,
-      "Gamejolt"       => 570,
-      "Life Skills"    => 8075,
-      "Equip Skill"    => 117,
-      "Level Up"       => 8182,
-      "Move to"        => 572,
-      "Follow"         => 1117,
-      "Patrol"         => 1114,
-      "Hold/Move"      => 9301,
-      ":Hold"          => 9301,
-      ":Move"          => 2255,
-      ":No Attack"     => 1141,
-      ":Passive"       => 13,
-      ":Stand Ground"  => 7346,
-      ":Defensive"     => 139,
-      ":Aggressive"    => 131,
-      ":Striking"      => 116,
-      "Tactics"        => 2103,
-      "Protect"        => 506,
-      "Skill Tree"     => 108,
-    }
-    #--------------------------------------------------------------------------
-  end
-  
-#==============================================================================
-# ** Vocab::YEA::Item
-#==============================================================================
-module Vocab
-  module YEA::ITEM
-    #--------------------------------------------------------------------------
-    ITEM_TYPES = {
-      :all          => "All",
-      :healings     => "Healings",
-      :book         => "Book",
-      :scroll       => "Scroll",
-      :hdweapons    => "Hidden Weapons",
-      :special      => "Special",
-      :ingredient   => "Ingredient",
-      :music_sheet  => "Music Sheet",
-      :misc         => "Misc",
-    }
-    #--------------------------------------------------------------------------
-    WEAPON_TYPES = {
-      :all      => "All",
-    }
-    #--------------------------------------------------------------------------  
-    ARMOUR_TYPES = {
-      :all      => "All",
-    }
-    #--------------------------------------------------------------------------
-    VOCAB_STATUS = {
-      :empty      => "---",          # Text used when nothing is shown.
-      :hp_recover => "HP Heal",      # Text used for HP Recovery.
-      :mp_recover => "MP Heal",      # Text used for MP Recovery.
-      :tp_recover => "TP Heal",      # Text used for TP Recovery.
-      :tp_gain    => "TP Gain",      # Text used for TP Gain.
-      :applies    => "Applies",      # Text used for applied states and buffs.
-      :removes    => "Removes",      # Text used for removed states and buffs.
-    } # Do not remove this.
-    #--------------------------------------------------------------------------
-  end
-end
+# Define supported languages map, language vocab files should be placed under 
+# 'Vocab/#{language_hey}/' folder.
+$supported_languages = {
+  :en_us => "English(US)",
+  :zh_tw => "繁體中文",
+}
 
-#==============================================================================
-# ** Vocab
-#------------------------------------------------------------------------------
-#  This module defines terms and messages. It defines some data as constant
-# variables. Terms in the database are obtained from $data_system.
-#==============================================================================
-# tag: translate
-module Vocab
+$default_encoding = 'utf-8'
+
+# Errno flag shared between threads
+$error_activated = false 
+#-------------------------------------------------------------------------------
+# * Used CSIDL
+#-------------------------------------------------------------------------------
+CSIDL_APPDATA = 0x1a
+=begin
+--------------------------------------------------------------------------------
+  CSIDL	                        Decimal/Hex	      	Description
+--------------------------------------------------------------------------------
+CSIDL_ADMINTOOLS	                48	0x30	
+  * The file system directory that is used to store administrative tools for an 
+  individual user.
+CSIDL_ALTSTARTUP      	          29	0x1D	
+  * The file system directory that corresponds to the user's nonlocalized 
+  Startup program group.
   
-  # BlockChain Node Name
-  Player         = "Player"
-  Coinbase       = "Equestria"
+CSIDL_APPDATA   	                26	0x1A	
+  * The file system directory that serves as a common repository for application
+  -specific data. 
+CSIDL_BITBUCKET	                  10	0x0A	
+  * The virtual folder containing the objects in the user's Recycle Bin.
+CSIDL_CDBURN_AREA	                59	0x3B	
+  * The file system directory acting as a staging area for files waiting to be 
+  written to CD.
+CSIDL_COMMON_ADMINTOOLS	          47	0x2F	
+  * The file system directory containing administrative tools for all users of 
+  the computer.
+CSIDL_COMMON_ALTSTARTUP         	30	0x1E	
+  NT-based only	The file system directory that corresponds to the nonlocalized 
+  Startup program group for all users.
+CSIDL_COMMON_APPDATA	            35	0x2	
+  The file system directory containing application data for all users.
+CSIDL_COMMON_DESKTOPDIRECTORY	    25	0x19	
+  NT-based only	The file system directory that contains files and folders that 
+  appear on the desktop for all users.
+CSIDL_COMMON_DOCUMENTS	          46	0x2E	 	
+  The file system directory that contains documents that are common to all users
+CSIDL_COMMON_FAVORITES	          31	0x1F	
+  NT-based only	The file system directory that serves as a common repository for 
+  favorite items common to all users.
+CSIDL_COMMON_MUSIC	              53	0x35
+  The file system directory that serves as a repository for music files common 
+  to all users.
+CSIDL_COMMON_PICTURES	            54	0x36
+  The file system directory that serves as a repository for image files common 
+  to all users.
+CSIDL_COMMON_PROGRAMS	            23	0x17	
+  NT-based only	The file system directory that contains the directories for the 
+  common program groups that appear on the Start menu for all users.
+CSIDL_COMMON_STARTMENU	          22	0x16	
+  NT-based only	The file system directory that contains the programs and folders
+  that appear on the Start menu for all users.
+CSIDL_COMMON_STARTUP	            24	0x18	
+  NT-based only	The file system directory that contains the programs that appear 
+  in the Startup folder for all users.
+CSIDL_COMMON_TEMPLATES	          45	0x2D	
+  NT-based only	The file system directory that contains the templates that are 
+  available to all users.
+CSIDL_COMMON_VIDEO	              55	0x37
+  The file system directory that serves as a repository for video files common 
+  to all users.
+CSIDL_COMPUTERSNEARME	            61	0x3D
+  The folder representing other machines in your workgroup.
+CSIDL_CONNECTIONS	                49	0x31
+  The virtual folder representing Network Connections, containing network and 
+  dial-up connections.
+CSIDL_CONTROLS                     3	0x03	 	
+  The virtual folder containing icons for the Control Panel applications.
+CSIDL_COOKIES	                    33	0x21	 	
+  The file system directory that serves as a common repository for Internet 
+  cookies.
+CSIDL_DESKTOP	                     0	0x00	 	
+  The virtual folder representing the Windows desktop, the root of the shell 
+  namespace.
+CSIDL_DESKTOPDIRECTORY	          16	0x10	 	
+  The file system directory used to physically store file objects on the desktop
+CSIDL_DRIVES	                    17	0x11	 	
+  The virtual folder representing My Computer, containing everything on the 
+  local computer: storage devices, printers, and Control Panel. The folder may 
+  also contain mapped network drives.
+CSIDL_FAVORITES	                   6	0x06	 	
+  The file system directory that serves as a common repository for the user's
+  favorite items.
+CSIDL_FONTS                      	20	0x14	 	
+  A virtual folder containing fonts.
+CSIDL_HISTORY	                    34	0x22	 	
+  The file system directory that serves as a common repository for Internet 
+  history items.
+CSIDL_INTERNET	                   1	0x01	 
+  A viritual folder for Internet Explorer.
+CSIDL_INTERNET_CACHE	            32	0x20
+  The file system directory that serves as a common repository for temporary 
+  Internet files.
+CSIDL_LOCAL_APPDATA	              28	0x1C		
+  The file system directory that serves as a data repository for local 
+  (nonroaming) applications.
+CSIDL_MYDOCUMENTS	                 5	0x05
+  The virtual folder representing the My Documents desktop item.
+CSIDL_MYMUSIC	                    13	0x0D	
+  he file system directory that serves as a common repository for music files.
+CSIDL_MYPICTURES	                39	0x27	
+  The file system directory that serves as a common repository for image files.
+CSIDL_MYVIDEO	                    14	0x0E	
+  The file system directory that serves as a common repository for video files.
+CSIDL_NETHOOD	                    19	0x13	 	
+  A file system directory containing the link objects that may exist in the My 
+  Network Places virtual folder.
+CSIDL_NETWORK	                    18	0x12	 	
+  A virtual folder representing Network Neighborhood, the root of the network 
+  namespace hierarchy.
+CSIDL_PERSONAL	                   5	0x05	 	
+  The file system directory used to physically store a user's common repository 
+  of documents. (From shell version 6.0 onwards, CSIDL_PERSONAL is equivalent to 
+  CSIDL_MYDOCUMENTS, which is a virtual folder.)
+CSIDL_PHOTOALBUMS	                69	0x45	
+  Vista	The virtual folder used to store photo albums.
+CSIDL_PLAYLISTS	                  63	0x3F	
+  Vista	The virtual folder used to store play albums.
+CSIDL_PRINTERS	                   4	0x04	 	T
+  The virtual folder containing installed printers.
+CSIDL_PRINTHOOD	                  27	0x1B	 	
+  The file system directory that contains the link objects that can exist in the 
+  Printers virtual folder.
+CSIDL_PROFILE	                    40	0x28	5.0	
+  The user's profile folder.
+CSIDL_PROGRAM_FILES	              38	0x26	5.0	
+  The Program Files folder.
+CSIDL_PROGRAM_FILESX86	          42	0x2A	5.0	
+  The Program Files folder for 32-bit programs on 64-bit systems.
+CSIDL_PROGRAM_FILES_COMMON	      43	0x2B	5.0	
+  A folder for components that are shared across applications.
+CSIDL_PROGRAM_FILES_COMMONX86	    44	0x2C	5.0	
+  A folder for 32-bit components that are shared across applications on 64-bit 
+  systems.
+CSIDL_PROGRAMS	                   2	0x02	 	
+  The file system directory that contains the user's program groups (which are 
+  themselves file system directories).
+CSIDL_RECENT	                     8	0x08	 	
+  The file system directory that contains shortcuts to the user's most recently 
+  used documents.
+CSIDL_RESOURCES	                  56	0x38	6.0	
+  The file system directory that contains resource data.
+CSIDL_RESOURCES_LOCALIZED	        57	0x39	6.0
+  The file system directory that contains localized resource data.
+CSIDL_SAMPLE_MUSIC	              64	0x40	
+  Vista	The file system directory that contains sample music.
+CSIDL_SAMPLE_PLAYLISTS	          65	0x41	
+  Vista	The file system directory that contains sample playlists.
+CSIDL_SAMPLE_PICTURES	            66	0x42	
+  Vista	The file system directory that contains sample pictures.
+CSIDL_SAMPLE_VIDEOS	              67	0x43	
+  Vista	The file system directory that contains sample videos.
+CSIDL_SENDTO	                     9	0x09	 	
+  The file system directory that contains Send To menu items.
+CSIDL_STARTMENU	                  11	0x0B	 	
+  The file system directory containing Start menu items.
+CSIDL_STARTUP	                     7	0x07	 
+  The file system directory that corresponds to the user's Startup program group
+CSIDL_SYSTEM	                    37	0x25	
+  The Windows System folder.
+CSIDL_SYSTEMX86	                  41	0x29	
+  The Windows 32-bit System folder on 64-bit systems.
+CSIDL_TEMPLATES	                  21	0x15	 	
+  The file system directory that serves as a common repository for document 
+  templates.
+CSIDL_WINDOWS	                    36	0x24	
+  The Windows directory or SYSROOT.
   
-  # Tactic processing
-  Pause           = "Paused"
-  Unpause         = "Unpaused"
-  
-  # Title Screen
-  NewGame         = "Start a new story"
-  LoadGame        = "Continue your journey"
-  ShutDown        = "Crashing back to your OS"
-  Option          = "Option"
-  Credits         = "Credits"
-  StartGame       = "Start"
-  
-  # Connections
-  Connection      = "Connecting...Your game will have no response for few minutes, please wait..."
-  
-  # Exit Info
-  ExitConfirm     = "Do you really want to leave? Ponies will miss you..."
-  
-  None            = "<None>"  
-  Type            = "Type"
-  
-  Quest           = "Quest Journal"
-  QuestUpdated    = "Your journal has been updated: %s"
-  QuestHint       = "Use Up/Down to negative the information"
-  
-  LevelUp         = "Level Up"
-  Skilltree       = "Skill Tree"
-  Upgradeable     = "You can level-up now!"
-  
-  InitLoadingMsg  = "To ensure your best gameplay experience, please close the app that will consume your system resource, such as Flash, Youtube and other games."
-  Unavailable     = "Not available yet"
-  
-  TransferGather  = "You must gather your party before venturing forth"
-  TransferCombat  = "You can't change location during the combat"
-  
-  SaveDec         = "Save your game progess"
-  SystemDec       = "Change options or leave current game"
-  
-  CritialMiss     = "%s - critical miss"
-  CritialHit      = "%s - critical hit"
-  AttackImmune    = "%s: %s immune to my damage"
-  Ineffective     = "%s - weapon ineffective"
-  
-  MoreInfo        = "Info"
-  
-  # path to database vocabulary dictionary
-  DictPath        = "History/en_us"
-  CategoryPath = {
-    :weapon     => "/Weapons",
-    :item       => "/Items",
-    :armor      => "/Armors",
-    :skill      => "/Skills",
-    :actor      => "/Actors",
-    :class      => "/Classes",
-    :term       => "/Terms",
-    :state      => "/States",
-  }
-  
-  Offline = "Unable connect to internet, some features won't be available," +
-            " such as Gamejolt achievement." + " If you have connected, " +
-            "please re-launch the game."
-            
-  OfflineMode = "This feature is unavailable in offline mode. You cannot " +
-                "access it until connected to internet and re-launch the game"
-  #----------------------------------------------------------------------------
-  VODL      = "Vengeance of Dark Lord"
-  VODLHelp  = "Play the main story, help Equestria fight against the invasion " +
-              "of King Sombra!"
-              
-  Tutorial  = "Tutorial"
-  TutorialHelp = "Help you understand core features of the game and learn how " +
-                 "to play & use them."
-  #----------------------------------------------------------------------------
-  # * Return dictionary file of language
-  #----------------------------------------------------------------------------
-  def self.GetDictPath(category)
-    return DictPath + CategoryPath[category] + '/'
+=end
+
+#--------------------------------------------------------------------------
+# * Print error informations
+#--------------------------------------------------------------------------
+def report_exception(error)
+  scripts_name = $RGSS_SCRIPTS.collect{|script|  script[1]  }
+  backtrace = []
+
+  # Flag to find the error location in externel files
+  translate_flag = false
+  if $LoaderMethodNames
+    translate_flag = $LoaderMethodNames.any?{|method_name|
+      error.backtrace.any?{|line| line.include?(method_name)}
+    }
   end
-  #----------------------------------------------------------------------------
-end
-#==============================================================================
-# ** Vocab::SaveLoad
-#------------------------------------------------------------------------------
-#   Message in SnL load screen
-#==============================================================================
-module Vocab::SaveLoad
   
-  ACTION_LOAD   = "Load"           # Text used for loading games.
-  ACTION_SAVE   = "Save"           # Text used for saving games.
-  ACTION_DELETE = "Delete"         # Text used for deleting games.
-    
-  # These text settings adjust what displays in the help window.
-  SELECT_HELP = "Select a savefile..."
-  LOAD_HELP   = "Load saved game progress"
-  SAVE_HELP   = "Save current game progress"
-  DELETE_HELP = "Delete this savefile"
-    
-  EMPTY_TEXT = "~No Data~"      # Text used when no save data is present.
-  PLAYTIME   = "Play time"          # Text used for total playtime.
-  TOTAL_SAVE = "Times saved: "     # Text used to indicate total saves.
-  TOTAL_GOLD = "βits: "      # Text used to indicate total gold.
-  LOCATION   = "Location: "        # Text used to indicate current location.
-  
-  Slot      = "File %s"
-  ASaveSlot = "AutoSave%s"
-  QSaveSlot = "QuickSave%s"
-end
-#==============================================================================
-# ** Vocab::Equipment
-#------------------------------------------------------------------------------
-#   Vocab that related to equipments and params
-#==============================================================================
-module Vocab::Equipment
-  
-  Weapon    = "Weapon"
-  Shield    = "Shield"
-  Head      = "Head"
-  Body      = "Body"
-  Accessory = "Accessory"
-  Cloak     = "Cloak"
-  Necklace  = "Necklace"
-  Boots     = "Boots"
-  Rune      = "Rune"
-  Gem       = "Gem"
-  Ammo      = "Ammo"
-  
-  WeaponDMG = "Weapon Damage"
-  AmmoDMG   = "Ammo Damage"
-  Speed     = "Speed"
-  
-  Thac0     = "Attack Bonus"
-  AC        = "Armor Class"
-  Damage    = "Damage"
-  Range     = "Range"
-  SType     = "Skill Type"
-  Cost      = "EP Cost"
-  Cooldown  = "Cooldown"
-  Save      = "Save"
-  
-  Remove    = "<Remove Equip>"
-  Empty     = "<Empty>"
-  
-  None      = "None"
-  Type      = "Type"
-  
-  Melee     = "Melee"
-  Magic     = "Magic"
-  Ranged    = "Ranged"
-  
-  CastingTime = "Casting Time"
-  SavingThrow = "Saves"
-  
-  SavingName = {
-    :halfdmg  => "1/2",
-    :nullify  => "Neg.",
-    :none     => "None",
-    nil       => "None",
+  error.backtrace.each_with_index {|line,i|
+    if line =~ /{(.*)}(.*)/
+      backtrace << (scripts_name[$1.to_i] + $2)
+    elsif line.start_with?(':1:')
+      break
+    else
+      backtrace << (translate_flag ? translate_debug_message(line) : line)
+    end
+    translate_flag = false if $LoaderMethodNames.any?{|name| line.include?(name)}
   }
   
+  error_line = backtrace.first
+  backtrace[0] = ''
+  err_class = " (#{error.class})"
+  back_trace_txt = backtrace.join("\n\tfrom ")
+  $error_tracer_header = backtrace[0]
+  error_txt = sprintf("%s %s %s %s %s %s",error_line, ": ", error.message, err_class, back_trace_txt, "\n" )
+  print error_txt
+  return error_txt.force_encoding($default_encoding)
 end
-#==============================================================================
-# ** Vocab::System
-#------------------------------------------------------------------------------
-#   System option vocabs
-#==============================================================================
-module Vocab::System
+#--------------------------------------------------------------------------
+# * Raise errors that not occurred in Main Thread
+#--------------------------------------------------------------------------
+def flag_error(error)
+  caller.each{|i| puts i}
+  if !$error_activated
+    error_txt = report_exception(error)
+    Audio.se_play('Audio/SE/Buzzer1',80,100)
+    info = (Vocab::Errno::Exception rescue "An error occurred during the gameplay, please submit \"ErrorLog.txt\" to the developers in order to resolve the problem.\n")
+    info = info.force_encoding($default_encoding)
+    print info
+    msgbox(info)
+    filename = "ErrorLog.txt"
+    File.open(filename, 'w+') {|f| f.write(error_txt + "\n") }
+  end
   
-  Language    = "Language"
-  LanguageDec = "Change game language"
-  
-  WarCry          = "Way cry"
-  WarCryDec       = "Character voices when enter the battle and other actions"
-  Difficulty      = "Combat Difficulty"
-  DifficultyName  = ["Novice", "Normal", "Hard", "Expert"]
-  DifficultyDec   = "Change the combat difficulty, Hp/Damage multipler: Easy: 0.5x/0.8x, \n" + 
-                    "Normal: 1x/1x, Hard:1.5x/1.2x, Expert: 2x/1.5x"
-                    
-  BGM           = "BGM Volume"
-  BGMDec        = "Adjust the volume of Background music\n" + "You can drag the meter by mouse to change the value"
-  BGS           = "BGS Volume"
-  BGSDec        = "Adjust the volume of Background sound\n" + "You can drag the meter by mouse to change the value"
-  SE            = "SE Volume"
-  SEDec         = "Adjust the volume of SFX\n" + "You can drag the meter by mouse to change the value"
-  
-  ToTitle       = "Back to Title"
-  ToTitleDec    = "Leave current game and back to title screen, please don't forget to save"
-  
-  ShutDown      = "Shutdown"
-  ShutDownDec   = "Close the game, please don't forget to save"
-  
-  UnsavedInfo   = "Unsaved progress will be lost, continue?"
-  
-  Overwrite     = "Selected file will be overwritten, continue?"
-  Delete        = "Do you really wanna delete this file?"
-  
-  AutoSave          = "Auto-Save"
-  AutoSaveDec       = "Auto save file if it's allowed. Save location is at the buttom\n" +
-                      "of the files."
-  AutoSaveCombat    = "Boss fight"
-  AutoSaveCombatDec = "Auto-Save file before boss fight"
-  AutoSaveStep      = "Steps"
-  AutoSaveStepDec   = "Auto-save after you walked a certain steps, 0 = inactive"
-  
-  Restart = "Options will be applied after restart the game"
+  $error_activated = true
+  raise error.class, error.message, [$error_tracer_header]
 end
-#==============================================================================
-# ** Vocab::Errno
-#------------------------------------------------------------------------------
-#   Message displayed when an error occurred
-#==============================================================================
-CurrentLanguage = :en_us
-module Vocab::Errno
-  
-  LoadErr         = "An error occurred while loading the file, please submit %s\n to the developers"
-  SaveErr         = "An error occurred while saving the file:\n%s, please submit %s to the developers and try again later"
-  
-  Exception       = "An error occurred during the gameplay, please submit \"ErrorLog.txt\" to the developers in order to resolve the problem.\n"
-  ScriptErr       = "An error occurred while executing the event script: %s\nplease submit %s to the developers"
-  
-  GiftCodeFailed  = "Gift code verify failed: %s"
-  ProgramMissing  = "Program missing: "
-  
-  PluginInitErr   = "Failed to initialize plugins: #{}" #tag: todo
-  PluginLoadErr   = "Failed to load some plugins, please send 'PluginErr.txt' to developer to resolve this bug."
-  
-  APIErr          = "An error occurred while calling API:\n%s"
-  
-  APISymbol_Table = {
-    true               => "Success!",
-    :json_failed       => "Configuration file build failed",
-    :connection_failed => "Internet connection failed",
-    :invalid_code      => "Your code has been used or invalid",
-    :close_failed      => "Gateway close error",
-    :decrypt_failed    => "File decryption failed",
-    false              => "Hmm...IDK, please contact the developers!",
-  }
-  
-  RunTimeErr  = "  An Error has occurred during gameplay: %s %s"
-  
-  RESymbol_Table = {
-    :bits_incorrect   => "Bits amount asynchronous with Block Chain",
-    :fileid_overflow  => "Object id overflow while convert to savefile format",
-    :item_unconsumed  => "Consumable Item can't be consumed",
-    :int_overflow     => "Integer Overflow",
-    :datatype_error   => "Data Type Error:\n",
-    :nil_block        => "Block nil miner",
-    :chain_broken     => "Block Chain Error:\n",
-    :illegel_value    => "Illegel value:\n",
-    :checksum_failed  => "File CheckSum failure",
-    :file_missing     => "File missing:\n",
-    :tactic_sym_missing => "Tactic command symbol unavailable:\n",
-    :secure_hash_failed => "Security hash match failed:\n",
-    :config_error       => "Script configuration error:\n",
-    :gib_nil_handler    => "InteractiveButton nil handler called\n",
-  }
-  
-  SequenceArgError = "%s has at least %d args, received %d\n"
+#--------------------------------------------------------------------------
+# * Find the error source
+#--------------------------------------------------------------------------
+def translate_debug_message(line)
+  return line unless Plugins
+  return line unless (line =~ /:(\d+):/)
+  line_number = $1.to_i
+  info = Plugins.find_file_by_line(line_number)
+  line_number = line_number - info[4] + 1
+  return sprintf("%s:%s:%s", info[1], line_number, line.split(':').last)
 end
-#==============================================================================
-# ** Vocab::Status
-#------------------------------------------------------------------------------
-#   Message displayed when on the status menu
-#==============================================================================
-module Vocab::Status
-  
-  General         = "General"
-  Property        = "Properties"
-  Tactic          = "Tactics"
-  Leveling        = "Level up"
-  
-  Parameter       = "Parameters"
-  Experience      = "Experience"
-  Next_Lv_Total   = "Next %s Total EXP"
-  
-  StrAth    = "Athletics"
-  DexAcr    = "Acrobatics"
-  DexSle    = "Sleight of Hand"
-  DexSte    = "Stealth"
-  IntArc    = "Arcana"
-  IntHis    = "History"
-  IntInv    = "Investigation"
-  IntNat    = "Nature"
-  IntRel    = "Religion"
-  WisAni    = "Animal Handling"
-  WisIns    = "Insight"
-  WisMed    = "Medicine"
-  WisPer    = "Perception"
-  WisSur    = "Survival"
-  ChaDec    = "Deception"
-  ChaInt    = "Intimidation"
-  ChaPerf   = "Performance"
-  ChaPers   = "Persuasion"
+#--------------------------------------------------------------------------
+def sprite_valid?(sprite)
+  return sprite && !sprite.disposed? rescue false
 end
-#==============================================================================
-# ** Vocab::Party
-#------------------------------------------------------------------------------
-#   Message displayed on the Scene_Party
-#==============================================================================
-module Vocab::Party
-  Change      = "Change"
-  Remove      = "Remove"
-  Revert      = "Revert"
-  Finish      = "Finish"
-  TextEmpty   = "-No pony-"
-  TextRemove  = "-Remove-"
-  TextEquip   = "Gear"
-  
-  GoldGain    = "Party has %s βits: %s%s"
-  ItemGain    = "Party has %s an item(x%s)"
-  EXPGain     = "Party has gained xp: %d"
-  BCGain      = "Party has gained block chain reward: %s"
-  
-  Limited     = "(max amount reached)"
-  WordGain    = "gained"
-  WordLost    = "lost"
+#--------------------------------------------------------------------------
+def debug_mode?
+  return (GameManager.debug_mode? rescue true)
 end
-#==============================================================================
-# ** Vocab::Tactic
-#------------------------------------------------------------------------------
-#   Message about the tactic processes
-#==============================================================================
-module Vocab::Tactic
-  CmdMove     = "Move to"
-  CmdFollow   = "Follow"
-  CmdGuard    = "Guard"
-  CmdPatrol   = "Patrol"
-  CmdMoving   = ":Move"
-  CmdHolding  = ":Hold"
-  CmdMHing    = "Hold/Move"
-  
-  HelpMove    = "Select a location to move, or an enemy to attack."
-  HelpSel     = "Select a location"
-  
-  DecMove     = "Move to a position or attack an enemy"
-  DecMHing    = "Press to toggle between hold/moving"
-  DecReaction = "Toggle between combat reactions"
-  DecFollow   = "Follow a character"
-  DecGuard    = "Protect a character"
-  DecPatrol   = "Guard an area"
-  
-  Targeting   = 'Visible Enemies'
-  Fighting    = 'Target fighting'
-  Self        = 'Self'
-  Item        = 'Items'
-  Skill       = 'Skills'
-  General     = 'General'
-  EdCondition = 'Edit condition'
-  EdAction    = 'Edit Action'
-  Delete      = "Delete"
-  
-  Hints = [
-    "Notice: Bot tactic will only works when the party AI is enabled [press 'C'",
-    "(default) in map scene to toggle it].",
-    "You can see the detailed information of all commands available in Player's",
-    "handbook",
-    "--------------------------------------------------------------------------",
-    "You can add up to 20 commands for each character, and the command will",
-    "works if and only if both condition and action is assigned.",
-    "If the command id is \\c[18]Red\\c[0], it's an invalid command, and \\c[29]Green\\c[0] is a valid one.",
-    "You can toggle enable/disable the command by press \\c[23]CTRL\\c[0], if the command",
-    "is disabled, the id color will be \\c[15]Black.",
-    "Conditions won't be checked if the command is invalid or disabled, but \\c[10]the",
-    "\\c[10]command accessed by 'Jump to Tactic' is not affected by disabling it.",
-    "",
-    "The priority of the command is from lower to higher according to its id.",
-    "So if multiple command condition is meet, the one with higher id will be",
-    "executed first; meanwhile AI will always prefer taking the action which",
-    "could causing effects to the target(including parties) instantly.",
-    "",
-    "To change the priority(id) of the command, press \\c[23]SHIFT\\c[0] then negative it",
-    "with cursor to the position you want; once you done, press \\c[23]shift/ok\\c[0] to",
-    "exit editing.",
-    "",
-  ]
-  
-  Help     = "No idea what's this? Press F4 for help"
-  SwapHelp = "Negative the cursor to swap order"
-  
-  Name_Table  = {
-    :attack_mainhoof      => "Use main-hoof attack",
-    :attack_offhoof       => "Use off-hoof attack",
-    :add_command          => "Add a new tactic logic",
-    :target_none          => "Set target to none",
-    :hp_most_power        => "Use Hp potion: most powerful",
-    :hp_least_power       => "Use Hp potion: least powerful",
-    :ep_most_power        => "Use Ep potion: most powerful",
-    :ep_least_power       => "Use Ep potion: least powerful",
-    :set_target           => "Set to primary target",
-    :jump_to              => "Jump to tactic:",
-    :move_away            => "Move away from target",
-    :move_close           => "Move close to target",
-    :player               => "Player",
-  }
+#--------------------------------------------------------------------------
+# * Print debug info
+#--------------------------------------------------------------------------
+def debug_print(*args)
+  return unless debug_mode?
+  info = ""
+  args.each do |line|
+    info += line.to_s + ' '
+  end
+  puts "[Debug]: #{info}"
 end
-#==============================================================================
-# ** Vocab::TacticConfig
-#------------------------------------------------------------------------------
-#   Text info of tactic commands
-#==============================================================================
-module Vocab::TacticConfig
+alias debug_printf debug_print
+#--------------------------------------------------------------------------
+def setup_font
   
-  Name_Table = {
-    :lowest_hp              => "Lowest HP",
-    :highest_hp             => "Highest HP",
-    :has_state              => "Has state:",
-    :nearest_visible        => "Nearest visible",
-    :attacking_ally         => "Attacking ally:",
-    :target_of_ally         => "Target of ally:",
-    :rank                   => "Rank:",
-    
-    :any                    => "Any",
-    :clustered              => "Clustered:",
-    :hp_lower               => "Hp lower than:",
-    :hp_higher              => "Hp higher than:",
-    :target_range           => "At range:",
-    :target_atk_type        => "Attack type:",
-    
-    :ep_lower               => "EP lower than:",
-    :being_attacked_by_type => "Hurt by attack type:",
-    
-    :enemies_alive          => "X Enemies alive:",
-    :allies_alive           => "X Team member alive:",
-    :allies_dead            => "X Team member K.O.:",
-    :surrounded_by_enemies  => "Surrounded by X enemies:",
-    :using_attack_type      => "Main-hoof attack type:",
-    
-    :attack_mainhoof        => "Main-hoof attack",
-    :attack_offhoof         => "Off-hoof attack",
-    :target_none            => "Set target to none",
-    :hp_most_power          => "Use hp potion: most powerful",
-    :hp_least_power         => "Use hp potion: least powerful",
-    :ep_most_power          => "Use ep potion: most powerful",
-    :ep_least_power         => "Use ep potion: least powerful",
-    
-    :set_target             => "Set to primary target",
-    :jump_to                => "Jump to tactic:",
-    :move_away            => "Move away from target",
-    :move_close           => "Move close to target",
-    
-    :enemies      => "Enemies:",
-    :targeting    => "Enemies:",
-    :target       => "Target:",
-    :fighting     => "Target:",
-    :self         => "Self:",
-    :new_command  => "<Add New Tactic>",
-    
-    :short      => "Short",
-    :medium     => "Medium",
-    :long       => "Long",
-    
-    :critter    => "Critter",
-    :minion     => "Minion",
-    :elite      => "Elite",
-    :captain    => "Captain",
-    :chief      => "Chief",
-    
-    :melee      => "Melee",
-    :ranged     => "Ranged",
-    :magic      => "Magic/Casting",
-    
-    :player => "Player"
-  }
-  
-  InputHelp = {
-    :attacking_ally => "Select a team member",
-    :target_of_ally => "Select a team member",
-    :has_state    => "Select a state",
-    :rank         => "Select a rank",
-    :hp_lower     => "Please enter the percentage, press Enter ot finish, ESC to abort",
-    :hp_higher    => "Please enter the percentage, press Enter ot finish, ESC to abort",
-    :ep_lower     => "Please enter the percentage, press Enter ot finish, ESC to abort",
-    :target_range => "Select a scale",
-    :target_atk_type  => "Select a type",
-    :being_attacked_by_type => "Select a type",
-    :using_attack_type      => "Select a type",
-    :clustered              => "Enter a number, operator is greater or equal",
-    :enemies_alive          => "Enter a number, operator is greater or equal",
-    :allies_alive           => "Enter a number, operator is greater or equal",
-    :allies_dead            => "Enter a number, operator is greater or equal",
-    :surrounded_by_enemies  => "Enter a number, operator is greater or equal",
-    :jump_to                => "Select the id of the command..."
-  }
-  
-  ArgDec_Table = {
-    :has_state    => "%s",
-    :rank         => "%s",
-    :hp_lower     => "%d\%",
-    :hp_higher    => "%d\%",
-    :ep_lower     => "%d\%",
-    :target_range => "at %s range",
-    :target_atk_type  => "%s",
-    :being_attacked_by_type => "%s",
-    :using_attack_type      => "%s",
-    :clustered              => "%d or more",
-    :enemies_alive          => ">= %d",
-    :allies_alive           => ">= %d",
-    :allies_dead            => ">= %d",
-    :surrounded_by_enemies  => ">= %d",
-    :short      => "Short",
-    :medium     => "Medium",
-    :long       => "Long",
-    :player     => "Player",
-  }
+  if CurrentLanguage == :zh_tw
+    Font.default_name = "NotoSansCJKtc-Regular"
+  else
+    Font.default_name = "Celestia Medium Redux"
+  end
+  puts "[Debug]: Setup Font #{Font.default_name}"
+  Font.default_size = 24
   
 end
-#==============================================================================
-# ** Vocab::Skillbar
-#------------------------------------------------------------------------------
-#   Text info in skillbar
-#==============================================================================
-module Vocab::Skillbar
-  
-  Follower    = "Toggle on/off Follower AI"
-  AllSkill    = "All Skills"
-  Vancian     = "Vancian"
-  AllItem     = "All Items"
-  PrevPage    = "Previous page"
-  NextPage    = "Next page"
-  Cancel      = "Cancel"
-  None        = "<Empty>"
-  
-  Use         = "Use"
-  Hotkey      = "Hotkey"
-  Info        = "Info"
-  MouseEdit   = "Now you can edit your hotkeys with mouse"
-  
-  SelHelp     = "Please press the hotkey(0~9) or mouse left-clicking on the slot"
-  SelSucc     = "You have assigned %s on hotkey '%s'"
+#--------------------------------------------------------------------------
+# * Alias: load_data
+#--------------------------------------------------------------------------
+alias load_data_pony load_data
+def load_data(filename)
+  SceneManager.update_loading
+  load_data_pony(filename)
 end
-#==============================================================================
-# ** Vocab::Debug
-#------------------------------------------------------------------------------
-#   Texts for Debug window
-#==============================================================================
-module Vocab::Debug
-  
-  Hint    = "Press Q/E(Pageup/Pagedown) to change category"
-  
-  Switch   = "This is list of available switches\n" + Hint
-  Variable = "This is list of available variables\n" + Hint
-  Sprite   = "This is list of undisposed bitmaps from last scene\n" + Hint
-  
-  SwitchHelp   = "C (Enter) : ON / OFF"
-  VariableHelp = "← (Left)    :  -1\n"  + "→ (Right)   :  +1\n" +
-                 "L (Pageup)   : -10\n" + "R (Pagedown) : +10"
-                 
-  SpriteHelp   = "Using WASD/↑←↓→ to negative the graph"
-  
+#--------------------------------------------------------------------------
+alias puts_debug puts
+def puts(*args)
+  return unless debug_mode?
+  args[0] = "<#{Time.now}> " + args[0] if args[0] =~ /\[(.*)\]/i
+  begin
+    puts_debug(*args)
+  rescue Encoding::UndefinedConversionError
+    args.each{|ar| ar = ar.to_s.force_encoding($default_encoding)}
+    puts_debug(*args)
+  end
 end
-#==============================================================================
-# ** Vocab::Leveling
-#------------------------------------------------------------------------------
-#   Text info about level up
-#==============================================================================
-module Vocab::Leveling
-  
-  Helps = {
-    :level_up   => "Level up!",
-    :unique     => "Unique skills of this character",
-    :race       => "Race skills",
-    :class      => "Class skills",
-    :dualclass  => "Dual-class skills",
-    :skilltree  => "Open the skill tree and manage available skills",
-    :level_up_main => "Advance your main class to next level",
-    :level_up_dual => "Advance your dual-class to next level",
-    :set_dualclass => "Start a dual-class",
-  }
-  
-  DualClass  = "Dual-Class"
-  SelectFeat = "New class feature available!"
-  Confirm_Dualclass  = "Are you sure about becoming a %s?"
-  Confirm_LearnSkill = "Do you really want to learn %s?"
+#--------------------------------------------------------------------------
+# * Overwrite the exit method to program-friendly
+#--------------------------------------------------------------------------
+def exit(stat = true)
+  $exited = true
+  SceneManager.scene.fadeout_all rescue nil
+  Cache.release
+  SceneManager.exit
 end
-#==============================================================================
-# ** Vocab::BlockChain
-#------------------------------------------------------------------------------
-#   Texts about block chain stuff
-#==============================================================================
-module Vocab::BlockChain
-  Info = {
-    :split_line => "-----------------------------",
-    :transinfo  => "\\c[1]Info:\\c[0] %s",
-    :payment    => "Payment is from \\c[1]%s \\c[0]to\\c[1] %s",
-    :currency   => "%s amount:\\c[6] %d",
-    :goods      => "Item: %s x%d",
-    :nogoods    => "No item was traded",
-  }
-  DropLoot = "Received via dropped loot"
-  LargeHistory = "You're going to view a large transaction history." +
-                 " This will take a while to display all item. Continue anyway?"
+#--------------------------------------------------------------------------
+def sec_to_frame(t)
+  return (t * Graphics.frame_rate).to_i
 end
-#==============================================================================
-# ** Vocab::Rescue
-#------------------------------------------------------------------------------
-#   Text info of the rescues
-#==============================================================================
-module Vocab::Rescue
-  Luna    = "\\af[9]\\n<Luna>Thou shall glad I followed you.."
-end
+#--------------------------------------------------------------------------
 
 #===============================================================================
 # Module Math
@@ -2215,6 +1676,294 @@ module PONY
   #-----------------------------------------------------------------------------
 end
 
+#==============================================================================
+# ** FileManager
+#------------------------------------------------------------------------------
+#  This module is using to change the configs in Game.ini, e.g. sound volume or
+#  other settings.
+#==============================================================================
+module FileManager
+  #---------------------------------------------------------------------------
+  PaddingWidth  = 6
+  DebugFilePath = "Data/Debug/"
+  #---------------------------------------------------------------------------
+  module_function
+  #---------------------------------------------------------------------------
+  # *) Ensure the file or dictionary
+  #---------------------------------------------------------------------------
+  def ensure_file_exist(filename)
+    Dir.mkdir(filename) unless File.exist?(filename)
+  end
+  #--------------------------------------------------------------------------
+  # * Text wrap for window contents
+  #--------------------------------------------------------------------------
+  def textwrap(full_text, line_width, sample_bitmap = nil)
+    return [] if full_text.nil?
+    
+
+    if sample_bitmap.nil?
+      using_sample = true
+      sample_bitmap = Bitmap.new(1,1)
+    else
+      using_sample  = false
+    end
+    raise TypeError unless full_text.is_a?(String)
+    full_text   = full_text.dup.force_encoding($default_encoding)
+    
+    wraped_text = []
+    cur_width   = PaddingWidth
+    line        = ""
+    bk_full     = '　'.force_encoding($default_encoding)
+    bk_half     = ' '.force_encoding($default_encoding)
+    strings     = full_text.gsub(bk_full, bk_half).split(/[\r\n ]+/i)
+    strs_n      = strings.size
+    space_width = sample_bitmap.text_size(' ').width
+    minus_width = sample_bitmap.text_size('-').width
+    
+    # while any string segment unprocessed
+    while (str = strings.first)
+      next if str.length == 0
+      width = sample_bitmap.text_size(str).width
+      endl  = false
+      # if the segment width larger than display width
+      if width + PaddingWidth >= line_width
+        line      = ""
+        cur_width = minus_width
+        strlen    = str.length
+        processed = false
+        last_i    = 0
+        # process each character on by one
+        for i in 0...strlen
+          width = sample_bitmap.text_size(str[i]).width
+          last_i = i
+          # unable to display character
+          if !processed && cur_width + width >= line_width
+            sample_bitmap.dispose if using_sample
+            return [full_text]
+          elsif cur_width + width < line_width
+            cur_width += width
+            line += str[i]
+            processed = true
+          else
+            break
+          end
+        end
+        # continue symbol character
+        line += '-'
+        # replace with left unprocessed string
+        strings[0] = str[last_i...strlen]
+        endl = true
+      # + segment width smaller than line width, continue
+      elsif cur_width + width < line_width
+        cur_width += width + space_width
+        line += strings.shift + ' '
+        endl = true if strings.size == 0
+      # + segment width over the line width, process end of line
+      else
+        endl = true
+      end
+      
+      if endl
+        wraped_text.push(line)
+        line = ""
+        cur_width = PaddingWidth
+      end
+    end
+    sample_bitmap.dispose if using_sample
+    return wraped_text
+  end
+  #--------------------------------------------------------------------------
+  # * Load Game.ini index
+  #--------------------------------------------------------------------------
+  def load_ini(group, target, path = ".//Game.ini")
+    buffer = '\0' * 256
+    PONY::API::GetPPString.call(group, target, '', buffer, 256, path)
+    return buffer.strip
+  end
+  #--------------------------------------------------------------------------
+  # * Modify Game.ini index
+  #--------------------------------------------------------------------------
+  def write_ini(group, target, goal, path = ".//Game.ini")
+    PONY::API::WritePPString.call(group, target, goal, path)
+  end # def change ini
+  #--------------------------------------------------------------------------
+  # * Replace
+  #--------------------------------------------------------------------------
+  def convert_eval_string(str)
+    return if str.nil?
+    cache = ""
+    detect_flag = false
+    true_str = ""
+    
+    for i in 0...str.length
+      if str[i] == '%' && str[i+1] == '{'
+        detect_flag = true
+        next
+      end
+      
+      if detect_flag
+        if str[i] == '}'
+          cache[0] = ''
+          puts "#{cache}"
+          true_str += eval(cache).to_s rescue "%{CONVERSION ERROR}"
+          cache = ""; detect_flag = false;
+        elsif str[i]
+          cache += str[i]
+        end
+      else # if not detecting eval code
+        true_str += str[i]
+      end # if detect flag on
+    end # for i in str
+    
+    return true_str
+  end # def convert
+  #--------------------------------------------------------------------------
+  def export_all_map_dialog
+    path = "Data/Map*.rvdata2"
+    files = Dir.glob(path)
+    files.each do |filename|
+     export_map_dialog(filename)
+    end
+  end
+  #--------------------------------------------------------------------------
+  def export_map_dialog(map_sym)
+    map_sym =~ /(?:Map)[ ]\d+/i
+    if map_sym.is_a?(Numeric)
+      map_id = map_sym.to_fileid(3) 
+    else
+      map_id = map_sym.split("Map")[1].split('.').first
+    end
+    path = "Data/Dialog/"
+    Dir.mkdir(path) unless File.exist?(path)
+    path     += map_id
+    Dir.mkdir(path) unless File.exist?(path)
+    filename = path + "/dialog.txt"
+    map  = load_data(sprintf("Data/Map%03d.rvdata2", map_sym)) if map_sym.is_a?(Numeric)
+    map  = load_data(map_sym) if map_sym.is_a?(String)
+    return unless map.is_a?(RPG::Map)
+    output = ""
+    map.events.each_value do |event|
+      output += sprintf("[%03d] %s\n", event.id, event.name)
+      event.pages.each do |page|
+        listsize = page.list.size
+        index = 0
+        while index < listsize
+          outputed = false
+          if page.list[index].code == 101 || page.list[index].code == 105
+            while page.list[index+1].code == 101 && Variable.message_rows > 4 || page.list[index+1].code == 401
+              index += 1
+              output += page.list[index].parameters[0].to_s + 10.chr
+              outputed = true
+            end
+          end # if page will show text
+          index += 1
+          output += SPLIT_LINE + 10.chr if outputed
+        end # commands in list
+      end # pages in event
+    end # events in map
+    File.open(filename, 'w') do |file|
+        file.write(output)
+    end
+  end
+  #--------------------------------------------------------------------------
+  def continue_message_string?
+    return true if next_event_code == 101 && Variable.message_rows > 4
+    return next_event_code == 401
+  end
+  #--------------------------------------------------------------------------
+  def build_debug_file(filename, stat, &block)
+    path = "Data/Debug"; ensure_file_exist(path); path += "/" + filename;
+    File.open(path, stat) do |file|
+      yield file if block_given?
+    end
+  end
+  #--------------------------------------------------------------------------
+  def compress_source(file)
+    script = []
+    script[0] = (file.hash + script.hash).abs
+    script[1] = file.split(/[\/\\]+/).last
+    script[3] = load_data(file)
+    script[2] = Zlib::Deflate.deflate(script[3])
+    return script
+  end
+  #---------------------------------------------------------------------------
+  def export_debug_file(filename, index)
+    mkdir(DebugFilePath) unless File.exist?(DebugFilePath)
+    path = DebugFilePath + filename
+    File.open(path, 'w') do |file|
+      file.write(index)
+    end
+    return path
+  end
+  #---------------------------------------------------------------------------
+end
+
+#===============================================================================
+# * GameManager
+#===============================================================================
+module GameManager
+  #----------------------------------------------------------------------------
+  @debug_mode       = false
+  @show_roll_result = false
+  @skip_loading     = false
+  @focus            = true
+  @hwnd             = nil
+  #----------------------------------------------------------------------------
+  module_function
+  def initialize
+    self.load_ini
+    @hwnd = PONY::API::Hwnd
+  end
+  #----------------------------------------------------------------------------
+  def load_ini
+    group = "Option"
+    @show_roll_result = FileManager.load_ini(group, 'ShowRollResult').to_i.to_bool
+    @debug_mode       = FileManager.load_ini(group, 'DebugMode').to_i.to_bool
+    @skip_loading     = FileManager.load_ini(group, 'SkipLoading').to_i.to_bool
+    puts "Ini loaded"
+    puts "#{@debug_mode} #{@skip_loading}"
+  end
+  #----------------------------------------------------------------------------
+  def load_volume
+    Sound.set_volume(100,100,100)
+    begin
+      volume = FileManager.load_ini('Option', 'Volume')
+      volume = volume.split(/[\[\]]/).at(1)
+      volume = volume.split(',').collect{|i| i.to_i}
+    rescue Exception => e
+      volume = [100, 100, 100]
+    end
+    volume = [100, 100, 100] if !volume
+    Sound.set_volume(*volume)
+    puts("Volume:", Sound.volume)
+  end
+  #----------------------------------------------------------------------------
+  def get_language_setting
+    raw = FileManager.load_ini('Option', 'Language').purify.downcase.to_sym
+    puts "Language Changed: #{raw}"
+    return $supported_languages.keys.include?(raw) ? raw : :en_us
+  end
+  #--------------------------------------------------------------------------
+  def update_focus
+    chwnd  = PONY::API::GetFocus.call(0)
+    @focus = chwnd == @hwnd || ($input_hwnd && $input_hwnd == chwnd)
+  end
+  #----------------------------------------------------------------------------
+  def skip_loading?
+    return @skip_loading || ($game_system && ($game_system.game_mode == :credits))
+  end
+  #----------------------------------------------------------------------------
+  # * Getter query functions
+  #----------------------------------------------------------------------------
+  def show_roll_result?; @show_roll_result; end
+  def focused?; @focus; end
+  def debug_mode?; @debug_mode; end
+  #----------------------------------------------------------------------------
+end
+
+GameManager.initialize
+CurrentLanguage = GameManager.get_language_setting
+puts "Language: #{CurrentLanguage}"
 #===============================================================================
 # Mouse System
 # By Jet10985(Jet)
@@ -3954,6 +3703,1866 @@ module_function :u2s
 end
 
 #==============================================================================
+# ** PONY::CHAIN
+#------------------------------------------------------------------------------
+#  Pone's block chain setting
+#==============================================================================
+module PONY::CHAIN
+  
+  # Total Bits available for transaction
+  TotalBalance = 10 ** 9
+  
+  # Total Chromastal available for transaction
+  TotalChromastal = 0xffff
+  
+  # Transaction fee
+  Transaction_Fee = 0.00042
+  
+  # Unnamed transaction source
+  CoinBase = 0xc4f10a20486103dd74203a315edf9200
+  # Mining Difficulty
+  Difficulty = 0x64
+  
+  #--------------------------------------------------------------------------
+  # * Nodes process block mining and player local bits flows
+  #--------------------------------------------------------------------------
+  Nodes = [
+    "Equestria", # 0
+      "Player",  # 1
+      "Ponyvile",
+      "Canterlot",
+      "Cloudsdale",
+      "Manehattan", # 5
+      "Appleloosa",
+      "Dodge_Junction",
+      "Filly_Delphia",
+      "Las_Pegasus",
+      "Baltimare",  # 10
+      "Starlights_Village",
+      "Yanhooyer",
+      "Rock_Farm", # 13
+    #---------------------------
+    "Crystal_Mountains", # 14
+      "Crystal_Empire",
+      "Yakyakistan",
+    #---------------------------
+    "HeartLands", # 17
+      "Smoky_Mountains",
+    #---------------------------
+    "BadLands", # 19
+      "UnderTribe",
+    #---------------------------
+    "Forbidden_Jungle", # 21
+    #---------------------------
+    "EastLands", # 22
+      "Griffon_Stone",
+      "Dragon_Land",
+    #---------------------------
+    "SouthEquestria", # 25
+      "Saddle_Arbia",
+      "Zefribia",
+  ]
+  #--------------------------------------------------------------------------#
+  # * Each node's initial Bits in new game                                   #
+  #--------------------------------------------------------------------------#
+  #                   *  Magic Numbers  *                                    #
+  Dispute_Weight = {
+    0xc4f10a20486103dd74203a315edf9200 => 0.150, # Equestria
+    0x636da1d35e805b00eae0fcd8333f9234 => 0    , # Player
+    0xd8ce07f3e67ffde6d6260e426a51a70b => 0.050, # Ponyvile
+    0x518f65c35638945cb6b2e3855b7c8f20 => 0.060, # Canterlot
+    0x5ea8847659eedf0104b9b74cb26533df => 0.040, # Cloudsdale
+    0x1e44e014507e1db404ebc32871d6d5ca => 0.060, # Manehattan
+    0xa2ececaab1570fdc9dda6761b9fd4ccb => 0.008, # Appleloosa
+    0x4588cc55c932638be854e8f503c9c088 => 0.005, # Dodge_Junction
+    0x9cc4410a5715561f6eb559b9e2feadcf => 0.015, # Filly_Delphia
+    0x42d7683217d076f0317d37e30f0796dd => 0.020, # Las_Pegasus
+    0xf69d7bf4390d5f32d4e74ae56d72973d => 0.048, # Baltimare
+    0x7ddcb5482c9ec7c003b35ee26053541c => 0.001, # Starlights_Village
+    0x7c5cab193bf23cfb5932ab9b2e786a81 => 0.012, # Yanhooyer
+    0xf066193a1b22cb02186da10f8ff2f745 => 0.003, # Rock_Farm
+    0xa6ba93608028cb3d87c7c545a7beea37 => 0.060, # Crystal Mountains
+    0x8efec93859f44adb1ee2f486710ba609 => 0.045, # Crystal Empire
+    0x4483ac41f5856b3c63187901af52d593 => 0.012, # Yakyakistan
+    0xe5bbc032695e96ea1d95163db1b9b1a7 => 0.065, # Heartlands
+    0xf832346e5964994e4e0b6048c4af5569 => 0.008, # Smoky Mounatins
+    0xf593ae588dfb9596a61f3431e4ae9475 => 0.010, # Badlands
+    0x7a8f93689d916c5ee846d1fc1cd9e2a7 => 0.006, # Undertribe
+    0xa59cd0371e35dde9ef61707d846e6414 => 0.004, # Forbidden Jungle
+    0xb1237f571e8ea9bbe802e69d20087c45 => 0.060, # Eastlands
+    0x560e56027d39ab11b5650c2f3bc46cbb => 0.060, # Griffon Stone
+    0xb54b9f45b857c9bc910466a6f6e0e94f => 0.080, # Dragon Lands
+    0xecc531adf9d75553a46be49dfee3cc2d => 0.008, # South Equestria
+    0xb4c38b478dee769f5978662d7ca409ad => 0.095, # Saddle Arbia
+    0x07c651182bf62dd18653ccf2f103d710 => 0.015, # Zefribia
+  }
+  #--------------------------------------------------------------------------
+  # * Verify all nodes balance if equal to totalbalance
+  #--------------------------------------------------------------------------
+  def self.verify_totalbalance
+    return true if BlockChain.node_empty?
+    return true if SceneManager.scene_is?(Scene_Map)
+    sum = BlockChain.account_balance
+    result = (sum == TotalBalance)
+    PONY::ERRNO.raise(:bits_incorrect, :exit, nil) unless result
+    return result
+  end
+  #--------------------------------------------------------------------------
+  # * Collect BC data
+  #--------------------------------------------------------------------------
+  def self.collect_data
+  end
+  
+end
+
+#==============================================================================
+# ** PONY::Formula
+#------------------------------------------------------------------------------
+#  Projectile movement definitions
+#==============================================================================
+# tag: formula
+module PONY::Formula
+  # empty, so far
+end
+
+#===============================================================================
+# * PONY::Hud
+#-------------------------------------------------------------------------------
+#   Hud settings
+#===============================================================================
+module PONY::Hud
+  
+  LayoutFilename     = "Hud_Outline"
+  LeadLayoutFilename = "Hud_Outline_Lead"
+  FaceFilename       = "HudFace_"
+  
+  HudSize	          = [170, 64]
+  ContentBitmapSize = [200, 70]
+  
+  HPBarRect   = Rect.new(59, 25, 100, 4)
+  
+  EPBarRect   = Rect.new(61, 34, 92, 4)
+  
+  FaceHudRect = Rect.new(0, 0, 62, 62)
+  FaceSrcRect = Rect.new(0, 0, 68, 68)
+  
+  NameRect    = Rect.new(58, 4, 102, 18)
+  
+  StatRect    = Rect.new(60, 40, 200, 24)
+  
+  FaceTimer   = 60
+  FaceIdle    = 0
+  FaceCombat  = 1
+  FaceAttack  = 2
+  FaceInjured = 3
+  FaceDying   = 4
+  FaceKO      = 5
+  
+end
+
+#==============================================================================
+# ** PONY::SpriteDepth
+#------------------------------------------------------------------------------
+#  Handles sprites depth (z) values
+#==============================================================================
+module PONY::SpriteDepth
+  #--------------------------------------------------------------------------
+  # * Return depth by layer id
+  #--------------------------------------------------------------------------
+  def self.layers(id)
+    return 50 * (id + 1)
+  end
+  #--------------------------------------------------------------------------
+  # * Pre-definied depth table
+  #--------------------------------------------------------------------------
+  Table = {
+    :viewport       =>            self.layers(2),
+    :viewport2      =>            self.layers(0),
+    :viewport3      =>            self.layers(1),
+    :character      =>                       200,
+    :super          =>                      5000,
+    :mouse          =>                     10000,
+    :foreground_ov  =>                     99999,
+    :overlays       =>                      1000,
+    :huds           =>            self.layers(5),
+    :input          =>                       500,
+    :ballon         =>                       200,
+    :animation      =>                       300,
+    :parallax       =>                      -100,
+    :shadow         =>                       180,
+    :tile           =>                         1,
+    :override       =>                       400,
+    :win_info       =>                       800,
+    :foreground     =>                      2000,
+    :win_debug      =>                       999,
+  }
+  #--------------------------------------------------------------------------
+end
+
+#==============================================================================
+# ** Vocab::Dungeons and Dragons
+#------------------------------------------------------------------------------
+#  The collection of words that belong to D&D terms
+#==============================================================================
+# tag: translate
+module Vocab::DND
+  
+  PARAM_NAME = [
+    "None",
+    "None",
+    "Str",
+    "Con",
+    "Int",
+    "Wis",
+    "Dex",
+    "Cha",
+  ]
+  
+  WEAPON_TYPE_NAME = [
+    "",
+    "Hoof Axe",
+    "Horseshoe",
+    "Polearm",
+    "1H Sword",
+    "2H Sword",
+    "Bow",
+    "Crossbow",
+    "Hammer",
+    "Mace",
+    "Firearm",
+    "Arrow",
+    "Bolt",
+    "Bullet",
+    "Mage Staff"
+  ]
+  
+  ARMOR_TYPE_NAME = [
+  "",
+  "Light Armor",
+  "Medium Armor",
+  "Heavy Armor",
+  "Clothing",
+  "Shield",
+  "Great Shield",
+  "Hooves",
+  "Belt",
+  "Necklace",
+  "Cloak",
+  "Ring",
+  "Greave",
+  "Rune",
+  "Gem",
+  ]
+  
+  SKILL_TYPE_NAME = [
+  "",
+  "Skill",
+  "Spell",
+  "Vancian",
+  "Passive",
+  ]
+  
+  ELEMENT_NAME = [
+    "",
+    "Bludgeoning",
+    "Piercing",
+    "Slashing",
+    "Acid",
+    "Cold",
+    "Fire",
+    "Force",
+    "Lightning",
+    "Necrotic",
+    "Poison",
+    "Psychic",
+    "Radiant",
+    "Thunder",
+  ]
+  
+  RankName = {
+    :critter  => "Critter",
+    :minion   => "Minion",
+    :elite    => "Elite",
+    :captain  => "Captain",
+    :chief    => "Chief",
+  }
+  
+end
+
+#==============================================================================
+# ** Vocab
+#------------------------------------------------------------------------------
+#  This module defines terms and messages. It defines some data as constant
+# variables. Terms in the database are obtained from $data_system.
+#==============================================================================
+module Vocab::YEA
+  ICON_HASH = {
+    # Matching Text   => Icon ID,
+      "New story"            => 125,    # Title scene.
+      "Continue story"       => 126,    # Title scene.
+      "Leave"                => 127,    # Title scene. Game End scene.
+      
+      "Battle"        => 386,     # Battle scene.
+      "Gallop"        => 328,     # Battle scene.
+      "Strike"        => 116,     # Battle scene.
+      "Guard"         => 506,     # Battle scene.
+      "Relic"         => 9299,
+      "Relics"        => 9299,
+      "Skill"         => 8175,    # Skill scene. Battle scene.
+      "Skills"        => 8175,
+      "Ability"       => 106,     # Skill scene. Battle scene.
+      "Spells"        => 106,     # Skill scene. Battle scene.
+      "Passive"       => 3193,
+      "Friendship"    => 8056,
+      "Learn Skills"  => 2437,
+      "Songs"         => 6470,
+      "Pet"           => 3316,
+      "Talent"        => 10662,
+      "Bio"           => 233,
+      "Brew"          => 3814,
+      "Science"       => 8249,
+      "Summon"        => 3761,
+      "Parameters"    => 228,
+      "Quest"         => 1334,
+      "Overview"      => 1354,
+      "Saddlebag"     => 1528,     # Menu scene. Item scene. Battle scene.
+      "Items"         => 1528,     # Menu scene. Item scene. Battle scene.
+      "Talk"          => 4,
+      "Actions"       => 143,
+      "Cook"          => 2580,
+      "Crafting"       => 125,
+      "Skills"        => 104,      # Menu scene.
+      "Log"           => 2441,
+      "Books"         => 2384,
+      "History"       => 2435,
+      "Execute"       => 125,
+      "Run"           => 172,
+      "Gear"          => 524,      # Menu scene.
+      "Stats"         => 1204,     # Menu scene.
+      "Party"         =>  11,      # Menu scene.
+      "Special"       => 775,
+      "Save"          => 10675,      # Menu scene.
+      "Load"          => 10674,
+      "Delete"        => 10676,
+      "System"        => 2144,
+      "End"           => 1020,      # Menu scene.
+      "Craft"         => 2059,  
+      "Weapons"       => 386,      # Item scene.
+      "Armors"        => 436,      # Item scene.
+      "Key Items"     => 243,      # Item scene.
+      "Special Items" => 243,      # Item scene.
+      "Special Item"  => 243,      # Item scene.
+      "To Title"      => 224,      # Game End scene.
+      "Cancel"        => 119,      # Game End scene.
+      "Spellbook"     => 4052,
+      "Vancian"       => 10044,
+      "Vancians"      => 10044,
+      "Vancian Spell" => 10044,
+      "Encyclopedia"  => 3734,
+      "Codex"         => 2399, 
+      "Bestiary"      => 3343,
+      "Music Room"    => 118,
+      "Talent Tree"   => 117,
+      "Equip"         => 3786,
+      "Add Point"     => 6476,
+      "Special stuff" => 1646,
+      "Buy"           => 555,
+      "Sell"          => 554,
+      "Properties"    => 2375,
+      "General"       => 556,
+      "Healings"      => 3958,
+      "Ingredient"    => 200,
+      "All"            => 1140,
+      "Hidden Weapons" => 159,
+      "Music Sheet"    => 118,
+      "Book"           => 2384,
+      "Scroll"         => 3733,
+      "Save/Load"      => 2431,
+      "Dismantle"      => 8175,
+      "Gamejolt"       => 570,
+      "Life Skills"    => 8075,
+      "Equip Skill"    => 117,
+      "Level Up"       => 8182,
+      "Move to"        => 572,
+      "Follow"         => 1117,
+      "Patrol"         => 1114,
+      "Hold/Move"      => 9301,
+      ":Hold"          => 9301,
+      ":Move"          => 2255,
+      ":No Attack"     => 1141,
+      ":Passive"       => 13,
+      ":Stand Ground"  => 7346,
+      ":Defensive"     => 139,
+      ":Aggressive"    => 131,
+      ":Striking"      => 116,
+      "Tactics"        => 2103,
+      "Protect"        => 506,
+      "Skill Tree"     => 108,
+    }
+    #--------------------------------------------------------------------------
+  end
+  
+#==============================================================================
+# ** Vocab::YEA::Item
+#==============================================================================
+module Vocab
+  module YEA::ITEM
+    #--------------------------------------------------------------------------
+    ITEM_TYPES = {
+      :all          => "All",
+      :healings     => "Healings",
+      :book         => "Book",
+      :scroll       => "Scroll",
+      :hdweapons    => "Hidden Weapons",
+      :special      => "Special",
+      :ingredient   => "Ingredient",
+      :music_sheet  => "Music Sheet",
+      :misc         => "Misc",
+    }
+    #--------------------------------------------------------------------------
+    WEAPON_TYPES = {
+      :all      => "All",
+    }
+    #--------------------------------------------------------------------------  
+    ARMOUR_TYPES = {
+      :all      => "All",
+    }
+    #--------------------------------------------------------------------------
+    VOCAB_STATUS = {
+      :empty      => "---",          # Text used when nothing is shown.
+      :hp_recover => "HP Heal",      # Text used for HP Recovery.
+      :mp_recover => "MP Heal",      # Text used for MP Recovery.
+      :tp_recover => "TP Heal",      # Text used for TP Recovery.
+      :tp_gain    => "TP Gain",      # Text used for TP Gain.
+      :applies    => "Applies",      # Text used for applied states and buffs.
+      :removes    => "Removes",      # Text used for removed states and buffs.
+    } # Do not remove this.
+    #--------------------------------------------------------------------------
+  end
+end
+
+#==============================================================================
+# ** Vocab
+#------------------------------------------------------------------------------
+#  This module defines terms and messages. It defines some data as constant
+# variables. Terms in the database are obtained from $data_system.
+#==============================================================================
+# tag: translate
+CurrentLanguage = :en_us unless defined?(CurrentLanguage)
+
+module Vocab
+  
+  # BlockChain Node Name
+  Player         = "Player"
+  Coinbase       = "Equestria"
+  
+  # Tactic processing
+  Pause           = "Paused"
+  Unpause         = "Unpaused"
+  
+  # Title Screen
+  Continue        = "Continue the lastest saved game"
+  NewGame         = "Start a new story"
+  LoadGame        = "Continue your journey"
+  ShutDown        = "Crashing back to your OS"
+  Option          = "Option"
+  Credits         = "Credits"
+  StartGame       = "Start"
+  
+  # Connections
+  Connection      = "Connecting...Your game will have no response for few minutes, please wait..."
+  
+  # Exit Info
+  ExitConfirm     = "Do you really want to leave? Ponies will miss you..."
+  
+  None            = "<None>"  
+  Type            = "Type"
+  
+  Quest           = "Quest Journal"
+  QuestUpdated    = "Your journal has been updated: %s"
+  QuestHint       = "Use Up/Down to negative the information"
+  
+  LevelUp         = "Level Up"
+  Skilltree       = "Skill Tree"
+  Upgradeable     = "You can level-up now!"
+  
+  InitLoadingMsg  = "To ensure your best gameplay experience, please close the app that will consume your system resource, such as Flash, Youtube and other games."
+  Unavailable     = "Not available yet"
+  
+  TransferGather  = "You must gather your party before venturing forth"
+  TransferCombat  = "You can't change location during the combat"
+  
+  SaveDec         = "Save your game progess"
+  SystemDec       = "Change options or leave current game"
+  
+  CritialMiss     = "%s - critical miss"
+  CritialHit      = "%s - critical hit"
+  AttackImmune    = "%s: %s immune to my damage"
+  Ineffective     = "%s - weapon ineffective"
+  
+  MoreInfo        = "Info"
+  
+  # path to database vocabulary dictionary
+  DictPath        = "History/en_us"
+  CategoryPath = {
+    :weapon     => "/Weapons",
+    :item       => "/Items",
+    :armor      => "/Armors",
+    :skill      => "/Skills",
+    :actor      => "/Actors",
+    :class      => "/Classes",
+    :term       => "/Terms",
+    :state      => "/States",
+  }
+  
+  Offline = "Unable connect to internet, some features won't be available," +
+            " such as Gamejolt achievement." + " If you have connected, " +
+            "please re-launch the game."
+            
+  OfflineMode = "This feature is unavailable in offline mode. You cannot " +
+                "access it until connected to internet and re-launch the game"
+  #----------------------------------------------------------------------------
+  VODL      = "Vengeance of Dark Lord"
+  VODLHelp  = "Play the main story, help Equestria fight against the invasion " +
+              "of King Sombra!"
+              
+  Tutorial  = "Tutorial"
+  TutorialHelp = "Help you understand core features of the game and learn how " +
+                 "to play & use them."
+  #----------------------------------------------------------------------------
+  # * Return dictionary file of language
+  #----------------------------------------------------------------------------
+  def self.GetDictPath(category)
+    return DictPath + CategoryPath[category] + '/'
+  end
+  #----------------------------------------------------------------------------
+end
+#==============================================================================
+# ** Vocab::SaveLoad
+#------------------------------------------------------------------------------
+#   Message in SnL load screen
+#==============================================================================
+module Vocab::SaveLoad
+  
+  ACTION_LOAD   = "Load"           # Text used for loading games.
+  ACTION_SAVE   = "Save"           # Text used for saving games.
+  ACTION_DELETE = "Delete"         # Text used for deleting games.
+    
+  # These text settings adjust what displays in the help window.
+  SELECT_HELP = "Select a savefile..."
+  LOAD_HELP   = "Load saved game progress"
+  SAVE_HELP   = "Save current game progress"
+  DELETE_HELP = "Delete this savefile"
+    
+  EMPTY_TEXT = "~No Data~"      # Text used when no save data is present.
+  PLAYTIME   = "Play time"          # Text used for total playtime.
+  TOTAL_SAVE = "Times saved: "     # Text used to indicate total saves.
+  TOTAL_GOLD = "βits: "      # Text used to indicate total gold.
+  LOCATION   = "Location: "        # Text used to indicate current location.
+  
+  Slot      = "File %s"
+  ASaveSlot = "AutoSave%s"
+  QSaveSlot = "QuickSave%s"
+end
+#==============================================================================
+# ** Vocab::Equipment
+#------------------------------------------------------------------------------
+#   Vocab that related to equipments and params
+#==============================================================================
+module Vocab::Equipment
+  
+  Weapon    = "Weapon"
+  Shield    = "Shield"
+  Head      = "Head"
+  Body      = "Body"
+  Accessory = "Accessory"
+  Cloak     = "Cloak"
+  Necklace  = "Necklace"
+  Boots     = "Boots"
+  Rune      = "Rune"
+  Gem       = "Gem"
+  Ammo      = "Ammo"
+  
+  WeaponDMG = "Weapon Damage"
+  AmmoDMG   = "Ammo Damage"
+  Speed     = "Speed"
+  
+  Thac0     = "Attack Bonus"
+  AC        = "Armor Class"
+  Damage    = "Damage"
+  Range     = "Range"
+  SType     = "Skill Type"
+  Cost      = "EP Cost"
+  Cooldown  = "Cooldown"
+  Save      = "Save"
+  
+  Remove    = "<Remove Equip>"
+  Empty     = "<Empty>"
+  
+  None      = "None"
+  Type      = "Type"
+  
+  Melee     = "Melee"
+  Magic     = "Magic"
+  Ranged    = "Ranged"
+  
+  CastingTime = "Casting Time"
+  SavingThrow = "Saves"
+  
+  SavingName = {
+    :halfdmg  => "1/2",
+    :nullify  => "Neg.",
+    :none     => "None",
+    nil       => "None",
+  }
+  
+end
+#==============================================================================
+# ** Vocab::System
+#------------------------------------------------------------------------------
+#   System option vocabs
+#==============================================================================
+module Vocab::System
+  
+  Language    = "Language"
+  LanguageDec = "Change game language"
+  
+  WarCry          = "Way cry"
+  WarCryDec       = "Character voices when enter the battle and other actions"
+  Difficulty      = "Combat Difficulty"
+  DifficultyName  = ["Novice", "Normal", "Hard", "Expert"]
+  DifficultyDec   = "Change the combat difficulty, Hp/Damage multipler: Easy: 0.5x/0.8x, \n" + 
+                    "Normal: 1x/1x, Hard:1.5x/1.2x, Expert: 2x/1.5x"
+                    
+  BGM           = "BGM Volume"
+  BGMDec        = "Adjust the volume of Background music\n" + "You can drag the meter by mouse to change the value"
+  BGS           = "BGS Volume"
+  BGSDec        = "Adjust the volume of Background sound\n" + "You can drag the meter by mouse to change the value"
+  SE            = "SE Volume"
+  SEDec         = "Adjust the volume of SFX\n" + "You can drag the meter by mouse to change the value"
+  
+  ToTitle       = "Back to Title"
+  ToTitleDec    = "Leave current game and back to title screen, please don't forget to save"
+  
+  ShutDown      = "Shutdown"
+  ShutDownDec   = "Close the game, please don't forget to save"
+  
+  UnsavedInfo   = "Unsaved progress will be lost, continue?"
+  
+  Overwrite     = "Selected file will be overwritten, continue?"
+  Delete        = "Do you really wanna delete this file?"
+  
+  AutoSave          = "Auto-Save"
+  AutoSaveDec       = "Auto save file if it's allowed. Save location is at the buttom\n" +
+                      "of the files."
+  AutoSaveCombat    = "Boss fight"
+  AutoSaveCombatDec = "Auto-Save file before boss fight"
+  AutoSaveStep      = "Steps"
+  AutoSaveStepDec   = "Auto-save after you walked a certain steps, 0 = inactive"
+  
+  Restart = "Options will be applied after restart the game"
+end
+#==============================================================================
+# ** Vocab::Errno
+#------------------------------------------------------------------------------
+#   Message displayed when an error occurred
+#==============================================================================
+module Vocab::Errno
+  
+  LoadErr         = "An error occurred while loading the file, please submit %s\n to the developers"
+  SaveErr         = "An error occurred while saving the file:\n%s, please submit %s to the developers and try again later"
+  
+  Exception       = "An error occurred during the gameplay, please submit \"ErrorLog.txt\" to the developers in order to resolve the problem.\n"
+  ScriptErr       = "An error occurred while executing the event script: %s\nplease submit %s to the developers"
+  
+  GiftCodeFailed  = "Gift code verify failed: %s"
+  ProgramMissing  = "Program missing: "
+  
+  PluginInitErr   = "Failed to initialize plugins: #{}" #tag: todo
+  PluginLoadErr   = "Failed to load some plugins, please send 'PluginErr.txt' to developer to resolve this bug."
+  
+  APIErr          = "An error occurred while calling API:\n%s"
+  
+  APISymbol_Table = {
+    true               => "Success!",
+    :json_failed       => "Configuration file build failed",
+    :connection_failed => "Internet connection failed",
+    :invalid_code      => "Your code has been used or invalid",
+    :close_failed      => "Gateway close error",
+    :decrypt_failed    => "File decryption failed",
+    false              => "Hmm...IDK, please contact the developers!",
+  }
+  
+  RunTimeErr  = "  An Error has occurred during gameplay: %s %s"
+  
+  RESymbol_Table = {
+    :bits_incorrect   => "Bits amount asynchronous with Block Chain",
+    :fileid_overflow  => "Object id overflow while convert to savefile format",
+    :item_unconsumed  => "Consumable Item can't be consumed",
+    :int_overflow     => "Integer Overflow",
+    :datatype_error   => "Data Type Error:\n",
+    :nil_block        => "Block nil miner",
+    :chain_broken     => "Block Chain Error:\n",
+    :illegel_value    => "Illegel value:\n",
+    :checksum_failed  => "File CheckSum failure",
+    :file_missing     => "File missing:\n",
+    :tactic_sym_missing => "Tactic command symbol unavailable:\n",
+    :secure_hash_failed => "Security hash match failed:\n",
+    :config_error       => "Script configuration error:\n",
+    :gib_nil_handler    => "InteractiveButton nil handler called\n",
+  }
+  
+  SequenceArgError = "%s has at least %d args, received %d\n"
+end
+#==============================================================================
+# ** Vocab::Status
+#------------------------------------------------------------------------------
+#   Message displayed when on the status menu
+#==============================================================================
+module Vocab::Status
+  
+  General         = "General"
+  Property        = "Properties"
+  Tactic          = "Tactics"
+  Leveling        = "Level up"
+  
+  Parameter       = "Parameters"
+  Experience      = "Experience"
+  Next_Lv_Total   = "Next %s Total EXP"
+  
+  StrAth    = "Athletics"
+  DexAcr    = "Acrobatics"
+  DexSle    = "Sleight of Hand"
+  DexSte    = "Stealth"
+  IntArc    = "Arcana"
+  IntHis    = "History"
+  IntInv    = "Investigation"
+  IntNat    = "Nature"
+  IntRel    = "Religion"
+  WisAni    = "Animal Handling"
+  WisIns    = "Insight"
+  WisMed    = "Medicine"
+  WisPer    = "Perception"
+  WisSur    = "Survival"
+  ChaDec    = "Deception"
+  ChaInt    = "Intimidation"
+  ChaPerf   = "Performance"
+  ChaPers   = "Persuasion"
+end
+#==============================================================================
+# ** Vocab::Party
+#------------------------------------------------------------------------------
+#   Message displayed on the Scene_Party
+#==============================================================================
+module Vocab::Party
+  Change      = "Change"
+  Remove      = "Remove"
+  Revert      = "Revert"
+  Finish      = "Finish"
+  TextEmpty   = "-No pony-"
+  TextRemove  = "-Remove-"
+  TextEquip   = "Gear"
+  
+  GoldGain    = "Party has %s βits: %s%s"
+  ItemGain    = "Party has %s an item(x%s)"
+  EXPGain     = "Party has gained xp: %d"
+  BCGain      = "Party has gained block chain reward: %s"
+  
+  Limited     = "(max amount reached)"
+  WordGain    = "gained"
+  WordLost    = "lost"
+end
+#==============================================================================
+# ** Vocab::Tactic
+#------------------------------------------------------------------------------
+#   Message about the tactic processes
+#==============================================================================
+module Vocab::Tactic
+  CmdMove     = "Move to"
+  CmdFollow   = "Follow"
+  CmdGuard    = "Guard"
+  CmdPatrol   = "Patrol"
+  CmdMoving   = ":Move"
+  CmdHolding  = ":Hold"
+  CmdMHing    = "Hold/Move"
+  
+  HelpMove    = "Select a location to move, or an enemy to attack."
+  HelpSel     = "Select a location"
+  
+  DecMove     = "Move to a position or attack an enemy"
+  DecMHing    = "Press to toggle between hold/moving"
+  DecReaction = "Toggle between combat reactions"
+  DecFollow   = "Follow a character"
+  DecGuard    = "Protect a character"
+  DecPatrol   = "Guard an area"
+  
+  Targeting   = 'Visible Enemies'
+  Fighting    = 'Target fighting'
+  Self        = 'Self'
+  Item        = 'Items'
+  Skill       = 'Skills'
+  General     = 'General'
+  EdCondition = 'Edit condition'
+  EdAction    = 'Edit Action'
+  Delete      = "Delete"
+  
+  Hints = [
+    "Notice: Bot tactic will only works when the party AI is enabled [press 'C'",
+    "(default) in map scene to toggle it].",
+    "You can see the detailed information of all commands available in Player's",
+    "handbook",
+    "--------------------------------------------------------------------------",
+    "You can add up to 20 commands for each character, and the command will",
+    "works if and only if both condition and action is assigned.",
+    "If the command id is \\c[18]Red\\c[0], it's an invalid command, and \\c[29]Green\\c[0] is a valid one.",
+    "You can toggle enable/disable the command by press \\c[23]CTRL\\c[0], if the command",
+    "is disabled, the id color will be \\c[15]Black.",
+    "Conditions won't be checked if the command is invalid or disabled, but \\c[10]the",
+    "\\c[10]command accessed by 'Jump to Tactic' is not affected by disabling it.",
+    "",
+    "The priority of the command is from lower to higher according to its id.",
+    "So if multiple command condition is meet, the one with higher id will be",
+    "executed first; meanwhile AI will always prefer taking the action which",
+    "could causing effects to the target(including parties) instantly.",
+    "",
+    "To change the priority(id) of the command, press \\c[23]SHIFT\\c[0] then negative it",
+    "with cursor to the position you want; once you done, press \\c[23]shift/ok\\c[0] to",
+    "exit editing.",
+    "",
+  ]
+  
+  Help     = "No idea what's this? Press F4 for help"
+  SwapHelp = "Negative the cursor to swap order"
+  
+  Name_Table  = {
+    :attack_mainhoof      => "Use main-hoof attack",
+    :attack_offhoof       => "Use off-hoof attack",
+    :add_command          => "Add a new tactic logic",
+    :target_none          => "Set target to none",
+    :hp_most_power        => "Use Hp potion: most powerful",
+    :hp_least_power       => "Use Hp potion: least powerful",
+    :ep_most_power        => "Use Ep potion: most powerful",
+    :ep_least_power       => "Use Ep potion: least powerful",
+    :set_target           => "Set to primary target",
+    :jump_to              => "Jump to tactic:",
+    :move_away            => "Move away from target",
+    :move_close           => "Move close to target",
+    :player               => "Player",
+  }
+end
+#==============================================================================
+# ** Vocab::TacticConfig
+#------------------------------------------------------------------------------
+#   Text info of tactic commands
+#==============================================================================
+module Vocab::TacticConfig
+  
+  Name_Table = {
+    :lowest_hp              => "Lowest HP",
+    :highest_hp             => "Highest HP",
+    :has_state              => "Has state:",
+    :nearest_visible        => "Nearest visible",
+    :attacking_ally         => "Attacking ally:",
+    :target_of_ally         => "Target of ally:",
+    :rank                   => "Rank:",
+    
+    :any                    => "Any",
+    :clustered              => "Clustered:",
+    :hp_lower               => "Hp lower than:",
+    :hp_higher              => "Hp higher than:",
+    :target_range           => "At range:",
+    :target_atk_type        => "Attack type:",
+    
+    :ep_lower               => "EP lower than:",
+    :being_attacked_by_type => "Hurt by attack type:",
+    
+    :enemies_alive          => "X Enemies alive:",
+    :allies_alive           => "X Team member alive:",
+    :allies_dead            => "X Team member K.O.:",
+    :surrounded_by_enemies  => "Surrounded by X enemies:",
+    :using_attack_type      => "Main-hoof attack type:",
+    
+    :attack_mainhoof        => "Main-hoof attack",
+    :attack_offhoof         => "Off-hoof attack",
+    :target_none            => "Set target to none",
+    :hp_most_power          => "Use hp potion: most powerful",
+    :hp_least_power         => "Use hp potion: least powerful",
+    :ep_most_power          => "Use ep potion: most powerful",
+    :ep_least_power         => "Use ep potion: least powerful",
+    
+    :set_target             => "Set to primary target",
+    :jump_to                => "Jump to tactic:",
+    :move_away            => "Move away from target",
+    :move_close           => "Move close to target",
+    
+    :enemies      => "Enemies:",
+    :targeting    => "Enemies:",
+    :target       => "Target:",
+    :fighting     => "Target:",
+    :self         => "Self:",
+    :new_command  => "<Add New Tactic>",
+    
+    :short      => "Short",
+    :medium     => "Medium",
+    :long       => "Long",
+    
+    :critter    => "Critter",
+    :minion     => "Minion",
+    :elite      => "Elite",
+    :captain    => "Captain",
+    :chief      => "Chief",
+    
+    :melee      => "Melee",
+    :ranged     => "Ranged",
+    :magic      => "Magic/Casting",
+    
+    :player => "Player"
+  }
+  
+  InputHelp = {
+    :attacking_ally => "Select a team member",
+    :target_of_ally => "Select a team member",
+    :has_state    => "Select a state",
+    :rank         => "Select a rank",
+    :hp_lower     => "Please enter the percentage, press Enter ot finish, ESC to abort",
+    :hp_higher    => "Please enter the percentage, press Enter ot finish, ESC to abort",
+    :ep_lower     => "Please enter the percentage, press Enter ot finish, ESC to abort",
+    :target_range => "Select a scale",
+    :target_atk_type  => "Select a type",
+    :being_attacked_by_type => "Select a type",
+    :using_attack_type      => "Select a type",
+    :clustered              => "Enter a number, operator is greater or equal",
+    :enemies_alive          => "Enter a number, operator is greater or equal",
+    :allies_alive           => "Enter a number, operator is greater or equal",
+    :allies_dead            => "Enter a number, operator is greater or equal",
+    :surrounded_by_enemies  => "Enter a number, operator is greater or equal",
+    :jump_to                => "Select the id of the command..."
+  }
+  
+  ArgDec_Table = {
+    :has_state    => "%s",
+    :rank         => "%s",
+    :hp_lower     => "%d\%",
+    :hp_higher    => "%d\%",
+    :ep_lower     => "%d\%",
+    :target_range => "at %s range",
+    :target_atk_type  => "%s",
+    :being_attacked_by_type => "%s",
+    :using_attack_type      => "%s",
+    :clustered              => "%d or more",
+    :enemies_alive          => ">= %d",
+    :allies_alive           => ">= %d",
+    :allies_dead            => ">= %d",
+    :surrounded_by_enemies  => ">= %d",
+    :short      => "Short",
+    :medium     => "Medium",
+    :long       => "Long",
+    :player     => "Player",
+  }
+  
+end
+#==============================================================================
+# ** Vocab::Skillbar
+#------------------------------------------------------------------------------
+#   Text info in skillbar
+#==============================================================================
+module Vocab::Skillbar
+  
+  Follower    = "Toggle on/off Follower AI"
+  AllSkill    = "All Skills"
+  Vancian     = "Vancian"
+  AllItem     = "All Items"
+  PrevPage    = "Previous page"
+  NextPage    = "Next page"
+  Cancel      = "Cancel"
+  None        = "<Empty>"
+  
+  Use         = "Use"
+  Hotkey      = "Hotkey"
+  Info        = "Info"
+  MouseEdit   = "Now you can edit your hotkeys with mouse"
+  
+  SelHelp     = "Please press the hotkey(0~9) or mouse left-clicking on the slot"
+  SelSucc     = "You have assigned %s on hotkey '%s'"
+end
+#==============================================================================
+# ** Vocab::Debug
+#------------------------------------------------------------------------------
+#   Texts for Debug window
+#==============================================================================
+module Vocab::Debug
+  
+  Hint    = "Press Q/E(Pageup/Pagedown) to change category"
+  
+  Switch   = "This is list of available switches\n" + Hint
+  Variable = "This is list of available variables\n" + Hint
+  Sprite   = "This is list of undisposed bitmaps from last scene\n" + Hint
+  
+  SwitchHelp   = "C (Enter) : ON / OFF"
+  VariableHelp = "← (Left)    :  -1\n"  + "→ (Right)   :  +1\n" +
+                 "L (Pageup)   : -10\n" + "R (Pagedown) : +10"
+                 
+  SpriteHelp   = "Using WASD/↑←↓→ to negative the graph"
+  
+end
+#==============================================================================
+# ** Vocab::Leveling
+#------------------------------------------------------------------------------
+#   Text info about level up
+#==============================================================================
+module Vocab::Leveling
+  
+  Helps = {
+    :level_up   => "Level up!",
+    :unique     => "Unique skills of this character",
+    :race       => "Race skills",
+    :class      => "Class skills",
+    :dualclass  => "Dual-class skills",
+    :skilltree  => "Open the skill tree and manage available skills",
+    :level_up_main => "Advance your main class to next level",
+    :level_up_dual => "Advance your dual-class to next level",
+    :set_dualclass => "Start a dual-class",
+  }
+  
+  DualClass  = "Dual-Class"
+  SelectFeat = "New class feature available!"
+  Confirm_Dualclass  = "Are you sure about becoming a %s?"
+  Confirm_LearnSkill = "Do you really want to learn %s?"
+end
+#==============================================================================
+# ** Vocab::BlockChain
+#------------------------------------------------------------------------------
+#   Texts about block chain stuff
+#==============================================================================
+module Vocab::BlockChain
+  Info = {
+    :split_line => "-----------------------------",
+    :transinfo  => "\\c[1]Info:\\c[0] %s",
+    :payment    => "Payment is from \\c[1]%s \\c[0]to\\c[1] %s",
+    :currency   => "%s amount:\\c[6] %d",
+    :goods      => "Item: %s x%d",
+    :nogoods    => "No item was traded",
+  }
+  DropLoot = "Received via dropped loot"
+  LargeHistory = "You're going to view a large transaction history." +
+                 " This will take a while to display all item. Continue anyway?"
+end
+#==============================================================================
+# ** Vocab::Rescue
+#------------------------------------------------------------------------------
+#   Text info of the rescues
+#==============================================================================
+module Vocab::Rescue
+  Luna    = "\\af[9]\\n<Luna>Thou shall glad I followed you.."
+end
+
+if CurrentLanguage == :zh_tw
+#==============================================================================
+# ** Dungeons and Dragons
+#------------------------------------------------------------------------------
+#  Config: Item and features sets
+#==============================================================================
+# tag: config
+module Vocab::DND
+ 
+  PARAM_NAME = [
+    "無",
+    "無",
+    "力量",
+    "體質",
+    "智力",
+    "智慧",
+    "敏捷",
+    "魅力",
+  ]
+  
+  WEAPON_TYPE_NAME = [
+    "",
+    "蹄斧",
+    "馬蹄",
+    "棍棒",
+    "單蹄劍",
+    "雙蹄劍",
+    "弓",
+    "弩",
+    "戰錘",
+    "流星錘",
+    "熱武器",
+    "箭矢",
+    "弩矢",
+    "子彈",
+    "法杖"
+  ]
+  
+  SKILL_TYPE_NAME = [
+  "",
+  "技能",
+  "法術",
+  "萬西安",
+  "被動",
+  ]
+  
+  ARMOR_TYPE_NAME = [
+  "",
+  "輕型甲",
+  "中型甲",
+  "重型甲",
+  "衣服",
+  "盾牌",
+  "大盾",
+  "靴子",
+  "腰帶",
+  "項鍊",
+  "斗篷",
+  "戒指",
+  "護腿",
+  "符文",
+  "寶石",
+  ]
+  
+  ELEMENT_NAME = [
+  "",
+  "鈍擊",
+  "穿刺",
+  "揮砍",
+  "強酸",
+  "寒冷",
+  "火焰",
+  "淨力",
+  "閃電",
+  "壞死",
+  "毒",
+  "精神",
+  "聖",
+  "雷電",
+  ]
+  
+  RankName = {
+    :critter    => "弱雞",
+    :minion     => "嘍囉",
+    :elite      => "菁英",
+    :captain    => "領班",
+    :chief      => "首領",
+  }
+  
+end
+end # Current Language
+
+if CurrentLanguage == :zh_tw
+#==============================================================================
+# ** Vocab
+#------------------------------------------------------------------------------
+#  This module defines terms and messages. It defines some data as constant
+# variables. Terms in the database are obtained from $data_system.
+#==============================================================================
+module Vocab::YEA
+  ICON_HASH = {
+    # Matching Text   => Icon ID,
+      "New story"            => 125,    # Title scene.
+      "Continue story"       => 126,    # Title scene.
+      "Leave"                => 127,    # Title scene. Game End scene.
+      
+      "Battle"        => 386,     # Battle scene.
+      "Gallop"        => 328,     # Battle scene.
+      "攻擊"          => 116,     # Battle scene.
+      "防禦"          => 506,     # Battle scene.
+      "聖物"          => 9299,
+      "技能"          => 8175,    # Skill scene. Battle scene.
+      "法術"          => 106,     # Skill scene. Battle scene.
+      "被動"          => 3193,
+      "Learn Skills"  => 2437,
+      "Songs"         => 6470,
+      "Pet"           => 3316,
+      "Talent"        => 10662,
+      "Bio"           => 233,
+      "Brew"          => 3814,
+      "Science"       => 8249,
+      "Summon"        => 3761,
+      "屬性能力"      => 228,
+      "能力點"        => 228,
+      "任務日誌"      => 1334,
+      "Overview"      => 1354,
+      "鞍袋(物品欄)"  => 1528,     # Menu scene. Item scene. Battle scene.
+      "物品"          => 1528,     # Menu scene. Item scene. Battle scene.
+      "Talk"          => 4,
+      "Actions"       => 143,
+      "Cook"          => 2580,
+      "Crafting"      => 125,
+      "Skills"        => 104,      # Menu scene.
+      "Log"           => 2441,
+      "書籍"          => 2384,
+      "歷史"          => 2435,
+      "Execute"       => 125,
+      "Run"           => 172,
+      "裝備"          => 524,      # Menu scene.
+      "狀態"          => 1204,     # Menu scene.
+      "隊伍"          =>  11,      # Menu scene.
+      "Special"       => 775,
+      "存檔"          => 10675,      # Menu scene.
+      "讀檔"          => 10674,
+      "Delete"        => 10676,
+      "刪除"          => 10676,
+      "System"        => 2144,
+      "End"           => 1020,      # Menu scene.
+      "Craft"         => 2059,  
+      "武器"          => 386,      # Item scene.
+      "裝甲"          => 436,      # Item scene.
+      "關鍵物品"      => 243,      # Item scene.
+      "回到標題"      => 224,      # Game End scene.
+      "取消"          => 119,      # Game End scene.
+      "魔法書"        => 4052,
+      "萬西安法術"    => 10044,
+      "萬西安"        => 10044,
+      "Encyclopedia"  => 3734,
+      "文獻"          => 2399, 
+      "圖鑑"          => 3343,
+      "Music Room"    => 118,
+      "技能"          => 117,
+      "裝備"          => 3786,
+      "Add Point"     => 6476,
+      "特殊物品"      => 1646,
+      "購買"          => 555,
+      "售出"          => 554,
+      "屬性"          => 2375,
+      "概覽"          => 556,
+      "一般"          => 556,
+      "醫療"          => 3958,
+      "材料"          => 200,
+      "素材"          => 200,
+      "全部"          => 1140,
+      "暗器"          => 159,
+      "樂譜"          => 118,
+      "書籍"          => 2384,
+      "卷軸"          => 3733,
+      "存檔/讀檔"     => 2431,
+      "Dismantle"     => 8175,
+      "Gamejolt"      => 570,
+      "Life Skills"   => 8075,
+      "Equip Skill"   => 117,
+      "升級"          => 8182,
+      "移動到"        => 572,
+      "跟隨"          => 1117,
+      "巡邏"          => 1114,
+      "移動/停止"     => 9301,
+      ":停止"         => 9301,
+      ":移動"         => 2255,
+      ":不攻擊"       => 1141,
+      ":被動"         => 13,
+      ":堅守"         => 7346,
+      ":防衛"         => 139,
+      ":主動"         => 131,
+      ":突襲"         => 116,
+      "戰術"          => 2103,
+      "保護"          => 506,
+      "技能樹"        => 108,
+    }
+    #--------------------------------------------------------------------------
+  end
+  
+#==============================================================================
+# ** Vocab::YEA::Item
+#==============================================================================
+module Vocab
+  module YEA::ITEM
+    #--------------------------------------------------------------------------
+    ITEM_TYPES = {
+      :all          => "全部",
+      :healings     => "醫療",
+      :book         => "書籍",
+      :scroll       => "卷軸",
+      :hdweapons    => "暗器",
+      :special      => "特殊物品",
+      :ingredient   => "素材",
+      :music_sheet  => "樂譜",
+      :misc         => "其他",
+    }
+    #--------------------------------------------------------------------------
+    WEAPON_TYPES = {
+      :all      => "全部",
+    }
+    #--------------------------------------------------------------------------  
+    ARMOUR_TYPES = {
+      :all      => "全部",
+    }
+    #--------------------------------------------------------------------------
+    VOCAB_STATUS = {
+      :empty      => "---",          # Text used when nothing is shown.
+      :hp_recover => "恢復生命",      # Text used for HP Recovery.
+      :mp_recover => "恢復能量",      # Text used for MP Recovery.
+      :tp_recover => "恢復TP",      # Text used for TP Recovery.
+      :tp_gain    => "獲得TP",      # Text used for TP Gain.
+      :applies    => "狀態追加",      # Text used for applied states and buffs.
+      :removes    => "狀態解除",      # Text used for removed states and buffs.
+    } # Do not remove this.
+    #--------------------------------------------------------------------------
+  end
+end
+end # Current Language
+
+if CurrentLanguage == :zh_tw
+#==============================================================================
+# ** Vocab
+#------------------------------------------------------------------------------
+#  這個模組包含部分遊戲內的顯示文字內容，資料庫內的顯示文字及物品詳細資料須在
+#  "History/zh_tw/"內
+#==============================================================================
+# tag: translate
+module Vocab
+  
+  # Shop Screen
+  ShopBuy         = "購買"
+  ShopSell        = "售出"
+  ShopCancel      = "取消"
+  Possession      = "擁有"
+  
+  # Status Screen
+  ExpTotal        = "當前經驗"
+  ExpNext         = "下級所需經驗 %s"
+  Upgradeable     = "已經可以升級!"
+  LevelUp         = "升級"
+  Skilltree       = "技能樹"
+  
+  # Save/Load Screen
+  SaveMessage     = "要儲存到哪個檔案呢?"
+  LoadMessage     = "要讀取哪個檔案呢?"
+  File            = "檔案"
+  
+  # Display when there are multiple members
+  PartyName       = "%s's 隊伍"
+  
+  # BlockChain Node Name
+  Player         = "Player"
+  Coinbase       = "Equestria"
+  
+  # Tactic processing
+  Pause           = "暫停"
+  Unpause         = "解除暫停"
+  
+  # Title Screen
+  Continue        = "繼續上次遊玩存檔"
+  NewGame         = "開始新的故事"
+  LoadGame        = "繼續您的旅程"
+  ShutDown        = "崩潰到桌面"
+  Option          = "遊戲選項"
+  Credits         = "製作群"
+  StartGame       = "開始遊戲"
+  
+  # Connections
+  Connection      = "連線中...遊戲程式可能會沒有回應數分鐘, 請耐心等待"
+  
+  # Exit Info
+  ExitConfirm     = "你真的要離開嗎? 小馬們會想念你的..."
+  
+  None            = "<無>"
+  Type            = "類別"
+  
+  # Quest stuff
+  Quest           = "任務日誌"
+  QuestUpdated    = "任務日誌已更新: %s"
+  
+  # Game hint
+  InitLoadingMsg  = "為了確保最佳的遊戲體驗, 請關閉占用系統資源的軟體及視窗.\n 例如Flash, Youtube或其他遊戲等"
+  Unavailable     = "尚未開發完成, 敬請期待"
+  
+  # Transfer Info
+  TransferGather  = "您必須集合隊伍才能繼續前進"
+  TransferCombat  = "戰鬥中無法脫出"
+  
+  # Menu Stuff
+  SaveDec         = "儲存遊戲進度或讀取先前的檔案"
+  SystemDec       = "更改參數選項或離開遊戲"
+  
+  CritialMiss     = "%s - 嚴重失誤"
+  CritialHit      = "%s - 致命一擊"
+  AttackImmune    = "%s: %s 免疫我的傷害"
+  Ineffective     = "%s - 武器無效"
+  
+  MoreInfo        = "詳細資料"
+  
+  # path to database vocabulary dictionary
+  DictPath        = "History/zh_tw"
+  #----------------------------------------------------------------------------
+  Offline = "無法連線至網際網路, 部分功能(如gamejolt成就)將被停用. 如已連線, " +
+            "請重啟遊戲變更為連線模式來恢復所有功能運作"
+            
+  OfflineMode = "此項功能在離線模式下無法使用, 請連接至網路並重新啟動遊戲"
+  #----------------------------------------------------------------------------
+  VODL      = "夜影復仇曲"
+  VODLHelp  = "遊玩主線故事, 對抗重新復活並想征服小馬國的影王!"
+              
+  Tutorial  = "教學"
+  TutorialHelp = "理解遊戲機制如何靈活運用所有功能, 強烈建議首次遊玩者"
+end
+#==============================================================================
+# ** Vocab::SaveLoad
+#------------------------------------------------------------------------------
+#   Message in SnL load screen
+#==============================================================================
+module Vocab::SaveLoad
+  
+  ACTION_LOAD   = "讀檔"           # Text used for loading games.
+  ACTION_SAVE   = "存檔"           # Text used for saving games.
+  ACTION_DELETE = "刪除"         # Text used for deleting games.
+    
+  # These text settings adjust what displays in the help window.
+  SELECT_HELP = "請選擇檔案欄位"
+  LOAD_HELP   = "讀取已儲存的遊戲進度"
+  SAVE_HELP   = "儲存當前遊戲進度"
+  DELETE_HELP = "刪除該存檔"
+    
+  EMPTY_TEXT = "~沒有檔案~"      # Text used when no save data is present.
+  PLAYTIME   = "遊戲時間"          # Text used for total playtime.
+  TOTAL_SAVE = "儲存次數: "     # Text used to indicate total saves.
+  TOTAL_GOLD = "擁有貨幣: "      # Text used to indicate total gold.
+  LOCATION   = "地點: "        # Text used to indicate current location.
+  
+  Slot      = "存檔 %s"
+  ASaveSlot = "自動存檔 %s"
+  QSaveSlot = "快速存檔 %s"
+end
+#==============================================================================
+# ** Vocab::Equipment
+#------------------------------------------------------------------------------
+#   Vocab that related to equipments and params
+#==============================================================================
+module Vocab::Equipment
+  
+  Weapon    = "武器"
+  Shield    = "盾牌"
+  Head      = "頭部"
+  Body      = "身體"
+  Accessory = "飾品"
+  Cloak     = "斗篷"
+  Necklace  = "項鍊"
+  Boots     = "靴子"
+  Rune      = "符文"
+  Ammo      = "彈藥"
+  Gem       = "寶石"
+  
+  WeaponDMG = "武器傷害"
+  AmmoDMG   = "彈藥傷害"
+  Speed     = "速度"
+  
+  Thac0     = "攻擊骰加成"
+  AC        = "護甲等級"
+  Damage    = "傷害"
+  Range     = "距離"
+  SType     = "類型"
+  Cost      = "能量消耗"
+  Cooldown  = "冷卻時間"
+  Save      = "豁免率檢定"
+  
+  Remove    = "<卸下裝備>"
+  Empty     = "<無>"
+  None      = "<無>"
+  Type      = "類別"
+  
+  Melee     = "物理"
+  Magic     = "魔法"
+  Ranged    = "遠程"
+  
+  CastingTime = "詠唱時間"
+  SavingThrow = "豁免率檢定"
+  
+  SavingName = {
+    :halfdmg  => "1/2",
+    :nullify  => "通過則無效(Neg.)",
+    :none     => "無",
+    nil       => "無",
+  }
+  
+end
+#==============================================================================
+# ** Vocab::System
+#------------------------------------------------------------------------------
+#   System option vocabs
+#==============================================================================
+module Vocab::System
+  
+  Language    = "語言"
+  LanguageDec = "更改遊戲語言"
+  
+  WarCry          = "啟用戰鬥語音"
+  WarCryDec       = "開關進入戰鬥時的開場白以及戰鬥時的部分語音效果"
+  Difficulty      = "戰鬥難度"
+  DifficultyName  = ["簡單", "普通", "困難", "專家"]
+  DifficultyDec   = "改變戰鬥難度, 生命/傷害變化: 簡單: 0.5x/0.8x, 普通: 1x/1x\n" + 
+                  "困難:1.5x/1.2x, 專家: 2x/1.5x"
+                  
+  BGM           = "BGM音量"
+  BGMDec        = "調整背景音樂的音量, 可滑鼠拖曳數量條來改變"
+  BGS           = "BGS音量"
+  BGSDec        = "調整背景聲音的音量, 可滑鼠拖曳數量條來改變"
+  SE            = "SE音量"
+  SEDec         = "調整聲音特效的音量, 可滑鼠拖曳數量條來改變"
+  
+  ToTitle       = "回到標題"
+  ToTitleDec    = "離開當前遊戲並回到標題畫面, 不要忘記存檔喔~"
+  
+  ShutDown      = "離開遊戲"
+  ShutDownDec   = "離開遊戲, 不要忘記存檔喔~"
+  
+  UnsavedInfo   = "未儲存的進度將會遺失，確認繼續嗎?"
+  
+  Delete        = "確認刪除?"
+  Overwrite     = "選擇的檔案將被覆蓋, 確認繼續?"
+  
+  AutoSave          = "自動存檔"
+  AutoSaveDec       = "達成特定條件且允許存檔時將自動存檔\n" +
+                      "存檔欄位位於檔案列最下方"
+  AutoSaveCombat    = "頭目戰"
+  AutoSaveCombatDec = "頭目戰前自動存檔"
+  AutoSaveStep      = "步數"
+  AutoSaveStepDec   = "每走N步後自動存檔, 0 = 關閉此功能"
+  
+  Restart = "新設定將在遊戲重啟後生效"
+end
+#==============================================================================
+# ** Vocab::Errno
+#------------------------------------------------------------------------------
+#   Message displayed when an error occurred
+#==============================================================================
+module Vocab::Errno
+  
+  LoadErr         = "讀取檔案時發生錯誤! 請將 %s\n寄送給開發團隊"
+  SaveErr         = "存檔時發生錯誤:\n%s, 請將 %s 寄送給開發團隊並稍後再試"
+  
+  Exception       = "遊戲運行時發生錯誤! 請將檔案\"ErrorLog.txt\"寄送給開發團隊以處理錯誤.\n"
+  ScriptErr       = "事件腳本運行時期錯誤!: %s\n請寄送 %s 給開發人員"
+  
+  GiftCodeFailed  = "禮物碼驗證失敗: %s"
+  ProgramMissing  = "遺失程式: "
+  
+  PluginInitErr   = "無法初始化擴充腳本: #{}" #tag: todo
+  PluginLoadErr   = "部分擴充腳本無法讀取, 請將'PluginErr.txt'寄送至開發團隊以解決問題"
+  
+  APIErr          = "呼叫API過程中發生錯誤:\n%s"
+  
+  APISymbol_Table = {
+    true               => "成功!",
+    :json_failed       => "組態檔建立失敗",
+    :connection_failed => "網際網路連線失敗",
+    :invalid_code      => "您的代碼已經被使用過或無效",
+    :close_failed      => "網路閘道關閉失敗",
+    :decrypt_failed    => "檔案解密失敗",
+    false              => "痾...我也不知道, 請聯絡開發人員!",
+  }
+  
+  RunTimeErr  = "遊戲執行時發生錯誤: %s %s"
+  
+  RESymbol_Table = {
+    :bits_incorrect   => "貨幣數量與區塊量不一致",
+    :fileid_overflow  => "檔案ID溢位",
+    :item_unconsumed  => "消耗品使用時期錯誤",
+    :int_overflow     => "整數溢位",
+    :datatype_error   => "資料型別錯誤:\n",
+    :nil_block        => "無效的區塊鏈礦工",
+    :chain_broken     => "區塊鏈:\n",
+    :illegel_value    => "非法數值:\n",
+    :checksum_failed  => "檔案驗證和失敗",
+    :file_missing     => "遺失檔案:\n",
+    :tactic_sym_missing => "無效的戰術指令符號:\n",
+    :secure_hash_failed => "安全性雜湊驗證失敗:\n",
+    :config_error       => "腳本設定錯誤:\n",
+    :gib_nil_handler    => "InteractiveButton nil handler called\n",
+  }
+  
+  SequenceArgError = "%s has at least %d args, received %d\n"
+end
+#==============================================================================
+# ** Vocab::Status
+#------------------------------------------------------------------------------
+#   Message displayed when on the status menu
+#==============================================================================
+module Vocab::Status
+  
+  General         = "概覽"
+  Property        = "屬性"
+  Tactic          = "戰術"
+  
+  Parameter       = "能力點"
+  Experience      = "經驗值"
+  Next_Lv_Total   = "下級所需經驗 %s"
+  
+  StrAth    = "體育"
+  DexAcr    = "雜技"
+  DexSle    = "巧手"
+  DexSte    = "潛行"
+  IntArc    = "奧術"
+  IntHis    = "歷史"
+  IntInv    = "偵查"
+  IntNat    = "自然"
+  IntRel    = "宗教"
+  WisAni    = "動物"
+  WisIns    = "洞察"
+  WisMed    = "醫學"
+  WisPer    = "感知"
+  WisSur    = "生存"
+  ChaDec    = "詐術"
+  ChaInt    = "威嚇"
+  ChaPerf   = "表演"
+  ChaPers   = "說服"
+end
+#==============================================================================
+# ** Vocab::Party
+#------------------------------------------------------------------------------
+#   Message displayed on the Scene_Party
+#==============================================================================
+module Vocab::Party
+  Change      = "變更"
+  Remove      = "移除"
+  Revert      = "復原"
+  Finish      = "完成"
+  TextEmpty   = "- 空 -"
+  TextRemove  = "-移除-"
+  TextEquip   = "裝備"
+  
+  GoldGain    = "隊伍%s金錢: %s%s"
+  ItemGain    = "隊伍%s物品(x%s)"
+  EXPGain     = "隊伍獲得經驗值: %d"
+  BCGain      = "隊伍獲得挖礦獎勵: %s"
+  
+  Limited     = "(已達上限)"
+  WordGain    = "獲得"
+  WordLost    = "失去"
+end
+#==============================================================================
+# ** Vocab::Tactic
+#------------------------------------------------------------------------------
+#   Message about the tactic processes
+#==============================================================================
+module Vocab::Tactic
+  
+  CmdMove     = "移動到"
+  CmdFollow   = "跟隨"
+  CmdGuard    = "保護"
+  CmdPatrol   = "巡邏"
+  CmdMoving   = ":移動"
+  CmdHolding  = ":停止"
+  CmdMHing    = "移動/停止"
+  
+  HelpMove    = "選擇一點移動到該位置，或一敵人以進行攻擊"
+  HelpSel     = "請選擇一位置"
+  
+  DecMove     = "移動到一定點或攻擊敵人"
+  DecMHing    = "按鍵切換是否移動"
+  DecReaction = "按鍵切換戰鬥反應模式"
+  DecFollow   = "跟隨目標"
+  DecGuard    = "保護目標"
+  DecPatrol   = "巡邏區域"
+  
+  Targeting   = '視野內敵方單位'
+  Fighting    = '主要目標條件'
+  Self        = '自身條件'
+  Item        = '物品'
+  Skill       = '技能'
+  General     = '一般'
+  EdCondition = '更改條件'
+  EdAction    = '更改動作'
+  Delete      = "刪除"
+  
+  Hints = [
+    "※此功能只有在隊伍AI啟用時才有效果，在地圖場景中按下\\c[23]C(預設)即可切換開/關。",
+    "關於各指令的詳細功能請參閱玩家手冊",
+    "--------------------------------------------------------------------------",
+    "每個角色都可以設置最大20個的戰術指令，並且皆須指明條件與動作才會生效。",
+    "如果該指令ID為\\c[18]紅色\\c[0], 代表該指令無效; \\c[29]綠色\\c[0]則是代表有效的指令。",
+    "你可以按下\\c[23]CTRL\\c[0]來啟用/停用該指令，若指令ID為\\c[15]黑色\\c[0]則代表該指令為停用狀態。",
+    "無效或停用的指令不會進行條檢查。\\c[10]但是動作'跳到戰術'如果跳到一個被停用的指令，",
+    "\\c[10]該指令依然會進行檢查。",
+    "",
+    "指令動作執行的優先順序等同它的ID，意即如果有多個指令條件吻合，ID較高的指令",
+    "將優先被執行；但AI會優先執行當下使用後對目標(包含敵我雙方)有效果的動作。",
+    "",
+    "若要改變指令的順序，按下\\c[23]SHIFT\\c[0]並將該指令移至你想要的位置即可。",
+    "完成後，按下\\c[23]shift/ok\\c[0]即可離開該指令的編輯模式",
+  ]
+  
+  Help = "霧煞煞? 按下F4取得幫助"
+  SwapHelp = "移動游標即可變更順序"
+  
+  Name_Table  = {
+    :attack_mainhoof      => "使用主武器",
+    :attack_offhoof       => "使用副武器",
+    :add_command          => "新增戰術",
+    :target_none          => "放棄當前目標",
+    :hp_most_power        => "使用生命藥水: 最強效",
+    :hp_least_power       => "使用生命藥水: 最弱效",
+    :ep_most_power        => "使用能量藥水: 最強效",
+    :ep_least_power       => "使用能量藥水: 最弱效",
+    :set_target           => "設為主要攻擊目標",
+    :jump_to              => "跳到戰術: ",
+    :move_away            => "遠離目標",
+    :move_close           => "接近目標",
+    :player               => "玩家當前操作角色",
+  }
+end
+#==============================================================================
+# ** Vocab::TacticConfig
+#------------------------------------------------------------------------------
+#   Text info of tactic commands
+#==============================================================================
+module Vocab::TacticConfig
+  
+  Name_Table = {
+    :lowest_hp              => "最低生命比",
+    :highest_hp             => "最高生命比",
+    :has_state              => "擁有狀態:",
+    :nearest_visible        => "最近可視敵方單位",
+    :attacking_ally         => "正在攻擊隊友:",
+    :target_of_ally         => "隊友的目標:",
+    :rank                   => "等級:",
+    
+    :any                    => "任何時刻",
+    :clustered              => "X名敵方聚集:",
+    :hp_lower               => "生命少於:",
+    :hp_higher              => "生命多於:",
+    :target_range           => "與自身的距離:",
+    :target_atk_type        => "攻擊型態:",
+    
+    :ep_lower               => "能量少於:",
+    :being_attacked_by_type => "被某攻擊所傷:",
+    
+    :enemies_alive          => "X名敵方存活:",
+    :allies_alive           => "存活隊員數量:",
+    :allies_dead            => "死亡隊員數量:",
+    :surrounded_by_enemies  => "被X名敵方包圍:",
+    :using_attack_type      => "主武器攻擊類型:",
+    
+    :attack_mainhoof        => "使用主武器攻擊",
+    :attack_offhoof         => "使用副武器攻擊",
+    :target_none            => "放棄當前目標",
+    :hp_most_power          => "使用生命藥水: 最強效",
+    :hp_least_power         => "使用生命藥水: 最弱效",
+    :ep_most_power          => "使用能量藥水: 最強效",
+    :ep_least_power         => "使用能量藥水: 最弱效",
+    
+    :set_target             => "設為主要攻擊目標",
+    :jump_to                => "跳到戰術: ",
+    :move_away              => "遠離目標",
+    :move_close             => "接近目標",
+    
+    :enemies      => "所有敵人:",
+    :targeting    => "所有敵人:",
+    :target       => "主要目標:",
+    :fighting     => "主要目標:",
+    :self         => "自己:",
+    :new_command  => "<新增戰術>",
+    
+    :short      => "短程",
+    :medium     => "中程",
+    :long       => "長程",
+    
+    :critter    => "弱雞",
+    :minion     => "嘍囉",
+    :elite      => "菁英",
+    :captain    => "領班",
+    :chief      => "首領",
+    
+    :melee      => "物理攻擊",
+    :ranged     => "遠程攻擊",
+    :magic      => "魔法攻擊或詠唱",
+    
+    :player     => "玩家當前操作角色",
+  }
+  
+  InputHelp = {
+    :attacking_ally => "請選擇一名隊伍成員",
+    :target_of_ally => "請選擇一名隊伍成員",
+    :has_state    => "請選擇一個狀態",
+    :rank         => "請選擇一個等級",
+    :hp_lower     => "請輸入百分比, 按下Enter鍵完成, ESC取消",
+    :hp_higher    => "請輸入百分比, 按下Enter鍵完成, ESC取消",
+    :ep_lower     => "請輸入百分比, 按下Enter鍵完成, ESC取消",
+    :target_range => "請選擇一個距離",
+    :target_atk_type  => "請選擇一個類型",
+    :being_attacked_by_type => "請選擇一個類型",
+    :using_attack_type      => "請選擇一個類型",
+    :clustered              => "請輸入數量, 條件門檻為大於等於這個數字",
+    :enemies_alive          => "請輸入數量, 條件門檻為大於等於這個數字",
+    :allies_alive           => "請輸入數量, 條件門檻為大於等於這個數字",
+    :allies_dead            => "請輸入數量, 條件門檻為大於等於這個數字",
+    :surrounded_by_enemies  => "請輸入數量, 條件門檻為大於等於這個數字",
+    :jump_to                => "請選擇指令的編號"
+  }
+  
+  ArgDec_Table = {
+    :has_state    => "%s",
+    :rank         => "%s",
+    :hp_lower     => "%d\%",
+    :hp_higher    => "%d\%",
+    :ep_lower     => "%d\%",
+    :target_range => "在 %s 時",
+    :target_atk_type  => "%s",
+    :being_attacked_by_type => "%s",
+    :using_attack_type      => "%s",
+    :clustered              => "%d名或更多",
+    :enemies_alive          => ">= %d",
+    :allies_alive           => ">= %d",
+    :allies_dead            => ">= %d",
+    :surrounded_by_enemies  => ">= %d",
+    :player     => "當前操縱角色",
+  }
+  
+end
+#==============================================================================
+# ** Vocab::Skillbar
+#------------------------------------------------------------------------------
+#   Text info in skillbar
+#==============================================================================
+module Vocab::Skillbar
+  
+  Follower    = "開關隊伍成員AI"
+  AllSkill    = "所有技能"
+  Vancian     = "萬西安"
+  AllItem     = "所有物品"
+  PrevPage    = "上一頁"
+  NextPage    = "下一頁"
+  Cancel      = "取消"
+  None        = "<無>"
+  
+  Use         = "使用"
+  Hotkey      = "熱鍵"
+  Info        = "詳細資料"
+  MouseEdit   = "現在您可以使用滑鼠拖曳編輯熱鍵欄"
+  
+  SelHelp     = "請用滑鼠點擊熱鍵欄位或按下對應按鍵來設定"
+  SelSucc     = "您已經將%s指定在熱鍵%s上"
+end
+#==============================================================================
+# ** Vocab::Leveling
+#------------------------------------------------------------------------------
+#   Text info about level up
+#==============================================================================
+module Vocab::Leveling
+  Helps = {
+    :level_up   => "升級!",
+    :unique     => "屬於這個角色的獨特技能",
+    :race       => "種族技能",
+    :class      => "職業技能",
+    :dualclass  => "第二職業(兼職)技能",
+    :skilltree  => "開啟並管理技能樹",
+    :level_up_main => "升級主要職業",
+    :level_up_dual => "升級第二職業",
+    :set_dualclass => "角色兼職",
+  }
+  
+  DualClass  = "兼職"
+  SelectFeat = "有新的職業屬性可用!"
+  Confirm_Dualclass  = "確定要兼職'%s'嗎?"
+  Confirm_LearnSkill = "確定要學習'%s'嗎?"
+end
+#==============================================================================
+# ** Vocab::Rescue
+#------------------------------------------------------------------------------
+#   Text info of the rescues
+#==============================================================================
+module Vocab::Rescue
+  Luna    = "\\af[9]\\n<Luna>汝該慶幸本宮隨之在後.."
+end
+end # Current Language
+
+#==============================================================================
 # +++ MOG - Wallpaper EX (V1.1) +++
 #==============================================================================
 # By Moghunter
@@ -4105,241 +5714,6 @@ module WALLPAPER_EX
 end
 
 #==============================================================================
-# ** PONY::CHAIN
-#------------------------------------------------------------------------------
-#  Pone's block chain setting
-#==============================================================================
-module PONY::CHAIN
-  
-  # Total Bits available for transaction
-  TotalBalance = 10 ** 9
-  
-  # Total Chromastal available for transaction
-  TotalChromastal = 0xffff
-  
-  # Transaction fee
-  Transaction_Fee = 0.00042
-  
-  # Unnamed transaction source
-  CoinBase = 0xc4f10a20486103dd74203a315edf9200
-  # Mining Difficulty
-  Difficulty = 0x64
-  
-  #--------------------------------------------------------------------------
-  # * Nodes process block mining and player local bits flows
-  #--------------------------------------------------------------------------
-  Nodes = [
-    "Equestria", # 0
-      "Player",  # 1
-      "Ponyvile",
-      "Canterlot",
-      "Cloudsdale",
-      "Manehattan", # 5
-      "Appleloosa",
-      "Dodge_Junction",
-      "Filly_Delphia",
-      "Las_Pegasus",
-      "Baltimare",  # 10
-      "Starlights_Village",
-      "Yanhooyer",
-      "Rock_Farm", # 13
-    #---------------------------
-    "Crystal_Mountains", # 14
-      "Crystal_Empire",
-      "Yakyakistan",
-    #---------------------------
-    "HeartLands", # 17
-      "Smoky_Mountains",
-    #---------------------------
-    "BadLands", # 19
-      "UnderTribe",
-    #---------------------------
-    "Forbidden_Jungle", # 21
-    #---------------------------
-    "EastLands", # 22
-      "Griffon_Stone",
-      "Dragon_Land",
-    #---------------------------
-    "SouthEquestria", # 25
-      "Saddle_Arbia",
-      "Zefribia",
-  ]
-  #--------------------------------------------------------------------------#
-  # * Each node's initial Bits in new game                                   #
-  #--------------------------------------------------------------------------#
-  #                   *  Magic Numbers  *                                    #
-  Dispute_Weight = {
-    0xc4f10a20486103dd74203a315edf9200 => 0.150, # Equestria
-    0x636da1d35e805b00eae0fcd8333f9234 => 0    , # Player
-    0xd8ce07f3e67ffde6d6260e426a51a70b => 0.050, # Ponyvile
-    0x518f65c35638945cb6b2e3855b7c8f20 => 0.060, # Canterlot
-    0x5ea8847659eedf0104b9b74cb26533df => 0.040, # Cloudsdale
-    0x1e44e014507e1db404ebc32871d6d5ca => 0.060, # Manehattan
-    0xa2ececaab1570fdc9dda6761b9fd4ccb => 0.008, # Appleloosa
-    0x4588cc55c932638be854e8f503c9c088 => 0.005, # Dodge_Junction
-    0x9cc4410a5715561f6eb559b9e2feadcf => 0.015, # Filly_Delphia
-    0x42d7683217d076f0317d37e30f0796dd => 0.020, # Las_Pegasus
-    0xf69d7bf4390d5f32d4e74ae56d72973d => 0.048, # Baltimare
-    0x7ddcb5482c9ec7c003b35ee26053541c => 0.001, # Starlights_Village
-    0x7c5cab193bf23cfb5932ab9b2e786a81 => 0.012, # Yanhooyer
-    0xf066193a1b22cb02186da10f8ff2f745 => 0.003, # Rock_Farm
-    0xa6ba93608028cb3d87c7c545a7beea37 => 0.060, # Crystal Mountains
-    0x8efec93859f44adb1ee2f486710ba609 => 0.045, # Crystal Empire
-    0x4483ac41f5856b3c63187901af52d593 => 0.012, # Yakyakistan
-    0xe5bbc032695e96ea1d95163db1b9b1a7 => 0.065, # Heartlands
-    0xf832346e5964994e4e0b6048c4af5569 => 0.008, # Smoky Mounatins
-    0xf593ae588dfb9596a61f3431e4ae9475 => 0.010, # Badlands
-    0x7a8f93689d916c5ee846d1fc1cd9e2a7 => 0.006, # Undertribe
-    0xa59cd0371e35dde9ef61707d846e6414 => 0.004, # Forbidden Jungle
-    0xb1237f571e8ea9bbe802e69d20087c45 => 0.060, # Eastlands
-    0x560e56027d39ab11b5650c2f3bc46cbb => 0.060, # Griffon Stone
-    0xb54b9f45b857c9bc910466a6f6e0e94f => 0.080, # Dragon Lands
-    0xecc531adf9d75553a46be49dfee3cc2d => 0.008, # South Equestria
-    0xb4c38b478dee769f5978662d7ca409ad => 0.095, # Saddle Arbia
-    0x07c651182bf62dd18653ccf2f103d710 => 0.015, # Zefribia
-  }
-  #--------------------------------------------------------------------------
-  # * Verify all nodes balance if equal to totalbalance
-  #--------------------------------------------------------------------------
-  def self.verify_totalbalance
-    return true if BlockChain.node_empty?
-    return true if SceneManager.scene_is?(Scene_Map)
-    sum = BlockChain.account_balance
-    result = (sum == TotalBalance)
-    PONY::ERRNO.raise(:bits_incorrect, :exit, nil) unless result
-    return result
-  end
-  #--------------------------------------------------------------------------
-  # * Collect BC data
-  #--------------------------------------------------------------------------
-  def self.collect_data
-  end
-  
-end
-
-#==============================================================================
-# ** PONY::ERRNO
-#------------------------------------------------------------------------------
-#  Friendship is magic. Error is tragic.
-#==============================================================================
-module PONY::ERRNO
-  #--------------------------------------------------------------------------
-  # * ERRNO COLLECTION
-  #--------------------------------------------------------------------------
-  ERR_INFO = Vocab::Errno::RESymbol_Table
-  SequenceArgTable = {
-    :pose           => 4,
-    :move           => 5,
-    :slide          => 5,
-    :move_to_target => 5,
-    :target_damage  => 2,
-    :show_anim      => 2,
-    :cast           => 2,
-    :flip           => 2,
-    :action         => 2,
-    :icon           => 2,
-    :sound          => 2,
-    :if             => 3,
-    :add_state      => 2,
-    :rem_state      => 2,
-    :change_target  => 2,
-    :target_move    => 5,
-    :target_slide   => 5,
-    :target_reset   => 3,
-    :target_lock_z  => 2,
-    :target_flip    => 2,
-    :ballon         => 2,
-    :log            => 2,
-    :loop           => 3,
-    :while          => 3,
-    :slow_motion    => 3,
-    :timestop       => 2,
-    :com_event      => 2,
-    :rotate         => 4,
-    :autopose       => 4,
-    
-    nil             => 1,
-  }
-  #--------------------------------------------------------------------------
-  @raised = false
-  #--------------------------------------------------------------------------
-  # * Raise Error Overlay
-  #--------------------------------------------------------------------------
-  def self.raise(symbol, cmd = nil, args = nil, extra_info = "")
-    @sym        = symbol
-    @cmd        = cmd
-    @args       = args
-    @extra_info = extra_info
-    @errno      = true
-  end
-  #--------------------------------------------------------------------------
-  def self.raise_errno
-    return if @raised
-    
-    @raised = true
-    Audio.se_play("Audio/SE/Pinkie_Pie_Sad_Trombone",100,100)
-    sym    = ERR_INFO[@sym] ? ERR_INFO[@sym] : "" 
-    info   = sprintf(Vocab::Errno::RunTimeErr, sym, @extra_info)
-    puts SPLIT_LINE
-    puts "An Error occurred!: #{@sym}"
-    puts "#{@extra_info}"
-    puts SPLIT_LINE
-    SceneManager.scene.raise_overlay_window(:popinfo , info, @cmd, @args, true)
-  end
-  #--------------------------------------------------------------------------
-  def self.close_errno_window
-    @raised     = false
-    @sym        = nil
-    @cmd        = nil
-    @args       = nil
-    @extra_info = nil
-    @errno      = nil
-  end
-  #--------------------------------------------------------------------------
-  def self.mutex_error(e)
-    @error = e
-  end
-  #--------------------------------------------------------------------------
-  def self.error_occurred?
-    @error
-  end
-  #--------------------------------------------------------------------------
-  def self.errno_occurred?
-    @errno
-  end
-  #--------------------------------------------------------------------------
-  def self.check_sequence(seq)
-    exp_num = (SequenceArgTable[seq.first] || 0)
-    if seq.size < exp_num
-      self.sequence_error(:args, seq.first, exp_num, seq.size - 1)
-      return false
-    else
-      return true
-    end
-  end
-  #--------------------------------------------------------------------------
-  def self.sequence_error(type, *args)
-    case type
-    when :args
-      info = Vocab::Errno::SequenceArgError
-      raise ArgumentError, sprintf(info, args[0], args[1], args[2])
-    when :eval
-      raise args[0]
-    end
-  end
-end
-
-#==============================================================================
-# ** PONY::Formula
-#------------------------------------------------------------------------------
-#  Projectile movement definitions
-#==============================================================================
-# tag: formula
-module PONY::Formula
-  # empty, so far
-end
-
-#==============================================================================
 # * Game mode configuration
 #==============================================================================
 #tag: game_mode
@@ -4424,421 +5798,6 @@ module PONY::GameMode
   #------------------------------------------------------------------------------
   setup_modes
 end
-
-#===============================================================================
-# * PONY::Hud
-#-------------------------------------------------------------------------------
-#   Hud settings
-#===============================================================================
-module PONY::Hud
-  
-  LayoutFilename     = "Hud_Outline"
-  LeadLayoutFilename = "Hud_Outline_Lead"
-  FaceFilename       = "HudFace_"
-  
-  HudSize	          = [170, 64]
-  ContentBitmapSize = [200, 70]
-  
-  HPBarRect   = Rect.new(59, 25, 100, 4)
-  
-  EPBarRect   = Rect.new(61, 34, 92, 4)
-  
-  FaceHudRect = Rect.new(0, 0, 62, 62)
-  FaceSrcRect = Rect.new(0, 0, 68, 68)
-  
-  NameRect    = Rect.new(58, 4, 102, 18)
-  
-  StatRect    = Rect.new(60, 40, 200, 24)
-  
-  FaceTimer   = 60
-  FaceIdle    = 0
-  FaceCombat  = 1
-  FaceAttack  = 2
-  FaceInjured = 3
-  FaceDying   = 4
-  FaceKO      = 5
-  
-end
-
-#==============================================================================
-# ** PONY::Rescue
-#------------------------------------------------------------------------------
-#  Thou shall not die!
-#==============================================================================
-module PONY::Rescue
-  module_function
-  
-  def CallPrincessLuna
-    return if $LunaCalled
-    $LunaCalled = true
-    $game_player.start_animation(159)
-    info = Vocab::Rescue::Luna
-    $game_message.add(info)
-    ex, ey = $game_player.x, $game_player.y
-    rpeve = RPG::Event.new(ex,ey)
-    rpeve.name = "Princess Luna"
-    rpeve.id = 2000
-    eve = Game_Event.new($game_map.map_id, rpeve)
-    eve.move_speed = 4
-    eve.through_character = true
-    eve.set_graphic("Princess_Luna%(6)", 0)
-    eve.spawn_npc_battler(9)
-    $game_map.register_event(eve)
-    item = $data_skills[15]
-    target = BattleManager.autotarget(eve, item)
-    eve.priority_type = 1
-    eve.step_anime = true
-    eve.action = Game_Action.new(eve, target, item)
-  end
-  
-end
-
-#==============================================================================
-# ** PONY::SpriteDepth
-#------------------------------------------------------------------------------
-#  Handles sprites depth (z) values
-#==============================================================================
-module PONY::SpriteDepth
-  #--------------------------------------------------------------------------
-  # * Return depth by layer id
-  #--------------------------------------------------------------------------
-  def self.layers(id)
-    return 50 * (id + 1)
-  end
-  #--------------------------------------------------------------------------
-  # * Pre-definied depth table
-  #--------------------------------------------------------------------------
-  Table = {
-    :viewport       =>            self.layers(2),
-    :viewport2      =>            self.layers(0),
-    :viewport3      =>            self.layers(1),
-    :character      =>                       200,
-    :super          =>                      5000,
-    :mouse          =>                     10000,
-    :foreground_ov  =>                     99999,
-    :overlays       =>                      1000,
-    :huds           =>            self.layers(5),
-    :input          =>                       500,
-    :ballon         =>                       200,
-    :animation      =>                       300,
-    :parallax       =>                      -100,
-    :shadow         =>                       180,
-    :tile           =>                         1,
-    :override       =>                       400,
-    :win_info       =>                       800,
-    :foreground     =>                      2000,
-    :win_debug      =>                       999,
-  }
-  #--------------------------------------------------------------------------
-end
-
-#===============================================================================
-# * Global variables
-#===============================================================================
-
-# Define supported languages map, language vocab files should be placed under 
-# 'Vocab/#{language_hey}/' folder.
-$supported_languages = {
-  :en_us => "English(US)",
-  :zh_tw => "繁體中文",
-}
-
-# Errno flag shared between threads
-$error_activated = false 
-#-------------------------------------------------------------------------------
-# * Used CSIDL
-#-------------------------------------------------------------------------------
-CSIDL_APPDATA = 0x1a
-=begin
---------------------------------------------------------------------------------
-  CSIDL	                        Decimal/Hex	      	Description
---------------------------------------------------------------------------------
-CSIDL_ADMINTOOLS	                48	0x30	
-  * The file system directory that is used to store administrative tools for an 
-  individual user.
-CSIDL_ALTSTARTUP      	          29	0x1D	
-  * The file system directory that corresponds to the user's nonlocalized 
-  Startup program group.
-  
-CSIDL_APPDATA   	                26	0x1A	
-  * The file system directory that serves as a common repository for application
-  -specific data. 
-CSIDL_BITBUCKET	                  10	0x0A	
-  * The virtual folder containing the objects in the user's Recycle Bin.
-CSIDL_CDBURN_AREA	                59	0x3B	
-  * The file system directory acting as a staging area for files waiting to be 
-  written to CD.
-CSIDL_COMMON_ADMINTOOLS	          47	0x2F	
-  * The file system directory containing administrative tools for all users of 
-  the computer.
-CSIDL_COMMON_ALTSTARTUP         	30	0x1E	
-  NT-based only	The file system directory that corresponds to the nonlocalized 
-  Startup program group for all users.
-CSIDL_COMMON_APPDATA	            35	0x2	
-  The file system directory containing application data for all users.
-CSIDL_COMMON_DESKTOPDIRECTORY	    25	0x19	
-  NT-based only	The file system directory that contains files and folders that 
-  appear on the desktop for all users.
-CSIDL_COMMON_DOCUMENTS	          46	0x2E	 	
-  The file system directory that contains documents that are common to all users
-CSIDL_COMMON_FAVORITES	          31	0x1F	
-  NT-based only	The file system directory that serves as a common repository for 
-  favorite items common to all users.
-CSIDL_COMMON_MUSIC	              53	0x35
-  The file system directory that serves as a repository for music files common 
-  to all users.
-CSIDL_COMMON_PICTURES	            54	0x36
-  The file system directory that serves as a repository for image files common 
-  to all users.
-CSIDL_COMMON_PROGRAMS	            23	0x17	
-  NT-based only	The file system directory that contains the directories for the 
-  common program groups that appear on the Start menu for all users.
-CSIDL_COMMON_STARTMENU	          22	0x16	
-  NT-based only	The file system directory that contains the programs and folders
-  that appear on the Start menu for all users.
-CSIDL_COMMON_STARTUP	            24	0x18	
-  NT-based only	The file system directory that contains the programs that appear 
-  in the Startup folder for all users.
-CSIDL_COMMON_TEMPLATES	          45	0x2D	
-  NT-based only	The file system directory that contains the templates that are 
-  available to all users.
-CSIDL_COMMON_VIDEO	              55	0x37
-  The file system directory that serves as a repository for video files common 
-  to all users.
-CSIDL_COMPUTERSNEARME	            61	0x3D
-  The folder representing other machines in your workgroup.
-CSIDL_CONNECTIONS	                49	0x31
-  The virtual folder representing Network Connections, containing network and 
-  dial-up connections.
-CSIDL_CONTROLS                     3	0x03	 	
-  The virtual folder containing icons for the Control Panel applications.
-CSIDL_COOKIES	                    33	0x21	 	
-  The file system directory that serves as a common repository for Internet 
-  cookies.
-CSIDL_DESKTOP	                     0	0x00	 	
-  The virtual folder representing the Windows desktop, the root of the shell 
-  namespace.
-CSIDL_DESKTOPDIRECTORY	          16	0x10	 	
-  The file system directory used to physically store file objects on the desktop
-CSIDL_DRIVES	                    17	0x11	 	
-  The virtual folder representing My Computer, containing everything on the 
-  local computer: storage devices, printers, and Control Panel. The folder may 
-  also contain mapped network drives.
-CSIDL_FAVORITES	                   6	0x06	 	
-  The file system directory that serves as a common repository for the user's
-  favorite items.
-CSIDL_FONTS                      	20	0x14	 	
-  A virtual folder containing fonts.
-CSIDL_HISTORY	                    34	0x22	 	
-  The file system directory that serves as a common repository for Internet 
-  history items.
-CSIDL_INTERNET	                   1	0x01	 
-  A viritual folder for Internet Explorer.
-CSIDL_INTERNET_CACHE	            32	0x20
-  The file system directory that serves as a common repository for temporary 
-  Internet files.
-CSIDL_LOCAL_APPDATA	              28	0x1C		
-  The file system directory that serves as a data repository for local 
-  (nonroaming) applications.
-CSIDL_MYDOCUMENTS	                 5	0x05
-  The virtual folder representing the My Documents desktop item.
-CSIDL_MYMUSIC	                    13	0x0D	
-  he file system directory that serves as a common repository for music files.
-CSIDL_MYPICTURES	                39	0x27	
-  The file system directory that serves as a common repository for image files.
-CSIDL_MYVIDEO	                    14	0x0E	
-  The file system directory that serves as a common repository for video files.
-CSIDL_NETHOOD	                    19	0x13	 	
-  A file system directory containing the link objects that may exist in the My 
-  Network Places virtual folder.
-CSIDL_NETWORK	                    18	0x12	 	
-  A virtual folder representing Network Neighborhood, the root of the network 
-  namespace hierarchy.
-CSIDL_PERSONAL	                   5	0x05	 	
-  The file system directory used to physically store a user's common repository 
-  of documents. (From shell version 6.0 onwards, CSIDL_PERSONAL is equivalent to 
-  CSIDL_MYDOCUMENTS, which is a virtual folder.)
-CSIDL_PHOTOALBUMS	                69	0x45	
-  Vista	The virtual folder used to store photo albums.
-CSIDL_PLAYLISTS	                  63	0x3F	
-  Vista	The virtual folder used to store play albums.
-CSIDL_PRINTERS	                   4	0x04	 	T
-  The virtual folder containing installed printers.
-CSIDL_PRINTHOOD	                  27	0x1B	 	
-  The file system directory that contains the link objects that can exist in the 
-  Printers virtual folder.
-CSIDL_PROFILE	                    40	0x28	5.0	
-  The user's profile folder.
-CSIDL_PROGRAM_FILES	              38	0x26	5.0	
-  The Program Files folder.
-CSIDL_PROGRAM_FILESX86	          42	0x2A	5.0	
-  The Program Files folder for 32-bit programs on 64-bit systems.
-CSIDL_PROGRAM_FILES_COMMON	      43	0x2B	5.0	
-  A folder for components that are shared across applications.
-CSIDL_PROGRAM_FILES_COMMONX86	    44	0x2C	5.0	
-  A folder for 32-bit components that are shared across applications on 64-bit 
-  systems.
-CSIDL_PROGRAMS	                   2	0x02	 	
-  The file system directory that contains the user's program groups (which are 
-  themselves file system directories).
-CSIDL_RECENT	                     8	0x08	 	
-  The file system directory that contains shortcuts to the user's most recently 
-  used documents.
-CSIDL_RESOURCES	                  56	0x38	6.0	
-  The file system directory that contains resource data.
-CSIDL_RESOURCES_LOCALIZED	        57	0x39	6.0
-  The file system directory that contains localized resource data.
-CSIDL_SAMPLE_MUSIC	              64	0x40	
-  Vista	The file system directory that contains sample music.
-CSIDL_SAMPLE_PLAYLISTS	          65	0x41	
-  Vista	The file system directory that contains sample playlists.
-CSIDL_SAMPLE_PICTURES	            66	0x42	
-  Vista	The file system directory that contains sample pictures.
-CSIDL_SAMPLE_VIDEOS	              67	0x43	
-  Vista	The file system directory that contains sample videos.
-CSIDL_SENDTO	                     9	0x09	 	
-  The file system directory that contains Send To menu items.
-CSIDL_STARTMENU	                  11	0x0B	 	
-  The file system directory containing Start menu items.
-CSIDL_STARTUP	                     7	0x07	 
-  The file system directory that corresponds to the user's Startup program group
-CSIDL_SYSTEM	                    37	0x25	
-  The Windows System folder.
-CSIDL_SYSTEMX86	                  41	0x29	
-  The Windows 32-bit System folder on 64-bit systems.
-CSIDL_TEMPLATES	                  21	0x15	 	
-  The file system directory that serves as a common repository for document 
-  templates.
-CSIDL_WINDOWS	                    36	0x24	
-  The Windows directory or SYSROOT.
-  
-=end
-
-#--------------------------------------------------------------------------
-# * Print error informations
-#--------------------------------------------------------------------------
-def report_exception(error)
-  scripts_name = $RGSS_SCRIPTS.collect{|script|  script[1]  }
-  backtrace = []
-
-  # Flag to find the error location in externel files
-  translate_flag = false
-  if $LoaderMethodNames
-    translate_flag = $LoaderMethodNames.any?{|method_name|
-      error.backtrace.any?{|line| line.include?(method_name)}
-    }
-  end
-  
-  error.backtrace.each_with_index {|line,i|
-    if line =~ /{(.*)}(.*)/
-      backtrace << (scripts_name[$1.to_i] + $2)
-    elsif line.start_with?(':1:')
-      break
-    else
-      backtrace << (translate_flag ? translate_debug_message(line) : line)
-    end
-    translate_flag = false if $LoaderMethodNames.any?{|name| line.include?(name)}
-  }
-  
-  error_line = backtrace.first
-  backtrace[0] = ''
-  err_class = " (#{error.class})"
-  back_trace_txt = backtrace.join("\n\tfrom ")
-  $error_tracer_header = backtrace[0]
-  error_txt = sprintf("%s %s %s %s %s %s",error_line, ": ", error.message, err_class, back_trace_txt, "\n" )
-  print error_txt
-  return error_txt
-end
-#--------------------------------------------------------------------------
-# * Raise errors that not occurred in Main Thread
-#--------------------------------------------------------------------------
-def flag_error(error)
-  caller.each{|i| puts i}
-  if !$error_activated
-    error_txt = report_exception(error)
-    Audio.se_play('Audio/SE/Buzzer1',80,100)
-    info = Vocab::Errno::Exception
-    print info
-    msgbox(info)
-    filename = "ErrorLog.txt"
-    File.open(filename, 'w+') {|f| f.write(error_txt + "\n") }
-  end
-  
-  $error_activated = true
-  raise error.class, error.message, [$error_tracer_header]
-end
-#--------------------------------------------------------------------------
-# * Find the error source
-#--------------------------------------------------------------------------
-def translate_debug_message(line)
-  return line unless Plugins
-  return line unless (line =~ /:(\d+):/)
-  line_number = $1.to_i
-  info = Plugins.find_file_by_line(line_number)
-  line_number = line_number - info[4] + 1
-  return sprintf("%s:%s:%s", info[1], line_number, line.split(':').last)
-end
-#--------------------------------------------------------------------------
-def sprite_valid?(sprite)
-  return sprite && !sprite.disposed? rescue false
-end
-#--------------------------------------------------------------------------
-def debug_mode?
-  return GameManager.debug_mode?
-end
-#--------------------------------------------------------------------------
-# * Print debug info
-#--------------------------------------------------------------------------
-def debug_print(*args)
-  return unless debug_mode?
-  info = ""
-  args.each do |line|
-    info += line.to_s + ' '
-  end
-  puts "[Debug]: #{info}"
-end
-alias debug_printf debug_print
-#--------------------------------------------------------------------------
-def setup_font
-  
-  if CurrentLanguage == :zh_tw
-    Font.default_name = "NotoSansCJKtc-Regular"
-  else
-    Font.default_name = "Celestia Medium Redux"
-  end
-  puts "[Debug]: Setup Font #{Font.default_name}"
-  Font.default_size = 24
-  
-end
-#--------------------------------------------------------------------------
-# * Alias: load_data
-#--------------------------------------------------------------------------
-alias load_data_pony load_data
-def load_data(filename)
-  SceneManager.update_loading
-  load_data_pony(filename)
-end
-#--------------------------------------------------------------------------
-alias puts_debug puts
-def puts(*args)
-  return unless debug_mode?
-  args[0] = "<#{Time.now}> " + args[0] if args[0] =~ /\[(.*)\]/i
-  puts_debug(*args)
-end
-#--------------------------------------------------------------------------
-# * Overwrite the exit method to program-friendly
-#--------------------------------------------------------------------------
-def exit(stat = true)
-  $exited = true
-  SceneManager.scene.fadeout_all rescue nil
-  Cache.release
-  SceneManager.exit
-end
-#--------------------------------------------------------------------------
-def sec_to_frame(t)
-  return (t * Graphics.frame_rate).to_i
-end
-#--------------------------------------------------------------------------
 
 #==============================================================================
 # ** Audio
@@ -5024,6 +5983,14 @@ class Bitmap
   def initialize(*args)
     @source = args[0].is_a?(String) ? args[0] : nil
     init_source(*args)
+  end
+  #-----------------------------------------------------------------------------
+  alias draw_text_encoding draw_text
+  def draw_text(*args)
+    args.each_with_index do |arg, i|
+      args[i] = arg.dup.force_encoding($default_encoding) if arg.is_a?(String)
+    end
+    draw_text_encoding(*args)
   end
   #-----------------------------------------------------------------------------
   # * Implementation of Bresenham's algorithm with dirty hacks
@@ -6279,285 +7246,6 @@ class RPG::Weapon < RPG::EquipItem
   def is_weapon?; true; end
   #---------------------------------------------------------------------------
 end
-#===============================================================================
-# * GameManager
-#===============================================================================
-module GameManager
-  #----------------------------------------------------------------------------
-  @debug_mode       = false
-  @show_roll_result = false
-  @skip_loading     = false
-  @focus            = true
-  @hwnd             = nil
-  #----------------------------------------------------------------------------
-  module_function
-  def initialize
-    self.load_ini
-    @hwnd = PONY::API::Hwnd
-  end
-  #----------------------------------------------------------------------------
-  def load_ini
-    group = "Option"
-    @show_roll_result = FileManager.load_ini(group, 'ShowRollResult').to_i.to_bool
-    @debug_mode       = FileManager.load_ini(group, 'DebugMode').to_i.to_bool
-    @skip_loading     = FileManager.load_ini(group, 'SkipLoading').to_i.to_bool
-    puts "Ini loaded"
-    puts "#{@debug_mode} #{@skip_loading}"
-    self.load_volume
-  end
-  #----------------------------------------------------------------------------
-  def load_volume
-    Sound.set_volume(100,100,100)
-    begin
-      volume = FileManager.load_ini('Option', 'Volume')
-      volume = volume.split(/[\[\]]/).at(1)
-      volume = volume.split(',').collect{|i| i.to_i}
-    rescue Exception => e
-      volume = [100, 100, 100]
-    end
-    volume = [100, 100, 100] if !volume
-    Sound.set_volume(*volume)
-    puts("Volume:", Sound.volume)
-  end
-  #----------------------------------------------------------------------------
-  def get_language_setting
-    raw = FileManager.load_ini('Option', 'Language').purify.downcase.to_sym
-    puts "Language Changed: #{raw}"
-    return $supported_languages.keys.include?(raw) ? raw : :en_us
-  end
-  #--------------------------------------------------------------------------
-  def update_focus
-    chwnd  = PONY::API::GetFocus.call(0)
-    @focus = chwnd == @hwnd || ($input_hwnd && $input_hwnd == chwnd)
-  end
-  #----------------------------------------------------------------------------
-  def skip_loading?
-    return @skip_loading || ($game_system && ($game_system.game_mode == :credits))
-  end
-  #----------------------------------------------------------------------------
-  # * Getter query functions
-  #----------------------------------------------------------------------------
-  def show_roll_result?; @show_roll_result; end
-  def focused?; @focus; end
-  def debug_mode?; @debug_mode; end
-  #----------------------------------------------------------------------------
-end
-#==============================================================================
-# ** FileManager
-#------------------------------------------------------------------------------
-#  This module is using to change the configs in Game.ini, e.g. sound volume or
-#  other settings.
-#==============================================================================
-module FileManager
-  #---------------------------------------------------------------------------
-  PaddingWidth  = 6
-  DebugFilePath = "Data/Debug/"
-  #---------------------------------------------------------------------------
-  module_function
-  #---------------------------------------------------------------------------
-  # *) Ensure the file or dictionary
-  #---------------------------------------------------------------------------
-  def ensure_file_exist(filename)
-    Dir.mkdir(filename) unless File.exist?(filename)
-  end
-  #--------------------------------------------------------------------------
-  # * Text wrap for window contents
-  #--------------------------------------------------------------------------
-  def textwrap(full_text, line_width, sample_bitmap = nil)
-    return [] if full_text.nil?
-    if sample_bitmap.nil?
-      using_sample = true
-      sample_bitmap = Bitmap.new(1,1)
-    else
-      using_sample  = false
-    end
-    raise TypeError unless full_text.is_a?(String)
-    wraped_text = []
-    cur_width   = PaddingWidth
-    line        = ""
-    strings     = full_text.gsub('　', ' ').split(/[\r\n ]+/i)
-    strs_n      = strings.size
-    space_width = sample_bitmap.text_size(' ').width
-    minus_width = sample_bitmap.text_size('-').width
-    
-    # while any string segment unprocessed
-    while (str = strings.first)
-      next if str.length == 0
-      width = sample_bitmap.text_size(str).width
-      endl  = false
-      # if the segment width larger than display width
-      if width + PaddingWidth >= line_width
-        line      = ""
-        cur_width = minus_width
-        strlen    = str.length
-        processed = false
-        last_i    = 0
-        # process each character on by one
-        for i in 0...strlen
-          width = sample_bitmap.text_size(str[i]).width
-          last_i = i
-          # unable to display character
-          if !processed && cur_width + width >= line_width
-            sample_bitmap.dispose if using_sample
-            return [full_text]
-          elsif cur_width + width < line_width
-            cur_width += width
-            line += str[i]
-            processed = true
-          else
-            break
-          end
-        end
-        # continue symbol character
-        line += '-'
-        # replace with left unprocessed string
-        strings[0] = str[last_i...strlen]
-        endl = true
-      # + segment width smaller than line width, continue
-      elsif cur_width + width < line_width
-        cur_width += width + space_width
-        line += strings.shift + ' '
-        endl = true if strings.size == 0
-      # + segment width over the line width, process end of line
-      else
-        endl = true
-      end
-      
-      if endl
-        wraped_text.push(line)
-        line = ""
-        cur_width = PaddingWidth
-      end
-    end
-    sample_bitmap.dispose if using_sample
-    return wraped_text
-  end
-  #--------------------------------------------------------------------------
-  # * Load Game.ini index
-  #--------------------------------------------------------------------------
-  def load_ini(group, target, path = ".//Game.ini")
-    buffer = '\0' * 256
-    PONY::API::GetPPString.call(group, target, '', buffer, 256, path)
-    return buffer.strip
-  end
-  #--------------------------------------------------------------------------
-  # * Modify Game.ini index
-  #--------------------------------------------------------------------------
-  def write_ini(group, target, goal, path = ".//Game.ini")
-    PONY::API::WritePPString.call(group, target, goal, path)
-  end # def change ini
-  #--------------------------------------------------------------------------
-  # * Replace
-  #--------------------------------------------------------------------------
-  def convert_eval_string(str)
-    return if str.nil?
-    cache = ""
-    detect_flag = false
-    true_str = ""
-    
-    for i in 0...str.length
-      if str[i] == '%' && str[i+1] == '{'
-        detect_flag = true
-        next
-      end
-      
-      if detect_flag
-        if str[i] == '}'
-          cache[0] = ''
-          puts "#{cache}"
-          true_str += eval(cache).to_s rescue "%{CONVERSION ERROR}"
-          cache = ""; detect_flag = false;
-        elsif str[i]
-          cache += str[i]
-        end
-      else # if not detecting eval code
-        true_str += str[i]
-      end # if detect flag on
-    end # for i in str
-    
-    return true_str
-  end # def convert
-  #--------------------------------------------------------------------------
-  def export_all_map_dialog
-    path = "Data/Map*.rvdata2"
-    files = Dir.glob(path)
-    files.each do |filename|
-     export_map_dialog(filename)
-    end
-  end
-  #--------------------------------------------------------------------------
-  def export_map_dialog(map_sym)
-    map_sym =~ /(?:Map)[ ]\d+/i
-    if map_sym.is_a?(Numeric)
-      map_id = map_sym.to_fileid(3) 
-    else
-      map_id = map_sym.split("Map")[1].split('.').first
-    end
-    path = "Data/Dialog/"
-    Dir.mkdir(path) unless File.exist?(path)
-    path     += map_id
-    Dir.mkdir(path) unless File.exist?(path)
-    filename = path + "/dialog.txt"
-    map  = load_data(sprintf("Data/Map%03d.rvdata2", map_sym)) if map_sym.is_a?(Numeric)
-    map  = load_data(map_sym) if map_sym.is_a?(String)
-    return unless map.is_a?(RPG::Map)
-    output = ""
-    map.events.each_value do |event|
-      output += sprintf("[%03d] %s\n", event.id, event.name)
-      event.pages.each do |page|
-        listsize = page.list.size
-        index = 0
-        while index < listsize
-          outputed = false
-          if page.list[index].code == 101 || page.list[index].code == 105
-            while page.list[index+1].code == 101 && Variable.message_rows > 4 || page.list[index+1].code == 401
-              index += 1
-              output += page.list[index].parameters[0].to_s + 10.chr
-              outputed = true
-            end
-          end # if page will show text
-          index += 1
-          output += SPLIT_LINE + 10.chr if outputed
-        end # commands in list
-      end # pages in event
-    end # events in map
-    File.open(filename, 'w') do |file|
-        file.write(output)
-    end
-  end
-  #--------------------------------------------------------------------------
-  def continue_message_string?
-    return true if next_event_code == 101 && Variable.message_rows > 4
-    return next_event_code == 401
-  end
-  #--------------------------------------------------------------------------
-  def build_debug_file(filename, stat, &block)
-    path = "Data/Debug"; ensure_file_exist(path); path += "/" + filename;
-    File.open(path, stat) do |file|
-      yield file if block_given?
-    end
-  end
-  #--------------------------------------------------------------------------
-  def compress_source(file)
-    script = []
-    script[0] = (file.hash + script.hash).abs
-    script[1] = file.split(/[\/\\]+/).last
-    script[3] = load_data(file)
-    script[2] = Zlib::Deflate.deflate(script[3])
-    return script
-  end
-  #---------------------------------------------------------------------------
-  def export_debug_file(filename, index)
-    mkdir(DebugFilePath) unless File.exist?(DebugFilePath)
-    path = DebugFilePath + filename
-    File.open(path, 'w') do |file|
-      file.write(index)
-    end
-    return path
-  end
-  #---------------------------------------------------------------------------
-end
-
 #==============================================================================
 # ** DataManager
 #------------------------------------------------------------------------------
@@ -6647,7 +7335,7 @@ module DataManager
   # * Execute Load
   #--------------------------------------------------------------------------
   def self.load_game(index, game_mode = $game_system.game_mode)
-    result = load_game_without_rescue(index, game_mode)# rescue false
+    result = load_game_without_rescue(index, game_mode) # rescue false
     return result
   end
   #--------------------------------------------------------------------------
@@ -6820,7 +7508,7 @@ module DataManager
   def self.delete_save_file(index, game_mode = $game_system.game_mode)
     File.delete(make_chainfilename(index, game_mode)) rescue nil
     File.delete(make_hashfilename(index, game_mode))  rescue nil
-    delete_save_file_chain(index, game_mode)
+    delete_save_file_chain(index)
   end
   #--------------------------------------------------------------------------
   # * Map cache file name
@@ -6962,6 +7650,7 @@ module DataManager
   #--------------------------------------------------------------------------
   #tag: transalte
   def self.process_translation
+    # change_encoding('utf-8')
     translate_actors
     translate_classes
     translate_items
@@ -6971,6 +7660,18 @@ module DataManager
     translate_terms
     translate_states
     debug_print("Translate to #{$supported_languages[CurrentLanguage]} done")
+  end
+  #--------------------------------------------------------------------------
+  def self.change_encoding(enc)
+    ObjectSpace.each_object(String) do |str|
+      next if str.frozen?
+      str = str.force_encoding(enc)
+    end
+    ObjectSpace.each_object(Regexp) do |reg|
+      next if reg.frozen?
+      regs = reg.inspect
+      reg  = Regexp.new(regs[1...regs.rindex('/')].force_encoding("utf-8"), Regexp::FIXEDENCODING | reg.options)
+    end
   end
   #--------------------------------------------------------------------------
   def self.translate_actors
@@ -13706,6 +14407,14 @@ class Game_Interpreter
     setup_gmitopt(list, event_id)
   end
   #--------------------------------------------------------------------------
+  # * Open Menu Screen
+  #--------------------------------------------------------------------------
+  alias command_351_imagemenu command_351
+  def command_351
+    Window_MenuImageCommand::init_command_position
+    command_351_imagemenu
+  end
+  #--------------------------------------------------------------------------
   # * Script
   #--------------------------------------------------------------------------
   def command_355
@@ -17280,6 +17989,23 @@ class Window_Base < Window
     self.windowskin = skin.is_a?(String) ? Cache.system(skin) : skin
   end
   #--------------------------------------------------------------------------
+  alias draw_text_encoding draw_text
+  def draw_text(*args)
+    args.each_with_index do |arg, i|
+      if arg.is_a?(String)
+        args[i] = arg.dup.force_encoding($default_encoding)
+      end
+    end
+    draw_text_encoding(*args)
+  end
+  #--------------------------------------------------------------------------
+  # * Draw Text with Control Characters
+  #--------------------------------------------------------------------------
+  alias draw_text_ex_encoding draw_text_ex
+  def draw_text_ex(x, y, text)
+    draw_text_ex_encoding(x, y, text.force_encoding($default_encoding))
+  end
+  #--------------------------------------------------------------------------
   # * Draw text in static position
   #--------------------------------------------------------------------------
   def draw_code_text(x, y, text)
@@ -17887,22 +18613,24 @@ class Window_Help < Window_Base
   # * Overwrite: Set Text
   #--------------------------------------------------------------------------
   def set_text(text)
+    text = (text || '')
     if text != @text
-      @text = text
+      @text = text.dup
       if text.is_a?(Array)
         @text = modify_text
       elsif text_size(text).width > contents.width
         @text = FileManager.textwrap(text, contents.width)
         @text = modify_text
+      else
+        @text = @text.force_encoding($default_encoding)
       end
       refresh
     end
   end
   #--------------------------------------------------------------------------
   def modify_text
-    @text.inject("") do |str, line|
-      str += line + 10.chr
-    end
+    @text = @text.inject(""){|str, line| str += line + 10.chr}
+    @text = @text.force_encoding($default_encoding)
   end
   #--------------------------------------------------------------------------
 end
@@ -18202,8 +18930,18 @@ end
 #  This command window appears on the menu screen.
 #==============================================================================
 class Window_MenuImageCommand < Window_ImageHorzCommand
+  #--------------------------------------------------------------------------
+  # * Constants
+  #--------------------------------------------------------------------------
   MENU_ICON_WIDTH  = 50
   MENU_ICON_HEIGHT = 50
+
+  # Levelup command
+  COMMAND_LEVELUP = {
+    :name   => Vocab::LevelUp,
+    :symbol => :levelup,
+    :image  => "Menu_Levelup"
+  }
   #--------------------------------------------------------------------------
   # * Initialize Command Selection Position (Class Method)
   #--------------------------------------------------------------------------
@@ -18325,17 +19063,23 @@ class Window_MenuImageCommand < Window_ImageHorzCommand
     rect
   end
   #--------------------------------------------------------------------------
+  # * Add Level up commmand
+  #--------------------------------------------------------------------------
+  def add_levelup_command
+    info = COMMAND_LEVELUP
+    add_command(info[:name], info[:symbol], info[:image], levelup_command_enabled, nil, info[:name])
+  end
+  #--------------------------------------------------------------------------
   # * Add Main Commands to List
   #--------------------------------------------------------------------------
   def add_main_commands
-    names   = [Vocab::item, Vocab::skill, Vocab::equip, Vocab::status,
-               Vocab::LevelUp, Vocab::Quest]
-    symbols = [:item, :skill, :equip, :status, :levelup, :quest]
-    image   = ["Menu_Bag", "Menu_Skill", "Menu_Gears", "Menu_Status", 
-               "Menu_Upgrade", "Menu_Quest"]
-             
+    # Names are obtained after data loaded so can't use constants
+    names   = [Vocab::item, Vocab::skill, Vocab::equip, Vocab::status, Vocab::Quest]
+    symbols = [:item, :skill, :equip, :status, :quest]
+    images  = ["Menu_Bag", "Menu_Skill", "Menu_Gears", "Menu_Status", "Menu_Quest"]
+
     names.size.times do |i|
-      add_command(names[i], symbols[i], image[i], main_commands_enabled, nil, names[i])
+      add_command(names[i], symbols[i], images[i], main_commands_enabled, nil, names[i])
     end
   end
   #--------------------------------------------------------------------------
@@ -18360,6 +19104,11 @@ class Window_MenuImageCommand < Window_ImageHorzCommand
   #--------------------------------------------------------------------------
   def add_game_end_command
     add_command(Vocab::game_end, :game_end, "Menu_System", true, nil, Vocab::SystemDec)
+  end
+  #--------------------------------------------------------------------------
+  def levelup_command_enabled
+    return false if BattleManager.in_battle?
+    return true
   end
   #--------------------------------------------------------------------------
   def save_enabled?
@@ -19068,7 +19817,7 @@ class Window_TitleCommand < Window_Command
   # * Overwrite: Change order and new commands
   #--------------------------------------------------------------------------
   def make_command_list
-    add_command(Vocab::continue, :continue, continue_enabled, nil, Vocab::continue)
+    add_command(Vocab::continue, :continue, continue_enabled, nil, Vocab::Continue)
     add_command(Vocab::new_game, :start_game, true, nil, Vocab::StartGame)
     add_command(Vocab::Option,   :option,     true, nil, Vocab::Option)
     add_command(Vocab::Credits,  :credits,    true, nil, Vocab::Credits)
@@ -22911,10 +23660,11 @@ class Window_InformationLog < Window_Selectable
   # * Add Text
   #--------------------------------------------------------------------------
   def add_text(text)
+    return unless text
     lines = FileManager.textwrap(text, contents_width, contents)
     lines.each do |line|
-      @lines.shift      if item_max > item_limit
-      @lines.push(line) if line.size > 0
+      @lines.shift if item_max > item_limit
+      @lines.push(line.dup.force_encoding($default_encoding)) if line.size > 0
     end
     refresh(true)
   end
@@ -24122,7 +24872,9 @@ class Scene_Title < Scene_Base
   #--------------------------------------------------------------------------
   def command_continue
     file = DataManager.latest_savefile
-    return if file.nil?
+    if file.nil?
+      return @command_window.activate
+    end
     result = DataManager.load_game(file.index, file.mode)
     if result == true
       on_load_success
@@ -24436,7 +25188,7 @@ class Scene_Map < Scene_Base
     @spriteset
   end
   #--------------------------------------------------------------------------
-  # * Determine if Menu is Called due to Cancel Button
+  # * Overwrite: Determine if Menu is Called due to Cancel Button
   #--------------------------------------------------------------------------
   def update_call_menu
     if $game_system.menu_disabled || $game_map.interpreter.running?
@@ -24446,6 +25198,14 @@ class Scene_Map < Scene_Base
       @menu_calling = false if $game_system.story_mode?
       call_menu if @menu_calling && !$game_player.moving?
     end
+  end
+  #--------------------------------------------------------------------------
+  # * Alias: Call Menu Screen
+  #--------------------------------------------------------------------------
+  alias call_imagemenu call_menu
+  def call_menu
+    Window_MenuImageCommand::init_command_position
+    call_imagemenu
   end
   #----------------------------------------------------------------------------
   def create_tactic_cursor
@@ -26543,6 +27303,151 @@ end
 #                      ▼   End of File   ▼                                     #
 #                                                                              # 
 #==============================================================================#
+
+#==============================================================================
+# ** PONY::ERRNO
+#------------------------------------------------------------------------------
+#  Friendship is magic. Error is tragic.
+#==============================================================================
+module PONY::ERRNO
+  #--------------------------------------------------------------------------
+  # * ERRNO COLLECTION
+  #--------------------------------------------------------------------------
+  ERR_INFO = Vocab::Errno::RESymbol_Table
+  SequenceArgTable = {
+    :pose           => 4,
+    :move           => 5,
+    :slide          => 5,
+    :move_to_target => 5,
+    :target_damage  => 2,
+    :show_anim      => 2,
+    :cast           => 2,
+    :flip           => 2,
+    :action         => 2,
+    :icon           => 2,
+    :sound          => 2,
+    :if             => 3,
+    :add_state      => 2,
+    :rem_state      => 2,
+    :change_target  => 2,
+    :target_move    => 5,
+    :target_slide   => 5,
+    :target_reset   => 3,
+    :target_lock_z  => 2,
+    :target_flip    => 2,
+    :ballon         => 2,
+    :log            => 2,
+    :loop           => 3,
+    :while          => 3,
+    :slow_motion    => 3,
+    :timestop       => 2,
+    :com_event      => 2,
+    :rotate         => 4,
+    :autopose       => 4,
+    
+    nil             => 1,
+  }
+  #--------------------------------------------------------------------------
+  @raised = false
+  #--------------------------------------------------------------------------
+  # * Raise Error Overlay
+  #--------------------------------------------------------------------------
+  def self.raise(symbol, cmd = nil, args = nil, extra_info = "")
+    @sym        = symbol
+    @cmd        = cmd
+    @args       = args
+    @extra_info = extra_info
+    @errno      = true
+  end
+  #--------------------------------------------------------------------------
+  def self.raise_errno
+    return if @raised
+    
+    @raised = true
+    Audio.se_play("Audio/SE/Pinkie_Pie_Sad_Trombone",100,100)
+    sym    = ERR_INFO[@sym] ? ERR_INFO[@sym] : "" 
+    info   = sprintf(Vocab::Errno::RunTimeErr, sym, @extra_info)
+    puts SPLIT_LINE
+    puts "An Error occurred!: #{@sym}"
+    puts "#{@extra_info}"
+    puts SPLIT_LINE
+    SceneManager.scene.raise_overlay_window(:popinfo , info, @cmd, @args, true)
+  end
+  #--------------------------------------------------------------------------
+  def self.close_errno_window
+    @raised     = false
+    @sym        = nil
+    @cmd        = nil
+    @args       = nil
+    @extra_info = nil
+    @errno      = nil
+  end
+  #--------------------------------------------------------------------------
+  def self.mutex_error(e)
+    @error = e
+  end
+  #--------------------------------------------------------------------------
+  def self.error_occurred?
+    @error
+  end
+  #--------------------------------------------------------------------------
+  def self.errno_occurred?
+    @errno
+  end
+  #--------------------------------------------------------------------------
+  def self.check_sequence(seq)
+    exp_num = (SequenceArgTable[seq.first] || 0)
+    if seq.size < exp_num
+      self.sequence_error(:args, seq.first, exp_num, seq.size - 1)
+      return false
+    else
+      return true
+    end
+  end
+  #--------------------------------------------------------------------------
+  def self.sequence_error(type, *args)
+    case type
+    when :args
+      info = Vocab::Errno::SequenceArgError
+      raise ArgumentError, sprintf(info, args[0], args[1], args[2])
+    when :eval
+      raise args[0]
+    end
+  end
+end
+
+#==============================================================================
+# ** PONY::Rescue
+#------------------------------------------------------------------------------
+#  Thou shall not die!
+#==============================================================================
+module PONY::Rescue
+  module_function
+  
+  def CallPrincessLuna
+    return if $LunaCalled
+    $LunaCalled = true
+    $game_player.start_animation(159)
+    info = Vocab::Rescue::Luna
+    $game_message.add(info)
+    ex, ey = $game_player.x, $game_player.y
+    rpeve = RPG::Event.new(ex,ey)
+    rpeve.name = "Princess Luna"
+    rpeve.id = 2000
+    eve = Game_Event.new($game_map.map_id, rpeve)
+    eve.move_speed = 4
+    eve.through_character = true
+    eve.set_graphic("Princess_Luna%(6)", 0)
+    eve.spawn_npc_battler(9)
+    $game_map.register_event(eve)
+    item = $data_skills[15]
+    target = BattleManager.autotarget(eve, item)
+    eve.priority_type = 1
+    eve.step_anime = true
+    eve.action = Game_Action.new(eve, target, item)
+  end
+  
+end
 
 # =============================================================================
 # TheoAllen - Basic Modules
@@ -51587,6 +52492,140 @@ end # Scene_Status
 #==============================================================================
 
 #==============================================================================
+# ■ Window_StatusCommand
+#==============================================================================
+class Window_StatusCommand < Window_Command
+  #-----------------------------------------------------------------------------
+  MouseTimer = 5
+  #-----------------------------------------------------------------------------
+  def get_mouse_timer
+    return MouseTimer
+  end
+  #-----------------------------------------------------------------------------
+end
+#==============================================================================
+# ■ Window_StatusItem
+#==============================================================================
+class Window_StatusItem < Window_Base
+  #-----------------------------------------------------------------------------
+  attr_accessor :skillbar
+  #--------------------------------------------------------------------------
+  # * alias method : initialize
+  #--------------------------------------------------------------------------
+  alias init_skillbar initialize
+  def initialize(dx, dy, command_window)
+    create_skillbar
+    init_skillbar(dx, dy, command_window)
+  end
+  #--------------------------------------------------------------------------
+  # * Create skillbar instance
+  #--------------------------------------------------------------------------
+  def create_skillbar
+    @skillbar = $game_party.skillbar
+    @skillbar.create_layout(SceneManager.viewport, 1)
+    @skillbar.hide
+  end
+  #--------------------------------------------------------------------------
+  # * alias: refresh
+  #--------------------------------------------------------------------------
+  alias refresh_skillbar refresh
+  def refresh
+    ori_opa = self.opacity
+    @skillbar.hide
+    refresh_skillbar
+    self.opacity = ori_opa
+  end
+  #--------------------------------------------------------------------------
+  # * alias method: draw actor general
+  #--------------------------------------------------------------------------
+  alias draw_actor_general_skillbar draw_actor_general
+  def draw_actor_general
+    @skillbar.show
+    @skillbar.z = self.z + 1
+    @skillbar.refresh(@actor)
+    draw_actor_general_skillbar
+  end
+  #--------------------------------------------------------------------------
+  # * Draw current setting of tactic logic
+  #--------------------------------------------------------------------------
+  def draw_tactic_overview
+  end # queued: tactics AI
+  #--------------------------------------------------------------------------
+  # * dispose window
+  #--------------------------------------------------------------------------
+  def dispose
+    @skillbar.dispose_layout
+    super
+  end
+  #-----------------------------------------------------------------------------
+end
+#==============================================================================
+# ■ Scene_Status
+#==============================================================================
+class Scene_Status < Scene_MenuBase
+  #--------------------------------------------------------------------------
+  alias start_scstat start
+  def start
+    start_scstat
+    @skillbar = @item_window.skillbar
+    create_foreground
+  end
+  #--------------------------------------------------------------------------
+  alias update_scstat_skillbar update
+  def update
+    update_scstat_skillbar
+    return unless @skillbar.edit_enabled
+    @skillbar.update
+    on_edit_end
+  end
+  #--------------------------------------------------------------------------
+  def create_foreground
+    @foreground = Sprite.new(@viewport)
+    @foreground.bitmap = Bitmap.new(Graphics.width, Graphics.height)
+    wy = @help_window.height
+    @foreground.bitmap.fill_rect(0, wy, Graphics.width, Graphics.height - wy, DND::COLOR::Black)
+    cx = @skillbar.x + 32 * 4
+    cy = @skillbar.y - 2
+    crect = Rect.new(cx, cy, 32 * HotKeys::HotKeys.size, 32)
+    @foreground.bitmap.clear_rect(crect)
+    @foreground.z = PONY::SpriteDepth::Table[:foreground]
+    @foreground.opacity = 196
+    @foreground.hide
+  end
+  #--------------------------------------------------------------------------
+  # * Activate edit mode of skillbar
+  #--------------------------------------------------------------------------
+  def edit_skillbar
+    return unless @skillbar
+    @skillbar.edit_enabled = true
+    @help_window.set_text(Vocab::Skillbar::MouseEdit)
+    @foreground.show
+  end
+  #--------------------------------------------------------------------------
+  def on_edit_end
+    return unless Input.trigger?(:B)
+    @skillbar.cancel_edit
+    Sound.play_cancel
+    @command_window.activate
+    @skillbar.unselect
+    @foreground.hide
+  end
+  #--------------------------------------------------------------------------
+  def call_tactic_scene
+    @command_window.activate
+    #raise_overlay_window(:popinfo, "Not available yet!")
+    SceneManager.call(Scene_Tactic)
+  end
+  #--------------------------------------------------------------------------
+  alias terminate_scstat terminate
+  def terminate
+    @foreground.dispose
+    terminate_scstat
+  end
+  
+end
+
+#==============================================================================
 # +++ MOG - Animated Title A (v2.4) +++
 #==============================================================================
 # By Moghunter 
@@ -52725,16 +53764,38 @@ module Thread_Assist
 end
 
 #================================================
-# * New Global variables
+# * Script Processions
 #================================================
-$supported_languages = {
-  :en_us => "English(US)",
-  :zh_tw => "繁體中文",
-}
+script_disable_flag = false
+output_script       = true
 
-GameManager.initialize
-CurrentLanguage = GameManager.get_language_setting
-puts "Language: #{CurrentLanguage}"
+Dir.mkdir("Scripts/") unless File.exist?("Scripts/")
+permutation_order = 0
+$RGSS_SCRIPTS.each_with_index {|data, i|
+  script_disable_flag = true  if data.at(1) =~ /<Disabled_Scripts>/i
+  script_disable_flag = false if data.at(1) =~ /<\/Disabled_Scripts>/i
+  next if data[4]
+
+  if output_script
+    string_order = permutation_order.to_fileid(3).to_s
+    
+    file_name = string_order + "_" + data[1] + ".rb"
+    file_name = string_order + "-----------------------------" if $RGSS_SCRIPTS[i][1].size < 1
+    file_name = "Scripts/" + file_name.tr(':<>|/','')
+    
+    script_file = File.new(file_name, 'w')
+    
+    codes = data[3]
+    codes.split(/[\r\n]+/).each { |line|
+     script_file.write(line)
+     script_file.write("\n")
+    }
+    script_file.close
+    permutation_order += 1
+  end
+  
+  $RGSS_SCRIPTS.at(i)[2] = $RGSS_SCRIPTS.at(i)[3] = '' if script_disable_flag 
+}
 
 # tag: test
 TEST = 0
@@ -52756,1651 +53817,19 @@ $rgss   = self
 $assist = RubyVM::InstructionSequence.compile("$thassist=Thread.new{Thread_Assist.assist_main}.run")
 $mutex  = Mutex.new
 #==============================================================================
-# ** Vocab::Dungeons and Dragons
-#------------------------------------------------------------------------------
-#  The collection of words that belong to D&D terms
+# ** Ex-Main
 #==============================================================================
-# tag: translate
-module Vocab::DND
-  
-  PARAM_NAME = [
-    "None",
-    "None",
-    "Str",
-    "Con",
-    "Int",
-    "Wis",
-    "Dex",
-    "Cha",
-  ]
-  
-  WEAPON_TYPE_NAME = [
-    "",
-    "Hoof Axe",
-    "Horseshoe",
-    "Polearm",
-    "1H Sword",
-    "2H Sword",
-    "Bow",
-    "Crossbow",
-    "Hammer",
-    "Mace",
-    "Firearm",
-    "Arrow",
-    "Bolt",
-    "Bullet",
-    "Mage Staff"
-  ]
-  
-  ARMOR_TYPE_NAME = [
-  "",
-  "Light Armor",
-  "Medium Armor",
-  "Heavy Armor",
-  "Clothing",
-  "Shield",
-  "Great Shield",
-  "Hooves",
-  "Belt",
-  "Necklace",
-  "Cloak",
-  "Ring",
-  "Greave",
-  "Rune",
-  "Gem",
-  ]
-  
-  SKILL_TYPE_NAME = [
-  "",
-  "Skill",
-  "Spell",
-  "Vancian",
-  "Passive",
-  ]
-  
-  ELEMENT_NAME = [
-    "",
-    "Bludgeoning",
-    "Piercing",
-    "Slashing",
-    "Acid",
-    "Cold",
-    "Fire",
-    "Force",
-    "Lightning",
-    "Necrotic",
-    "Poison",
-    "Psychic",
-    "Radiant",
-    "Thunder",
-  ]
-  
-  RankName = {
-    :critter  => "Critter",
-    :minion   => "Minion",
-    :elite    => "Elite",
-    :captain  => "Captain",
-    :chief    => "Chief",
-  }
-  
-end
-
-#==============================================================================
-# ** Vocab
-#------------------------------------------------------------------------------
-#  This module defines terms and messages. It defines some data as constant
-# variables. Terms in the database are obtained from $data_system.
-#==============================================================================
-module Vocab::YEA
-  ICON_HASH = {
-    # Matching Text   => Icon ID,
-      "New story"            => 125,    # Title scene.
-      "Continue story"       => 126,    # Title scene.
-      "Leave"                => 127,    # Title scene. Game End scene.
-      
-      "Battle"        => 386,     # Battle scene.
-      "Gallop"        => 328,     # Battle scene.
-      "Strike"        => 116,     # Battle scene.
-      "Guard"         => 506,     # Battle scene.
-      "Relic"         => 9299,
-      "Relics"        => 9299,
-      "Skill"         => 8175,    # Skill scene. Battle scene.
-      "Skills"        => 8175,
-      "Ability"       => 106,     # Skill scene. Battle scene.
-      "Spells"        => 106,     # Skill scene. Battle scene.
-      "Passive"       => 3193,
-      "Friendship"    => 8056,
-      "Learn Skills"  => 2437,
-      "Songs"         => 6470,
-      "Pet"           => 3316,
-      "Talent"        => 10662,
-      "Bio"           => 233,
-      "Brew"          => 3814,
-      "Science"       => 8249,
-      "Summon"        => 3761,
-      "Parameters"    => 228,
-      "Quest"         => 1334,
-      "Overview"      => 1354,
-      "Saddlebag"     => 1528,     # Menu scene. Item scene. Battle scene.
-      "Items"         => 1528,     # Menu scene. Item scene. Battle scene.
-      "Talk"          => 4,
-      "Actions"       => 143,
-      "Cook"          => 2580,
-      "Crafting"       => 125,
-      "Skills"        => 104,      # Menu scene.
-      "Log"           => 2441,
-      "Books"         => 2384,
-      "History"       => 2435,
-      "Execute"       => 125,
-      "Run"           => 172,
-      "Gear"          => 524,      # Menu scene.
-      "Stats"         => 1204,     # Menu scene.
-      "Party"         =>  11,      # Menu scene.
-      "Special"       => 775,
-      "Save"          => 10675,      # Menu scene.
-      "Load"          => 10674,
-      "Delete"        => 10676,
-      "System"        => 2144,
-      "End"           => 1020,      # Menu scene.
-      "Craft"         => 2059,  
-      "Weapons"       => 386,      # Item scene.
-      "Armors"        => 436,      # Item scene.
-      "Key Items"     => 243,      # Item scene.
-      "Special Items" => 243,      # Item scene.
-      "Special Item"  => 243,      # Item scene.
-      "To Title"      => 224,      # Game End scene.
-      "Cancel"        => 119,      # Game End scene.
-      "Spellbook"     => 4052,
-      "Vancian"       => 10044,
-      "Vancians"      => 10044,
-      "Vancian Spell" => 10044,
-      "Encyclopedia"  => 3734,
-      "Codex"         => 2399, 
-      "Bestiary"      => 3343,
-      "Music Room"    => 118,
-      "Talent Tree"   => 117,
-      "Equip"         => 3786,
-      "Add Point"     => 6476,
-      "Special stuff" => 1646,
-      "Buy"           => 555,
-      "Sell"          => 554,
-      "Properties"    => 2375,
-      "General"       => 556,
-      "Healings"      => 3958,
-      "Ingredient"    => 200,
-      "All"            => 1140,
-      "Hidden Weapons" => 159,
-      "Music Sheet"    => 118,
-      "Book"           => 2384,
-      "Scroll"         => 3733,
-      "Save/Load"      => 2431,
-      "Dismantle"      => 8175,
-      "Gamejolt"       => 570,
-      "Life Skills"    => 8075,
-      "Equip Skill"    => 117,
-      "Level Up"       => 8182,
-      "Move to"        => 572,
-      "Follow"         => 1117,
-      "Patrol"         => 1114,
-      "Hold/Move"      => 9301,
-      ":Hold"          => 9301,
-      ":Move"          => 2255,
-      ":No Attack"     => 1141,
-      ":Passive"       => 13,
-      ":Stand Ground"  => 7346,
-      ":Defensive"     => 139,
-      ":Aggressive"    => 131,
-      ":Striking"      => 116,
-      "Tactics"        => 2103,
-      "Protect"        => 506,
-      "Skill Tree"     => 108,
-    }
-    #--------------------------------------------------------------------------
-  end
-  
-#==============================================================================
-# ** Vocab::YEA::Item
-#==============================================================================
-module Vocab
-  module YEA::ITEM
-    #--------------------------------------------------------------------------
-    ITEM_TYPES = {
-      :all          => "All",
-      :healings     => "Healings",
-      :book         => "Book",
-      :scroll       => "Scroll",
-      :hdweapons    => "Hidden Weapons",
-      :special      => "Special",
-      :ingredient   => "Ingredient",
-      :music_sheet  => "Music Sheet",
-      :misc         => "Misc",
-    }
-    #--------------------------------------------------------------------------
-    WEAPON_TYPES = {
-      :all      => "All",
-    }
-    #--------------------------------------------------------------------------  
-    ARMOUR_TYPES = {
-      :all      => "All",
-    }
-    #--------------------------------------------------------------------------
-    VOCAB_STATUS = {
-      :empty      => "---",          # Text used when nothing is shown.
-      :hp_recover => "HP Heal",      # Text used for HP Recovery.
-      :mp_recover => "MP Heal",      # Text used for MP Recovery.
-      :tp_recover => "TP Heal",      # Text used for TP Recovery.
-      :tp_gain    => "TP Gain",      # Text used for TP Gain.
-      :applies    => "Applies",      # Text used for applied states and buffs.
-      :removes    => "Removes",      # Text used for removed states and buffs.
-    } # Do not remove this.
-    #--------------------------------------------------------------------------
-  end
-end
-
-#==============================================================================
-# ** Vocab
-#------------------------------------------------------------------------------
-#  This module defines terms and messages. It defines some data as constant
-# variables. Terms in the database are obtained from $data_system.
-#==============================================================================
-# tag: translate
-module Vocab
-  
-  # BlockChain Node Name
-  Player         = "Player"
-  Coinbase       = "Equestria"
-  
-  # Tactic processing
-  Pause           = "Paused"
-  Unpause         = "Unpaused"
-  
-  # Title Screen
-  NewGame         = "Start a new story"
-  LoadGame        = "Continue your journey"
-  ShutDown        = "Crashing back to your OS"
-  Option          = "Option"
-  Credits         = "Credits"
-  StartGame       = "Start"
-  
-  # Connections
-  Connection      = "Connecting...Your game will have no response for few minutes, please wait..."
-  
-  # Exit Info
-  ExitConfirm     = "Do you really want to leave? Ponies will miss you..."
-  
-  None            = "<None>"  
-  Type            = "Type"
-  
-  Quest           = "Quest Journal"
-  QuestUpdated    = "Your journal has been updated: %s"
-  QuestHint       = "Use Up/Down to negative the information"
-  
-  LevelUp         = "Level Up"
-  Skilltree       = "Skill Tree"
-  Upgradeable     = "You can level-up now!"
-  
-  InitLoadingMsg  = "To ensure your best gameplay experience, please close the app that will consume your system resource, such as Flash, Youtube and other games."
-  Unavailable     = "Not available yet"
-  
-  TransferGather  = "You must gather your party before venturing forth"
-  TransferCombat  = "You can't change location during the combat"
-  
-  SaveDec         = "Save your game progess"
-  SystemDec       = "Change options or leave current game"
-  
-  CritialMiss     = "%s - critical miss"
-  CritialHit      = "%s - critical hit"
-  AttackImmune    = "%s: %s immune to my damage"
-  Ineffective     = "%s - weapon ineffective"
-  
-  MoreInfo        = "Info"
-  
-  # path to database vocabulary dictionary
-  DictPath        = "History/en_us"
-  CategoryPath = {
-    :weapon     => "/Weapons",
-    :item       => "/Items",
-    :armor      => "/Armors",
-    :skill      => "/Skills",
-    :actor      => "/Actors",
-    :class      => "/Classes",
-    :term       => "/Terms",
-    :state      => "/States",
-  }
-  
-  Offline = "Unable connect to internet, some features won't be available," +
-            " such as Gamejolt achievement." + " If you have connected, " +
-            "please re-launch the game."
-            
-  OfflineMode = "This feature is unavailable in offline mode. You cannot " +
-                "access it until connected to internet and re-launch the game"
-  #----------------------------------------------------------------------------
-  VODL      = "Vengeance of Dark Lord"
-  VODLHelp  = "Play the main story, help Equestria fight against the invasion " +
-              "of King Sombra!"
-              
-  Tutorial  = "Tutorial"
-  TutorialHelp = "Help you understand core features of the game and learn how " +
-                 "to play & use them."
-  #----------------------------------------------------------------------------
-  # * Return dictionary file of language
-  #----------------------------------------------------------------------------
-  def self.GetDictPath(category)
-    return DictPath + CategoryPath[category] + '/'
-  end
-  #----------------------------------------------------------------------------
-end
-#==============================================================================
-# ** Vocab::SaveLoad
-#------------------------------------------------------------------------------
-#   Message in SnL load screen
-#==============================================================================
-module Vocab::SaveLoad
-  
-  ACTION_LOAD   = "Load"           # Text used for loading games.
-  ACTION_SAVE   = "Save"           # Text used for saving games.
-  ACTION_DELETE = "Delete"         # Text used for deleting games.
-    
-  # These text settings adjust what displays in the help window.
-  SELECT_HELP = "Select a savefile..."
-  LOAD_HELP   = "Load saved game progress"
-  SAVE_HELP   = "Save current game progress"
-  DELETE_HELP = "Delete this savefile"
-    
-  EMPTY_TEXT = "~No Data~"      # Text used when no save data is present.
-  PLAYTIME   = "Play time"          # Text used for total playtime.
-  TOTAL_SAVE = "Times saved: "     # Text used to indicate total saves.
-  TOTAL_GOLD = "βits: "      # Text used to indicate total gold.
-  LOCATION   = "Location: "        # Text used to indicate current location.
-  
-  Slot      = "File %s"
-  ASaveSlot = "AutoSave%s"
-  QSaveSlot = "QuickSave%s"
-end
-#==============================================================================
-# ** Vocab::Equipment
-#------------------------------------------------------------------------------
-#   Vocab that related to equipments and params
-#==============================================================================
-module Vocab::Equipment
-  
-  Weapon    = "Weapon"
-  Shield    = "Shield"
-  Head      = "Head"
-  Body      = "Body"
-  Accessory = "Accessory"
-  Cloak     = "Cloak"
-  Necklace  = "Necklace"
-  Boots     = "Boots"
-  Rune      = "Rune"
-  Gem       = "Gem"
-  Ammo      = "Ammo"
-  
-  WeaponDMG = "Weapon Damage"
-  AmmoDMG   = "Ammo Damage"
-  Speed     = "Speed"
-  
-  Thac0     = "Attack Bonus"
-  AC        = "Armor Class"
-  Damage    = "Damage"
-  Range     = "Range"
-  SType     = "Skill Type"
-  Cost      = "EP Cost"
-  Cooldown  = "Cooldown"
-  Save      = "Save"
-  
-  Remove    = "<Remove Equip>"
-  Empty     = "<Empty>"
-  
-  None      = "None"
-  Type      = "Type"
-  
-  Melee     = "Melee"
-  Magic     = "Magic"
-  Ranged    = "Ranged"
-  
-  CastingTime = "Casting Time"
-  SavingThrow = "Saves"
-  
-  SavingName = {
-    :halfdmg  => "1/2",
-    :nullify  => "Neg.",
-    :none     => "None",
-    nil       => "None",
-  }
-  
-end
-#==============================================================================
-# ** Vocab::System
-#------------------------------------------------------------------------------
-#   System option vocabs
-#==============================================================================
-module Vocab::System
-  
-  Language    = "Language"
-  LanguageDec = "Change game language"
-  
-  WarCry          = "Way cry"
-  WarCryDec       = "Character voices when enter the battle and other actions"
-  Difficulty      = "Combat Difficulty"
-  DifficultyName  = ["Novice", "Normal", "Hard", "Expert"]
-  DifficultyDec   = "Change the combat difficulty, Hp/Damage multipler: Easy: 0.5x/0.8x, \n" + 
-                    "Normal: 1x/1x, Hard:1.5x/1.2x, Expert: 2x/1.5x"
-                    
-  BGM           = "BGM Volume"
-  BGMDec        = "Adjust the volume of Background music\n" + "You can drag the meter by mouse to change the value"
-  BGS           = "BGS Volume"
-  BGSDec        = "Adjust the volume of Background sound\n" + "You can drag the meter by mouse to change the value"
-  SE            = "SE Volume"
-  SEDec         = "Adjust the volume of SFX\n" + "You can drag the meter by mouse to change the value"
-  
-  ToTitle       = "Back to Title"
-  ToTitleDec    = "Leave current game and back to title screen, please don't forget to save"
-  
-  ShutDown      = "Shutdown"
-  ShutDownDec   = "Close the game, please don't forget to save"
-  
-  UnsavedInfo   = "Unsaved progress will be lost, continue?"
-  
-  Overwrite     = "Selected file will be overwritten, continue?"
-  Delete        = "Do you really wanna delete this file?"
-  
-  AutoSave          = "Auto-Save"
-  AutoSaveDec       = "Auto save file if it's allowed. Save location is at the buttom\n" +
-                      "of the files."
-  AutoSaveCombat    = "Boss fight"
-  AutoSaveCombatDec = "Auto-Save file before boss fight"
-  AutoSaveStep      = "Steps"
-  AutoSaveStepDec   = "Auto-save after you walked a certain steps, 0 = inactive"
-  
-  Restart = "Options will be applied after restart the game"
-end
-#==============================================================================
-# ** Vocab::Errno
-#------------------------------------------------------------------------------
-#   Message displayed when an error occurred
-#==============================================================================
-CurrentLanguage = :en_us
-module Vocab::Errno
-  
-  LoadErr         = "An error occurred while loading the file, please submit %s\n to the developers"
-  SaveErr         = "An error occurred while saving the file:\n%s, please submit %s to the developers and try again later"
-  
-  Exception       = "An error occurred during the gameplay, please submit \"ErrorLog.txt\" to the developers in order to resolve the problem.\n"
-  ScriptErr       = "An error occurred while executing the event script: %s\nplease submit %s to the developers"
-  
-  GiftCodeFailed  = "Gift code verify failed: %s"
-  ProgramMissing  = "Program missing: "
-  
-  PluginInitErr   = "Failed to initialize plugins: #{}" #tag: todo
-  PluginLoadErr   = "Failed to load some plugins, please send 'PluginErr.txt' to developer to resolve this bug."
-  
-  APIErr          = "An error occurred while calling API:\n%s"
-  
-  APISymbol_Table = {
-    true               => "Success!",
-    :json_failed       => "Configuration file build failed",
-    :connection_failed => "Internet connection failed",
-    :invalid_code      => "Your code has been used or invalid",
-    :close_failed      => "Gateway close error",
-    :decrypt_failed    => "File decryption failed",
-    false              => "Hmm...IDK, please contact the developers!",
-  }
-  
-  RunTimeErr  = "  An Error has occurred during gameplay: %s %s"
-  
-  RESymbol_Table = {
-    :bits_incorrect   => "Bits amount asynchronous with Block Chain",
-    :fileid_overflow  => "Object id overflow while convert to savefile format",
-    :item_unconsumed  => "Consumable Item can't be consumed",
-    :int_overflow     => "Integer Overflow",
-    :datatype_error   => "Data Type Error:\n",
-    :nil_block        => "Block nil miner",
-    :chain_broken     => "Block Chain Error:\n",
-    :illegel_value    => "Illegel value:\n",
-    :checksum_failed  => "File CheckSum failure",
-    :file_missing     => "File missing:\n",
-    :tactic_sym_missing => "Tactic command symbol unavailable:\n",
-    :secure_hash_failed => "Security hash match failed:\n",
-    :config_error       => "Script configuration error:\n",
-    :gib_nil_handler    => "InteractiveButton nil handler called\n",
-  }
-  
-  SequenceArgError = "%s has at least %d args, received %d\n"
-end
-#==============================================================================
-# ** Vocab::Status
-#------------------------------------------------------------------------------
-#   Message displayed when on the status menu
-#==============================================================================
-module Vocab::Status
-  
-  General         = "General"
-  Property        = "Properties"
-  Tactic          = "Tactics"
-  Leveling        = "Level up"
-  
-  Parameter       = "Parameters"
-  Experience      = "Experience"
-  Next_Lv_Total   = "Next %s Total EXP"
-  
-  StrAth    = "Athletics"
-  DexAcr    = "Acrobatics"
-  DexSle    = "Sleight of Hand"
-  DexSte    = "Stealth"
-  IntArc    = "Arcana"
-  IntHis    = "History"
-  IntInv    = "Investigation"
-  IntNat    = "Nature"
-  IntRel    = "Religion"
-  WisAni    = "Animal Handling"
-  WisIns    = "Insight"
-  WisMed    = "Medicine"
-  WisPer    = "Perception"
-  WisSur    = "Survival"
-  ChaDec    = "Deception"
-  ChaInt    = "Intimidation"
-  ChaPerf   = "Performance"
-  ChaPers   = "Persuasion"
-end
-#==============================================================================
-# ** Vocab::Party
-#------------------------------------------------------------------------------
-#   Message displayed on the Scene_Party
-#==============================================================================
-module Vocab::Party
-  Change      = "Change"
-  Remove      = "Remove"
-  Revert      = "Revert"
-  Finish      = "Finish"
-  TextEmpty   = "-No pony-"
-  TextRemove  = "-Remove-"
-  TextEquip   = "Gear"
-  
-  GoldGain    = "Party has %s βits: %s%s"
-  ItemGain    = "Party has %s an item(x%s)"
-  EXPGain     = "Party has gained xp: %d"
-  BCGain      = "Party has gained block chain reward: %s"
-  
-  Limited     = "(max amount reached)"
-  WordGain    = "gained"
-  WordLost    = "lost"
-end
-#==============================================================================
-# ** Vocab::Tactic
-#------------------------------------------------------------------------------
-#   Message about the tactic processes
-#==============================================================================
-module Vocab::Tactic
-  CmdMove     = "Move to"
-  CmdFollow   = "Follow"
-  CmdGuard    = "Guard"
-  CmdPatrol   = "Patrol"
-  CmdMoving   = ":Move"
-  CmdHolding  = ":Hold"
-  CmdMHing    = "Hold/Move"
-  
-  HelpMove    = "Select a location to move, or an enemy to attack."
-  HelpSel     = "Select a location"
-  
-  DecMove     = "Move to a position or attack an enemy"
-  DecMHing    = "Press to toggle between hold/moving"
-  DecReaction = "Toggle between combat reactions"
-  DecFollow   = "Follow a character"
-  DecGuard    = "Protect a character"
-  DecPatrol   = "Guard an area"
-  
-  Targeting   = 'Visible Enemies'
-  Fighting    = 'Target fighting'
-  Self        = 'Self'
-  Item        = 'Items'
-  Skill       = 'Skills'
-  General     = 'General'
-  EdCondition = 'Edit condition'
-  EdAction    = 'Edit Action'
-  Delete      = "Delete"
-  
-  Hints = [
-    "Notice: Bot tactic will only works when the party AI is enabled [press 'C'",
-    "(default) in map scene to toggle it].",
-    "You can see the detailed information of all commands available in Player's",
-    "handbook",
-    "--------------------------------------------------------------------------",
-    "You can add up to 20 commands for each character, and the command will",
-    "works if and only if both condition and action is assigned.",
-    "If the command id is \\c[18]Red\\c[0], it's an invalid command, and \\c[29]Green\\c[0] is a valid one.",
-    "You can toggle enable/disable the command by press \\c[23]CTRL\\c[0], if the command",
-    "is disabled, the id color will be \\c[15]Black.",
-    "Conditions won't be checked if the command is invalid or disabled, but \\c[10]the",
-    "\\c[10]command accessed by 'Jump to Tactic' is not affected by disabling it.",
-    "",
-    "The priority of the command is from lower to higher according to its id.",
-    "So if multiple command condition is meet, the one with higher id will be",
-    "executed first; meanwhile AI will always prefer taking the action which",
-    "could causing effects to the target(including parties) instantly.",
-    "",
-    "To change the priority(id) of the command, press \\c[23]SHIFT\\c[0] then negative it",
-    "with cursor to the position you want; once you done, press \\c[23]shift/ok\\c[0] to",
-    "exit editing.",
-    "",
-  ]
-  
-  Help     = "No idea what's this? Press F4 for help"
-  SwapHelp = "Negative the cursor to swap order"
-  
-  Name_Table  = {
-    :attack_mainhoof      => "Use main-hoof attack",
-    :attack_offhoof       => "Use off-hoof attack",
-    :add_command          => "Add a new tactic logic",
-    :target_none          => "Set target to none",
-    :hp_most_power        => "Use Hp potion: most powerful",
-    :hp_least_power       => "Use Hp potion: least powerful",
-    :ep_most_power        => "Use Ep potion: most powerful",
-    :ep_least_power       => "Use Ep potion: least powerful",
-    :set_target           => "Set to primary target",
-    :jump_to              => "Jump to tactic:",
-    :move_away            => "Move away from target",
-    :move_close           => "Move close to target",
-    :player               => "Player",
-  }
-end
-#==============================================================================
-# ** Vocab::TacticConfig
-#------------------------------------------------------------------------------
-#   Text info of tactic commands
-#==============================================================================
-module Vocab::TacticConfig
-  
-  Name_Table = {
-    :lowest_hp              => "Lowest HP",
-    :highest_hp             => "Highest HP",
-    :has_state              => "Has state:",
-    :nearest_visible        => "Nearest visible",
-    :attacking_ally         => "Attacking ally:",
-    :target_of_ally         => "Target of ally:",
-    :rank                   => "Rank:",
-    
-    :any                    => "Any",
-    :clustered              => "Clustered:",
-    :hp_lower               => "Hp lower than:",
-    :hp_higher              => "Hp higher than:",
-    :target_range           => "At range:",
-    :target_atk_type        => "Attack type:",
-    
-    :ep_lower               => "EP lower than:",
-    :being_attacked_by_type => "Hurt by attack type:",
-    
-    :enemies_alive          => "X Enemies alive:",
-    :allies_alive           => "X Team member alive:",
-    :allies_dead            => "X Team member K.O.:",
-    :surrounded_by_enemies  => "Surrounded by X enemies:",
-    :using_attack_type      => "Main-hoof attack type:",
-    
-    :attack_mainhoof        => "Main-hoof attack",
-    :attack_offhoof         => "Off-hoof attack",
-    :target_none            => "Set target to none",
-    :hp_most_power          => "Use hp potion: most powerful",
-    :hp_least_power         => "Use hp potion: least powerful",
-    :ep_most_power          => "Use ep potion: most powerful",
-    :ep_least_power         => "Use ep potion: least powerful",
-    
-    :set_target             => "Set to primary target",
-    :jump_to                => "Jump to tactic:",
-    :move_away            => "Move away from target",
-    :move_close           => "Move close to target",
-    
-    :enemies      => "Enemies:",
-    :targeting    => "Enemies:",
-    :target       => "Target:",
-    :fighting     => "Target:",
-    :self         => "Self:",
-    :new_command  => "<Add New Tactic>",
-    
-    :short      => "Short",
-    :medium     => "Medium",
-    :long       => "Long",
-    
-    :critter    => "Critter",
-    :minion     => "Minion",
-    :elite      => "Elite",
-    :captain    => "Captain",
-    :chief      => "Chief",
-    
-    :melee      => "Melee",
-    :ranged     => "Ranged",
-    :magic      => "Magic/Casting",
-    
-    :player => "Player"
-  }
-  
-  InputHelp = {
-    :attacking_ally => "Select a team member",
-    :target_of_ally => "Select a team member",
-    :has_state    => "Select a state",
-    :rank         => "Select a rank",
-    :hp_lower     => "Please enter the percentage, press Enter ot finish, ESC to abort",
-    :hp_higher    => "Please enter the percentage, press Enter ot finish, ESC to abort",
-    :ep_lower     => "Please enter the percentage, press Enter ot finish, ESC to abort",
-    :target_range => "Select a scale",
-    :target_atk_type  => "Select a type",
-    :being_attacked_by_type => "Select a type",
-    :using_attack_type      => "Select a type",
-    :clustered              => "Enter a number, operator is greater or equal",
-    :enemies_alive          => "Enter a number, operator is greater or equal",
-    :allies_alive           => "Enter a number, operator is greater or equal",
-    :allies_dead            => "Enter a number, operator is greater or equal",
-    :surrounded_by_enemies  => "Enter a number, operator is greater or equal",
-    :jump_to                => "Select the id of the command..."
-  }
-  
-  ArgDec_Table = {
-    :has_state    => "%s",
-    :rank         => "%s",
-    :hp_lower     => "%d\%",
-    :hp_higher    => "%d\%",
-    :ep_lower     => "%d\%",
-    :target_range => "at %s range",
-    :target_atk_type  => "%s",
-    :being_attacked_by_type => "%s",
-    :using_attack_type      => "%s",
-    :clustered              => "%d or more",
-    :enemies_alive          => ">= %d",
-    :allies_alive           => ">= %d",
-    :allies_dead            => ">= %d",
-    :surrounded_by_enemies  => ">= %d",
-    :short      => "Short",
-    :medium     => "Medium",
-    :long       => "Long",
-    :player     => "Player",
-  }
-  
-end
-#==============================================================================
-# ** Vocab::Skillbar
-#------------------------------------------------------------------------------
-#   Text info in skillbar
-#==============================================================================
-module Vocab::Skillbar
-  
-  Follower    = "Toggle on/off Follower AI"
-  AllSkill    = "All Skills"
-  Vancian     = "Vancian"
-  AllItem     = "All Items"
-  PrevPage    = "Previous page"
-  NextPage    = "Next page"
-  Cancel      = "Cancel"
-  None        = "<Empty>"
-  
-  Use         = "Use"
-  Hotkey      = "Hotkey"
-  Info        = "Info"
-  MouseEdit   = "Now you can edit your hotkeys with mouse"
-  
-  SelHelp     = "Please press the hotkey(0~9) or mouse left-clicking on the slot"
-  SelSucc     = "You have assigned %s on hotkey '%s'"
-end
-#==============================================================================
-# ** Vocab::Debug
-#------------------------------------------------------------------------------
-#   Texts for Debug window
-#==============================================================================
-module Vocab::Debug
-  
-  Hint    = "Press Q/E(Pageup/Pagedown) to change category"
-  
-  Switch   = "This is list of available switches\n" + Hint
-  Variable = "This is list of available variables\n" + Hint
-  Sprite   = "This is list of undisposed bitmaps from last scene\n" + Hint
-  
-  SwitchHelp   = "C (Enter) : ON / OFF"
-  VariableHelp = "← (Left)    :  -1\n"  + "→ (Right)   :  +1\n" +
-                 "L (Pageup)   : -10\n" + "R (Pagedown) : +10"
-                 
-  SpriteHelp   = "Using WASD/↑←↓→ to negative the graph"
-  
-end
-#==============================================================================
-# ** Vocab::Leveling
-#------------------------------------------------------------------------------
-#   Text info about level up
-#==============================================================================
-module Vocab::Leveling
-  
-  Helps = {
-    :level_up   => "Level up!",
-    :unique     => "Unique skills of this character",
-    :race       => "Race skills",
-    :class      => "Class skills",
-    :dualclass  => "Dual-class skills",
-    :skilltree  => "Open the skill tree and manage available skills",
-    :level_up_main => "Advance your main class to next level",
-    :level_up_dual => "Advance your dual-class to next level",
-    :set_dualclass => "Start a dual-class",
-  }
-  
-  DualClass  = "Dual-Class"
-  SelectFeat = "New class feature available!"
-  Confirm_Dualclass  = "Are you sure about becoming a %s?"
-  Confirm_LearnSkill = "Do you really want to learn %s?"
-end
-#==============================================================================
-# ** Vocab::BlockChain
-#------------------------------------------------------------------------------
-#   Texts about block chain stuff
-#==============================================================================
-module Vocab::BlockChain
-  Info = {
-    :split_line => "-----------------------------",
-    :transinfo  => "\\c[1]Info:\\c[0] %s",
-    :payment    => "Payment is from \\c[1]%s \\c[0]to\\c[1] %s",
-    :currency   => "%s amount:\\c[6] %d",
-    :goods      => "Item: %s x%d",
-    :nogoods    => "No item was traded",
-  }
-  DropLoot = "Received via dropped loot"
-  LargeHistory = "You're going to view a large transaction history." +
-                 " This will take a while to display all item. Continue anyway?"
-end
-#==============================================================================
-# ** Vocab::Rescue
-#------------------------------------------------------------------------------
-#   Text info of the rescues
-#==============================================================================
-module Vocab::Rescue
-  Luna    = "\\af[9]\\n<Luna>Thou shall glad I followed you.."
-end
-
-if CurrentLanguage == :zh_tw
-#==============================================================================
-# ** Dungeons and Dragons
-#------------------------------------------------------------------------------
-#  Config: Item and features sets
-#==============================================================================
-# tag: config
-module Vocab::DND
- 
-  PARAM_NAME = [
-    "無",
-    "無",
-    "力量",
-    "體質",
-    "智力",
-    "智慧",
-    "敏捷",
-    "魅力",
-  ]
-  
-  WEAPON_TYPE_NAME = [
-    "",
-    "蹄斧",
-    "馬蹄",
-    "棍棒",
-    "單蹄劍",
-    "雙蹄劍",
-    "弓",
-    "弩",
-    "戰錘",
-    "流星錘",
-    "熱武器",
-    "箭矢",
-    "弩矢",
-    "子彈",
-    "法杖"
-  ]
-  
-  SKILL_TYPE_NAME = [
-  "",
-  "技能",
-  "法術",
-  "萬西安",
-  "被動",
-  ]
-  
-  ARMOR_TYPE_NAME = [
-  "",
-  "輕型甲",
-  "中型甲",
-  "重型甲",
-  "衣服",
-  "盾牌",
-  "大盾",
-  "靴子",
-  "腰帶",
-  "項鍊",
-  "斗篷",
-  "戒指",
-  "護腿",
-  "符文",
-  "寶石",
-  ]
-  
-  ELEMENT_NAME = [
-  "",
-  "鈍擊",
-  "穿刺",
-  "揮砍",
-  "強酸",
-  "寒冷",
-  "火焰",
-  "淨力",
-  "閃電",
-  "壞死",
-  "毒",
-  "精神",
-  "聖",
-  "雷電",
-  ]
-  
-  RankName = {
-    :critter    => "弱雞",
-    :minion     => "嘍囉",
-    :elite      => "菁英",
-    :captain    => "領班",
-    :chief      => "首領",
-  }
-  
-end
-end # Current Language
-
-if CurrentLanguage == :zh_tw
-#==============================================================================
-# ** Vocab
-#------------------------------------------------------------------------------
-#  This module defines terms and messages. It defines some data as constant
-# variables. Terms in the database are obtained from $data_system.
-#==============================================================================
-module Vocab::YEA
-  ICON_HASH = {
-    # Matching Text   => Icon ID,
-      "New story"            => 125,    # Title scene.
-      "Continue story"       => 126,    # Title scene.
-      "Leave"                => 127,    # Title scene. Game End scene.
-      
-      "Battle"        => 386,     # Battle scene.
-      "Gallop"        => 328,     # Battle scene.
-      "攻擊"          => 116,     # Battle scene.
-      "防禦"          => 506,     # Battle scene.
-      "聖物"          => 9299,
-      "技能"          => 8175,    # Skill scene. Battle scene.
-      "法術"          => 106,     # Skill scene. Battle scene.
-      "被動"          => 3193,
-      "Learn Skills"  => 2437,
-      "Songs"         => 6470,
-      "Pet"           => 3316,
-      "Talent"        => 10662,
-      "Bio"           => 233,
-      "Brew"          => 3814,
-      "Science"       => 8249,
-      "Summon"        => 3761,
-      "屬性能力"      => 228,
-      "能力點"        => 228,
-      "任務日誌"      => 1334,
-      "Overview"      => 1354,
-      "鞍袋(物品欄)"  => 1528,     # Menu scene. Item scene. Battle scene.
-      "物品"          => 1528,     # Menu scene. Item scene. Battle scene.
-      "Talk"          => 4,
-      "Actions"       => 143,
-      "Cook"          => 2580,
-      "Crafting"      => 125,
-      "Skills"        => 104,      # Menu scene.
-      "Log"           => 2441,
-      "書籍"          => 2384,
-      "歷史"          => 2435,
-      "Execute"       => 125,
-      "Run"           => 172,
-      "裝備"          => 524,      # Menu scene.
-      "狀態"          => 1204,     # Menu scene.
-      "隊伍"          =>  11,      # Menu scene.
-      "Special"       => 775,
-      "存檔"          => 10675,      # Menu scene.
-      "讀檔"          => 10674,
-      "Delete"        => 10676,
-      "刪除"          => 10676,
-      "System"        => 2144,
-      "End"           => 1020,      # Menu scene.
-      "Craft"         => 2059,  
-      "武器"          => 386,      # Item scene.
-      "裝甲"          => 436,      # Item scene.
-      "關鍵物品"      => 243,      # Item scene.
-      "回到標題"      => 224,      # Game End scene.
-      "取消"          => 119,      # Game End scene.
-      "魔法書"        => 4052,
-      "萬西安法術"    => 10044,
-      "萬西安"        => 10044,
-      "Encyclopedia"  => 3734,
-      "文獻"          => 2399, 
-      "圖鑑"          => 3343,
-      "Music Room"    => 118,
-      "技能"          => 117,
-      "裝備"          => 3786,
-      "Add Point"     => 6476,
-      "特殊物品"      => 1646,
-      "購買"          => 555,
-      "售出"          => 554,
-      "屬性"          => 2375,
-      "概覽"          => 556,
-      "一般"          => 556,
-      "醫療"          => 3958,
-      "材料"          => 200,
-      "素材"          => 200,
-      "全部"          => 1140,
-      "暗器"          => 159,
-      "樂譜"          => 118,
-      "書籍"          => 2384,
-      "卷軸"          => 3733,
-      "存檔/讀檔"     => 2431,
-      "Dismantle"     => 8175,
-      "Gamejolt"      => 570,
-      "Life Skills"   => 8075,
-      "Equip Skill"   => 117,
-      "升級"          => 8182,
-      "移動到"        => 572,
-      "跟隨"          => 1117,
-      "巡邏"          => 1114,
-      "移動/停止"     => 9301,
-      ":停止"         => 9301,
-      ":移動"         => 2255,
-      ":不攻擊"       => 1141,
-      ":被動"         => 13,
-      ":堅守"         => 7346,
-      ":防衛"         => 139,
-      ":主動"         => 131,
-      ":突襲"         => 116,
-      "戰術"          => 2103,
-      "保護"          => 506,
-      "技能樹"        => 108,
-    }
-    #--------------------------------------------------------------------------
-  end
-  
-#==============================================================================
-# ** Vocab::YEA::Item
-#==============================================================================
-module Vocab
-  module YEA::ITEM
-    #--------------------------------------------------------------------------
-    ITEM_TYPES = {
-      :all          => "全部",
-      :healings     => "醫療",
-      :book         => "書籍",
-      :scroll       => "卷軸",
-      :hdweapons    => "暗器",
-      :special      => "特殊物品",
-      :ingredient   => "素材",
-      :music_sheet  => "樂譜",
-      :misc         => "其他",
-    }
-    #--------------------------------------------------------------------------
-    WEAPON_TYPES = {
-      :all      => "全部",
-    }
-    #--------------------------------------------------------------------------  
-    ARMOUR_TYPES = {
-      :all      => "全部",
-    }
-    #--------------------------------------------------------------------------
-    VOCAB_STATUS = {
-      :empty      => "---",          # Text used when nothing is shown.
-      :hp_recover => "恢復生命",      # Text used for HP Recovery.
-      :mp_recover => "恢復能量",      # Text used for MP Recovery.
-      :tp_recover => "恢復TP",      # Text used for TP Recovery.
-      :tp_gain    => "獲得TP",      # Text used for TP Gain.
-      :applies    => "狀態追加",      # Text used for applied states and buffs.
-      :removes    => "狀態解除",      # Text used for removed states and buffs.
-    } # Do not remove this.
-    #--------------------------------------------------------------------------
-  end
-end
-end # Current Language
-
-if CurrentLanguage == :zh_tw
-#==============================================================================
-# ** Vocab
-#------------------------------------------------------------------------------
-#  這個模組包含部分遊戲內的顯示文字內容，資料庫內的顯示文字及物品詳細資料須在
-#  "History/zh_tw/"內
-#==============================================================================
-# tag: translate
-module Vocab
-  
-  # Shop Screen
-  ShopBuy         = "購買"
-  ShopSell        = "售出"
-  ShopCancel      = "取消"
-  Possession      = "擁有"
-  
-  # Status Screen
-  ExpTotal        = "當前經驗"
-  ExpNext         = "下級所需經驗 %s"
-  Upgradeable     = "已經可以升級!"
-  LevelUp         = "升級"
-  Skilltree       = "技能樹"
-  
-  # Save/Load Screen
-  SaveMessage     = "要儲存到哪個檔案呢?"
-  LoadMessage     = "要讀取哪個檔案呢?"
-  File            = "檔案"
-  
-  # Display when there are multiple members
-  PartyName       = "%s's 隊伍"
-  
-  # BlockChain Node Name
-  Player         = "Player"
-  Coinbase       = "Equestria"
-  
-  # Tactic processing
-  Pause           = "暫停"
-  Unpause         = "解除暫停"
-  
-  # Title Screen
-  NewGame         = "開始新的故事"
-  LoadGame        = "繼續您的旅程"
-  ShutDown        = "崩潰到桌面"
-  
-  # Connections
-  Connection      = "連線中...遊戲程式可能會沒有回應數分鐘, 請耐心等待"
-  
-  # Exit Info
-  ExitConfirm     = "你真的要離開嗎? 小馬們會想念你的..."
-  
-  None            = "<無>"
-  Type            = "類別"
-  
-  # Quest stuff
-  Quest           = "任務日誌"
-  QuestUpdated    = "任務日誌已更新: %s"
-  
-  # Game hint
-  InitLoadingMsg  = "為了確保最佳的遊戲體驗, 請關閉占用系統資源的軟體及視窗.\n 例如Flash, Youtube或其他遊戲等"
-  Unavailable     = "尚未開發完成, 敬請期待"
-  
-  # Transfer Info
-  TransferGather  = "您必須集合隊伍才能繼續前進"
-  TransferCombat  = "戰鬥中無法脫出"
-  
-  # Menu Stuff
-  SaveDec         = "儲存遊戲進度或讀取先前的檔案"
-  SystemDec       = "更改參數選項或離開遊戲"
-  
-  CritialMiss     = "%s - 嚴重失誤"
-  CritialHit      = "%s - 致命一擊"
-  AttackImmune    = "%s: %s 免疫我的傷害"
-  Ineffective     = "%s - 武器無效"
-  
-  MoreInfo        = "詳細資料"
-  
-  # path to database vocabulary dictionary
-  DictPath        = "History/zh_tw"
-end
-#==============================================================================
-# ** Vocab::SaveLoad
-#------------------------------------------------------------------------------
-#   Message in SnL load screen
-#==============================================================================
-module Vocab::SaveLoad
-  
-  ACTION_LOAD   = "讀檔"           # Text used for loading games.
-  ACTION_SAVE   = "存檔"           # Text used for saving games.
-  ACTION_DELETE = "刪除"         # Text used for deleting games.
-    
-  # These text settings adjust what displays in the help window.
-  SELECT_HELP = "請選擇檔案欄位"
-  LOAD_HELP   = "讀取已儲存的遊戲進度"
-  SAVE_HELP   = "儲存當前遊戲進度"
-  DELETE_HELP = "刪除該存檔"
-    
-  EMPTY_TEXT = "~沒有檔案~"      # Text used when no save data is present.
-  PLAYTIME   = "遊戲時間"          # Text used for total playtime.
-  TOTAL_SAVE = "儲存次數: "     # Text used to indicate total saves.
-  TOTAL_GOLD = "擁有貨幣: "      # Text used to indicate total gold.
-  LOCATION   = "地點: "        # Text used to indicate current location.
-  
-  Slot      = "存檔 %s"
-  ASaveSlot = "自動存檔 %s"
-  QSaveSlot = "快速存檔 %s"
-end
-#==============================================================================
-# ** Vocab::Equipment
-#------------------------------------------------------------------------------
-#   Vocab that related to equipments and params
-#==============================================================================
-module Vocab::Equipment
-  
-  Weapon    = "武器"
-  Shield    = "盾牌"
-  Head      = "頭部"
-  Body      = "身體"
-  Accessory = "飾品"
-  Cloak     = "斗篷"
-  Necklace  = "項鍊"
-  Boots     = "靴子"
-  Rune      = "符文"
-  Ammo      = "彈藥"
-  Gem       = "寶石"
-  
-  WeaponDMG = "武器傷害"
-  AmmoDMG   = "彈藥傷害"
-  Speed     = "速度"
-  
-  Thac0     = "攻擊骰加成"
-  AC        = "護甲等級"
-  Damage    = "傷害"
-  Range     = "距離"
-  SType     = "類型"
-  Cost      = "能量消耗"
-  Cooldown  = "冷卻時間"
-  Save      = "豁免率檢定"
-  
-  Remove    = "<卸下裝備>"
-  Empty     = "<無>"
-  None      = "<無>"
-  Type      = "類別"
-  
-  Melee     = "物理"
-  Magic     = "魔法"
-  Ranged    = "遠程"
-  
-  CastingTime = "詠唱時間"
-  SavingThrow = "豁免率檢定"
-  
-  SavingName = {
-    :halfdmg  => "1/2",
-    :nullify  => "通過則無效(Neg.)",
-    :none     => "無",
-    nil       => "無",
-  }
-  
-end
-#==============================================================================
-# ** Vocab::System
-#------------------------------------------------------------------------------
-#   System option vocabs
-#==============================================================================
-module Vocab::System
-  
-  Language    = "語言"
-  LanguageDec = "更改遊戲語言"
-  
-  WarCry          = "啟用戰鬥語音"
-  WarCryDec       = "開關進入戰鬥時的開場白以及戰鬥時的部分語音效果"
-  Difficulty      = "戰鬥難度"
-  DifficultyName  = ["簡單", "普通", "困難", "專家"]
-  DifficultyDec   = "改變戰鬥難度, 生命/傷害變化: 簡單: 0.5x/0.8x, 普通: 1x/1x\n" + 
-                  "困難:1.5x/1.2x, 專家: 2x/1.5x"
-                  
-  BGM           = "BGM音量"
-  BGMDec        = "調整背景音樂的音量, 可滑鼠拖曳數量條來改變"
-  BGS           = "BGS音量"
-  BGSDec        = "調整背景聲音的音量, 可滑鼠拖曳數量條來改變"
-  SE            = "SE音量"
-  SEDec         = "調整聲音特效的音量, 可滑鼠拖曳數量條來改變"
-  
-  ToTitle       = "回到標題"
-  ToTitleDec    = "離開當前遊戲並回到標題畫面, 不要忘記存檔喔~"
-  
-  ShutDown      = "離開遊戲"
-  ShutDownDec   = "離開遊戲, 不要忘記存檔喔~"
-  
-  UnsavedInfo   = "未儲存的進度將會遺失，確認繼續嗎?"
-  
-  Delete        = "確認刪除?"
-  Overwrite     = "選擇的檔案將被覆蓋, 確認繼續?"
-  
-  AutoSave          = "自動存檔"
-  AutoSaveDec       = "達成特定條件且允許存檔時將自動存檔\n" +
-                      "存檔欄位位於檔案列最下方"
-  AutoSaveCombat    = "頭目戰"
-  AutoSaveCombatDec = "頭目戰前自動存檔"
-  AutoSaveStep      = "步數"
-  AutoSaveStepDec   = "每走N步後自動存檔, 0 = 關閉此功能"
-  
-  Restart = "新設定將在遊戲重啟後生效"
-end
-#==============================================================================
-# ** Vocab::Errno
-#------------------------------------------------------------------------------
-#   Message displayed when an error occurred
-#==============================================================================
-module Vocab::Errno
-  
-  LoadErr         = "讀取檔案時發生錯誤! 請將 %s\n寄送給開發團隊"
-  SaveErr         = "存檔時發生錯誤:\n%s, 請將 %s 寄送給開發團隊並稍後再試"
-  
-  Exception       = "遊戲運行時發生錯誤! 請將檔案\"ErrorLog.txt\"寄送給開發團隊以處理錯誤.\n"
-  ScriptErr       = "事件腳本運行時期錯誤!: %s\n請寄送 %s 給開發人員"
-  
-  GiftCodeFailed  = "禮物碼驗證失敗: %s"
-  ProgramMissing  = "遺失程式: "
-  
-  PluginInitErr   = "無法初始化擴充腳本: #{}" #tag: todo
-  PluginLoadErr   = "部分擴充腳本無法讀取, 請將'PluginErr.txt'寄送至開發團隊以解決問題"
-  
-  APIErr          = "呼叫API過程中發生錯誤:\n%s"
-  
-  APISymbol_Table = {
-    true               => "成功!",
-    :json_failed       => "組態檔建立失敗",
-    :connection_failed => "網際網路連線失敗",
-    :invalid_code      => "您的代碼已經被使用過或無效",
-    :close_failed      => "網路閘道關閉失敗",
-    :decrypt_failed    => "檔案解密失敗",
-    false              => "痾...我也不知道, 請聯絡開發人員!",
-  }
-  
-  RunTimeErr  = "遊戲執行時發生錯誤: %s %s"
-  
-  RESymbol_Table = {
-    :bits_incorrect   => "貨幣數量與區塊量不一致",
-    :fileid_overflow  => "檔案ID溢位",
-    :item_unconsumed  => "消耗品使用時期錯誤",
-    :int_overflow     => "整數溢位",
-    :datatype_error   => "資料型別錯誤:\n",
-    :nil_block        => "無效的區塊鏈礦工",
-    :chain_broken     => "區塊鏈:\n",
-    :illegel_value    => "非法數值:\n",
-    :checksum_failed  => "檔案驗證和失敗",
-    :file_missing     => "遺失檔案:\n",
-    :tactic_sym_missing => "無效的戰術指令符號:\n",
-    :secure_hash_failed => "安全性雜湊驗證失敗:\n",
-    :config_error       => "腳本設定錯誤:\n",
-    :gib_nil_handler    => "InteractiveButton nil handler called\n",
-  }
-  
-  SequenceArgError = "%s has at least %d args, received %d\n"
-end
-#==============================================================================
-# ** Vocab::Status
-#------------------------------------------------------------------------------
-#   Message displayed when on the status menu
-#==============================================================================
-module Vocab::Status
-  
-  General         = "概覽"
-  Property        = "屬性"
-  Tactic          = "戰術"
-  
-  Parameter       = "能力點"
-  Experience      = "經驗值"
-  Next_Lv_Total   = "下級所需經驗 %s"
-  
-  StrAth    = "體育"
-  DexAcr    = "雜技"
-  DexSle    = "巧手"
-  DexSte    = "潛行"
-  IntArc    = "奧術"
-  IntHis    = "歷史"
-  IntInv    = "偵查"
-  IntNat    = "自然"
-  IntRel    = "宗教"
-  WisAni    = "動物"
-  WisIns    = "洞察"
-  WisMed    = "醫學"
-  WisPer    = "感知"
-  WisSur    = "生存"
-  ChaDec    = "詐術"
-  ChaInt    = "威嚇"
-  ChaPerf   = "表演"
-  ChaPers   = "說服"
-end
-#==============================================================================
-# ** Vocab::Party
-#------------------------------------------------------------------------------
-#   Message displayed on the Scene_Party
-#==============================================================================
-module Vocab::Party
-  Change      = "變更"
-  Remove      = "移除"
-  Revert      = "復原"
-  Finish      = "完成"
-  TextEmpty   = "- 空 -"
-  TextRemove  = "-移除-"
-  TextEquip   = "裝備"
-  
-  GoldGain    = "隊伍%s金錢: %s%s"
-  ItemGain    = "隊伍%s物品(x%s)"
-  EXPGain     = "隊伍獲得經驗值: %d"
-  BCGain      = "隊伍獲得挖礦獎勵: %s"
-  
-  Limited     = "(已達上限)"
-  WordGain    = "獲得"
-  WordLost    = "失去"
-end
-#==============================================================================
-# ** Vocab::Tactic
-#------------------------------------------------------------------------------
-#   Message about the tactic processes
-#==============================================================================
-module Vocab::Tactic
-  
-  CmdMove     = "移動到"
-  CmdFollow   = "跟隨"
-  CmdGuard    = "保護"
-  CmdPatrol   = "巡邏"
-  CmdMoving   = ":移動"
-  CmdHolding  = ":停止"
-  CmdMHing    = "移動/停止"
-  
-  HelpMove    = "選擇一點移動到該位置，或一敵人以進行攻擊"
-  HelpSel     = "請選擇一位置"
-  
-  DecMove     = "移動到一定點或攻擊敵人"
-  DecMHing    = "按鍵切換是否移動"
-  DecReaction = "按鍵切換戰鬥反應模式"
-  DecFollow   = "跟隨目標"
-  DecGuard    = "保護目標"
-  DecPatrol   = "巡邏區域"
-  
-  Targeting   = '視野內敵方單位'
-  Fighting    = '主要目標條件'
-  Self        = '自身條件'
-  Item        = '物品'
-  Skill       = '技能'
-  General     = '一般'
-  EdCondition = '更改條件'
-  EdAction    = '更改動作'
-  Delete      = "刪除"
-  
-  Hints = [
-    "※此功能只有在隊伍AI啟用時才有效果，在地圖場景中按下\\c[23]C(預設)即可切換開/關。",
-    "關於各指令的詳細功能請參閱玩家手冊",
-    "--------------------------------------------------------------------------",
-    "每個角色都可以設置最大20個的戰術指令，並且皆須指明條件與動作才會生效。",
-    "如果該指令ID為\\c[18]紅色\\c[0], 代表該指令無效; \\c[29]綠色\\c[0]則是代表有效的指令。",
-    "你可以按下\\c[23]CTRL\\c[0]來啟用/停用該指令，若指令ID為\\c[15]黑色\\c[0]則代表該指令為停用狀態。",
-    "無效或停用的指令不會進行條檢查。\\c[10]但是動作'跳到戰術'如果跳到一個被停用的指令，",
-    "\\c[10]該指令依然會進行檢查。",
-    "",
-    "指令動作執行的優先順序等同它的ID，意即如果有多個指令條件吻合，ID較高的指令",
-    "將優先被執行；但AI會優先執行當下使用後對目標(包含敵我雙方)有效果的動作。",
-    "",
-    "若要改變指令的順序，按下\\c[23]SHIFT\\c[0]並將該指令移至你想要的位置即可。",
-    "完成後，按下\\c[23]shift/ok\\c[0]即可離開該指令的編輯模式",
-  ]
-  
-  Help = "霧煞煞? 按下F4取得幫助"
-  SwapHelp = "移動游標即可變更順序"
-  
-  Name_Table  = {
-    :attack_mainhoof      => "使用主武器",
-    :attack_offhoof       => "使用副武器",
-    :add_command          => "新增戰術",
-    :target_none          => "放棄當前目標",
-    :hp_most_power        => "使用生命藥水: 最強效",
-    :hp_least_power       => "使用生命藥水: 最弱效",
-    :ep_most_power        => "使用能量藥水: 最強效",
-    :ep_least_power       => "使用能量藥水: 最弱效",
-    :set_target           => "設為主要攻擊目標",
-    :jump_to              => "跳到戰術: ",
-    :move_away            => "遠離目標",
-    :move_close           => "接近目標",
-    :player               => "玩家當前操作角色",
-  }
-end
-#==============================================================================
-# ** Vocab::TacticConfig
-#------------------------------------------------------------------------------
-#   Text info of tactic commands
-#==============================================================================
-module Vocab::TacticConfig
-  
-  Name_Table = {
-    :lowest_hp              => "最低生命比",
-    :highest_hp             => "最高生命比",
-    :has_state              => "擁有狀態:",
-    :nearest_visible        => "最近可視敵方單位",
-    :attacking_ally         => "正在攻擊隊友:",
-    :target_of_ally         => "隊友的目標:",
-    :rank                   => "等級:",
-    
-    :any                    => "任何時刻",
-    :clustered              => "X名敵方聚集:",
-    :hp_lower               => "生命少於:",
-    :hp_higher              => "生命多於:",
-    :target_range           => "與自身的距離:",
-    :target_atk_type        => "攻擊型態:",
-    
-    :ep_lower               => "能量少於:",
-    :being_attacked_by_type => "被某攻擊所傷:",
-    
-    :enemies_alive          => "X名敵方存活:",
-    :allies_alive           => "存活隊員數量:",
-    :allies_dead            => "死亡隊員數量:",
-    :surrounded_by_enemies  => "被X名敵方包圍:",
-    :using_attack_type      => "主武器攻擊類型:",
-    
-    :attack_mainhoof        => "使用主武器攻擊",
-    :attack_offhoof         => "使用副武器攻擊",
-    :target_none            => "放棄當前目標",
-    :hp_most_power          => "使用生命藥水: 最強效",
-    :hp_least_power         => "使用生命藥水: 最弱效",
-    :ep_most_power          => "使用能量藥水: 最強效",
-    :ep_least_power         => "使用能量藥水: 最弱效",
-    
-    :set_target             => "設為主要攻擊目標",
-    :jump_to                => "跳到戰術: ",
-    :move_away              => "遠離目標",
-    :move_close             => "接近目標",
-    
-    :enemies      => "所有敵人:",
-    :targeting    => "所有敵人:",
-    :target       => "主要目標:",
-    :fighting     => "主要目標:",
-    :self         => "自己:",
-    :new_command  => "<新增戰術>",
-    
-    :short      => "短程",
-    :medium     => "中程",
-    :long       => "長程",
-    
-    :critter    => "弱雞",
-    :minion     => "嘍囉",
-    :elite      => "菁英",
-    :captain    => "領班",
-    :chief      => "首領",
-    
-    :melee      => "物理攻擊",
-    :ranged     => "遠程攻擊",
-    :magic      => "魔法攻擊或詠唱",
-    
-    :player     => "玩家當前操作角色",
-  }
-  
-  InputHelp = {
-    :attacking_ally => "請選擇一名隊伍成員",
-    :target_of_ally => "請選擇一名隊伍成員",
-    :has_state    => "請選擇一個狀態",
-    :rank         => "請選擇一個等級",
-    :hp_lower     => "請輸入百分比, 按下Enter鍵完成, ESC取消",
-    :hp_higher    => "請輸入百分比, 按下Enter鍵完成, ESC取消",
-    :ep_lower     => "請輸入百分比, 按下Enter鍵完成, ESC取消",
-    :target_range => "請選擇一個距離",
-    :target_atk_type  => "請選擇一個類型",
-    :being_attacked_by_type => "請選擇一個類型",
-    :using_attack_type      => "請選擇一個類型",
-    :clustered              => "請輸入數量, 條件門檻為大於等於這個數字",
-    :enemies_alive          => "請輸入數量, 條件門檻為大於等於這個數字",
-    :allies_alive           => "請輸入數量, 條件門檻為大於等於這個數字",
-    :allies_dead            => "請輸入數量, 條件門檻為大於等於這個數字",
-    :surrounded_by_enemies  => "請輸入數量, 條件門檻為大於等於這個數字",
-    :jump_to                => "請選擇指令的編號"
-  }
-  
-  ArgDec_Table = {
-    :has_state    => "%s",
-    :rank         => "%s",
-    :hp_lower     => "%d\%",
-    :hp_higher    => "%d\%",
-    :ep_lower     => "%d\%",
-    :target_range => "在 %s 時",
-    :target_atk_type  => "%s",
-    :being_attacked_by_type => "%s",
-    :using_attack_type      => "%s",
-    :clustered              => "%d名或更多",
-    :enemies_alive          => ">= %d",
-    :allies_alive           => ">= %d",
-    :allies_dead            => ">= %d",
-    :surrounded_by_enemies  => ">= %d",
-    :player     => "當前操縱角色",
-  }
-  
-end
-#==============================================================================
-# ** Vocab::Skillbar
-#------------------------------------------------------------------------------
-#   Text info in skillbar
-#==============================================================================
-module Vocab::Skillbar
-  
-  Follower    = "開關隊伍成員AI"
-  AllSkill    = "所有技能"
-  Vancian     = "萬西安"
-  AllItem     = "所有物品"
-  PrevPage    = "上一頁"
-  NextPage    = "下一頁"
-  Cancel      = "取消"
-  None        = "<無>"
-  
-  Use         = "使用"
-  Hotkey      = "熱鍵"
-  Info        = "詳細資料"
-  MouseEdit   = "現在您可以使用滑鼠拖曳編輯熱鍵欄"
-  
-  SelHelp     = "請用滑鼠點擊熱鍵欄位或按下對應按鍵來設定"
-  SelSucc     = "您已經將%s指定在熱鍵%s上"
-end
-#==============================================================================
-# ** Vocab::Leveling
-#------------------------------------------------------------------------------
-#   Text info about level up
-#==============================================================================
-module Vocab::Leveling
-  Helps = {
-    :level_up   => "升級!",
-    :unique     => "屬於這個角色的獨特技能",
-    :race       => "種族技能",
-    :class      => "職業技能",
-    :dualclass  => "第二職業(兼職)技能",
-    :skilltree  => "開啟並管理技能樹",
-    :level_up_main => "升級主要職業",
-    :level_up_dual => "升級第二職業",
-    :set_dualclass => "角色兼職",
-  }
-  
-  DualClass  = "兼職"
-  SelectFeat = "有新的職業屬性可用!"
-  Confirm_Dualclass  = "確定要兼職'%s'嗎?"
-  Confirm_LearnSkill = "確定要學習'%s'嗎?"
-end
-#==============================================================================
-# ** Vocab::Rescue
-#------------------------------------------------------------------------------
-#   Text info of the rescues
-#==============================================================================
-module Vocab::Rescue
-  Luna    = "\\af[9]\\n<Luna>汝該慶幸本宮隨之在後.."
-end
-end # Current Language
-
+setup_font
+Graphics.resize_screen(640 ,480)
+puts "[Debug]: Screen resized"
+Graphics.frame_rate = 60
+GameManager.load_volume
+Cache.init
+Mouse.init
+Mouse.cursor.visible = false
+#PONY.InitOpenAL
+PONY.InitObjSpace
+$assist.eval
 
 rescue SystemExit
   exit

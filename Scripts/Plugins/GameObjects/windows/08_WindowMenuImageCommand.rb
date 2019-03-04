@@ -4,8 +4,18 @@
 #  This command window appears on the menu screen.
 #==============================================================================
 class Window_MenuImageCommand < Window_ImageHorzCommand
+  #--------------------------------------------------------------------------
+  # * Constants
+  #--------------------------------------------------------------------------
   MENU_ICON_WIDTH  = 50
   MENU_ICON_HEIGHT = 50
+
+  # Levelup command
+  COMMAND_LEVELUP = {
+    :name   => Vocab::LevelUp,
+    :symbol => :levelup,
+    :image  => "Menu_Levelup"
+  }
   #--------------------------------------------------------------------------
   # * Initialize Command Selection Position (Class Method)
   #--------------------------------------------------------------------------
@@ -127,17 +137,23 @@ class Window_MenuImageCommand < Window_ImageHorzCommand
     rect
   end
   #--------------------------------------------------------------------------
+  # * Add Level up commmand
+  #--------------------------------------------------------------------------
+  def add_levelup_command
+    info = COMMAND_LEVELUP
+    add_command(info[:name], info[:symbol], info[:image], levelup_command_enabled, nil, info[:name])
+  end
+  #--------------------------------------------------------------------------
   # * Add Main Commands to List
   #--------------------------------------------------------------------------
   def add_main_commands
-    names   = [Vocab::item, Vocab::skill, Vocab::equip, Vocab::status,
-               Vocab::LevelUp, Vocab::Quest]
-    symbols = [:item, :skill, :equip, :status, :levelup, :quest]
-    image   = ["Menu_Bag", "Menu_Skill", "Menu_Gears", "Menu_Status", 
-               "Menu_Upgrade", "Menu_Quest"]
-             
+    # Names are obtained after data loaded so can't use constants
+    names   = [Vocab::item, Vocab::skill, Vocab::equip, Vocab::status, Vocab::Quest]
+    symbols = [:item, :skill, :equip, :status, :quest]
+    images  = ["Menu_Bag", "Menu_Skill", "Menu_Gears", "Menu_Status", "Menu_Quest"]
+
     names.size.times do |i|
-      add_command(names[i], symbols[i], image[i], main_commands_enabled, nil, names[i])
+      add_command(names[i], symbols[i], images[i], main_commands_enabled, nil, names[i])
     end
   end
   #--------------------------------------------------------------------------
@@ -162,6 +178,11 @@ class Window_MenuImageCommand < Window_ImageHorzCommand
   #--------------------------------------------------------------------------
   def add_game_end_command
     add_command(Vocab::game_end, :game_end, "Menu_System", true, nil, Vocab::SystemDec)
+  end
+  #--------------------------------------------------------------------------
+  def levelup_command_enabled
+    return false if BattleManager.in_battle?
+    return true
   end
   #--------------------------------------------------------------------------
   def save_enabled?

@@ -40,6 +40,14 @@ class Game_Interpreter
     setup_gmitopt(list, event_id)
   end
   #--------------------------------------------------------------------------
+  # * Open Menu Screen
+  #--------------------------------------------------------------------------
+  alias command_351_imagemenu command_351
+  def command_351
+    Window_MenuImageCommand::init_command_position
+    command_351_imagemenu
+  end
+  #--------------------------------------------------------------------------
   # * Script
   #--------------------------------------------------------------------------
   def command_355

@@ -49,6 +49,7 @@ module DataManager
   #--------------------------------------------------------------------------
   #tag: transalte
   def self.process_translation
+    # change_encoding('utf-8')
     translate_actors
     translate_classes
     translate_items
@@ -58,6 +59,18 @@ module DataManager
     translate_terms
     translate_states
     debug_print("Translate to #{$supported_languages[CurrentLanguage]} done")
+  end
+  #--------------------------------------------------------------------------
+  def self.change_encoding(enc)
+    ObjectSpace.each_object(String) do |str|
+      next if str.frozen?
+      str = str.force_encoding(enc)
+    end
+    ObjectSpace.each_object(Regexp) do |reg|
+      next if reg.frozen?
+      regs = reg.inspect
+      reg  = Regexp.new(regs[1...regs.rindex('/')].force_encoding("utf-8"), Regexp::FIXEDENCODING | reg.options)
+    end
   end
   #--------------------------------------------------------------------------
   def self.translate_actors

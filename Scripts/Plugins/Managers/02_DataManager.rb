@@ -87,7 +87,7 @@ module DataManager
   # * Execute Load
   #--------------------------------------------------------------------------
   def self.load_game(index, game_mode = $game_system.game_mode)
-    result = load_game_without_rescue(index, game_mode)# rescue false
+    result = load_game_without_rescue(index, game_mode) # rescue false
     return result
   end
   #--------------------------------------------------------------------------
@@ -260,7 +260,7 @@ module DataManager
   def self.delete_save_file(index, game_mode = $game_system.game_mode)
     File.delete(make_chainfilename(index, game_mode)) rescue nil
     File.delete(make_hashfilename(index, game_mode))  rescue nil
-    delete_save_file_chain(index, game_mode)
+    delete_save_file_chain(index)
   end
   #--------------------------------------------------------------------------
   # * Map cache file name

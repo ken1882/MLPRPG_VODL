@@ -91,7 +91,7 @@ class Scene_Map < Scene_Base
     @spriteset
   end
   #--------------------------------------------------------------------------
-  # * Determine if Menu is Called due to Cancel Button
+  # * Overwrite: Determine if Menu is Called due to Cancel Button
   #--------------------------------------------------------------------------
   def update_call_menu
     if $game_system.menu_disabled || $game_map.interpreter.running?
@@ -101,6 +101,14 @@ class Scene_Map < Scene_Base
       @menu_calling = false if $game_system.story_mode?
       call_menu if @menu_calling && !$game_player.moving?
     end
+  end
+  #--------------------------------------------------------------------------
+  # * Alias: Call Menu Screen
+  #--------------------------------------------------------------------------
+  alias call_imagemenu call_menu
+  def call_menu
+    Window_MenuImageCommand::init_command_position
+    call_imagemenu
   end
   #----------------------------------------------------------------------------
   def create_tactic_cursor

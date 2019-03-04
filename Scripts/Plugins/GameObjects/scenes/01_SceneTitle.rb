@@ -154,7 +154,9 @@ class Scene_Title < Scene_Base
   #--------------------------------------------------------------------------
   def command_continue
     file = DataManager.latest_savefile
-    return if file.nil?
+    if file.nil?
+      return @command_window.activate
+    end
     result = DataManager.load_game(file.index, file.mode)
     if result == true
       on_load_success

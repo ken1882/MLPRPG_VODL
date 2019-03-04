@@ -21,7 +21,7 @@ class Window_TitleCommand < Window_Command
   # * Overwrite: Change order and new commands
   #--------------------------------------------------------------------------
   def make_command_list
-    add_command(Vocab::continue, :continue, continue_enabled, nil, Vocab::continue)
+    add_command(Vocab::continue, :continue, continue_enabled, nil, Vocab::Continue)
     add_command(Vocab::new_game, :start_game, true, nil, Vocab::StartGame)
     add_command(Vocab::Option,   :option,     true, nil, Vocab::Option)
     add_command(Vocab::Credits,  :credits,    true, nil, Vocab::Credits)

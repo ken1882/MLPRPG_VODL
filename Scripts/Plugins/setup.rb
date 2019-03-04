@@ -25,18 +25,19 @@
 #------------------------------------------------------------------------------
 plugins = { # Do not remove
 #------------------------------------------------------------------------------
-  # load default language
-  "Vocab" => {
-    "en_us" => {},
-  },
+  "GlobalSettings" => {},
 
   "Kernel_preload" => {
     "RbModules" => {},
     "RbObjects" => {},
     "modules" => {},
+    "lib" => {},
+    "Vocab" => {
+      "en_us" => {},
+      "zh_tw" => {},
+    },
+    "modules_afterload" => {},
   },
-
-  "GlobalSettings" => {},
 
   "RGSS" => {
     "modules" => {},
@@ -76,12 +77,6 @@ plugins = { # Do not remove
 #------------------------------------------------------------------------------
 } # Do not remove
 
-VocabPath = {
-  "Vocab" => {
-    "en_us" => {},
-    "zh_tw" => {},
-  },
-}
 #------------------------------------------------------------------------------
 #==============================+
 # Folder structure explanation |
@@ -187,8 +182,6 @@ Plugins.root_path = ROOT_PATH
 # We then load the folder structure we made earlier using the
 # load_recursive method
 Plugins.load_recursive(plugins)
-
-Plugins.load_recursive(VocabPath)
 
 # Then we package all plugin scripts into a single scripts.rb file. This is
 # also necessary for this to work when we encrypt our game.

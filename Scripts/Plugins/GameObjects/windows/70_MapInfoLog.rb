@@ -233,10 +233,11 @@ class Window_InformationLog < Window_Selectable
   # * Add Text
   #--------------------------------------------------------------------------
   def add_text(text)
+    return unless text
     lines = FileManager.textwrap(text, contents_width, contents)
     lines.each do |line|
-      @lines.shift      if item_max > item_limit
-      @lines.push(line) if line.size > 0
+      @lines.shift if item_max > item_limit
+      @lines.push(line.dup.force_encoding($default_encoding)) if line.size > 0
     end
     refresh(true)
   end

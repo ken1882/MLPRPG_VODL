@@ -14,22 +14,24 @@ class Window_Help < Window_Base
   # * Overwrite: Set Text
   #--------------------------------------------------------------------------
   def set_text(text)
+    text = (text || '')
     if text != @text
-      @text = text
+      @text = text.dup
       if text.is_a?(Array)
         @text = modify_text
       elsif text_size(text).width > contents.width
         @text = FileManager.textwrap(text, contents.width)
         @text = modify_text
+      else
+        @text = @text.force_encoding($default_encoding)
       end
       refresh
     end
   end
   #--------------------------------------------------------------------------
   def modify_text
-    @text.inject("") do |str, line|
-      str += line + 10.chr
-    end
+    @text = @text.inject(""){|str, line| str += line + 10.chr}
+    @text = @text.force_encoding($default_encoding)
   end
   #--------------------------------------------------------------------------
 end

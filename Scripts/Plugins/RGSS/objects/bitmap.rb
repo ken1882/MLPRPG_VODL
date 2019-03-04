@@ -11,6 +11,14 @@ class Bitmap
     init_source(*args)
   end
   #-----------------------------------------------------------------------------
+  alias draw_text_encoding draw_text
+  def draw_text(*args)
+    args.each_with_index do |arg, i|
+      args[i] = arg.dup.force_encoding($default_encoding) if arg.is_a?(String)
+    end
+    draw_text_encoding(*args)
+  end
+  #-----------------------------------------------------------------------------
   # * Implementation of Bresenham's algorithm with dirty hacks
   #-----------------------------------------------------------------------------
   def draw_line(x1,y1,x2,y2,col)
