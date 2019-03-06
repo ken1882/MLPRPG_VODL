@@ -9,5 +9,7 @@ $supported_languages = {
   :zh_tw => "繁體中文",
 }
 
+$default_encoding = 'utf-8'
+
 # Errno flag shared between threads
 $error_activated = false 

@@ -5,23 +5,18 @@ def report_exception(error)
   scripts_name = $RGSS_SCRIPTS.collect{|script|  script[1]  }
   backtrace = []
 
-  # Flag to find the error location in externel files
-  translate_flag = false
-  if $LoaderMethodNames
-    translate_flag = $LoaderMethodNames.any?{|method_name|
-      error.backtrace.any?{|line| line.include?(method_name)}
-    }
-  end
-  
   error.backtrace.each_with_index {|line,i|
+    if line =~ /:(\d+):/
+      line_number = $1.to_i
+    end
+
     if line =~ /{(.*)}(.*)/
       backtrace << (scripts_name[$1.to_i] + $2)
     elsif line.start_with?(':1:')
       break
     else
-      backtrace << (translate_flag ? translate_debug_message(line) : line)
+      backtrace << translate_debug_message(line)
     end
-    translate_flag = false if $LoaderMethodNames.any?{|name| line.include?(name)}
   }
   
   error_line = backtrace.first
@@ -31,7 +26,7 @@ def report_exception(error)
   $error_tracer_header = backtrace[0]
   error_txt = sprintf("%s %s %s %s %s %s",error_line, ": ", error.message, err_class, back_trace_txt, "\n" )
   print error_txt
-  return error_txt
+  return error_txt.force_encoding($default_encoding)
 end
 #--------------------------------------------------------------------------
 # * Raise errors that not occurred in Main Thread
@@ -41,7 +36,8 @@ def flag_error(error)
   if !$error_activated
     error_txt = report_exception(error)
     Audio.se_play('Audio/SE/Buzzer1',80,100)
-    info = Vocab::Errno::Exception
+    info = (Vocab::Errno::Exception rescue "An error occurred during the gameplay, please submit \"ErrorLog.txt\" to the developers in order to resolve the problem.\n")
+    info = info.force_encoding($default_encoding)
     print info
     msgbox(info)
     filename = "ErrorLog.txt"
@@ -56,11 +52,13 @@ end
 #--------------------------------------------------------------------------
 def translate_debug_message(line)
   return line unless Plugins
-  return line unless (line =~ /:(\d+):/)
+  return line unless (line =~ /:(\d+)/)
   line_number = $1.to_i
   info = Plugins.find_file_by_line(line_number)
   line_number = line_number - info[4] + 1
-  return sprintf("%s:%s:%s", info[1], line_number, line.split(':').last)
+  msg = line.split(':'+$1.to_s)
+  msg = msg.size > 1 ? msg.last : ''
+  return sprintf("%s:%s%s", info[1], line_number, msg)
 end
 #--------------------------------------------------------------------------
 def sprite_valid?(sprite)
@@ -68,7 +66,7 @@ def sprite_valid?(sprite)
 end
 #--------------------------------------------------------------------------
 def debug_mode?
-  return GameManager.debug_mode?
+  return (GameManager.debug_mode? rescue true)
 end
 #--------------------------------------------------------------------------
 # * Print debug info
@@ -107,7 +105,12 @@ alias puts_debug puts
 def puts(*args)
   return unless debug_mode?
   args[0] = "<#{Time.now}> " + args[0] if args[0] =~ /\[(.*)\]/i
-  puts_debug(*args)
+  begin
+    puts_debug(*args)
+  rescue Encoding::UndefinedConversionError
+    args.each{|ar| ar = ar.to_s.force_encoding($default_encoding)}
+    puts_debug(*args)
+  end
 end
 #--------------------------------------------------------------------------
 # * Overwrite the exit method to program-friendly
