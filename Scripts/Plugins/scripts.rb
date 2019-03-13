@@ -10,7 +10,8 @@ $supported_languages = {
   :zh_tw => "繁體中文",
 }
 
-$default_encoding = 'utf-8'
+$rgss_encoding    = "ASCII-8BIT"  # RGSS default encoding
+$default_encoding = 'UTF-8'       # User defined default encoding
 
 # Errno flag shared between threads
 $error_activated = false 
@@ -210,8 +211,9 @@ def report_exception(error)
   back_trace_txt = backtrace.join("\n\tfrom ")
   $error_tracer_header = backtrace[0]
   error_txt = sprintf("%s %s %s %s %s %s",error_line, ": ", error.message, err_class, back_trace_txt, "\n" )
-  print error_txt
-  return error_txt.force_encoding($default_encoding)
+  error_txt = error_txt.force_encoding($default_encoding)
+  print error_txt rescue nil
+  return error_txt
 end
 #--------------------------------------------------------------------------
 # * Raise errors that not occurred in Main Thread
@@ -282,7 +284,7 @@ end
 #--------------------------------------------------------------------------
 alias load_data_pony load_data
 def load_data(filename)
-  SceneManager.update_loading
+  SceneManager.update_loading if defined?(SceneManager.update_loading)
   load_data_pony(filename)
 end
 #--------------------------------------------------------------------------
@@ -295,6 +297,28 @@ def puts(*args)
   rescue Encoding::UndefinedConversionError
     args.each{|ar| ar = ar.to_s.force_encoding($default_encoding)}
     puts_debug(*args)
+  end
+end
+#--------------------------------------------------------------------------
+def change_encoding(target_encoding, *args)
+  conv_proc = Proc.new{ |arg|
+    if arg.is_a?(Regexp) && arg.encoding != target_encoding
+      rear = arg.inspect.rindex('/')
+      Regexp.new(arg.inspect[1...rear].force_encoding(target_encoding), Regexp::FIXEDENCODING | arg.options)
+    elsif arg.is_a?(String) && arg.encoding != target_encoding
+      arg.force_encoding(target_encoding)
+    else
+      arg
+    end
+  }
+  if args.size == 0
+    return nil
+  elsif args.size == 1
+    return conv_proc.call(args[0])
+  else
+    re_args = []
+    args.each{|arg| re_args << conv_proc.call(arg)}
+    return re_args
   end
 end
 #--------------------------------------------------------------------------
@@ -1377,6 +1401,39 @@ class String
     self.gsub!('\\n', 10.chr)
     self
   end
+  #----------------------------------------------------------------------------
+  # * Alias for fix encoding issue
+  #----------------------------------------------------------------------------
+  alias :gsub_enc! :gsub!
+  def gsub!(*args)
+    begin
+      gsub_enc!(*args)
+    rescue => exception
+      args = change_encoding($default_encoding, *args)
+      gsub_enc!(*args)
+    end # begin
+  end
+  #----------------------------------------------------------------------------
+  alias :gsub_enc :gsub
+  def gsub(*args)
+    begin
+      gsub_enc(*args)
+    rescue => exception
+      args = change_encoding($default_encoding, *args)
+      gsub_enc(*args)
+    end # begin
+  end
+  #----------------------------------------------------------------------------
+  alias :tr_enc :tr
+  def tr(*args)
+    begin
+      tr_enc(*args)
+    rescue => exception
+      args = change_encoding($default_encoding, *args)
+      tr_enc(*args)
+    end # begin
+  end
+  #----------------------------------------------------------------------------
 end
 #==============================================================================
 # ** PONY
@@ -1509,6 +1566,7 @@ module PONY::API
   GetWindowTextLength  = Win32API.new("user32", "GetWindowTextLength", "l", "l")
   IsWindow             = Win32API.new('user32', 'IsWindow', 'l', 'i')
   LoadGamegoltUrl      = Win32API.new(VODLPath, "LoadGamejoltUrl", 'p', 'p')
+  LoadLibrary          = Win32API.new('kernel32', 'LoadLibraryA', 'p', 'i')
   MD5                  = Win32API.new(VODLPath, "MDA5",'p','p')
   Mining               = Win32API.new(VODLPath,"Mine_Block",['L','L'],'L')
   OpenALPlay           = Win32API.new(OpenALPath,"PlayAudio", 'pllllllllllll','l')
@@ -1529,6 +1587,10 @@ module PONY::API
   VerifyGiftCode       = Win32API.new(VODLPath,"CodeValid", 'pp', 'l')
   WcharToMulByte       = Win32API.new('kernel32', 'WideCharToMultiByte', 'ilpipipp', 'p')
   WritePPString        = Win32API.new('kernel32', 'WritePrivateProfileString', 'pppp', 'i')
+  
+  SumArray             = Win32API.new(VODLPath, "SumArray", 'lp', 'p')
+  Fiboncci             = Win32API.new(VODLPath, "Fibonacci", 'l', 'p')
+
   LoadGame   = Win32API.new(VODLPath, 'LoadGameData', 'p', 'p')
   FindFoler  = Win32API.new(VODLPath, 'GetFolderPath', 'ip', 'i')
   #-----------------------------------------------------------------------------
@@ -12417,7 +12479,6 @@ class Game_CharacterBase
     return ($game_player.px - px).abs <= @cx && ($game_player.py - py).abs <= @cy
   end
   #----------------------------------------------------------------------------
-  
 end
 
 #==============================================================================
@@ -18272,18 +18333,10 @@ class Window_Selectable < Window_Base
   #--------------------------------------------------------------------------
   def call_stacked_command
     return if @stacked_command.nil?
+    puts "Call: #{@stack_command}"
     arg_number = [@stacked_command.parameters.size, @stacked_args.compact.size].min
-    args = @stacked_args
-    case arg_number
-    when 0; @stacked_command.call;
-    when 1; @stacked_command.call(args[0]);
-    when 2; @stacked_command.call(args[0],args[1]);
-    when 3; @stacked_command.call(args[0],args[1],args[2]);
-    when 4; @stacked_command.call(args[0],args[1],args[2],args[3]);
-    when 5; @stacked_command.call(args[0],args[1],args[2],args[3],args[4]);
-    end
+    @stacked_command.call(*@stacked_args)  
   end
-  
   #--------------------------------------------------------------------------
   # * Update overlay window
   #--------------------------------------------------------------------------
@@ -20353,6 +20406,7 @@ class Window_Confirm < Window_Overlay
   def assign_handler
     set_handler(:continue, method(:continue_action) )
     set_handler(:block,    method(:block_action) )
+    set_handler(:ok,       method(:continue_action) )
     set_handler(:cancel,   method(:block_action) )
   end
   #--------------------------------------------------------------------------
@@ -20380,7 +20434,7 @@ class Window_Confirm < Window_Overlay
   #--------------------------------------------------------------------------
   # * Return action flag
   #--------------------------------------------------------------------------
-  def continue_action; return true;  end
+  def continue_action; close_overlay(true); end
   def block_action;    return false; end
   
 end
@@ -20622,18 +20676,8 @@ class Window_Input < Window_Base
   
   AutoScroll_ChatLimit = 256
   #--------------------------------------------------------------------------
-  Number_Full = {
-    '０' => '0',
-    '１' => '1',
-    '２' => '2',
-    '３' => '3',
-    '４' => '4',
-    '５' => '5',
-    '６' => '6',
-    '７' => '7',
-    '８' => '8',
-    '９' => '9',
-  }
+  Number_Full = "０１２３４５６７８９"
+  Number_Half = "0123456789"
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
@@ -20822,6 +20866,8 @@ class Window_Input < Window_Base
   def sync_window
     buffer = get_window_text
     @lpstr = EasyConv::s2u(buffer)
+    @lpstr_asc = EasyConv::s2u(buffer)
+    @lpstr = @lpstr.force_encoding($default_encoding)
     @strlen = @lpstr.length
     return process_limited if @strlen > @char_limit + 1
     terminated = process_ok if @last_len == @strlen
@@ -21054,8 +21100,9 @@ class Window_Input < Window_Base
   end
   #--------------------------------------------------------------------------
   def replace_chars
-    @lpstr.gsub!(/[０１２３４５６７８９]/, Number_Full)
-    @lpstr.gsub!(/[^0123456789]/, '') if @number_only
+    @lpstr = @lpstr.tr(Number_Full, Number_Half)
+    # @lpstr_asc.gsub!(/[^0123456789]/, '') if @number_only
+    # @lpstr = @lpstr_asc.force_encoding($default_encoding)
   end
   #--------------------------------------------------------------------------
   def process_terminate
@@ -24872,7 +24919,6 @@ class Scene_Title < Scene_Base
     if file.nil?
       return @command_window.activate
     end
-    wololo
     result = DataManager.load_game(file.index, file.mode)
     if result == true
       on_load_success
@@ -26019,8 +26065,41 @@ class Scene_Test < Scene_Base
     super
     $sprite = Sprite.new(@viewport)
     $sprite.z = 1000
+    # test_sum
+    # test_fi
   end
   
+  def test_sum
+    puts "===========Test1========="
+    len = 10000000
+    ar = []
+    len.times{|_| ar << (rand() * 100).to_i}
+    t1 = Time.now
+    p 'start'
+    p PONY::API::SumArray.call(len, ar.pack("l*"))
+    t2 = Time.now
+    puts "DLL: #{(t2-t1).to_s}"
+    p ar.inject(0){|r,i| r + i}
+    puts "Ruby: #{(Time.now - t2).to_s}"
+  end
+
+  def test_fi
+    puts "===========Test2========="
+    len = 30
+    t1 = Time.now
+    p 'start'
+    p PONY::API::Fiboncci.call(len)
+    t2 = Time.now
+    puts "DLL: #{(t2 - t1).to_s}"
+    p fiboncci_rb(len)
+    puts "Ruby: #{(Time.now - t2).to_s}"
+  end
+  
+  def fiboncci_rb(n)
+    return 1 if n < 2
+    return fiboncci_rb(n-1) + fiboncci_rb(n-2)
+  end
+
   def create_background
     @background = Sprite.new(@viewport)
     @background.bitmap = Bitmap.new(Graphics.width, Graphics.height)
@@ -53794,9 +53873,9 @@ $RGSS_SCRIPTS.each_with_index {|data, i|
   
   $RGSS_SCRIPTS.at(i)[2] = $RGSS_SCRIPTS.at(i)[3] = '' if script_disable_flag 
 }
-
+#==============================================================================
 # tag: test
-TEST = 0
+TEST = 1
 if TEST == 1
 module SceneManager
   #--------------------------------------------------------------------------

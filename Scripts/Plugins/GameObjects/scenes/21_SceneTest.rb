@@ -13,8 +13,41 @@ class Scene_Test < Scene_Base
     super
     $sprite = Sprite.new(@viewport)
     $sprite.z = 1000
+    # test_sum
+    # test_fi
   end
   
+  def test_sum
+    puts "===========Test1========="
+    len = 10000000
+    ar = []
+    len.times{|_| ar << (rand() * 100).to_i}
+    t1 = Time.now
+    p 'start'
+    p PONY::API::SumArray.call(len, ar.pack("l*"))
+    t2 = Time.now
+    puts "DLL: #{(t2-t1).to_s}"
+    p ar.inject(0){|r,i| r + i}
+    puts "Ruby: #{(Time.now - t2).to_s}"
+  end
+
+  def test_fi
+    puts "===========Test2========="
+    len = 30
+    t1 = Time.now
+    p 'start'
+    p PONY::API::Fiboncci.call(len)
+    t2 = Time.now
+    puts "DLL: #{(t2 - t1).to_s}"
+    p fiboncci_rb(len)
+    puts "Ruby: #{(Time.now - t2).to_s}"
+  end
+  
+  def fiboncci_rb(n)
+    return 1 if n < 2
+    return fiboncci_rb(n-1) + fiboncci_rb(n-2)
+  end
+
   def create_background
     @background = Sprite.new(@viewport)
     @background.bitmap = Bitmap.new(Graphics.width, Graphics.height)

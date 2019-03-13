@@ -31,9 +31,9 @@ $RGSS_SCRIPTS.each_with_index {|data, i|
   
   $RGSS_SCRIPTS.at(i)[2] = $RGSS_SCRIPTS.at(i)[3] = '' if script_disable_flag 
 }
-
+#==============================================================================
 # tag: test
-TEST = 0
+TEST = 1
 if TEST == 1
 module SceneManager
   #--------------------------------------------------------------------------

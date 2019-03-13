@@ -17,4 +17,37 @@ class String
     self.gsub!('\\n', 10.chr)
     self
   end
+  #----------------------------------------------------------------------------
+  # * Alias for fix encoding issue
+  #----------------------------------------------------------------------------
+  alias :gsub_enc! :gsub!
+  def gsub!(*args)
+    begin
+      gsub_enc!(*args)
+    rescue => exception
+      args = change_encoding($default_encoding, *args)
+      gsub_enc!(*args)
+    end # begin
+  end
+  #----------------------------------------------------------------------------
+  alias :gsub_enc :gsub
+  def gsub(*args)
+    begin
+      gsub_enc(*args)
+    rescue => exception
+      args = change_encoding($default_encoding, *args)
+      gsub_enc(*args)
+    end # begin
+  end
+  #----------------------------------------------------------------------------
+  alias :tr_enc :tr
+  def tr(*args)
+    begin
+      tr_enc(*args)
+    rescue => exception
+      args = change_encoding($default_encoding, *args)
+      tr_enc(*args)
+    end # begin
+  end
+  #----------------------------------------------------------------------------
 end

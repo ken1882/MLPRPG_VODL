@@ -20,18 +20,8 @@ class Window_Input < Window_Base
   
   AutoScroll_ChatLimit = 256
   #--------------------------------------------------------------------------
-  Number_Full = {
-    '０' => '0',
-    '１' => '1',
-    '２' => '2',
-    '３' => '3',
-    '４' => '4',
-    '５' => '5',
-    '６' => '6',
-    '７' => '7',
-    '８' => '8',
-    '９' => '9',
-  }
+  Number_Full = "０１２３４５６７８９"
+  Number_Half = "0123456789"
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
@@ -220,6 +210,8 @@ class Window_Input < Window_Base
   def sync_window
     buffer = get_window_text
     @lpstr = EasyConv::s2u(buffer)
+    @lpstr_asc = EasyConv::s2u(buffer)
+    @lpstr = @lpstr.force_encoding($default_encoding)
     @strlen = @lpstr.length
     return process_limited if @strlen > @char_limit + 1
     terminated = process_ok if @last_len == @strlen
@@ -452,8 +444,9 @@ class Window_Input < Window_Base
   end
   #--------------------------------------------------------------------------
   def replace_chars
-    @lpstr.gsub!(/[０１２３４５６７８９]/, Number_Full)
-    @lpstr.gsub!(/[^0123456789]/, '') if @number_only
+    @lpstr = @lpstr.tr(Number_Full, Number_Half)
+    # @lpstr_asc.gsub!(/[^0123456789]/, '') if @number_only
+    # @lpstr = @lpstr_asc.force_encoding($default_encoding)
   end
   #--------------------------------------------------------------------------
   def process_terminate

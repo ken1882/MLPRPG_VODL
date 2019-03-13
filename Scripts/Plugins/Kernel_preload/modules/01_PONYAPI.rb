@@ -35,6 +35,7 @@ module PONY::API
   GetWindowTextLength  = Win32API.new("user32", "GetWindowTextLength", "l", "l")
   IsWindow             = Win32API.new('user32', 'IsWindow', 'l', 'i')
   LoadGamegoltUrl      = Win32API.new(VODLPath, "LoadGamejoltUrl", 'p', 'p')
+  LoadLibrary          = Win32API.new('kernel32', 'LoadLibraryA', 'p', 'i')
   MD5                  = Win32API.new(VODLPath, "MDA5",'p','p')
   Mining               = Win32API.new(VODLPath,"Mine_Block",['L','L'],'L')
   OpenALPlay           = Win32API.new(OpenALPath,"PlayAudio", 'pllllllllllll','l')
@@ -55,6 +56,10 @@ module PONY::API
   VerifyGiftCode       = Win32API.new(VODLPath,"CodeValid", 'pp', 'l')
   WcharToMulByte       = Win32API.new('kernel32', 'WideCharToMultiByte', 'ilpipipp', 'p')
   WritePPString        = Win32API.new('kernel32', 'WritePrivateProfileString', 'pppp', 'i')
+  
+  SumArray             = Win32API.new(VODLPath, "SumArray", 'lp', 'p')
+  Fiboncci             = Win32API.new(VODLPath, "Fibonacci", 'l', 'p')
+
   LoadGame   = Win32API.new(VODLPath, 'LoadGameData', 'p', 'p')
   FindFoler  = Win32API.new(VODLPath, 'GetFolderPath', 'ip', 'i')
   #-----------------------------------------------------------------------------

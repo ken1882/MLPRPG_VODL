@@ -77,6 +77,7 @@ class Window_Confirm < Window_Overlay
   def assign_handler
     set_handler(:continue, method(:continue_action) )
     set_handler(:block,    method(:block_action) )
+    set_handler(:ok,       method(:continue_action) )
     set_handler(:cancel,   method(:block_action) )
   end
   #--------------------------------------------------------------------------
@@ -104,7 +105,7 @@ class Window_Confirm < Window_Overlay
   #--------------------------------------------------------------------------
   # * Return action flag
   #--------------------------------------------------------------------------
-  def continue_action; return true;  end
+  def continue_action; close_overlay(true); end
   def block_action;    return false; end
   
 end

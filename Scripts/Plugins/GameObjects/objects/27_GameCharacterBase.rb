@@ -171,5 +171,4 @@ class Game_CharacterBase
     return ($game_player.px - px).abs <= @cx && ($game_player.py - py).abs <= @cy
   end
   #----------------------------------------------------------------------------
-  
 end

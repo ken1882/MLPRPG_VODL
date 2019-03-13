@@ -106,18 +106,10 @@ class Window_Selectable < Window_Base
   #--------------------------------------------------------------------------
   def call_stacked_command
     return if @stacked_command.nil?
+    puts "Call: #{@stack_command}"
     arg_number = [@stacked_command.parameters.size, @stacked_args.compact.size].min
-    args = @stacked_args
-    case arg_number
-    when 0; @stacked_command.call;
-    when 1; @stacked_command.call(args[0]);
-    when 2; @stacked_command.call(args[0],args[1]);
-    when 3; @stacked_command.call(args[0],args[1],args[2]);
-    when 4; @stacked_command.call(args[0],args[1],args[2],args[3]);
-    when 5; @stacked_command.call(args[0],args[1],args[2],args[3],args[4]);
-    end
+    @stacked_command.call(*@stacked_args)  
   end
-  
   #--------------------------------------------------------------------------
   # * Update overlay window
   #--------------------------------------------------------------------------
